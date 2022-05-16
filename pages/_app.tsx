@@ -12,9 +12,6 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   // Theme Init and subscribe changes
   useEffect(() => {
-    // generate follow system theme
-    // SystemTheme DrawBack: 系统设置变化后需要刷新才能生效。不知道有没有相应的监听事件。跟随系统这里还是 css 好使，JS 整太复杂了
-    // setInitTheme
     setTheme(getAppTheme() === 'dark' ?
       darkTheme : getAppTheme() === 'light' ?
         lightTheme : genSystemTheme())
