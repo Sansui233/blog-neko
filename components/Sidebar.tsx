@@ -17,7 +17,6 @@ export default function Sidebar({ isShow, toggle }: Props) {
     const targetTheme = (t === 'system' ?
       'dark' : t === 'dark' ?
         'light' : 'system') as ThemeMsg;
-    console.log(targetTheme)
     setAppTheme(targetTheme)
   }
 
@@ -39,6 +38,7 @@ export default function Sidebar({ isShow, toggle }: Props) {
 
 const Container = styled.div`
   background: #000000e3;
+  backdrop-filter: blur(6px);
   position: fixed;
   width: 100%;
   height: 100%;
