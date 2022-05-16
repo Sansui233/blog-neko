@@ -26,3 +26,11 @@ export const darkTheme: DefaultTheme = {
     codeBlockBg: '#111111',
   }
 }
+
+export const genSystemTheme = ((): DefaultTheme => {
+  const theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? darkTheme : lightTheme
+  return {
+    ...theme,
+    mode: 'system'
+  }
+})

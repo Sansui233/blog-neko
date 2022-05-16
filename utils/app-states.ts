@@ -6,7 +6,7 @@ export const emitter = new EventEmitter();
 
 // Theme
 export const ThemeEvtName = 'theme changed'
-export type ThemeMsg = 'light' | 'dark'
+export type ThemeMsg = 'light' | 'dark' | 'system'
 export type ThemeCallBack = (theme: ThemeMsg) => void
 
 /**

@@ -2,7 +2,7 @@ import Link from "next/link"
 import styled, { ThemeContext } from "styled-components"
 import { fadeIn, TextFocusIn } from "../styles/animations"
 import { useContext, useState } from "react"
-import { getAppTheme, setAppTheme } from "../utils/app-states"
+import { getAppTheme, setAppTheme, ThemeMsg } from "../utils/app-states"
 
 type Props = {
   isShow: boolean,
@@ -13,7 +13,11 @@ export default function Sidebar({ isShow, toggle }: Props) {
   const themeContext = useContext(ThemeContext)
 
   function handleThemeChange() {
-    const targetTheme = getAppTheme() === 'dark' ? 'light' : 'dark'
+    const t = getAppTheme()
+    const targetTheme = (t === 'system' ?
+      'dark' : t === 'dark' ?
+        'light' : 'system') as ThemeMsg;
+    console.log(targetTheme)
     setAppTheme(targetTheme)
   }
 
@@ -23,7 +27,7 @@ export default function Sidebar({ isShow, toggle }: Props) {
       <Content>
         <div onClick={handleThemeChange}>
           <OptionText style={{ fontSize: '1.625rem' }}>
-            DarkMode {themeContext.mode === 'dark' ? 'ON' : 'OFF'}
+            {themeContext.mode.toUpperCase()} THEME
           </OptionText>
         </div>
         <div><OptionText><Link href="/atom.xml">RSS</Link></OptionText></div>
