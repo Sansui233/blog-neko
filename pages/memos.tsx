@@ -123,12 +123,7 @@ const CardMask = styled.div<{
     height: 7rem;
     cursor: pointer;
     text-align: center;
-    ${props => props.isCollapse === true ? css`
-      background-image: -webkit-linear-gradient(top,rgba(255,255,255,0) 0%,rgba(255,255,255,.8) 40%,rgba(255,255,255,1) 75%);
-      background-image: -moz-linear-gradient(top,rgba(255,255,255,0) 0%,rgba(255,255,255,.8) 40%,rgba(255,255,255,1) 75%);
-      background-image: -o-linear-gradient(top,rgba(255,255,255,0) 0%,rgba(255,255,255,.8) 40%,rgba(255,255,255,1) 75%);
-      background-image: linear-gradient(top,rgba(255,255,255,0) 0%,rgba(255,255,255,.8) 40%,rgba(255,255,255,1) 75%);
-    `: ''}
+    ${props => props.isCollapse === true ? props.theme.colors.memoGradient : ''}
 
     .rd-more {
       margin-top: 5.375rem;

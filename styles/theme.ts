@@ -1,4 +1,4 @@
-import { DefaultTheme } from "styled-components"
+import { css, DefaultTheme } from "styled-components"
 
 export const lightTheme: DefaultTheme = {
   mode: 'light',
@@ -11,6 +11,12 @@ export const lightTheme: DefaultTheme = {
     background: 'white',
     hoverBg: '#00000022',
     codeBlockBg: '#eeeeee',
+    memoGradient: css`
+    background-image: -webkit-linear-gradient(top,rgba(255,255,255,0) 0%,rgba(255,255,255,.8) 40%,rgba(255,255,255,1) 75%);
+    background-image: -moz-linear-gradient(top,rgba(255,255,255,0) 0%,rgba(255,255,255,.8) 40%,rgba(255,255,255,1) 75%);
+    background-image: -o-linear-gradient(top,rgba(255,255,255,0) 0%,rgba(255,255,255,.8) 40%,rgba(255,255,255,1) 75%);
+    background-image: linear-gradient(top,rgba(255,255,255,0) 0%,rgba(255,255,255,.8) 40%,rgba(255,255,255,1) 75%);
+    `
   }
 }
 export const darkTheme: DefaultTheme = {
@@ -24,6 +30,12 @@ export const darkTheme: DefaultTheme = {
     background: '#242424',
     hoverBg: '#ffffff55',
     codeBlockBg: '#111111',
+    memoGradient: css`
+    background-image: -webkit-linear-gradient(top,rgba(36,36,36,0) 0%,rgba(36,36,36,.8) 40%,rgba(36,36,36,1) 75%);
+    background-image: -moz-linear-gradient(top,rgba(36,36,36,0) 0%,rgba(36,36,36,.8) 40%,rgba(36,36,36,1) 75%);
+    background-image: -o-linear-gradient(top,rgba(36,36,36,0) 0%,rgba(36,36,36,.8) 40%,rgba(36,36,36,1) 75%);
+    background-image: linear-gradient(top,rgba(36,36,36,0) 0%,rgba(36,36,36,.8) 40%,rgba(36,36,36,1) 75%);
+    `
   }
 }
 
