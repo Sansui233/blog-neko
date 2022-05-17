@@ -6,7 +6,7 @@ import Layout from "../../components/Layout";
 import styled from "styled-components";
 import { dateToYMD } from "../../utils/date";
 import Link from "next/link";
-import { Title } from "../categories";
+import { Title } from ".";
 
 type Props = {
   category: string,
@@ -116,7 +116,6 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const paths = Array.from(getAllCategories()).map(v => {
     return { params: { id: v[0] } }
   })
-  paths.push({ params: { id: '' } })
   return {
     paths,
     fallback: false

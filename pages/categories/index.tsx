@@ -2,9 +2,9 @@ import { GetStaticProps } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import styled from "styled-components";
-import { CommonHeader, MainLayoutStyle } from ".";
-import Layout from "../components/Layout";
-import { getAllCategories } from "../utils/posts";
+import { CommonHeader, MainLayoutStyle } from "..";
+import Layout from "../../components/Layout";
+import { getAllCategories } from "../../utils/posts";
 
 export default function Categories({ categories }: {
   categories: {
