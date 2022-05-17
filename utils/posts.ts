@@ -52,11 +52,12 @@ export function getSortedPostsMeta() {
   })
 }
 
+const CATEGORY_ALL = 'All Posts'
 
 export function getAllCategories() {
   const categories = new Map<string, number>()
   const posts = postsFileNames // 取出防止重复计算
-  categories.set('所有文章', posts.length)
+  categories.set(CATEGORY_ALL, posts.length)
 
   posts.map(fileName => {
     const matterResult = getFrontMatter(fileName)
@@ -72,24 +73,25 @@ export function getAllCategories() {
   return categories
 }
 
-export function getCategoryData(c: string) {
+export function getSortedCategoryPosts(c: string) {
   const posts: {
+    id: string,
     title: string,
-    date: string,
+    date: Date,
   }[] = []
 
   postsFileNames.map(fileName => {
     const matterResult = getFrontMatter(fileName)
-    if (matterResult.data['categories'] && matterResult.data['categories'] === c) {
+    if (c === CATEGORY_ALL ||
+      (matterResult.data['categories'] && matterResult.data['categories'] === c)
+    ) {
       posts.push({
+        id: fileName.replace(/\.mdx?$/, ''),
         title: matterResult.data['title'],
-        date: dateToYMD(matterResult.data['date'])
+        date: matterResult.data['date']
       })
     }
   })
 
-  return {
-    category: c,
-    posts: posts
-  }
+  return posts.sort((a, b) => a.date < b.date ? 1 : -1)
 }

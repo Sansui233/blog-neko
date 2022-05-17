@@ -2,7 +2,7 @@ import { GetStaticPaths, GetStaticProps } from "next"
 import styled from "styled-components"
 import { getAllPostIds, POSTDIR } from "../../utils/posts"
 import { MarkdownStyle } from "../../styles/markdown"
-import { CommonHeader, MainContent } from ".."
+import { CommonHeader, MainLayoutStyle } from ".."
 import { serialize } from 'next-mdx-remote/serialize'
 import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote'
 import { readFileSync } from "fs"
@@ -30,7 +30,7 @@ export default function Post({ mdxSource }: Props) {
   }
 
   return (
-    <div>
+    <>
       <Head>
         <title>{frontmatter.title}</title>
         <CommonHeader />
@@ -46,7 +46,7 @@ export default function Post({ mdxSource }: Props) {
           </MarkdownStyle>
         </PostLayout>
       </Layout>
-    </div>
+    </>
   )
 }
 
@@ -75,7 +75,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   return { props: { mdxSource } }
 }
 
-const PostLayout = styled(MainContent)`
+const PostLayout = styled(MainLayoutStyle)`
   max-width: 800px;
   margin: 72px auto;
 `

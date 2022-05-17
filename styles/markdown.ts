@@ -48,8 +48,8 @@ export const MarkdownStyle = styled.div`
   }
 
   blockquote {
-    border-left: solid 2px #000;
-    padding-left: 2rem;
+    border-left: solid 2px;
+    padding-left: 1.875em;
     color: ${props => props.theme.colors.textGray};
   }
 

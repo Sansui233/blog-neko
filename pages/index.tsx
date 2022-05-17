@@ -48,21 +48,23 @@ const Home: NextPage<Props> = ({ posts, categories }: Props) => {
         <CommonHeader />
       </Head>
       <Layout>
-        <MainContent>
+        <MainLayoutStyle>
           <NavDropper items={categories} current={currCategory} setCurrent={setCurrCategory} />
           <PostGrids>
             {filteredPosts.map(p => (
               <Card key={p.id}>
                 <div className='card-content'>
-                  <Link href={'/posts/' + p.id}>{p.title}</Link>
+                  <Title><Link href={'/posts/' + p.id}>{p.title}</Link></Title>
                   <div className='meta'>
-                    <span className='date'>{p.date}</span> | {p.categories}
+                    <span className='date'>{p.date}</span>
+                    {` | `}
+                    <Link href={`/categories/${p.categories}`}>{p.categories}</Link>
                   </div>
                 </div>
               </Card>
             ))}
           </PostGrids>
-        </MainContent>
+        </MainLayoutStyle>
       </Layout>
     </div>
   )
@@ -79,17 +81,17 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 
 export default Home
 
-export const MainContent = styled.div`
+export const MainLayoutStyle = styled.div`
   max-width: 720px;
   margin: 0 auto;
   padding: 0 3rem 3rem 3rem;
 
   @media screen and (max-width: 780px) {
-    max-width: 540px;
+    max-width: 580px;
   }
 
   @media screen and (max-width: 580px) {
-    padding: 0 2rem 2rem 2rem;
+    padding: 0 1rem 2rem 1rem;
   }
 `
 
@@ -120,9 +122,6 @@ const Card = styled.div`
   }
 
   a {
-    font-size: 1.125rem;
-    position: relative;
-    font-weight: 500;
     box-shadow: inset 0 0 0 ${props => props.theme.colors.hoverBg};
     transition: box-shadow 0.5s ease;
   }
@@ -140,5 +139,10 @@ const Card = styled.div`
     font-size: 0.9rem;
     font-family: Dosis;
   }
+`
+
+const Title = styled.span`
+  font-size: 1.125rem;
+  font-weight: 500;
 `
 

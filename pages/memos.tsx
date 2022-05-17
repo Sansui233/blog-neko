@@ -4,7 +4,7 @@ import styled, { css } from "styled-components";
 import { MarkdownStyle } from "../styles/markdown";
 import { getMemoPosts } from "../utils/memos";
 import React, { useState } from "react";
-import { CommonHeader, MainContent, PageDescription } from ".";
+import { CommonHeader, MainLayoutStyle, PageDescription } from ".";
 import { serialize } from "next-mdx-remote/serialize";
 import remarkGfm from "remark-gfm";
 import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote";
@@ -54,7 +54,7 @@ function MemoCard({ memoPost }: { memoPost: MemoPost }) {
       </MemoMarkdown>
       <CardMask onClick={handleExpand} isCollapse={isCollapse} isShown={shouldCollapse}>
         <div className="rd-more">
-          <span>{isCollapse ? "Show more" : "Hide"}</span>
+          <span>{isCollapse ? "SHOW MORE" : "Hide"}</span>
         </div>
       </CardMask>
     </StyledCard>
@@ -89,7 +89,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 
 /** Styles **/
 
-const MemoLayout = styled(MainContent)`
+const MemoLayout = styled(MainLayoutStyle)`
   max-width: 720px;
 `
 
@@ -126,17 +126,16 @@ const CardMask = styled.div<{
 
     .rd-more {
       margin-top: 5.375rem;
-
+      font-size: 0.875rem;
+      padding: 0.2rem 0;
       span {
-        font-weight: bold;
-        box-shadow: inset 0 -0.5em 0 ${props => props.theme.colors.hoverBg};
+        box-shadow: inset 0 -0.3em 0 ${props => props.theme.colors.hoverBg};
         transition: box-shadow .5s ease;
       }
-  
-      span:hover {
-        font-weight: bold;
-        box-shadow: inset 0 -1em 0 ${props => props.theme.colors.hoverBg};
-      }
+    }
+
+    &:hover .rd-more span {
+      box-shadow: inset 0 -1em 0 ${props => props.theme.colors.hoverBg};
     }
    
 `

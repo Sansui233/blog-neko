@@ -8,7 +8,7 @@ import { emitter, getAppTheme, ThemeEvtName, ThemeMsg, ThemeCallBack } from '../
 
 function MyApp({ Component, pageProps }: AppProps) {
 
-  const [theme, setTheme] = useState(darkTheme);
+  const [theme, setTheme] = useState(lightTheme);
   const themeRef = useRef(theme) // 防止 theme 更新而反复 addListener
 
   useEffect(() => { themeRef.current = theme }, [theme])

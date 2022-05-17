@@ -20,7 +20,7 @@ https://sansui233.com
 - [x] 基本框架完成
 - [x] rss 完成
 - [x] Dark Mode
-- [ ] 详细分类页
+- [x] 详细分类页
 - [ ] 分页渲染
 - [ ] 抠 Footer，抠 Markdown 等
 - [ ] 动画优化

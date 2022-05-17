@@ -32,7 +32,7 @@ export function NavDropper({ items, current, setCurrent }: Props) {
 const NavLayout = styled.nav`
   text-align: right;
   position: relative;
-  padding: 2rem 0 1rem 0;
+  padding: 2rem 0;
 `
 const SubItemContainer = styled.div`
   position: absolute;

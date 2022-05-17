@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { CommonHeader, MainContent, PageDescription } from ".";
+import { CommonHeader, MainLayoutStyle, PageDescription } from ".";
 import { serialize } from 'next-mdx-remote/serialize'
 import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote'
 import { MarkdownStyle } from "../styles/markdown";
@@ -66,12 +66,12 @@ export default function About({ source }: Props) {
         <CommonHeader />
       </Head>
       <Layout>
-        <MainContent>
+        <MainLayoutStyle>
           <AboutDescription>| 记录学习和生活思考的博客 |</AboutDescription>
           <MarkdownStyle>
             <MDXRemote {...source} />
           </MarkdownStyle>
-        </MainContent>
+        </MainLayoutStyle>
       </Layout>
     </div>
   )

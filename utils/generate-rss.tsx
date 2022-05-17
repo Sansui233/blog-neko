@@ -27,6 +27,11 @@ async function getLastTenPosts(): Promise<Item[]> {
         id: `${SiteInfo.domain}/posts/${id}`,
         link: `${SiteInfo.domain}/posts/${id}`,
         date: frontmatter.date,
+        category: [
+          {
+            name: frontmatter.categories,
+            domain: `${SiteInfo.domain}/posts/${frontmatter.categories}`
+          }],
         content: renderToStaticMarkup(
           <MDXRemote compiledSource={contentsource}></MDXRemote>
         )
