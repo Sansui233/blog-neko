@@ -1,6 +1,8 @@
+import { GetStaticProps } from "next"
 import Link from "next/link"
 import React, { useContext, useEffect, useState } from "react"
 import styled, { ThemeContext } from "styled-components"
+import { getAllCategories } from "../utils/posts"
 import { throttle } from "../utils/throttle"
 import Sidebar from "./Sidebar"
 
@@ -50,7 +52,6 @@ export default function Header() {
         </Nav>
         <Avatar onClick={toggleSidebar}>
           {/*eslint-disable-next-line @next/next/no-img-element*/}
-          {/* TODO Dark Theme ico */}
           <img src={theme.assets.favico} alt="Sansui" />
         </Avatar>
       </Layout>

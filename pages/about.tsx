@@ -6,6 +6,7 @@ import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote'
 import { MarkdownStyle } from "../styles/markdown";
 import remarkGfm from 'remark-gfm'
 import styled from "styled-components";
+import Layout from "../components/Layout";
 
 
 const mdText = `
@@ -65,15 +66,14 @@ export default function About({ source }: Props) {
         <title>About Sansui</title>
         <CommonHeader />
       </Head>
-      <main>
-        <Header />
+      <Layout>
         <MainContent>
           <AboutDescription>| 记录学习和生活思考的博客 |</AboutDescription>
           <MarkdownStyle>
             <MDXRemote {...source} />
           </MarkdownStyle>
         </MainContent>
-      </main>
+      </Layout>
     </div>
   )
 }

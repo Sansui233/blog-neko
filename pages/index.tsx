@@ -4,6 +4,7 @@ import Link from 'next/link'
 import React from 'react'
 import styled from 'styled-components'
 import Header from '../components/Header'
+import Layout from '../components/Layout'
 import { getSortedPostsMeta } from '../utils/posts'
 
 type Props = {
@@ -31,8 +32,7 @@ const Home: NextPage<Props> = ({ posts }: Props) => {
         <title>Sansui - Blog</title>
         <CommonHeader />
       </Head>
-      <main>
-        <Header />
+      <Layout>
         <MainContent>
           <PageDescription>| 这里是所有长文 |</PageDescription>
           <PostGrids>
@@ -48,7 +48,7 @@ const Home: NextPage<Props> = ({ posts }: Props) => {
             ))}
           </PostGrids>
         </MainContent>
-      </main>
+      </Layout>
     </div>
   )
 }

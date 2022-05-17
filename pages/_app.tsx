@@ -5,6 +5,7 @@ import { darkTheme, genSystemTheme, lightTheme } from '../styles/theme'
 import { GlobalStyle } from '../styles/global'
 import { useEffect, useRef, useState } from 'react'
 import { emitter, getAppTheme, ThemeEvtName, ThemeMsg, ThemeCallBack } from '../utils/app-states'
+import Header from '../components/Header'
 
 function MyApp({ Component, pageProps }: AppProps) {
 
@@ -42,6 +43,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return <>
     <ThemeProvider theme={theme}>
+      {/* <div id='tooltip-portal'>全局</div> */}
       <GlobalStyle />
       <Component {...pageProps} />
     </ThemeProvider>

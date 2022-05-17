@@ -9,6 +9,7 @@ import { CommonHeader, MainContent, PageDescription } from ".";
 import { serialize } from "next-mdx-remote/serialize";
 import remarkGfm from "remark-gfm";
 import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote";
+import Layout from "../components/Layout";
 
 type MemoPost = {
   title: string,
@@ -26,15 +27,14 @@ export default function Memos({ memoposts }: Props) {
         <title>Sansui - Memos</title>
         <CommonHeader />
       </Head>
-      <main>
-        <Header />
+      <Layout>
         <MemoLayout>
           <MemoDescription>| 记录碎碎念是坏习惯 |</MemoDescription>
           {memoposts.map(m => (
             <MemoCard memoPost={m} key={m.title} />
           ))}
         </MemoLayout>
-      </main>
+      </Layout>
     </div>
   )
 }

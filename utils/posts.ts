@@ -5,16 +5,26 @@ import { dateToYMD } from './date';
 
 export const POSTDIR = path.join(process.cwd(), 'source', 'posts')
 
+const postsFileNames = (() => {
+  let fileNames = fs.readdirSync(POSTDIR);
+  fileNames = fileNames.filter(f => {
+    return f.endsWith(".md") || f.endsWith(".mdx")
+  })
+  return fileNames
+})()
+
+function getFrontMatter(fileName: string) {
+  const fullPath = path.join(POSTDIR, fileName)
+  const fileContents = fs.readFileSync(fullPath, 'utf8')
+  return matter(fileContents)
+}
+
 /**
  * used in post dynamic routes generation
  * @returns 
  */
 export function getAllPostIds() {
-  let fileNames = fs.readdirSync(POSTDIR);
-  fileNames = fileNames.filter(f => {
-    return f.endsWith(".md") || f.endsWith(".mdx")
-  })
-  return fileNames.map(f => {
+  return postsFileNames.map(f => {
     return {
       params: {
         id: f.replace(/\.mdx?$/, '')
@@ -23,16 +33,11 @@ export function getAllPostIds() {
   })
 }
 
+
 export function getSortedPostsMeta() {
-  let fileNames = fs.readdirSync(POSTDIR);
-  fileNames = fileNames.filter(f => {
-    return f.endsWith(".md") || f.endsWith(".mdx")
-  })
-  const allPosts = fileNames.map(fileName => {
+  const allPosts = postsFileNames.map(fileName => {
     const id = fileName.replace(/\.mdx?$/, '')
-    const fullPath = path.join(POSTDIR, fileName)
-    const fileContents = fs.readFileSync(fullPath, 'utf8')
-    const matterResult = matter(fileContents)
+    const matterResult = getFrontMatter(fileName)
     const date = dateToYMD(matterResult.data['date'])
 
     return {
@@ -45,5 +50,38 @@ export function getSortedPostsMeta() {
   return allPosts.sort((a, b) => {
     return a.date < b.date ? 1 : -1
   })
+}
 
+
+export function getAllCategories(): Set<string> {
+  const categories = new Set<string>()
+  postsFileNames.map(fileName => {
+    const matterResult = getFrontMatter(fileName)
+    if (matterResult.data['categories']) {
+      categories.add(matterResult.data['categories'])
+    }
+  })
+  return categories
+}
+
+export function getCategoryData(c: string) {
+  const posts: {
+    title: string,
+    date: string,
+  }[] = []
+
+  postsFileNames.map(fileName => {
+    const matterResult = getFrontMatter(fileName)
+    if (matterResult.data['categories'] && matterResult.data['categories'] === c) {
+      posts.push({
+        title: matterResult.data['title'],
+        date: dateToYMD(matterResult.data['date'])
+      })
+    }
+  })
+
+  return {
+    category: c,
+    posts: posts
+  }
 }

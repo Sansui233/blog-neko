@@ -10,6 +10,7 @@ import { readFileSync } from "fs"
 import path from "path"
 import { dateToYMD } from "../../utils/date"
 import Head from "next/head"
+import Layout from "../../components/Layout"
 
 type Props = {
   mdxSource: MDXRemoteSerializeResult
@@ -35,8 +36,7 @@ export default function Post({ mdxSource }: Props) {
         <title>{frontmatter.title}</title>
         <CommonHeader />
       </Head>
-      <main>
-        <Header />
+      <Layout>
         <PostLayout>
           <PostTitle>
             <h1>{frontmatter.title}</h1>
@@ -46,7 +46,7 @@ export default function Post({ mdxSource }: Props) {
             <MDXRemote compiledSource={source} />
           </MarkdownStyle>
         </PostLayout>
-      </main>
+      </Layout>
     </div>
   )
 }
