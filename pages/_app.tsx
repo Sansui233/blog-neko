@@ -5,7 +5,6 @@ import { darkTheme, genSystemTheme, lightTheme } from '../styles/theme'
 import { GlobalStyle } from '../styles/global'
 import { useEffect, useRef, useState } from 'react'
 import { emitter, getAppTheme, ThemeEvtName, ThemeMsg, ThemeCallBack } from '../utils/app-states'
-import Header from '../components/Header'
 
 function MyApp({ Component, pageProps }: AppProps) {
 

@@ -53,12 +53,20 @@ export function getSortedPostsMeta() {
 }
 
 
-export function getAllCategories(): Set<string> {
-  const categories = new Set<string>()
-  postsFileNames.map(fileName => {
+export function getAllCategories() {
+  const categories = new Map<string, number>()
+  const posts = postsFileNames // 取出防止重复计算
+  categories.set('所有文章', posts.length)
+
+  posts.map(fileName => {
     const matterResult = getFrontMatter(fileName)
     if (matterResult.data['categories']) {
-      categories.add(matterResult.data['categories'])
+      const c = matterResult.data['categories']
+      if (categories.has(c)) {
+        const m = categories.set(c, categories.get(c)! + 1)
+      } else {
+        categories.set(c, 1)
+      }
     }
   })
   return categories

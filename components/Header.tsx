@@ -2,7 +2,6 @@ import { GetStaticProps } from "next"
 import Link from "next/link"
 import React, { useContext, useEffect, useState } from "react"
 import styled, { ThemeContext } from "styled-components"
-import { getAllCategories } from "../utils/posts"
 import { throttle } from "../utils/throttle"
 import Sidebar from "./Sidebar"
 
@@ -80,7 +79,7 @@ const Layout = styled.header<{
   align-items: center;
   position: fixed;
   background-color: ${(props => props.theme.colors.background)};
-  z-index:1;
+  z-index:9;
   transform: ${props => props.isHidden ? "translateY(-100%)" : "translateY(0)"};
   transition: transform .5s ease;
 `

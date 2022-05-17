@@ -1,6 +1,5 @@
 import Head from "next/head";
 import { CommonHeader, MainContent, PageDescription } from ".";
-import Header from "../components/Header";
 import { serialize } from 'next-mdx-remote/serialize'
 import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote'
 import { MarkdownStyle } from "../styles/markdown";

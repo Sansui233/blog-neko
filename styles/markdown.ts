@@ -33,7 +33,7 @@ export const MarkdownStyle = styled.div`
   }
 
   code {
-    background-color: #eee;
+    background-color: ${props => props.theme.colors.codeBlockBg};
     font-size: 0.95rem;
     border-radius: 3px;
     padding: 0 0.25rem;

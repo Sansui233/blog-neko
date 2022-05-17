@@ -1,6 +1,5 @@
 import { GetStaticPaths, GetStaticProps } from "next"
 import styled from "styled-components"
-import Header from "../../components/Header"
 import { getAllPostIds, POSTDIR } from "../../utils/posts"
 import { MarkdownStyle } from "../../styles/markdown"
 import { CommonHeader, MainContent } from ".."

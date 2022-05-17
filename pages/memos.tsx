@@ -1,7 +1,6 @@
 import { GetStaticProps } from "next";
 import Head from "next/head";
 import styled, { css } from "styled-components";
-import Header from "../components/Header";
 import { MarkdownStyle } from "../styles/markdown";
 import { getMemoPosts } from "../utils/memos";
 import React, { useState } from "react";

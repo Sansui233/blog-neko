@@ -13,7 +13,8 @@ declare module 'styled-components' {
       background: string,
       hoverBg: string,
       codeBlockBg: string,
-      memoGradient: FlattenSimpleInterpolation
+      memoGradient: FlattenSimpleInterpolation,
+      navBgGradient: FlattenInterpolation,
     };
   }
 }

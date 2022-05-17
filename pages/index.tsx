@@ -1,20 +1,23 @@
 import type { GetStaticProps, NextPage } from 'next'
 import Head from 'next/head'
 import Link from 'next/link'
-import React from 'react'
+import React, { useMemo, useState } from 'react'
 import styled from 'styled-components'
-import Header from '../components/Header'
 import Layout from '../components/Layout'
-import { getSortedPostsMeta } from '../utils/posts'
+import { NavDropper } from '../components/NavDropper'
+import { getAllCategories, getSortedPostsMeta } from '../utils/posts'
+
+type PostType = {
+  id: string,
+  date: string,
+  title?: string,
+  categories?: string,
+  tags?: string,
+}
 
 type Props = {
-  posts: {
-    id: string,
-    date: string,
-    title?: string,
-    categories?: string,
-    tags?: string,
-  }[]
+  posts: PostType[],
+  categories: [string, number][]
 }
 
 
@@ -25,7 +28,19 @@ export const CommonHeader = () => (
   </React.Fragment>
 )
 
-const Home: NextPage<Props> = ({ posts }: Props) => {
+const Home: NextPage<Props> = ({ posts, categories }: Props) => {
+  const [currCategory, setCurrCategory] = useState(0)
+
+  const filteredPosts = useMemo<PostType[]>(() => {
+    if (currCategory === 0) {
+      return posts
+    } else {
+      return posts.filter(p => {
+        return p.categories === categories[currCategory][0]
+      })
+    }
+  }, [currCategory, posts, categories])
+
   return (
     <div>
       <Head>
@@ -34,9 +49,9 @@ const Home: NextPage<Props> = ({ posts }: Props) => {
       </Head>
       <Layout>
         <MainContent>
-          <PageDescription>| 这里是所有长文 |</PageDescription>
+          <NavDropper items={categories} current={currCategory} setCurrent={setCurrCategory} />
           <PostGrids>
-            {posts.map(p => (
+            {filteredPosts.map(p => (
               <Card key={p.id}>
                 <div className='card-content'>
                   <Link href={'/posts/' + p.id}>{p.title}</Link>
@@ -56,7 +71,8 @@ const Home: NextPage<Props> = ({ posts }: Props) => {
 export const getStaticProps: GetStaticProps<Props> = async () => {
   return {
     props: {
-      posts: getSortedPostsMeta()
+      posts: getSortedPostsMeta(),
+      categories: Array.from(getAllCategories())
     }
   }
 }

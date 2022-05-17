@@ -42,7 +42,7 @@ const Container = styled.div`
   position: fixed;
   width: 100%;
   height: 100%;
-  z-index: 2;
+  z-index: 10;
   color: white;
   animation: ${fadeIn} .7s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
 `
