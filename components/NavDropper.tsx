@@ -14,7 +14,9 @@ export function NavDropper({ items, current, setCurrent }: Props) {
   }
 
   return (
-    <NavLayout onMouseLeave={() => { toggleOpen(false) }} >
+    <NavLayout
+      onMouseLeave={() => { toggleOpen(false) }}
+      onTouchStart={() => { toggleOpen(!isOpen) }}>
       <MainItem>
         <span onMouseEnter={() => { toggleOpen(true) }} className={isOpen ? "is-open" : ''}>
           {items[current][0]}({items[current][1]}) ▼
@@ -42,7 +44,6 @@ const SubItemContainer = styled.div`
   opacity: 0;
   pointer-events: none;
   margin-top: .625rem;
-  pointer-events: auto;
   border-right: 2px solid;
   padding-left: 2.5rem;
   transform: none;
@@ -54,6 +55,7 @@ const SubItemContainer = styled.div`
     z-index: 1;
     opacity: 1;
     transform: translate(0);
+    pointer-events: auto;
   }
 `
 const NavItem = styled.div`
