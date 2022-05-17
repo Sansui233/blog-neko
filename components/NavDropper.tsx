@@ -9,16 +9,12 @@ type Props = {
 }
 export function NavDropper({ items, current, setCurrent }: Props) {
   const [isOpen, setisOpen] = useState(false)
-  function toggleOpen(open = true) {
-    setisOpen(open)
-  }
 
   return (
     <NavLayout
-      onMouseLeave={() => { toggleOpen(false) }}
-      onTouchStart={() => { toggleOpen(!isOpen) }}>
+      onMouseLeave={() => { setisOpen(false) }}>
       <MainItem>
-        <span onMouseEnter={() => { toggleOpen(true) }} className={isOpen ? "is-open" : ''}>
+        <span onMouseEnter={() => { setisOpen(true) }} onClick={() => { setisOpen(!isOpen) }} className={isOpen ? "is-open" : ''}>
           {items[current][0]}({items[current][1]}) ▼
         </span>
       </MainItem>
