@@ -35,17 +35,17 @@ export default function CategoryPage({ category, posts }: Props) {
           </Title>
           {Object.keys(posts).sort((a, b) => a < b ? 1 : -1).map(year => {
             return (
-              <Section key={year}>
-                <Year>{year}</Year>
-                <PostsContainer>
+              <TLSectionStyle key={year}>
+                <TLYearStyle>{year}</TLYearStyle>
+                <TLPostsContainer>
                   {posts[year].map(p => {
                     return (<li key={p.id}>
                       <Link href={`/posts/${p.id}`}>{p.title}</Link>
-                      <Date>{p.date.slice(5)}</Date>
+                      <TLDateStyle>{p.date.slice(5)}</TLDateStyle>
                     </li>)
                   })}
-                </PostsContainer>
-              </Section>
+                </TLPostsContainer>
+              </TLSectionStyle>
             )
           })}
         </MainLayoutStyle>
@@ -57,7 +57,7 @@ export default function CategoryPage({ category, posts }: Props) {
 
 
 
-const Section = styled.section`
+export const TLSectionStyle = styled.section`
   display: flex;
   margin: 2rem 0;
 
@@ -66,7 +66,7 @@ const Section = styled.section`
   }
 `
 
-const Year = styled.div`
+export const TLYearStyle = styled.div`
   font-size: 2rem;
   font-weight: bold;
   flex: 1 1 0;
@@ -76,14 +76,14 @@ const Year = styled.div`
   }
 `
 
-const Date = styled.span`
+export const TLDateStyle = styled.span`
   padding: 0 .5rem;
   font-size: 0.875rem;
   color: ${props => props.theme.colors.textGray};
   font-family: Dosis;
 `
 
-const PostsContainer = styled.ul`
+export const TLPostsContainer = styled.ul`
   margin: .125rem 0;
   padding-left: 1.5rem;
   flex: 2.5 1 0;

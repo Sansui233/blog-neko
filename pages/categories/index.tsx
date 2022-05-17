@@ -4,10 +4,13 @@ import Link from "next/link";
 import styled from "styled-components";
 import { CommonHeader, MainLayoutStyle } from "..";
 import Layout from "../../components/Layout";
-import { getAllCategories } from "../../utils/posts";
+import { getAllCategories, getAllTags } from "../../utils/posts";
 
-export default function Categories({ categories }: {
+export default function Categories({ categories, tags }: {
   categories: {
+    [k: string]: number;
+  },
+  tags: {
     [k: string]: number;
   }
 }) {
@@ -32,6 +35,20 @@ export default function Categories({ categories }: {
               )
             })}
           </Container>
+          <Title>
+            <span>TAGS</span>
+            <h1>标签</h1>
+          </Title>
+          <Container>
+            {Object.keys(tags).map(k => {
+              if (tags[k] === 0) return
+              return (
+                <Link href={`/tags/${k}`} passHref={true} key={k}>
+                  <LabelStyle>{`${k}(${tags[k]})`}</LabelStyle>
+                </Link>
+              )
+            })}
+          </Container>
         </MainLayoutStyle>
       </Layout>
     </>
@@ -41,7 +58,8 @@ export default function Categories({ categories }: {
 export const getStaticProps: GetStaticProps = async () => {
   return {
     props: {
-      categories: Object.fromEntries(getAllCategories())
+      categories: Object.fromEntries(getAllCategories()),
+      tags: Object.fromEntries(getAllTags())
     }
   }
 }

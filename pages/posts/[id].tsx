@@ -20,13 +20,14 @@ export default function Post({ mdxSource }: Props) {
   const source = mdxSource.compiledSource
 
   function genTags(tags: any) {
-    if (tags instanceof Array) {
-      return (tags.map(tag => {
-        return `#${tag} `
-      }))
-    } else {
-      return `#${tags}`
-    }
+    tags = typeof (tags) === "string" ? [tags] : tags
+    return (
+      <>
+        {tags.map((tag: string) => {
+          return <a href={`/tags/${tag}`} className="underline" key={tag}>{`#${tag}`}</a>
+        })}
+      </>
+    )
   }
 
   return (
@@ -39,7 +40,11 @@ export default function Post({ mdxSource }: Props) {
         <PostLayout>
           <PostTitle>
             <h1>{frontmatter.title}</h1>
-            {frontmatter.date} | {genTags(frontmatter.tags)} in {frontmatter.categories}
+            {frontmatter.date}
+            {" | "}
+            {genTags(frontmatter.tags)}
+            {" in "}
+            <a href={`/categories/${frontmatter.categories}`} className="blockbg">{frontmatter.categories}</a>
           </PostTitle>
           <MarkdownStyle>
             <MDXRemote compiledSource={source} />
@@ -85,6 +90,23 @@ const PostTitle = styled.div`
   h1 {
     margin-top: .3rem;
     margin-bottom: 0.5rem;
+  }
+
+  a.underline {
+    opacity: .8;
+    border-bottom: solid 1px;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  a.blockbg {
+    box-shadow: inset 0 -0.3rem 0 ${props => props.theme.colors.hoverBg};
+    transition: box-shadow 0.5s ease;
+  }
+  a.blockbg:hover {
+    box-shadow: inset 0 -1em 0 ${props => props.theme.colors.hoverBg};
   }
 `
 

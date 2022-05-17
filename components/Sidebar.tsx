@@ -29,7 +29,7 @@ export default function Sidebar({ isShow, toggle }: Props) {
             {themeContext.mode.toUpperCase()} THEME
           </OptionText>
         </div>
-        <div><OptionText><Link href="/categories">Categories</Link></OptionText></div>
+        <div><OptionText><Link href="/categories">{"TAGS"}</Link></OptionText></div>
         <div><OptionText><Link href="/atom.xml">RSS</Link></OptionText></div>
         <p style={{ paddingTop: '2em' }}>仍在开发中</p>
         <p>Sansui 2022 All rights reserved</p>
