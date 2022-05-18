@@ -31,7 +31,7 @@ export default function Sidebar({ isShow, toggle }: Props) {
         </div>
         <div><OptionText><Link href="/categories">{"TAGS"}</Link></OptionText></div>
         <div><OptionText><Link href="/atom.xml">RSS</Link></OptionText></div>
-        <p style={{ paddingTop: '2em' }}>仍在开发中</p>
+        <p style={{ paddingTop: '2em' }}>持续完善中</p>
         <p>Sansui 2022 All rights reserved</p>
       </Content>
     </Container>) : null)
@@ -45,7 +45,7 @@ const Container = styled.div`
   height: 100%;
   z-index: 10;
   color: white;
-  animation: ${fadeIn} .7s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
+  animation: ${fadeIn} .5s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
 `
 
 const Close = styled.div`
@@ -73,11 +73,12 @@ const Content = styled.div`
 const OptionText = styled.span`
   position: relative;
   box-shadow: inset 0 0 0 #ffffff55;
-  transition: box-shadow .5s ease;
-  animation: ${TextFocusIn} .7s cubic-bezier(0.550, 0.085, 0.680, 0.530) both;
+  transition: box-shadow .3s ease;
+  animation: ${TextFocusIn} .5s cubic-bezier(0.550, 0.085, 0.680, 0.530) both;
   cursor: pointer;
 
   :hover {
     box-shadow: inset 0 -0.5em 0 #ffffff55;
+    transform: scale(1.2);
   }
 `

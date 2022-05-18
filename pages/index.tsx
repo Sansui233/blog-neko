@@ -84,14 +84,14 @@ export default Home
 export const MainLayoutStyle = styled.div`
   max-width: 720px;
   margin: 0 auto;
-  padding: 0 3rem 3rem 3rem;
+  padding: 0 48px 48px 48px;
 
   @media screen and (max-width: 780px) {
     max-width: 580px;
   }
 
   @media screen and (max-width: 580px) {
-    padding: 0 1rem 2rem 1rem;
+    padding: 0 20px 48px 20px;
   }
 `
 

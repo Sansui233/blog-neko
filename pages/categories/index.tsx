@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { CommonHeader, MainLayoutStyle } from "..";
 import Layout from "../../components/Layout";
 import { getAllCategories, getAllTags } from "../../utils/posts";
+import { CategoryLayoutStyle, CategoryTitle } from "../../components/TimelinePosts"
 
 export default function Categories({ categories, tags }: {
   categories: {
@@ -21,11 +22,11 @@ export default function Categories({ categories, tags }: {
         <CommonHeader />
       </Head>
       <Layout>
-        <MainLayoutStyle>
-          <Title>
+        <CategoryLayoutStyle>
+          <CategoryTitle>
             <span>CATEGORIES</span>
             <h1>分类</h1>
-          </Title>
+          </CategoryTitle>
           <Container>
             {Object.keys(categories).map(k => {
               return (
@@ -35,10 +36,10 @@ export default function Categories({ categories, tags }: {
               )
             })}
           </Container>
-          <Title>
+          <CategoryTitle>
             <span>TAGS</span>
             <h1>标签</h1>
-          </Title>
+          </CategoryTitle>
           <Container>
             {Object.keys(tags).map(k => {
               if (tags[k] === 0) return
@@ -49,7 +50,7 @@ export default function Categories({ categories, tags }: {
               )
             })}
           </Container>
-        </MainLayoutStyle>
+        </CategoryLayoutStyle>
       </Layout>
     </>
   )
@@ -83,20 +84,6 @@ const LabelStyle = styled.a`
   :hover {
     opacity: 1;
     transform: scale(1.15);
-  }
-`
-
-export const Title = styled.div`
-  margin: 0 auto;
-  text-align: center;
-  padding: 3rem 0 1rem 0;
-
-  a,span {
-    opacity: .5;
-    transition: opacity .5s ease;
-  }
-  a:hover {
-    opacity: 1;
   }
 `
 

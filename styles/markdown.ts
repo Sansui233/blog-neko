@@ -11,6 +11,10 @@ export const MarkdownStyle = styled.div`
     margin: 1.625rem 0;
   }
 
+  p,ul,ol {
+    line-height: 1.8em;
+  }
+
   a {
     position: relative;
     font-weight: 600;

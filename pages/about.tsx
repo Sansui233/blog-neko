@@ -12,7 +12,7 @@ const mdText = `
 
 ## Hi, I’m Sansui
 
-Github: Sansui233  
+Github: [Sansui233](https://github.com/sansui233)
 E-mail：[sansuilnm@gmail.com](mailto:sansuilnm@gmail.com)
 
 #### Programing

@@ -1,4 +1,4 @@
-import { getAllCategories, getSortedCategoryPosts } from "../../utils/posts";
+import { getAllCategories, getPostsTreeByTime, getSortedCategoryPosts } from "../../utils/posts";
 import { GetStaticPaths, GetStaticProps } from 'next'
 import Head from "next/head";
 import { CommonHeader, MainLayoutStyle } from "..";
@@ -6,7 +6,7 @@ import Layout from "../../components/Layout";
 import styled from "styled-components";
 import { dateToYMD } from "../../utils/date";
 import Link from "next/link";
-import { Title } from ".";
+import TLContent from "../../components/TimelinePosts";
 
 type Props = {
   category: string,
@@ -28,28 +28,7 @@ export default function CategoryPage({ category, posts }: Props) {
         <CommonHeader />
       </Head>
       <Layout>
-        <MainLayoutStyle>
-          <Title>
-            <Link href="/categories">CATEGORY</Link>
-            <h1>{category}</h1>
-          </Title>
-          {Object.keys(posts).sort((a, b) => a < b ? 1 : -1).map(year => {
-            return (
-              <TLSectionStyle key={year}>
-                <TLYearStyle>{year}</TLYearStyle>
-                <TLPostsContainer>
-                  {posts[year].map(p => {
-                    return (<li key={p.id}>
-                      <Link href={`/posts/${p.id}`}>{p.title}</Link>
-                      <TLDateStyle>{p.date.slice(5)}</TLDateStyle>
-                    </li>)
-                  })}
-                </TLPostsContainer>
-              </TLSectionStyle>
-            )
-          })}
-        </MainLayoutStyle>
-
+        <TLContent mode='category' title={category} posts={posts} />
       </Layout>
     </>
   )
@@ -93,7 +72,7 @@ export const TLPostsContainer = styled.ul`
 
   a {
     box-shadow: inset 0 0 0 ${props => props.theme.colors.hoverBg};
-    transition: box-shadow .5s ease;
+    transition: box-shadow .3s;
   }
 
   a:hover {
@@ -126,30 +105,10 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
   let category = params!.id as string
   const posts = getSortedCategoryPosts(category)
 
-  // Convert to timeline tree
-  const postsTree = new Map<number, { id: string, title: string, date: string }[]>() //<year,post[]>
-  posts.forEach(p => {
-    const y = p.date.getFullYear()
-    if (postsTree.has(y)) {
-      postsTree.get(y)!.push({
-        id: p.id,
-        title: p.title,
-        date: dateToYMD(p.date)
-      })
-    } else {
-      postsTree.set(y, [{
-        id: p.id,
-        title: p.title,
-        date: dateToYMD(p.date)
-      }])
-    }
-  })
-
-
   return {
     props: {
       category: category,
-      posts: Object.fromEntries(postsTree)
+      posts: getPostsTreeByTime(posts)
     }
   }
 }

@@ -43,7 +43,11 @@ export default function Header() {
     <React.Fragment>
       <Sidebar isShow={isSidebar} toggle={toggleSidebar} />
       <Layout isHidden={isHidden}>
-        <Description><Link href="/">{"Sansui's blog"}</Link></Description>
+        <Description>
+          <div>
+            <Link href="/">{"Sansui's blog"}</Link>
+          </div>
+        </Description>
         <Nav>
           <ol><Link href="/">Posts</Link></ol>
           <ol><Link href="/memos">Memos</Link></ol>
@@ -86,35 +90,20 @@ const Layout = styled.header<{
 
 const Description = styled.div`
   flex: 1;
-  display: flex;
-  align-items: center;
 
-  a {
-    display: block;
+  div {
     font-style: italic;
     font-weight: bold;
-    padding: 0 .7em 0 0.4em;
     margin-left: 1rem;
-    position: relative;
-
+    padding: 0 .7em 0 0.4em;
     @media screen and (max-width: 580px) {
-      font-size: 0.75rem;
+      font-size: 0.875em;
       width: 9ch;
     }
   }
 
-  a::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: 0.2rem;
-    width: 100%;
-    height: 0.5rem;
-    background: ${props => props.theme.colors.hoverBg};
-
-    @media screen and (max-width: 580px) {
-      display: none;
-    }
+  a {
+    box-shadow: inset 0 -0.5em 0 ${props => props.theme.colors.hoverBg};
   }
 `
 const Nav = styled.nav`
@@ -140,7 +129,7 @@ const Nav = styled.nav`
     width: 100%;
     height: 0;
     background: ${props => props.theme.colors.hoverBg};
-    transition: height .5s ease;
+    transition: height .3s ease;
   }
   
   a:hover::before {

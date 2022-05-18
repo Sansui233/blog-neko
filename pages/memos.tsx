@@ -130,7 +130,7 @@ const CardMask = styled.div<{
       padding: 0.2rem 0;
       span {
         box-shadow: inset 0 -0.3em 0 ${props => props.theme.colors.hoverBg};
-        transition: box-shadow .5s ease;
+        transition: box-shadow .3s;
       }
     }
 

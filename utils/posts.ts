@@ -144,3 +144,35 @@ export function getAllTags() {
   })
   return tags
 }
+
+export function getPostsTreeByTime(posts: {
+  id: string,
+  title: string,
+  date: Date,
+}[]): {
+  [year: string]: {
+    id: string;
+    title: string;
+    date: string;
+  }[];
+} {
+  const postsTree = new Map<number, { id: string, title: string, date: string }[]>() //<year,post[]>
+  posts.forEach(p => {
+    const y = p.date.getFullYear()
+    if (postsTree.has(y)) {
+      postsTree.get(y)!.push({
+        id: p.id,
+        title: p.title,
+        date: dateToYMD(p.date)
+      })
+    } else {
+      postsTree.set(y, [{
+        id: p.id,
+        title: p.title,
+        date: dateToYMD(p.date)
+      }])
+    }
+  })
+
+  return Object.fromEntries(postsTree)
+}
