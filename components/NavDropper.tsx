@@ -68,6 +68,5 @@ const MainItem = styled.div`
   transform: translateX(.3em);
   span {
     cursor: pointer;
-    transition: box-shadow 0.5s ease;
   }
 `

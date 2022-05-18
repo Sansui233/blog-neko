@@ -22,7 +22,6 @@ export default function Sidebar({ isShow, toggle }: Props) {
 
   return (
     <Container className={isShow ? '' : 'hidden'}>
-      {/* <Close onClick={toggle}>X</Close> */}
       <Content style={{ paddingTop: '8rem' }}>
         <h1>
           <span>
@@ -72,20 +71,6 @@ const Container = styled.div`
   }
 `
 
-const Close = styled.div`
-  position: fixed;
-  top: 16px;
-  right: 32px;
-  cursor: pointer;
-  font-size: 3rem;
-
-
-  :hover {
-    transform: scale(1.2);
-  }
-
-`
-
 const Content = styled.div`
   margin: 0 auto;
   padding: 92px 0px;
@@ -97,7 +82,6 @@ const OptionText = styled.span`
 
   font-size: 1.625rem;
   position: relative;
-  box-shadow: inset 0 0 0 #ffffff55;
   transition: box-shadow .3s ease;
   cursor: pointer;
 

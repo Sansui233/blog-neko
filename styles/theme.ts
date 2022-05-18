@@ -8,10 +8,11 @@ export const lightTheme: DefaultTheme = {
   colors: {
     textPrimary: 'black',
     textGray: '#666666',
-    gold: '#9d8352',
+    gold: '#c4a747',
     bg: 'white',
     bgInverse: "#292929",
     hoverBg: '#00000022',
+    shadowBg: `rgb(0 0 0 / 5%)`,
     codeBlockBg: '#eeeeee',
     memoGradient: css`
     background-image: -webkit-linear-gradient(top,rgba(255,255,255,0) 0%,rgba(255,255,255,.8) 40%,rgba(255,255,255,1) 75%);
@@ -25,10 +26,6 @@ export const lightTheme: DefaultTheme = {
     background: -o-linear-linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 14%, rgba(255,255,255,1) 23%, rgba(255,255,255,1) 100%);
     background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 14%, rgba(255,255,255,1) 23%, rgba(255,255,255,1) 100%);
     `
-  },
-  styles: {
-    boxShadowHidden: "box-shadow: rgb(0 0 0 / 5%) 0px 0rem 0rem;",
-    boxShadow: "box-shadow: rgb(0 0 0 / 5%) 0px 0.5rem 2rem;"
   }
 }
 export const darkTheme: DefaultTheme = {
@@ -39,10 +36,11 @@ export const darkTheme: DefaultTheme = {
   colors: {
     textPrimary: 'white',
     textGray: '#aaaaaa',
-    gold: '#9d8352',
+    gold: '#c4a747',
     bg: '#242424',
     bgInverse: 'white',
     hoverBg: '#ffffff55',
+    shadowBg: `rgb(255 255 255 / 5%)`,
     codeBlockBg: '#3b3b3b',
     memoGradient: css`
     background-image: -webkit-linear-gradient(top,rgba(36,36,36,0) 0%,rgba(36,36,36,.8) 40%,rgba(36,36,36,1) 75%);
@@ -56,10 +54,6 @@ export const darkTheme: DefaultTheme = {
     background: -o-linear-linear-gradient(to right, rgba(36,36,36,0) 0%, rgba(36,36,36,0.8) 14%, rgba(36,36,36,1) 23%, rgba(36,36,36,1) 100%);
     background: linear-gradient(to right, rgba(36,36,36,0) 0%, rgba(36,36,36,0.8) 14%, rgba(36,36,36,1) 23%, rgba(36,36,36,1) 100%);
     `
-  },
-  styles: {
-    boxShadowHidden: "box-shadow: rgb(255 255 255 / 5%) 0px 0rem 0rem;",
-    boxShadow: "box-shadow: rgb(255 255 255 / 5%) 0px 0.5rem 2rem;"
   }
 }
 

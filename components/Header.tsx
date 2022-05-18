@@ -1,9 +1,9 @@
-import { GetStaticProps } from "next"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import React, { useContext, useEffect, useState } from "react"
 import styled, { ThemeContext } from "styled-components"
 import { throttle } from "../utils/throttle"
+import MenuIcon from "./MenuIcon"
 import Sidebar from "./Sidebar"
 
 export default function Header() {
@@ -56,9 +56,11 @@ export default function Header() {
           <ol className={router.pathname === "/memos" ? 'current' : ''}><Link href="/memos">Memos</Link></ol>
           <ol className={router.pathname === "/about" ? 'current' : ''}><Link href="/about">About</Link></ol>
         </Nav>
-        <Description onClick={toggleSidebar}>
-          <span>{"MORE"}</span>
-        </Description>
+        <More>
+          <div onClick={toggleSidebar}>
+            <MenuIcon width={24} height={20} isClose={isSidebar} />
+          </div>
+        </More>
       </Layout>
       <PlaceHolder>
         - 人活着就是为了卡卡西 -
@@ -90,27 +92,44 @@ const Layout = styled.header<{
   transition: transform .5s ease;
 `
 
-const Description = styled.div`
-  flex: 1;
+const More = styled.div`
+  flex: 1 1 auto;
   text-align: right;
   font-size: 0.875em;
-  padding: 0 .7em 0 0.4em;
   cursor: pointer;
+  max-width: 63px;
 
-  margin-left: 1rem;
+  & > div {
+    display: inline-block;
+    margin-left: auto;
+    margin-right: 20px;
+  }
+
   @media screen and (max-width: 580px) {
-    font-size: 0.875em;
-    width: 9ch;
+    & > div {
+      display: inline-block;
+      margin-right: 10px;
+    }
   }
 `
 const Nav = styled.nav`
-  flex: 1;
+  flex: 2 1 auto;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-evenly;
   align-items: center;
+  @media screen and (min-width: 780px) {
+    max-width: 50%;
+  }
+  @media screen and (min-width: 580px) {
+    max-width: 390px;
+  }
+  @media screen and (max-width: 580px) {
+    max-width: 290px;
+  }
+  
 
   ol {
-    padding: 0 1rem;
+    padding: 0 .5em;
   }
 
   a {
@@ -139,17 +158,13 @@ const Nav = styled.nav`
 
 `
 const Avatar = styled.div`
-  flex: 1;
-  text-align: right;
-
+  flex: 1 1 auto;
+  max-width: 63px;
   img {
+    z-index: 11;
     width: 63px;
     height: 63px;
     float: left;
     cursor: pointer;
-    @media screen and (max-width: 580px) {
-      width: 3rem;
-      height: 3rem;
-    }
   }
 `

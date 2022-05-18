@@ -9,6 +9,7 @@ import { serialize } from "next-mdx-remote/serialize";
 import remarkGfm from "remark-gfm";
 import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote";
 import Layout from "../components/Layout";
+import { textBoxShadow } from "../styles/styles";
 
 type MemoPost = {
   title: string,
@@ -129,13 +130,13 @@ const CardMask = styled.div<{
       font-size: 0.875rem;
       padding: 0.2rem 0;
       span {
-        box-shadow: inset 0 -0.3em 0 ${props => props.theme.colors.hoverBg};
+        ${() => textBoxShadow.s}
         transition: box-shadow .3s;
       }
     }
 
     &:hover .rd-more span {
-      box-shadow: inset 0 -1em 0 ${props => props.theme.colors.hoverBg};
+      ${() => textBoxShadow.f}
     }
    
 `

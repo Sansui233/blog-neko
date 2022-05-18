@@ -7,6 +7,7 @@ import styled from "styled-components";
 import { dateToYMD } from "../../utils/date";
 import Link from "next/link";
 import TLContent from "../../components/TimelinePosts";
+import { textBoxShadow } from "../../styles/styles";
 
 type Props = {
   category: string,
@@ -71,12 +72,11 @@ export const TLPostsContainer = styled.ul`
   }
 
   a {
-    box-shadow: inset 0 0 0 ${props => props.theme.colors.hoverBg};
     transition: box-shadow .3s;
   }
 
   a:hover {
-    box-shadow: inset 0 -0.5em 0 ${props => props.theme.colors.hoverBg};
+    ${() => textBoxShadow.m}
   }
 
   li {

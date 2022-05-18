@@ -11,6 +11,7 @@ import { dateToYMD } from "../../utils/date"
 import Head from "next/head"
 import Layout from "../../components/Layout"
 import Link from "next/link"
+import { textBoxShadow } from "../../styles/styles"
 
 type Props = {
   mdxSource: MDXRemoteSerializeResult
@@ -127,11 +128,11 @@ color: ${p => p.theme.colors.textGray};
 `
 
 const StyledLinkBgblock = styled.a`
-  box-shadow: inset 0 -0.3rem 0 ${props => props.theme.colors.hoverBg};
+  ${() => textBoxShadow.s}
   transition: box-shadow 0.5s ease;
 
   :hover {
-    box-shadow: inset 0 -1em 0 ${props => props.theme.colors.hoverBg};
+    ${() => textBoxShadow.f}
   }
 
 `

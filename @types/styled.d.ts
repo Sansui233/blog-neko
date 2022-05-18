@@ -15,12 +15,9 @@ declare module 'styled-components' {
       bgInverse: string,
       hoverBg: string,
       codeBlockBg: string,
+      shadowBg: string,
       memoGradient: FlattenSimpleInterpolation,
       navBgGradient: FlattenInterpolation,
     },
-    styles: {
-      boxShadowHidden: FlattenSimpleInterplation,
-      boxShadow: FlattenSimpleInterplation,
-    }
   }
 }

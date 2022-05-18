@@ -5,6 +5,7 @@ import React, { useMemo, useState } from 'react'
 import styled from 'styled-components'
 import Layout from '../components/Layout'
 import { NavDropper } from '../components/NavDropper'
+import { cardBoxShadow } from '../styles/styles'
 import { getAllCategories, getSortedPostsMeta } from '../utils/posts'
 
 type PostType = {
@@ -124,7 +125,7 @@ const Card = styled.a`
   position: relative;
 
   :hover{
-    ${props => props.theme.styles.boxShadow}
+    ${() => cardBoxShadow}
     transform: scale(1.1);
   }
 
