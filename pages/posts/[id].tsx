@@ -10,6 +10,7 @@ import path from "path"
 import { dateToYMD } from "../../utils/date"
 import Head from "next/head"
 import Layout from "../../components/Layout"
+import Link from "next/link"
 
 type Props = {
   mdxSource: MDXRemoteSerializeResult
@@ -24,7 +25,9 @@ export default function Post({ mdxSource }: Props) {
     return (
       <>
         {tags.map((tag: string) => {
-          return <a href={`/tags/${tag}`} className="underline" key={tag}>{`#${tag}`}</a>
+          return <Link href={`/tags/${tag}`} passHref={true} key={tag}>
+            <StyledLinkLine>{`#${tag}`}</StyledLinkLine>
+          </Link>
         })}
       </>
     )
@@ -44,7 +47,10 @@ export default function Post({ mdxSource }: Props) {
             {" | "}
             {genTags(frontmatter.tags)}
             {" in "}
-            <a href={`/categories/${frontmatter.categories}`} className="blockbg">{frontmatter.categories}</a>
+            <Link href={`/categories/${frontmatter.categories}`} passHref={true}>
+              <StyledLinkBgblock>{frontmatter.categories}</StyledLinkBgblock>
+            </Link>
+
           </PostTitle>
           <MarkdownStyle>
             <MDXRemote compiledSource={source} />
@@ -91,22 +97,24 @@ const PostTitle = styled.div`
     margin-top: .3rem;
     margin-bottom: 0.5rem;
   }
+`
 
-  a.underline {
-    opacity: .8;
-    border-bottom: solid 1px;
+const StyledLinkLine = styled.a`
+  opacity: .8;
+  border-bottom: solid 1px;
 
-    &:hover {
-      opacity: 1;
-    }
+  &:hover {
+    opacity: 1;
   }
+`
 
-  a.blockbg {
-    box-shadow: inset 0 -0.3rem 0 ${props => props.theme.colors.hoverBg};
-    transition: box-shadow 0.5s ease;
-  }
-  a.blockbg:hover {
+const StyledLinkBgblock = styled.a`
+  box-shadow: inset 0 -0.3rem 0 ${props => props.theme.colors.hoverBg};
+  transition: box-shadow 0.5s ease;
+
+  :hover {
     box-shadow: inset 0 -1em 0 ${props => props.theme.colors.hoverBg};
   }
+
 `
 
