@@ -1,5 +1,6 @@
 import { GetStaticProps } from "next"
 import Link from "next/link"
+import { useRouter } from "next/router"
 import React, { useContext, useEffect, useState } from "react"
 import styled, { ThemeContext } from "styled-components"
 import { throttle } from "../utils/throttle"
@@ -9,6 +10,7 @@ export default function Header() {
   const theme = useContext(ThemeContext)
   const [isHidden, setisHidden] = useState(false)
   const [isSidebar, setIsSidebar] = useState(false)
+  const router = useRouter()
 
   useEffect(() => { // This will be rendered twice?
     let previousTop = globalThis.scrollY
@@ -43,20 +45,20 @@ export default function Header() {
     <React.Fragment>
       <Sidebar isShow={isSidebar} toggle={toggleSidebar} />
       <Layout isHidden={isHidden}>
-        <Description>
-          <div>
-            <Link href="/">{"Sansui's blog"}</Link>
-          </div>
-        </Description>
-        <Nav>
-          <ol><Link href="/">Posts</Link></ol>
-          <ol><Link href="/memos">Memos</Link></ol>
-          <ol><Link href="/about">About</Link></ol>
-        </Nav>
-        <Avatar onClick={toggleSidebar}>
-          {/*eslint-disable-next-line @next/next/no-img-element*/}
-          <img src={theme.assets.favico} alt="Sansui" />
+        <Avatar >
+          <Link href="/" passHref={true}>
+            {/*eslint-disable-next-line @next/next/no-img-element*/}
+            <a><img src={theme.assets.favico} alt="Sansui" /></a>
+          </Link>
         </Avatar>
+        <Nav>
+          <ol className={router.pathname === "/" ? 'current' : ''}><Link href="/">Posts</Link></ol>
+          <ol className={router.pathname === "/memos" ? 'current' : ''}><Link href="/memos">Memos</Link></ol>
+          <ol className={router.pathname === "/about" ? 'current' : ''}><Link href="/about">About</Link></ol>
+        </Nav>
+        <Description onClick={toggleSidebar}>
+          <span>{"MORE"}</span>
+        </Description>
       </Layout>
       <PlaceHolder>
         - 人活着就是为了卡卡西 -
@@ -82,28 +84,23 @@ const Layout = styled.header<{
   justify-content: space-between;
   align-items: center;
   position: fixed;
-  background-color: ${(props => props.theme.colors.background)};
-  z-index:9;
+  background-color: ${(props => props.theme.colors.bg)};
+  z-index:10;
   transform: ${props => props.isHidden ? "translateY(-100%)" : "translateY(0)"};
   transition: transform .5s ease;
 `
 
 const Description = styled.div`
   flex: 1;
+  text-align: right;
+  font-size: 0.875em;
+  padding: 0 .7em 0 0.4em;
+  cursor: pointer;
 
-  div {
-    font-style: italic;
-    font-weight: bold;
-    margin-left: 1rem;
-    padding: 0 .7em 0 0.4em;
-    @media screen and (max-width: 580px) {
-      font-size: 0.875em;
-      width: 9ch;
-    }
-  }
-
-  a {
-    box-shadow: inset 0 -0.5em 0 ${props => props.theme.colors.hoverBg};
+  margin-left: 1rem;
+  @media screen and (max-width: 580px) {
+    font-size: 0.875em;
+    width: 9ch;
   }
 `
 const Nav = styled.nav`
@@ -125,16 +122,21 @@ const Nav = styled.nav`
     content: '';
     position: absolute;
     left: 0;
-    bottom: 0;
-    width: 100%;
-    height: 0;
-    background: ${props => props.theme.colors.hoverBg};
-    transition: height .3s ease;
+    bottom: -3px;
+    width: 0;
+    height: 2px;
+    background: ${props => props.theme.colors.gold};
+    transition: width 1s cubic-bezier(0.34, 0.04, 0.03, 1.4), background .3s;
   }
-  
+    
   a:hover::before {
-    height: 40%;
+    width: 100%;
   }
+
+  ol.current a{
+    color: ${props => props.theme.colors.gold};
+  }
+
 `
 const Avatar = styled.div`
   flex: 1;
@@ -143,7 +145,7 @@ const Avatar = styled.div`
   img {
     width: 63px;
     height: 63px;
-    float: right;
+    float: left;
     cursor: pointer;
     @media screen and (max-width: 580px) {
       width: 3rem;

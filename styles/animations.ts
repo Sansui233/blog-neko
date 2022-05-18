@@ -8,7 +8,7 @@ export const fadeIn = keyframes`
   opacity: 1;
 }`
 
-export const TextFocusIn = keyframes`
+export const textFocusIn = keyframes`
 0% {
   -webkit-filter: blur(12px);
           filter: blur(12px);
@@ -20,3 +20,19 @@ export const TextFocusIn = keyframes`
   opacity: 1;
 }
 `
+
+export const slideDown = keyframes`
+0% {
+  transform: translateY(-100%);
+}
+100% {
+  transform: translateY(0);
+}`
+
+export const slideUp = keyframes`
+0% {
+  transform: translateY(0);
+}
+100% {
+  transform: translateY(-100%);
+}`

@@ -26,7 +26,7 @@ export default function Post({ mdxSource }: Props) {
       <>
         {tags.map((tag: string) => {
           return <Link href={`/tags/${tag}`} passHref={true} key={tag}>
-            <StyledLinkLine>{`#${tag}`}</StyledLinkLine>
+            <StyledLinkGray>{`#${tag}`}</StyledLinkGray>
           </Link>
         })}
       </>
@@ -43,13 +43,15 @@ export default function Post({ mdxSource }: Props) {
         <PostLayout>
           <PostTitle>
             <h1>{frontmatter.title}</h1>
-            {frontmatter.date}
-            {" | "}
-            {genTags(frontmatter.tags)}
-            {" in "}
-            <Link href={`/categories/${frontmatter.categories}`} passHref={true}>
-              <StyledLinkBgblock>{frontmatter.categories}</StyledLinkBgblock>
-            </Link>
+            <MetaStyle>
+              {frontmatter.date}
+              {" | "}
+              {genTags(frontmatter.tags)}
+              {" in "}
+              <Link href={`/categories/${frontmatter.categories}`} passHref={true}>
+                <StyledLinkBgblock>{frontmatter.categories}</StyledLinkBgblock>
+              </Link>
+            </MetaStyle>
 
           </PostTitle>
           <MarkdownStyle>
@@ -60,6 +62,7 @@ export default function Post({ mdxSource }: Props) {
     </>
   )
 }
+
 
 // ALL POSTS Dynamic Route 決定
 export const getStaticPaths: GetStaticPaths = async () => {
@@ -99,12 +102,27 @@ const PostTitle = styled.div`
   }
 `
 
-const StyledLinkLine = styled.a`
-  opacity: .8;
-  border-bottom: solid 1px;
+const MetaStyle = styled.span`
+  font-size: 0.875rem;
+  position: relative;
+  ::before {
+    content:'';
+    position: absolute;
+    top: -.8em;
+    left: 0;
+    height: 1px;
+    width: 133%;
+    background: ${p => p.theme.colors.gold};
+  }
+  // border-top: 1px solid;
+`
+
+const StyledLinkGray = styled.a`
+color: ${p => p.theme.colors.textGray};
+  transition: opacity .3s, color .3s;
 
   &:hover {
-    opacity: 1;
+    color: ${p => p.theme.colors.gold};
   }
 `
 

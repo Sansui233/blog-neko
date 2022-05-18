@@ -1,7 +1,6 @@
 import Link from "next/link"
 import styled, { ThemeContext } from "styled-components"
-import { fadeIn, TextFocusIn } from "../styles/animations"
-import { useContext, useState } from "react"
+import { useContext } from "react"
 import { getAppTheme, setAppTheme, ThemeMsg } from "../utils/app-states"
 
 type Props = {
@@ -20,10 +19,15 @@ export default function Sidebar({ isShow, toggle }: Props) {
     setAppTheme(targetTheme)
   }
 
-  return (isShow ? (
-    <Container>
-      <Close onClick={toggle}>X</Close>
-      <Content>
+  return (
+    <Container className={isShow ? '' : 'hidden'}>
+      {/* <Close onClick={toggle}>X</Close> */}
+      <Content style={{ paddingTop: '8rem' }}>
+        <h1>
+          <span style={{ borderBottom: "2px solid #9d8352" }}>
+            {"Sansui's blog"}
+          </span>
+        </h1>
         <div onClick={handleThemeChange}>
           <OptionText style={{ fontSize: '1.625rem' }}>
             {themeContext.mode.toUpperCase()} THEME
@@ -34,18 +38,22 @@ export default function Sidebar({ isShow, toggle }: Props) {
         <p style={{ paddingTop: '2em' }}>持续完善中</p>
         <p>Sansui 2022 All rights reserved</p>
       </Content>
-    </Container>) : null)
+    </Container>)
 }
 
 const Container = styled.div`
-  background: #000000e3;
-  backdrop-filter: blur(6px);
+  background: #242424;
   position: fixed;
   width: 100%;
   height: 100%;
   z-index: 10;
   color: white;
-  animation: ${fadeIn} .5s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
+  transform: translateY(0);
+  transition: transform 1s cubic-bezier(0.35, 0, 0.15, 1);
+
+  &.hidden {
+    transform: translateY(-100%);
+  }
 `
 
 const Close = styled.div`
@@ -66,15 +74,15 @@ const Content = styled.div`
   margin: 0 auto;
   padding: 92px 0px;
   text-align: center;
-  font-size: 4rem;
   font-weight: bold;
 `
 
 const OptionText = styled.span`
+
+  font-size: 1.625rem;
   position: relative;
   box-shadow: inset 0 0 0 #ffffff55;
   transition: box-shadow .3s ease;
-  animation: ${TextFocusIn} .5s cubic-bezier(0.550, 0.085, 0.680, 0.530) both;
   cursor: pointer;
 
   :hover {

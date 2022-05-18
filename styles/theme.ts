@@ -8,7 +8,9 @@ export const lightTheme: DefaultTheme = {
   colors: {
     textPrimary: 'black',
     textGray: '#666666',
-    background: 'white',
+    gold: '#9d8352',
+    bg: 'white',
+    bgInverse: "#292929",
     hoverBg: '#00000022',
     codeBlockBg: '#eeeeee',
     memoGradient: css`
@@ -23,6 +25,10 @@ export const lightTheme: DefaultTheme = {
     background: -o-linear-linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 14%, rgba(255,255,255,1) 23%, rgba(255,255,255,1) 100%);
     background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 14%, rgba(255,255,255,1) 23%, rgba(255,255,255,1) 100%);
     `
+  },
+  styles: {
+    boxShadowHidden: "box-shadow: rgb(0 0 0 / 5%) 0px 0rem 0rem;",
+    boxShadow: "box-shadow: rgb(0 0 0 / 5%) 0px 0.5rem 2rem;"
   }
 }
 export const darkTheme: DefaultTheme = {
@@ -33,7 +39,9 @@ export const darkTheme: DefaultTheme = {
   colors: {
     textPrimary: 'white',
     textGray: '#aaaaaa',
-    background: '#242424',
+    gold: '#9d8352',
+    bg: '#242424',
+    bgInverse: 'white',
     hoverBg: '#ffffff55',
     codeBlockBg: '#3b3b3b',
     memoGradient: css`
@@ -48,6 +56,10 @@ export const darkTheme: DefaultTheme = {
     background: -o-linear-linear-gradient(to right, rgba(36,36,36,0) 0%, rgba(36,36,36,0.8) 14%, rgba(36,36,36,1) 23%, rgba(36,36,36,1) 100%);
     background: linear-gradient(to right, rgba(36,36,36,0) 0%, rgba(36,36,36,0.8) 14%, rgba(36,36,36,1) 23%, rgba(36,36,36,1) 100%);
     `
+  },
+  styles: {
+    boxShadowHidden: "box-shadow: rgb(255 255 255 / 5%) 0px 0rem 0rem;",
+    boxShadow: "box-shadow: rgb(255 255 255 / 5%) 0px 0.5rem 2rem;"
   }
 }
 

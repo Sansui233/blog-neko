@@ -60,22 +60,14 @@ const NavItem = styled.div`
   cursor: pointer;
   position: relative;
   &:hover span{
-    box-shadow: inset 0 -1px 0 ${props => props.theme.colors.textGray};
+    border-bottom: solid 1px ${props => props.theme.colors.gold};
   }
 `
 
 const MainItem = styled.div`
-  font-weight: bold;
   transform: translateX(.3em);
   span {
     cursor: pointer;
-    box-shadow: inset 0 0 0 ${props => props.theme.colors.hoverBg};
     transition: box-shadow 0.5s ease;
-  }
-  span:hover {
-    box-shadow: inset 0 -0.5em 0 ${props => props.theme.colors.hoverBg};
-  }
-  span.is-open {
-    box-shadow: inset 0 -0.5em 0 ${props => props.theme.colors.hoverBg};
   }
 `

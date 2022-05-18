@@ -52,16 +52,18 @@ const Home: NextPage<Props> = ({ posts, categories }: Props) => {
           <NavDropper items={categories} current={currCategory} setCurrent={setCurrCategory} />
           <PostGrids>
             {filteredPosts.map(p => (
-              <Card key={p.id}>
-                <div className='card-content'>
-                  <Title><Link href={'/posts/' + p.id}>{p.title}</Link></Title>
-                  <div className='meta'>
-                    <span className='date'>{p.date}</span>
-                    {` | `}
-                    <Link href={`/categories/${p.categories}`}>{p.categories}</Link>
+              <Link key={p.id} href={'/posts/' + p.id} passHref={true}>
+                <Card>
+                  <div className='card-content'>
+                    <Title>{p.title}</Title>
+                    <div className='meta'>
+                      <span className='date'>{p.date}</span>
+                      {` | `}
+                      {p.categories}
+                    </div>
                   </div>
-                </div>
-              </Card>
+                </Card>
+              </Link>
             ))}
           </PostGrids>
         </MainLayoutStyle>
@@ -82,7 +84,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 export default Home
 
 export const MainLayoutStyle = styled.div`
-  max-width: 720px;
+  max-width: 780px;
   margin: 0 auto;
   padding: 0 48px 48px 48px;
 
@@ -114,20 +116,20 @@ const PostGrids = styled.section`
   }
 `
 
-const Card = styled.div`
+const Card = styled.a`
+  display: block;
   min-height: 6rem;
+  cursor: pointer;
+  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0s;
+  position: relative;
+
+  :hover{
+    ${props => props.theme.styles.boxShadow}
+    transform: scale(1.1);
+  }
 
   .card-content {
     padding: 1rem;
-  }
-
-  a {
-    box-shadow: inset 0 0 0 ${props => props.theme.colors.hoverBg};
-    transition: box-shadow 0.5s ease;
-  }
-
-  a:hover {
-    box-shadow: inset 0 -0.5em 0 ${props => props.theme.colors.hoverBg};
   }
 
   .meta {

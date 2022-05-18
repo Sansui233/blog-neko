@@ -6,15 +6,21 @@ declare module 'styled-components' {
     mode: 'light' | 'dark' | 'system',
     assets: {
       favico: string,
-    }
+    },
     colors: {
       textPrimary: string,
       textGray: string,
-      background: string,
+      gold: string,
+      bg: string,
+      bgInverse: string,
       hoverBg: string,
       codeBlockBg: string,
       memoGradient: FlattenSimpleInterpolation,
       navBgGradient: FlattenInterpolation,
-    };
+    },
+    styles: {
+      boxShadowHidden: FlattenSimpleInterplation,
+      boxShadow: FlattenSimpleInterplation,
+    }
   }
 }
