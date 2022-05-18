@@ -2,6 +2,7 @@ import Link from "next/link"
 import styled, { ThemeContext } from "styled-components"
 import { useContext } from "react"
 import { getAppTheme, setAppTheme, ThemeMsg } from "../utils/app-states"
+import { textStroke } from "../styles/styles"
 
 type Props = {
   isShow: boolean,
@@ -24,7 +25,7 @@ export default function Sidebar({ isShow, toggle }: Props) {
       {/* <Close onClick={toggle}>X</Close> */}
       <Content style={{ paddingTop: '8rem' }}>
         <h1>
-          <span style={{ borderBottom: "2px solid #9d8352" }}>
+          <span>
             {"Sansui's blog"}
           </span>
         </h1>
@@ -42,17 +43,32 @@ export default function Sidebar({ isShow, toggle }: Props) {
 }
 
 const Container = styled.div`
-  background: #242424;
+  background: ${p => p.theme.colors.bg};
   position: fixed;
   width: 100%;
   height: 100%;
   z-index: 10;
-  color: white;
   transform: translateY(0);
   transition: transform 1s cubic-bezier(0.35, 0, 0.15, 1);
 
   &.hidden {
     transform: translateY(-100%);
+  }
+
+  h1 {
+    ${() => textStroke}
+    span{
+      position: relative;
+    }
+    span::after {
+      content:'';
+      position: absolute;
+      left:0;
+      bottom: -1rem;
+      width: 100%;
+      height: 1px;
+      background: ${p => p.theme.colors.gold};
+    }
   }
 `
 

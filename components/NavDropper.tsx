@@ -40,7 +40,7 @@ const SubItemContainer = styled.div`
   opacity: 0;
   pointer-events: none;
   margin-top: .625rem;
-  border-right: 2px solid;
+  border-right: 1px solid ${props => props.theme.colors.gold};
   padding-left: 2.5rem;
   transform: none;
   ${props => props.theme.colors.navBgGradient};
