@@ -56,9 +56,9 @@ export default function Header() {
           <ol className={router.pathname === "/memos" ? 'current' : ''}><Link href="/memos">Memos</Link></ol>
           <ol className={router.pathname === "/about" ? 'current' : ''}><Link href="/about">About</Link></ol>
         </Nav>
-        <More>
-          <div onClick={toggleSidebar}>
-            <MenuIcon width={24} height={20} isClose={isSidebar} />
+        <More onClick={toggleSidebar}>
+          <div>
+            <MenuIcon width={24} isClose={isSidebar} />
           </div>
         </More>
       </Layout>
@@ -98,17 +98,20 @@ const More = styled.div`
   font-size: 0.875em;
   cursor: pointer;
   max-width: 63px;
-
+  display: flex;
+  
   & > div {
     display: inline-block;
     margin-left: auto;
     margin-right: 20px;
+    height: 20px;
+    position: relative;
   }
 
   @media screen and (max-width: 580px) {
     & > div {
-      display: inline-block;
-      margin-right: 10px;
+      margin-right: 16px;
+      padding: 1px 0;
     }
   }
 `
@@ -130,6 +133,7 @@ const Nav = styled.nav`
 
   ol {
     padding: 0 .5em;
+    padding-top: 2px;
   }
 
   a {
@@ -160,11 +164,20 @@ const Nav = styled.nav`
 const Avatar = styled.div`
   flex: 1 1 auto;
   max-width: 63px;
+  display: flex;
   img {
+    margin-left: 10px;
     z-index: 11;
     width: 63px;
     height: 63px;
     float: left;
     cursor: pointer;
+  }
+
+  @media screen and (max-width: 580px){
+    img {
+      width: 48px;
+      height: 48px;
+    }
   }
 `

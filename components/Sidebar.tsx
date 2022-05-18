@@ -1,6 +1,6 @@
 import Link from "next/link"
 import styled, { ThemeContext } from "styled-components"
-import { useContext } from "react"
+import { useContext, useMemo } from "react"
 import { getAppTheme, setAppTheme, ThemeMsg } from "../utils/app-states"
 import { textStroke } from "../styles/styles"
 
@@ -20,6 +20,13 @@ export default function Sidebar({ isShow, toggle }: Props) {
     setAppTheme(targetTheme)
   }
 
+  const themeText = useMemo(() => {
+    const t = themeContext.mode
+    return t === 'system' ? '系统外观' :
+      t === 'dark' ? '夜间模式'
+        : '日间模式'
+  }, [themeContext.mode])
+
   return (
     <Container className={isShow ? '' : 'hidden'}>
       <Content style={{ paddingTop: '8rem' }}>
@@ -30,10 +37,10 @@ export default function Sidebar({ isShow, toggle }: Props) {
         </h1>
         <div onClick={handleThemeChange}>
           <OptionText style={{ fontSize: '1.625rem' }}>
-            {themeContext.mode.toUpperCase()} THEME
+            {themeText}
           </OptionText>
         </div>
-        <div><OptionText><Link href="/categories">{"TAGS"}</Link></OptionText></div>
+        <div><OptionText><Link href="/categories">分类</Link></OptionText></div>
         <div><OptionText><Link href="/atom.xml">RSS</Link></OptionText></div>
         <p style={{ paddingTop: '2em' }}>持续完善中</p>
         <p>Sansui 2022 All rights reserved</p>
@@ -48,7 +55,7 @@ const Container = styled.div`
   height: 100%;
   z-index: 10;
   transform: translateY(0);
-  transition: transform 1s cubic-bezier(0.35, 0, 0.15, 1);
+  transition: transform 1s cubic-bezier(0.46, 0, 0.08, 1.11);
 
   &.hidden {
     transform: translateY(-100%);
@@ -81,6 +88,7 @@ const Content = styled.div`
 const OptionText = styled.span`
 
   font-size: 1.625rem;
+  line-height: 2.75rem;
   position: relative;
   transition: box-shadow .3s ease;
   cursor: pointer;

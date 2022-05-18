@@ -8,7 +8,7 @@ export const lightTheme: DefaultTheme = {
   colors: {
     textPrimary: 'black',
     textGray: '#666666',
-    gold: '#c4a747',
+    gold: '#ae8d0b',
     bg: 'white',
     bgInverse: "#292929",
     hoverBg: '#00000022',
