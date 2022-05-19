@@ -18,7 +18,7 @@ export function NavDropper({ items, current, setCurrent }: Props) {
         <span className={isOpen ? "is-open" : ''}>
           {items[current][0]}{' '}{items[current][1]}
         </span>
-        <ChevronDown />
+        <ChevronDown className={isOpen ? "is-open" : ''} />
       </MainItem>
       <SubItemContainer className={isOpen ? "is-open" : ''}>
         {items.map((item, i) => (
@@ -83,9 +83,10 @@ const MainItem = styled.div`
 
   span.is-open {
     box-shadow: inset 0 -0.5em 0 ${p => p.theme.colors.goldHover};
-    svg {
-      transform: rotateX(180deg);
-    }
+  }
+
+  svg.is-open {
+    transform: rotateX(180deg);
   }
 
 `

@@ -121,9 +121,9 @@ const Card = styled.a`
   display: block;
   min-height: 6rem;
   cursor: pointer;
-  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.1s;
   position: relative;
 
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.1s;
   @media (any-hover: hover) {
     &:hover{
       ${() => cardBoxShadow}
@@ -134,7 +134,6 @@ const Card = styled.a`
   @media (any-hover: none) {
     &:active{
       ${() => cardBoxShadow}
-      transform: scale(1.1);
     }
   }
 

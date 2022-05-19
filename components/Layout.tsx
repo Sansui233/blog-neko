@@ -1,3 +1,4 @@
+import Footer from "./Footer";
 import Header from "./Header";
 
 type Props = {
@@ -11,6 +12,7 @@ const Layout: React.FC<Props> = ({ children }) => {
       <main>
         {children}
       </main>
+      <Footer />
     </>
   )
 }

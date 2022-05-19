@@ -3,6 +3,7 @@ import styled, { ThemeContext } from "styled-components"
 import { useContext, useMemo } from "react"
 import { getAppTheme, setAppTheme, ThemeMsg } from "../utils/app-states"
 import { textStroke } from "../styles/styles"
+import MenuIcon from "./MenuIcon"
 
 type Props = {
   isShow: boolean,
@@ -42,14 +43,54 @@ export default function Sidebar({ isShow, toggle }: Props) {
         </div>
         <div><OptionText><Link href="/categories">分类</Link></OptionText></div>
         <div><OptionText><Link href="/atom.xml">RSS</Link></OptionText></div>
-        <p style={{ paddingTop: '2em' }}>持续完善中</p>
-        <p>Sansui 2022 All rights reserved</p>
+        <LastSection>
+          <Icons>
+            <a href="https://github.com/sansui233"><i className='icon-github-rounded'></i></a>
+            <a href="mailto:sansuilnm@gmail.com"><i className='icon-email-rounded'></i></a>
+            <a href="/atom.xml"><i className='icon-rss-rounded'></i></a>
+          </Icons>
+          <div>Sansui 2022 All rights reserved</div>
+        </LastSection>
       </Content>
+      <PositionedClose>
+        <MenuIcon isClose={true} isCloseToggler={toggle} />
+      </PositionedClose>
     </Container>)
 }
 
+const PositionedClose = styled.div`
+  width: 24px;
+  height: 20px;
+  position: fixed;
+  top: 22px;
+  right: 20px;
+`
+
+const LastSection = styled.div`
+  font-weight: 400;
+  padding-top: 4rem;
+  font-size: 0.625rem;
+`
+
+const Icons = styled.div`
+  margin: 0.5rem 0;
+  a{
+    transition: color .5s;
+  }
+
+  a:hover {
+    color: ${p => p.theme.colors.gold};
+  }
+
+  i {
+    font-size: 1.5rem;
+    margin: 0 0.5rem;
+  }
+`
+
 const Container = styled.div`
   background: ${p => p.theme.colors.bg};
+  overflow: scroll;
   position: fixed;
   width: 100%;
   height: 100%;
