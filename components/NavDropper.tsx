@@ -12,9 +12,9 @@ export function NavDropper({ items, current, setCurrent }: Props) {
 
   return (
     <NavLayout
-      onMouseLeave={() => { setisOpen(false) }}>
+      onClick={() => { setisOpen(!isOpen) }}>
       <MainItem>
-        <span onMouseEnter={() => { setisOpen(true) }} onClick={() => { setisOpen(!isOpen) }} className={isOpen ? "is-open" : ''}>
+        <span className={isOpen ? "is-open" : ''}>
           {items[current][0]}({items[current][1]}) ▼
         </span>
       </MainItem>

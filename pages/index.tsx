@@ -124,9 +124,18 @@ const Card = styled.a`
   transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0s;
   position: relative;
 
-  :hover{
-    ${() => cardBoxShadow}
-    transform: scale(1.1);
+  @media (any-hover: hover) {
+    &:hover{
+      ${() => cardBoxShadow}
+      transform: scale(1.1);
+    }
+  }
+
+  @media (any-hover: none) {
+    &:active{
+      ${() => cardBoxShadow}
+      transform: scale(1.1);
+    }
   }
 
   .card-content {
