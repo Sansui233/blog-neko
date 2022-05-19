@@ -23,10 +23,13 @@ body {
 img,
 picture,
 video,
-canvas,
-svg {
-  display: block;
+canvas {
   max-width: 100%;
+}
+
+svg {
+  display: inline-block;
+  vertical-align: middle;
 }
 
 input,

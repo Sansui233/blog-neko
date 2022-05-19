@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import styled from "styled-components"
+import ChevronDown from '../public/icons/chevron-down.svg';
 
 type Props = {
   // 如果有需要可以适配其他类型，还有高度字号什么的。自用组件就算了不写这么多
@@ -15,13 +16,14 @@ export function NavDropper({ items, current, setCurrent }: Props) {
       onClick={() => { setisOpen(!isOpen) }}>
       <MainItem>
         <span className={isOpen ? "is-open" : ''}>
-          {items[current][0]}({items[current][1]}) ▼
+          {items[current][0]}{' '}{items[current][1]}
         </span>
+        <ChevronDown />
       </MainItem>
       <SubItemContainer className={isOpen ? "is-open" : ''}>
         {items.map((item, i) => (
           <NavItem key={i} onClick={() => { setCurrent(i); setisOpen(false) }}>
-            <span>{item[0]}({item[1]})</span>
+            <span>{item[0]}{' '}{item[1]}</span>
           </NavItem>
         ))}
       </SubItemContainer>
@@ -33,6 +35,7 @@ const NavLayout = styled.nav`
   text-align: right;
   position: relative;
   padding: 2rem 0;
+  font-family: 'Dosis';
 `
 const SubItemContainer = styled.div`
   position: absolute;
@@ -65,8 +68,24 @@ const NavItem = styled.div`
 `
 
 const MainItem = styled.div`
-  transform: translateX(.3em);
+  cursor: pointer;
   span {
-    cursor: pointer;
+    transition: box-shadow .5s;
+    box-shadow: inset 0 -1px 0 ${p => p.theme.colors.goldHover};
   }
+
+  svg {
+    transition: transform .3s;
+    margin-right: -0.4em;
+    margin-top: -2px;
+    margin-left: 2px;
+  }
+
+  span.is-open {
+    box-shadow: inset 0 -0.5em 0 ${p => p.theme.colors.goldHover};
+    svg {
+      transform: rotateX(180deg);
+    }
+  }
+
 `

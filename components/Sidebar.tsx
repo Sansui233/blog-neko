@@ -32,7 +32,7 @@ export default function Sidebar({ isShow, toggle }: Props) {
       <Content style={{ paddingTop: '8rem' }}>
         <h1>
           <span>
-            {"Sansui's blog"}
+            {"SANSUI'S BLOG"}
           </span>
         </h1>
         <div onClick={handleThemeChange}>

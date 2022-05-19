@@ -12,7 +12,12 @@ export const MarkdownStyle = styled.div`
   }
 
   p,ul,ol {
-    line-height: 1.8em;
+    line-height: 1.8rem;
+    margin: 1.125rem 0;
+  }
+
+  blockquote {
+    margin: 1.625rem 0;
   }
 
   a {
@@ -59,6 +64,21 @@ export const MarkdownStyle = styled.div`
 
   del {
     opacity: .33;
+  }
+
+  li {
+    display: block;
+    position: relative;
+  }
+  li::before {
+    content:'';
+    position: absolute;
+    top: .6em;
+    height: .4em;
+    width: .4em;
+    border-radius: 1em;
+    border: solid 1px ${p => p.theme.colors.gold};
+    left: -1.5rem;
   }
 
 `;

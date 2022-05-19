@@ -27,7 +27,7 @@ export default function Post({ mdxSource }: Props) {
       <>
         {tags.map((tag: string) => {
           return <Link href={`/tags/${tag}`} passHref={true} key={tag}>
-            <StyledLinkGray>{`#${tag}`}</StyledLinkGray>
+            <StyledLinkGray>{`#${tag} `}</StyledLinkGray>
           </Link>
         })}
       </>
@@ -91,7 +91,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 }
 
 const PostLayout = styled(MainLayoutStyle)`
-  max-width: 800px;
+  max-width: 750px;
   margin: 72px auto;
 `
 

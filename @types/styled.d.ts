@@ -11,6 +11,7 @@ declare module 'styled-components' {
       textPrimary: string,
       textGray: string,
       gold: string,
+      goldHover: string,
       bg: string,
       bgInverse: string,
       hoverBg: string,
