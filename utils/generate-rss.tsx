@@ -1,20 +1,22 @@
 import { Feed, Item } from "feed"
 import { SiteInfo } from "../site.config";
-import { POSTDIR } from './posts';
+import { getFrontMatter, POSTDIR } from './posts';
 import path from 'path';
 import { serialize } from 'next-mdx-remote/serialize';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { MDXRemote } from 'next-mdx-remote'
 import fs from 'fs'
+import readline from 'readline'
+import { MEMOSDIR } from "./memos";
+import remarkGfm from "remark-gfm";
 
-async function getLastTenPosts(): Promise<Item[]> {
+async function getPosts(): Promise<Item[]> {
   let fileNames = fs.readdirSync(POSTDIR);
   fileNames = fileNames.filter(f => {
     return f.endsWith(".md") || f.endsWith(".mdx")
   })
-  let allPosts = await Promise.all(
+  let allPosts: Item[] = await Promise.all(
     fileNames.map(async fileName => {
-      // console.log(fileName)
       const fileContents = fs.readFileSync(path.join(POSTDIR, fileName), 'utf-8')
       const mdxSource = await serialize(fileContents, { parseFrontmatter: true })
 
@@ -27,6 +29,7 @@ async function getLastTenPosts(): Promise<Item[]> {
         id: `${SiteInfo.domain}/posts/${id}`,
         link: `${SiteInfo.domain}/posts/${id}`,
         date: frontmatter.date,
+        description: frontmatter.description ? frontmatter.description : '',
         category: [
           {
             name: frontmatter.categories,
@@ -38,12 +41,63 @@ async function getLastTenPosts(): Promise<Item[]> {
       }
     }))
 
+  allPosts.push(await getMemo())
+
   allPosts = allPosts.sort((a, b) => {
     return a.date > b.date ? -1 : 1
   })
   allPosts.splice(10)
   return allPosts
+}
 
+async function getMemo(): Promise<Item> {
+  const f = fs.readdirSync(MEMOSDIR).filter(f => {
+    return f.endsWith(".md")
+  }).sort((a, b) => {
+    return a < b ? 1 : -1 // Desc for latest first
+  })[0]
+  const fileStream = fs.createReadStream(path.join(MEMOSDIR, f))
+  const rl = readline.createInterface({
+    input: fileStream,
+    crlfDelay: Infinity
+  })
+  let count = 0
+  let content = ""
+  for await (const line of rl) {
+    if (line.startsWith("## ")) {
+      if (count === 6) break
+      count++
+    }
+    if (count != 0) content += line + "\n" // push content
+  }
+
+  const mdxSource = await serialize(content, {
+    mdxOptions: {
+      remarkPlugins: [remarkGfm],
+    }
+  })
+
+  rl.close()
+  fileStream.close()
+
+  const matterResult = getFrontMatter(f, MEMOSDIR)
+
+  const res = {
+    title: matterResult.data.title,
+    id: `${SiteInfo.domain}/memos`,
+    link: `${SiteInfo.domain}/memos`,
+    date: matterResult.data.date,
+    description: matterResult.data.description ? matterResult.data.description : '',
+    category: [
+      {
+        name: matterResult.data.categories
+      }],
+    content: renderToStaticMarkup(
+      <MDXRemote compiledSource={mdxSource.compiledSource}></MDXRemote>
+    )
+  }
+
+  return res
 }
 
 async function generateFeed() {
@@ -70,7 +124,7 @@ async function generateFeed() {
     }
   });
 
-  const posts = await getLastTenPosts()
+  const posts = await getPosts()
 
   posts.forEach(p => {
     feed.addItem(p)

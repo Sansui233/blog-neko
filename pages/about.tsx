@@ -83,7 +83,6 @@ export async function getStaticProps() {
   const mdxSource = await serialize(source, {
     mdxOptions: {
       remarkPlugins: [remarkGfm],
-      // TODO not work
     },
   })
   return { props: { source: mdxSource } }

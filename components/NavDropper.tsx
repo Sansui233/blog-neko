@@ -35,7 +35,6 @@ const NavLayout = styled.nav`
   text-align: right;
   position: relative;
   padding: 2rem 0;
-  font-family: 'Dosis';
 `
 const SubItemContainer = styled.div`
   position: absolute;

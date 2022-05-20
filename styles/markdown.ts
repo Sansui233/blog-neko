@@ -13,7 +13,7 @@ export const MarkdownStyle = styled.div`
 
   p,ul,ol {
     line-height: 1.8rem;
-    margin: 1.125rem 0;
+    margin: 1.5rem 0;
   }
 
   blockquote {

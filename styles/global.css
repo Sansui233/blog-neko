@@ -168,7 +168,13 @@ pre code {
   content: "\e936";
 }
 
+.icon-arrow-right2:before {
+  content: "\ea3c";
+}
 
+.icon-arrow-left2:before {
+  content: "\ea40";
+}
 
 
 html,

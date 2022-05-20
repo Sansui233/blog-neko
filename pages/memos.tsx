@@ -2,14 +2,18 @@ import { GetStaticProps } from "next";
 import Head from "next/head";
 import styled, { css } from "styled-components";
 import { MarkdownStyle } from "../styles/markdown";
-import { getMemoPosts } from "../utils/memos";
-import React, { useState } from "react";
+import { genMemoJsonFile, getMemoPages, getMemoPosts } from "../utils/memos";
+import React, { useEffect, useState } from "react";
 import { CommonHeader, MainLayoutStyle, PageDescription } from ".";
 import { serialize } from "next-mdx-remote/serialize";
 import remarkGfm from "remark-gfm";
 import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote";
 import Layout from "../components/Layout";
 import { textBoxShadow } from "../styles/styles";
+import { useRouter } from "next/router";
+import Link from "next/link";
+
+const MemoCSRAPI = '/data/memos'
 
 type MemoPost = {
   title: string,
@@ -18,9 +22,54 @@ type MemoPost = {
 
 type Props = {
   memoposts: MemoPost[]
+  pagelimit: number
 }
 
-export default function Memos({ memoposts }: Props) {
+export default function Memos({ memoposts, pagelimit }: Props) {
+  const router = useRouter()
+  const [postsData, setpostsData] = useState(memoposts)
+
+  useEffect(() => {
+    console.log(JSON.stringify(router.query))
+    if (typeof (router.query.p) === 'string') {
+      const page = parseInt(router.query.p)
+      if (page === NaN) {
+        console.error('Wrong query p=', router.query.p)
+        return
+      }
+      fetch(`${MemoCSRAPI}/${page}.json`)
+        .then(res => res.json())
+        .then((data) => {
+          const posts = data as Array<{ title: string, content: string }>
+          const compiledPosts = Promise.all(posts.map(async p => {
+            const content = await serialize(p.content, {
+              mdxOptions: {
+                remarkPlugins: [remarkGfm]
+              }
+            })
+            return {
+              title: p.title,
+              content: content
+            }
+          }))
+          return compiledPosts
+        })
+        .then(posts => {
+          setpostsData(posts)
+        }).catch(console.error);
+    }
+  }, [router.query])
+
+  const currPage = (() => {
+    if (typeof (router.query.p) === 'string') {
+      const page = parseInt(router.query.p)
+      if (page !== NaN) {
+        return page
+      }
+    }
+    return 0
+  })()
+
   return (
     <div>
       <Head>
@@ -29,10 +78,23 @@ export default function Memos({ memoposts }: Props) {
       </Head>
       <Layout>
         <MemoLayout>
-          <MemoDescription>| 记录碎碎念是坏习惯 |</MemoDescription>
-          {memoposts.map(m => (
+          <MemoDescription style={{ marginBottom: '-2rem' }}>| 记录碎碎念是坏习惯 |</MemoDescription>
+          {postsData.map(m => (
             <MemoCard memoPost={m} key={m.title} />
           ))}
+          <Pagination>
+            {currPage > 0 &&
+              <Link href={`/memos?p=${currPage - 1}`} passHref={true}>
+                <PageBtn><i className="icon-arrow-left2" /><span>&nbsp;PREV</span></PageBtn>
+              </Link>
+            }
+            <span>PAGE {currPage + 1}</span>
+            {currPage + 1 < pagelimit &&
+              <Link href={`/memos?p=${currPage + 1}`} passHref={true}>
+                <PageBtn><span>NEXT&nbsp;</span><i className="icon-arrow-right2" /></PageBtn>
+              </Link>
+            }
+          </Pagination>
         </MemoLayout>
       </Layout>
     </div>
@@ -41,14 +103,14 @@ export default function Memos({ memoposts }: Props) {
 
 function MemoCard({ memoPost }: { memoPost: MemoPost }) {
   const [isCollapse, setfisCollapse] = useState(true)
-  const shouldCollapse = memoPost.content.compiledSource.length > 1100 ? true : false
+  const shouldCollapse = memoPost.content.compiledSource.length > 1014 ? true : false
 
   function handleExpand(e: React.MouseEvent<HTMLDivElement>) {
     setfisCollapse(!isCollapse)
   }
 
   return (
-    <StyledCard isCollapse={isCollapse}>
+    <StyledCard isCollapse={shouldCollapse === false ? false : isCollapse}>
       <h2 className="title">{memoPost.title}</h2>
       <MemoMarkdown bottomSpace={shouldCollapse}>
         <MDXRemote {...memoPost.content} />
@@ -66,43 +128,84 @@ function MemoCard({ memoPost }: { memoPost: MemoPost }) {
 /** Rendering Control **/
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
-  const posts = await getMemoPosts()
+  // 首屏 SEO 数据
+  const posts = await getMemoPosts(0)
   const compiledPosts = await Promise.all(posts.map(async p => {
-
     const content = await serialize(p.content, {
       mdxOptions: {
         remarkPlugins: [remarkGfm]
       }
     })
-
     return {
       title: p.title,
       content: content
     }
-
   }))
 
+  // 生成 CSR 所需 JSON
+  genMemoJsonFile()
 
   return {
-    props: { memoposts: compiledPosts }
+    props: {
+      memoposts: compiledPosts,
+      pagelimit: await getMemoPages()
+    }
   }
 }
 
 /** Styles **/
+
+const Pagination = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 75px;
+  justify-content: space-between;
+  align-items: center;
+
+  & > span {
+    color: ${p => p.theme.colors.textGray};
+    font-size: 0.875rem;
+  }
+`
+
+const PageBtn = styled.a`
+  padding: .2em 0;
+  display: flex;
+  align-items: center;
+  position: relative;
+  i {
+    transform: translateY(-0.1em);
+  }
+
+  ::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 0;
+    height: 2px;
+    background: ${props => props.theme.colors.gold};
+    transition: width 1s cubic-bezier(0.34, 0.04, 0.03, 1.4), background .3s;
+  }
+    
+  :hover::before {
+    width: 100%;
+  }
+`
 
 const MemoLayout = styled(MainLayoutStyle)`
   max-width: 720px;
 `
 
 const MemoDescription = styled(PageDescription)`
-  margin-bottom: -2rem;
+  
 `
 
 const StyledCard = styled.section<{
   isCollapse: boolean
 }>`
   position: relative;
-  max-height: ${props => props.isCollapse === true ? "18rem" : "unset"};
+  max-height: ${props => props.isCollapse === true ? "19rem" : "unset"};
   overflow: hidden;
   margin: 2rem 0;
   h2.title {

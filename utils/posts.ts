@@ -15,8 +15,8 @@ const postsFileNames = (() => {
   return fileNames
 })()
 
-function getFrontMatter(fileName: string) {
-  const fullPath = path.join(POSTDIR, fileName)
+export function getFrontMatter(fileName: string, dir = POSTDIR) {
+  const fullPath = path.join(dir, fileName)
   const fileContents = fs.readFileSync(fullPath, 'utf8')
   return matter(fileContents)
 }
