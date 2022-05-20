@@ -50,6 +50,7 @@ async function getPosts(): Promise<Item[]> {
   return allPosts
 }
 
+// 单文件 memo  最近 5 条生成 rss
 async function getMemo(): Promise<Item> {
   const f = fs.readdirSync(MEMOSDIR).filter(f => {
     return f.endsWith(".md")

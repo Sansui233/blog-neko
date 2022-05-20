@@ -36,6 +36,7 @@ export async function getMemoPosts(page: number): Promise<MemoPost[]> {
 
   const memos: MemoPost[] = []
   let counter = -1 //由于 counter 需要从 0 开始，而后面是先加再算，所以这里是-1
+  let isFrontMatter = false
 
   // Generate memos
   for (const fileName of fileNames) {
@@ -44,7 +45,18 @@ export async function getMemoPosts(page: number): Promise<MemoPost[]> {
       input: fileStream,
       crlfDelay: Infinity
     })
+    let isFirstLine = true
     for await (const line of rl) {
+      if (line.startsWith("---") && isFirstLine) {
+        if (isFrontMatter) {
+          isFrontMatter = false
+          isFirstLine = false
+          continue
+        } else {
+          isFrontMatter = true
+          continue
+        }
+      }
       if (line.startsWith("## ")) {
         counter++
         if (counter < postRange[0]) {
@@ -59,6 +71,7 @@ export async function getMemoPosts(page: number): Promise<MemoPost[]> {
           content: "",
         })
       } else {
+        if (isFrontMatter) continue
         if (memos.length === 0) continue // Ignore the start of a md file
         memos[memos.length - 1].content += line + "\n" // push content
       }
@@ -108,13 +121,25 @@ export async function genMemoJsonFile() {
 
   let page = 0
   let posts: MemoPost[] = []
+  let isFrontMatter = false
   for (const fileName of fileNames) {
     const fileStream = fs.createReadStream(path.join(MEMOSDIR, fileName))
     const rl = readline.createInterface({
       input: fileStream,
       crlfDelay: Infinity
     })
+    let isFirstLine = true
     for await (const line of rl) {
+      if (line.startsWith("---") && isFirstLine) {
+        if (isFrontMatter) {
+          isFrontMatter = false
+          isFirstLine = false
+          continue
+        } else {
+          isFrontMatter = true
+          continue
+        }
+      }
       if (line.startsWith("## ")) {
         if (posts.length === NumPerPage) {
           writeToFs(page, posts)
@@ -126,7 +151,8 @@ export async function genMemoJsonFile() {
           content: "",
         })
       } else {
-        if (posts.length === 0) continue // Ignore the start of a md file
+        if (isFrontMatter) continue
+        if (posts.length === 0) continue // Ignore the start of the first md file
         posts[posts.length - 1].content += line + "\n" // push content
       }
     }
