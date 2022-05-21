@@ -1,6 +1,6 @@
 import { GetStaticPaths, GetStaticProps } from "next"
 import styled from "styled-components"
-import { getAllPostIds, POSTDIR } from "../../utils/posts"
+import { getAllPostIds, getSortedPostsMeta, POSTDIR } from "../../utils/posts"
 import { MarkdownStyle } from "../../styles/markdown"
 import { CommonHeader, MainLayoutStyle } from ".."
 import { serialize } from 'next-mdx-remote/serialize'
@@ -12,12 +12,21 @@ import Head from "next/head"
 import Layout from "../../components/Layout"
 import Link from "next/link"
 import { textBoxShadow } from "../../styles/styles"
+import Pagination from "../../components/Pagination"
 
 type Props = {
-  mdxSource: MDXRemoteSerializeResult
+  mdxSource: MDXRemoteSerializeResult,
+  nextPost?: {
+    title: string,
+    link: string,
+  },
+  prevPost?: {
+    title: string,
+    link: string,
+  }
 }
 
-export default function Post({ mdxSource }: Props) {
+export default function Post({ mdxSource, nextPost, prevPost }: Props) {
   const frontmatter = mdxSource.frontmatter! as any
   const source = mdxSource.compiledSource
 
@@ -53,11 +62,17 @@ export default function Post({ mdxSource }: Props) {
                 <StyledLinkBgblock>{frontmatter.categories}</StyledLinkBgblock>
               </Link>
             </MetaStyle>
-
           </PostTitle>
           <MarkdownStyle>
             <MDXRemote compiledSource={source} />
           </MarkdownStyle>
+          <div style={{ textAlign: 'center', opacity: .5, fontSize: '0.875rem', margin: "4rem 0 2rem 0" }}>
+            - THE END -
+          </div>
+          <Pagination
+            nextPage={nextPost}
+            prevPage={prevPost}
+          />
         </PostLayout>
       </Layout>
     </>
@@ -76,7 +91,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 }
 
 // ONE POST Data
-export const getStaticProps: GetStaticProps = async ({ params }) => {
+export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
   const id = params!.id as string
   const source = readFileSync(path.join(POSTDIR, `${id}.md`), 'utf-8')
   const mdxSource = await serialize(source, { parseFrontmatter: true })
@@ -87,7 +102,25 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     fm["date"] = dateToYMD(fm["date"])
   }
 
-  return { props: { mdxSource } }
+  // Get next and prev Post
+  const allPosts = getSortedPostsMeta()
+  const i = allPosts.findIndex(p => p.id === id)
+  const prevPost = i - 1 < 0 ? undefined : {
+    title: allPosts[i - 1].title!,
+    link: `posts/${allPosts[i - 1].id!}`
+  }
+  const nextPost = i + 1 > allPosts.length - 1 ? undefined : {
+    title: allPosts[i + 1].title!,
+    link: `posts/${allPosts[i + 1].id!}`
+  }
+
+  return {
+    props: {
+      mdxSource,
+      prevPost,
+      nextPost
+    }
+  }
 }
 
 const PostLayout = styled(MainLayoutStyle)`

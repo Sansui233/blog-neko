@@ -15,7 +15,7 @@ const Footer = (props: Props) => {
 }
 
 const Container = styled.div`
-  padding: 100px 0 10px 0;
+  padding: 24px 0 10px 0;
   text-align: center;
   font-size: 0.625rem;
 

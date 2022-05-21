@@ -12,6 +12,7 @@ import Layout from "../components/Layout";
 import { textBoxShadow } from "../styles/styles";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import Pagination from "../components/Pagination";
 
 const MemoCSRAPI = '/data/memos'
 
@@ -30,34 +31,35 @@ export default function Memos({ memoposts, pagelimit }: Props) {
   const [postsData, setpostsData] = useState(memoposts)
 
   useEffect(() => {
-    console.log(JSON.stringify(router.query))
+    console.log('Update ', JSON.stringify(router.query))
+    let page = 0
     if (typeof (router.query.p) === 'string') {
-      const page = parseInt(router.query.p)
+      page = parseInt(router.query.p)
       if (page === NaN) {
         console.error('Wrong query p=', router.query.p)
         return
       }
-      fetch(`${MemoCSRAPI}/${page}.json`)
-        .then(res => res.json())
-        .then((data) => {
-          const posts = data as Array<{ title: string, content: string }>
-          const compiledPosts = Promise.all(posts.map(async p => {
-            const content = await serialize(p.content, {
-              mdxOptions: {
-                remarkPlugins: [remarkGfm]
-              }
-            })
-            return {
-              title: p.title,
-              content: content
-            }
-          }))
-          return compiledPosts
-        })
-        .then(posts => {
-          setpostsData(posts)
-        }).catch(console.error);
     }
+    fetch(`${MemoCSRAPI}/${page}.json`)
+      .then(res => res.json())
+      .then((data) => {
+        const posts = data as Array<{ title: string, content: string }>
+        const compiledPosts = Promise.all(posts.map(async p => {
+          const content = await serialize(p.content, {
+            mdxOptions: {
+              remarkPlugins: [remarkGfm]
+            }
+          })
+          return {
+            title: p.title,
+            content: content
+          }
+        }))
+        return compiledPosts
+      })
+      .then(posts => {
+        setpostsData(posts)
+      }).catch(console.error);
   }, [router.query])
 
   const currPage = (() => {
@@ -82,19 +84,19 @@ export default function Memos({ memoposts, pagelimit }: Props) {
           {postsData.map(m => (
             <MemoCard memoPost={m} key={m.title} />
           ))}
-          <Pagination>
-            {currPage > 0 &&
-              <Link href={`/memos?p=${currPage - 1}`} passHref={true}>
-                <PageBtn><i className="icon-arrow-left2" /><span>&nbsp;PREV</span></PageBtn>
-              </Link>
+          <Pagination
+            currTitle={`PAGE ${currPage + 1}`}
+            prevPage={currPage > 0 ? {
+              title: "PREV",
+              link: `/memos?p=${currPage - 1}`
+            } : undefined
             }
-            <span>PAGE {currPage + 1}</span>
-            {currPage + 1 < pagelimit &&
-              <Link href={`/memos?p=${currPage + 1}`} passHref={true}>
-                <PageBtn><span>NEXT&nbsp;</span><i className="icon-arrow-right2" /></PageBtn>
-              </Link>
+            nextPage={currPage + 1 < pagelimit ? {
+              title: "NEXT",
+              link: `/memos?p=${currPage + 1}`
+            } : undefined
             }
-          </Pagination>
+          />
         </MemoLayout>
       </Layout>
     </div>
@@ -154,45 +156,6 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 }
 
 /** Styles **/
-
-const Pagination = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  margin-top: 75px;
-  justify-content: space-between;
-  align-items: center;
-
-  & > span {
-    color: ${p => p.theme.colors.textGray};
-    font-size: 0.875rem;
-  }
-`
-
-const PageBtn = styled.a`
-  padding: .2em 0;
-  display: flex;
-  align-items: center;
-  position: relative;
-  i {
-    transform: translateY(-0.1em);
-  }
-
-  ::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 0;
-    height: 2px;
-    background: ${props => props.theme.colors.gold};
-    transition: width 1s cubic-bezier(0.34, 0.04, 0.03, 1.4), background .3s;
-  }
-    
-  :hover::before {
-    width: 100%;
-  }
-`
-
 const MemoLayout = styled(MainLayoutStyle)`
   max-width: 720px;
 `

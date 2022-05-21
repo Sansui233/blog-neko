@@ -5,8 +5,6 @@ import { dateToYMD } from './date';
 
 export const POSTDIR = path.join(process.cwd(), 'source', 'posts')
 
-// TODO a 换成 link 后进行 style，内部路由不会有全局样式闪屏问题。
-// TODO index 和 tags 页边距问题，应该再细致一点
 const postsFileNames = (() => {
   let fileNames = fs.readdirSync(POSTDIR);
   fileNames = fileNames.filter(f => {
@@ -35,15 +33,23 @@ export function getAllPostIds() {
   })
 }
 
+type FrontMatter = {
+  title?: string,
+  date?: Date,
+  category?: string,
+  tags?: string | string[],
+  description?: string | string[],
+}
+
 export function getSortedPostsMeta() {
   const allPosts = postsFileNames.map(fileName => {
     const id = fileName.replace(/\.mdx?$/, '')
-    const matterResult = getFrontMatter(fileName)
-    const date = dateToYMD(matterResult.data['date'])
+    const frontMatter: FrontMatter = getFrontMatter(fileName).data
+    const date = dateToYMD(frontMatter.date!)
 
     return {
       id,
-      ...matterResult.data,
+      ...frontMatter,
       date
     }
   })
