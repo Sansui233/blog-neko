@@ -1,6 +1,6 @@
 import { GetStaticProps } from "next";
 import Head from "next/head";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import { MarkdownStyle } from "../styles/markdown";
 import { genMemoJsonFile, getMemoPages, getMemoPosts } from "../utils/memos";
 import React, { useEffect, useState } from "react";
@@ -11,8 +11,8 @@ import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote";
 import Layout from "../components/Layout";
 import { textBoxShadow } from "../styles/styles";
 import { useRouter } from "next/router";
-import Link from "next/link";
 import Pagination from "../components/Pagination";
+import Waline from "../components/Waline";
 
 const MemoCSRAPI = '/data/memos'
 
@@ -61,7 +61,6 @@ export default function Memos({ memoposts, pagelimit }: Props) {
         setpostsData(posts)
       }).catch(console.error);
   }, [router.query])
-
   const currPage = (() => {
     if (typeof (router.query.p) === 'string') {
       const page = parseInt(router.query.p)
@@ -73,7 +72,7 @@ export default function Memos({ memoposts, pagelimit }: Props) {
   })()
 
   return (
-    <div>
+    <>
       <Head>
         <title>Sansui - Memos</title>
         <CommonHeader />
@@ -97,9 +96,10 @@ export default function Memos({ memoposts, pagelimit }: Props) {
             } : undefined
             }
           />
+          <Waline />
         </MemoLayout>
       </Layout>
-    </div>
+    </>
   )
 }
 

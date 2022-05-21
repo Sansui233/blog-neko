@@ -37,7 +37,7 @@ const Pagination: React.FC<Props> = (props) => {
 }
 
 const Layout = styled.div`
-  margin: 32px 0;
+  margin: 64px 0;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;

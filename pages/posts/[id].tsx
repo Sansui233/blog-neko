@@ -13,6 +13,7 @@ import Layout from "../../components/Layout"
 import Link from "next/link"
 import { textBoxShadow } from "../../styles/styles"
 import Pagination from "../../components/Pagination"
+import Waline from "../../components/Waline"
 
 type Props = {
   mdxSource: MDXRemoteSerializeResult,
@@ -73,6 +74,7 @@ export default function Post({ mdxSource, nextPost, prevPost }: Props) {
             nextPage={nextPost ? nextPost : undefined}
             prevPage={prevPost ? prevPost : undefined}
           />
+          <Waline />
         </PostLayout>
       </Layout>
     </>

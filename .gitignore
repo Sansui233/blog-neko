@@ -2,6 +2,7 @@
 
 # deploy
 deploy.sh
+site.config.ts
 
 # posts source
 source/*/*
