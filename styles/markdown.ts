@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { textBoxShadow } from "./styles";
 
 export const MarkdownStyle = styled.div`
   text-align: justify;
@@ -22,25 +23,15 @@ export const MarkdownStyle = styled.div`
 
   a {
     position: relative;
-    font-weight: 600;
+    font-weight: 500;
+    border-bottom: 1px solid ${props => props.theme.colors.gold};
+    transition: box-shadow .5s;
   }
 
-  a::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: -0.125em;
-    width: 100%;
-    height: 0;
-    background: ${props => props.theme.colors.hoverBg};
-    border-bottom: 1px solid gray;
-    transition: height .5s ease;
+  a:hover {
+    box-shadow: inset 0 -0.5em 0 ${props => props.theme.colors.goldHover};
   }
   
-  a:hover::before {
-    height: 1.25em;
-  }
-
   code {
     background-color: ${props => props.theme.colors.codeBlockBg};
     font-size: 0.95rem;
@@ -54,6 +45,7 @@ export const MarkdownStyle = styled.div`
     border-radius: unset;
     padding: 1rem 2rem;
     margin: unset;
+    overflow: auto;
   }
 
   blockquote {
@@ -66,11 +58,11 @@ export const MarkdownStyle = styled.div`
     opacity: .33;
   }
 
-  li {
+  ul li {
     display: block;
     position: relative;
   }
-  li::before {
+  ul li::before {
     content:'';
     position: absolute;
     top: .6em;

@@ -13,7 +13,7 @@ type PostType = {
   date: string,
   title?: string,
   categories?: string,
-  tags?: string,
+  tags?: string | string[],
 }
 
 type Props = {

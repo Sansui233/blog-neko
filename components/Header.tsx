@@ -15,14 +15,14 @@ export default function Header() {
   useEffect(() => { // This will be rendered twice?
     let previousTop = globalThis.scrollY
     const onScroll: EventListener = () => { // <-- DOM-EventListener
-      if (globalThis.scrollY < 63) {
+      if (globalThis.scrollY < 200) {
         setisHidden(false)
         previousTop = globalThis.scrollY
         return
       }
 
       const distance = globalThis.scrollY - previousTop
-      if (distance > 50) {
+      if (distance > 10) {
         setisHidden(true)
         previousTop = globalThis.scrollY
       } else if (distance < -10) {
@@ -31,7 +31,7 @@ export default function Header() {
       }
     };
 
-    const throttled = throttle(onScroll, 250)
+    const throttled = throttle(onScroll, 500)
     globalThis.addEventListener("scroll", throttled, true);
 
     return () => window.removeEventListener("scroll", throttled);
@@ -63,7 +63,7 @@ export default function Header() {
         </More>
       </Layout>
       <PlaceHolder>
-        - 人活着就是为了卡卡西 -
+        人活着就是为了卡卡西
       </PlaceHolder>
     </React.Fragment>
   )
@@ -74,7 +74,10 @@ const PlaceHolder = styled.div`
     width: 100%;
     text-align: center;
     padding-top: 0.625rem;
-    font-size: 14px;
+    font-size: 0.625rem;
+    font-style: italic;
+    color: ${p => p.theme.colors.gold};
+    font-family: 'Times New Roman', STSong, '宋体', serif;
     opacity: .6;
 `
 const Layout = styled.header<{

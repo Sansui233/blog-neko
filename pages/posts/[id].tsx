@@ -19,11 +19,11 @@ type Props = {
   nextPost?: {
     title: string,
     link: string,
-  },
+  } | null, // 由于 undefined 不能被序列化无奈加了 null
   prevPost?: {
     title: string,
     link: string,
-  }
+  } | null
 }
 
 export default function Post({ mdxSource, nextPost, prevPost }: Props) {
@@ -66,12 +66,12 @@ export default function Post({ mdxSource, nextPost, prevPost }: Props) {
           <MarkdownStyle>
             <MDXRemote compiledSource={source} />
           </MarkdownStyle>
-          <div style={{ textAlign: 'center', opacity: .5, fontSize: '0.875rem', margin: "4rem 0 2rem 0" }}>
-            - THE END -
+          <div style={{ textAlign: 'right', opacity: .5, fontSize: '0.875rem', margin: "4rem 0 2rem 0" }}>
+            更新于 {frontmatter.date}
           </div>
           <Pagination
-            nextPage={nextPost}
-            prevPage={prevPost}
+            nextPage={nextPost ? nextPost : undefined}
+            prevPage={prevPost ? prevPost : undefined}
           />
         </PostLayout>
       </Layout>
@@ -105,27 +105,27 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
   // Get next and prev Post
   const allPosts = getSortedPostsMeta()
   const i = allPosts.findIndex(p => p.id === id)
-  const prevPost = i - 1 < 0 ? undefined : {
+  const prevPost = i - 1 < 0 ? null : {
     title: allPosts[i - 1].title!,
-    link: `posts/${allPosts[i - 1].id!}`
+    link: `/posts/${allPosts[i - 1].id!}`
   }
-  const nextPost = i + 1 > allPosts.length - 1 ? undefined : {
+  const nextPost = i + 1 > allPosts.length - 1 ? null : {
     title: allPosts[i + 1].title!,
-    link: `posts/${allPosts[i + 1].id!}`
+    link: `/posts/${allPosts[i + 1].id!}`
   }
 
   return {
     props: {
       mdxSource,
-      prevPost,
-      nextPost
+      prevPost: prevPost,
+      nextPost: nextPost,
     }
   }
 }
 
 const PostLayout = styled(MainLayoutStyle)`
   max-width: 750px;
-  margin: 72px auto;
+  margin-top: 72px;
 `
 
 const PostTitle = styled.div`

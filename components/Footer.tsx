@@ -28,7 +28,7 @@ const Container = styled.div`
   }
 
   a:hover {
-    color: ${p => p.theme.colors.textGray};
+    color: ${p => p.theme.colors.goldHover};
   }
 
   i {

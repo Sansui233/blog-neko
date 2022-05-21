@@ -90,7 +90,7 @@ const Icons = styled.div`
 
 const Container = styled.div`
   background: ${p => p.theme.colors.bg};
-  overflow: scroll;
+  overflow: auto;
   position: fixed;
   width: 100%;
   height: 100%;
