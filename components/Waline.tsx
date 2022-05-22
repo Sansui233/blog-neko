@@ -20,38 +20,57 @@ const Waline = () => {
 }
 
 const StyledWL = styled.div`
+  position: relative;
   --waline-theme-color: ${p => p.theme.colors.bgInverse};
   --waline-bgcolor: ${p => p.theme.colors.bg};
   --waline-color: ${p => p.theme.colors.textGray};
   --waline-active-color: ${p => p.theme.colors.gold};
   --waline-bgcolor-light: #99999915;
-  .wl-panel {
-    margin: .5rem 0;
-    border-radius: unset;
-  }
-  .wl-login-info{
-    margin-right: .5rem;
-  }
+  --waline-border: 1px solid #99999966;
+  --waline-border-color: #99999966;
+  --waline-info-bgcolor: #99999915;
   .wl-avatar {
-    margin: 0 .5rem
+    margin: 0 .5rem;
   }
-
-  .wl-heaer {
-    border-bottom: 1px solid ${p => p.theme.colors.gold};
-  }
-
-  .wl-header label {
-    font-size: 0.875rem;
-  }
-
-  .wl-btn {
-    font-size: 0.875rem;
-    border-radius: unset;
+  .wl-card .wl-meta {
+    display: none;
   }
 
   .wl-btn.primary {
     background: ${p => p.theme.colors.bgInverse};
+    color:${p => p.theme.colors.bg};
   }
+  .wl-gif-popup {
+    .wl-gallery-column {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr;
+      max-height: 200px;
+    }
+    img {
+      width: unset !important;
+      height: unset !important;
+      border-color: ${p => p.theme.colors.bg};
+    }
+    input {
+      background: ${p => p.theme.colors.bg};
+      color: ${p => p.theme.colors.textPrimary};
+    }
+  }
+
+
+  // @media screen and (max-width:580px) {
+  //   .wl-footer {
+  //     margin: unset;
+  //     padding: 0.5rem 0.75rem;
+  //   }
+  
+  //   .wl-gif-popup {
+  //     width: 100%;
+  //     left: 0;
+  //     padding: 0;
+  //   }
+  // }
+
 `
 
 export default Waline

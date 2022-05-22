@@ -30,7 +30,7 @@ export const SiteInfo = {
 - [x] Dark Mode
 - [x] 详细分类页
 - [x] 分页渲染
-- [ ] 评论接入
+- [x] 评论接入
 - [ ] 统计接入
 - [ ] 动画优化
 - [ ] （长期）设计、抠 Markdown 等
