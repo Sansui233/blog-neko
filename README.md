@@ -16,7 +16,8 @@ https://sansui233.com
 ```ts
 export const SiteInfo = {
   domain: "https://sansui233.com", // used to generate rss at build time
-  walineApi: serverAPI // Waline 评论系统后端地址
+  walineApi: serverAPI, // Waline 评论系统后端地址
+  GAId: "G-xxxxxx" // Google Analytics id
 }
 ```
 
@@ -31,7 +32,7 @@ export const SiteInfo = {
 - [x] 详细分类页
 - [x] 分页渲染
 - [x] 评论接入
-- [ ] 统计接入
+- [x] 统计接入
 - [ ] 动画优化
 - [ ] （长期）设计、抠 Markdown 等
 
