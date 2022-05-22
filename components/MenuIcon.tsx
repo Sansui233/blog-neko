@@ -2,14 +2,15 @@ import React from 'react'
 import styled, { css } from 'styled-components';
 
 type Props = {
-  width?: number;
+  width?: string;
+  height?: string;
   isClose: boolean;
   isCloseToggler?: () => void
 }
 
-const MenuIcon: React.FC<Props> = ({ width = 24, isClose, isCloseToggler }) => {
+const MenuIcon: React.FC<Props> = ({ width = "1em", height = "1em", isClose, isCloseToggler }) => {
   return (
-    <Container width={width} onClick={isCloseToggler}>
+    <Container width={width} height={height} onClick={isCloseToggler}>
       <Line className={isClose ? 'is-close' : ''} />
       <Middle isClose={isClose} />
       <Line className={isClose ? 'is-close' : ''} />
@@ -18,10 +19,11 @@ const MenuIcon: React.FC<Props> = ({ width = 24, isClose, isCloseToggler }) => {
 }
 
 const Container = styled.div<{
-  width: number
+  width: string,
+  height: string,
 }>`
-  width: ${p => p.width}px;
-  height: 100%;
+  width: ${p => p.width};
+  height: ${p => p.height ? p.height : "100%"};
   display: flex;
   flex-direction: column;
   justify-content: space-between;

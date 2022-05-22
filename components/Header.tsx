@@ -58,7 +58,7 @@ export default function Header() {
         </Nav>
         <More onClick={toggleSidebar}>
           <div>
-            <MenuIcon width={24} isClose={isSidebar} />
+            <MenuIcon width={"24px"} height={"100%"} isClose={isSidebar} />
           </div>
         </More>
       </Layout>
