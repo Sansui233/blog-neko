@@ -1,19 +1,19 @@
-import { GetStaticPaths, GetStaticProps } from "next"
-import styled from "styled-components"
-import { getAllPostIds, getSortedPostsMeta, POSTDIR } from "../../utils/posts"
-import { MarkdownStyle } from "../../styles/markdown"
-import { CommonHeader, MainLayoutStyle } from ".."
-import { serialize } from 'next-mdx-remote/serialize'
-import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote'
 import { readFileSync } from "fs"
-import path from "path"
-import { dateToYMD } from "../../utils/date"
+import { GetStaticPaths, GetStaticProps } from "next"
+import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote'
+import { serialize } from 'next-mdx-remote/serialize'
 import Head from "next/head"
-import Layout from "../../components/Layout"
 import Link from "next/link"
-import { textBoxShadow } from "../../styles/styles"
+import path from "path"
+import styled from "styled-components"
+import { CommonHeader, MainLayoutStyle } from ".."
+import Layout from "../../components/Layout"
 import Pagination from "../../components/Pagination"
 import Waline from "../../components/Waline"
+import { dateToYMD } from "../../lib/date"
+import { getAllPostIds, getSortedPostsMeta, POST_DIR } from "../../lib/posts"
+import { MarkdownStyle } from "../../styles/markdown"
+import { textBoxShadow } from "../../styles/styles"
 
 type Props = {
   mdxSource: MDXRemoteSerializeResult,
@@ -95,7 +95,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 // ONE POST Data
 export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
   const id = params!.id as string
-  const source = readFileSync(path.join(POSTDIR, `${id}.md`), 'utf-8')
+  const source = readFileSync(path.join(POST_DIR, `${id}.md`), 'utf-8')
   const mdxSource = await serialize(source, { parseFrontmatter: true })
 
   // Process Date

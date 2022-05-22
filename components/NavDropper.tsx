@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react"
-import styled from "styled-components"
+import { useState } from "react";
+import styled from "styled-components";
 import ChevronDown from '../public/icons/chevron-down.svg';
 
 type Props = {

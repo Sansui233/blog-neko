@@ -10,7 +10,7 @@ export default function Loading() {
     const handleOnload = () => {
       setout(true)
       setTimeout(() => {
-        if(myRef.current){
+        if (myRef.current) {
           myRef.current.style.display = "none"
         }
       }, 1100);
@@ -19,7 +19,7 @@ export default function Loading() {
   }, [])
 
   return (
-    <div className={out?style.layoutHide:style.layout} ref={myRef}>
+    <div className={out ? style.layoutHide : style.layout} ref={myRef}>
       {/* <span className={style.loading}>Loading</span> */}
     </div>
   )

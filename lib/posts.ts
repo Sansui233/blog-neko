@@ -3,24 +3,34 @@ import path from 'path';
 import matter from 'gray-matter'
 import { dateToYMD } from './date';
 
-export const POSTDIR = path.join(process.cwd(), 'source', 'posts')
+export const POST_DIR = path.join(process.cwd(), 'source', 'posts')
+const CATEGORY_ALL = 'All Posts'
+const TAG_UNTAGGED = 'Untagged'
+
+type FrontMatter = {
+  title?: string,
+  date?: Date,
+  category?: string,
+  tags?: string | string[],
+  description?: string | string[],
+}
 
 const postsFileNames = (() => {
-  let fileNames = fs.readdirSync(POSTDIR);
+  let fileNames = fs.readdirSync(POST_DIR);
   fileNames = fileNames.filter(f => {
     return f.endsWith(".md") || f.endsWith(".mdx")
   })
   return fileNames
 })()
 
-export function getFrontMatter(fileName: string, dir = POSTDIR) {
+export function getFrontMatter(fileName: string, dir = POST_DIR) {
   const fullPath = path.join(dir, fileName)
   const fileContents = fs.readFileSync(fullPath, 'utf8')
   return matter(fileContents)
 }
 
 /**
- * used in post dynamic routes generation
+ * Get ids of all posts. Id is used in post url
  * @returns 
  */
 export function getAllPostIds() {
@@ -31,14 +41,6 @@ export function getAllPostIds() {
       }
     }
   })
-}
-
-type FrontMatter = {
-  title?: string,
-  date?: Date,
-  category?: string,
-  tags?: string | string[],
-  description?: string | string[],
 }
 
 export function getSortedPostsMeta() {
@@ -59,8 +61,6 @@ export function getSortedPostsMeta() {
   })
 }
 
-const CATEGORY_ALL = 'All Posts'
-
 export function getAllCategories() {
   const categories = new Map<string, number>()
   const posts = postsFileNames // 取出防止重复计算
@@ -80,7 +80,7 @@ export function getAllCategories() {
   return categories
 }
 
-export function getSortedCategoryPosts(c: string) {
+export function getPostsMetaInCategory(c: string) {
   const posts: {
     id: string,
     title: string,
@@ -126,8 +126,6 @@ export function getSortedTagPosts(t: string) {
   return posts.sort((a, b) => a.date < b.date ? 1 : -1)
 }
 
-const TAG_UNTAGGED = 'Untagged'
-
 export function getAllTags() {
   const tags = new Map<string, number>()
   tags.set(TAG_UNTAGGED, 0)
@@ -151,7 +149,7 @@ export function getAllTags() {
   return tags
 }
 
-export function getPostsTreeByTime(posts: {
+export function reconstructPostsByTime(posts: {
   id: string,
   title: string,
   date: Date,

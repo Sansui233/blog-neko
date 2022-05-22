@@ -1,12 +1,10 @@
-import { getAllCategories, getPostsTreeByTime, getSortedCategoryPosts } from "../../utils/posts";
-import { GetStaticPaths, GetStaticProps } from 'next'
+import { GetStaticPaths, GetStaticProps } from 'next';
 import Head from "next/head";
-import { CommonHeader, MainLayoutStyle } from "..";
-import Layout from "../../components/Layout";
 import styled from "styled-components";
-import { dateToYMD } from "../../utils/date";
-import Link from "next/link";
+import { CommonHeader } from "..";
+import Layout from "../../components/Layout";
 import TLContent from "../../components/TimelinePosts";
+import { getAllCategories, getPostsMetaInCategory, reconstructPostsByTime } from "../../lib/posts";
 import { textBoxShadow } from "../../styles/styles";
 
 type Props = {
@@ -103,12 +101,12 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
   let category = params!.id as string
-  const posts = getSortedCategoryPosts(category)
+  const posts = getPostsMetaInCategory(category)
 
   return {
     props: {
       category: category,
-      posts: getPostsTreeByTime(posts)
+      posts: reconstructPostsByTime(posts)
     }
   }
 }

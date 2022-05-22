@@ -1,4 +1,4 @@
-import Link from "next/link"
+import Link from "next/link";
 import styled from "styled-components";
 import { MainLayoutStyle } from "../pages";
 import { textBoxShadow } from "../styles/styles";

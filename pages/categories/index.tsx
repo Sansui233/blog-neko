@@ -2,10 +2,10 @@ import { GetStaticProps } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import styled from "styled-components";
-import { CommonHeader, MainLayoutStyle } from "..";
+import { CommonHeader } from "..";
 import Layout from "../../components/Layout";
-import { getAllCategories, getAllTags } from "../../utils/posts";
-import { CategoryLayoutStyle, CategoryTitle } from "../../components/TimelinePosts"
+import { CategoryLayoutStyle, CategoryTitle } from "../../components/TimelinePosts";
+import { getAllCategories, getAllTags } from "../../lib/posts";
 
 export default function Categories({ categories, tags }: {
   categories: {

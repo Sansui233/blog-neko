@@ -1,6 +1,6 @@
 import { GetStaticProps } from "next"
 import React, { useEffect } from "react"
-import { generateFeedFile } from "../utils/generate-rss"
+import { generateFeedFile } from "../lib/generate-rss"
 
 const Atom: React.FC = () => {
   useEffect(() => {

@@ -1,11 +1,9 @@
 import { GetStaticPaths, GetStaticProps } from "next";
 import Head from "next/head";
-import Link from "next/link";
-import { CommonHeader, MainLayoutStyle } from "..";
+import { CommonHeader } from "..";
 import Layout from "../../components/Layout";
 import TLContent from "../../components/TimelinePosts";
-import { dateToYMD } from "../../utils/date";
-import { getAllTags, getPostsTreeByTime, getSortedTagPosts } from "../../utils/posts";
+import { getAllTags, getSortedTagPosts, reconstructPostsByTime } from "../../lib/posts";
 
 type Props = {
   tag: string,
@@ -47,7 +45,7 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
   return {
     props: {
       tag: tag,
-      posts: getPostsTreeByTime(posts)
+      posts: reconstructPostsByTime(posts)
     }
   }
 }

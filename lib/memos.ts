@@ -2,9 +2,9 @@ import fs from "fs";
 import readline from 'readline'
 import path from "path"
 
-export const MEMOSDIR = path.join(process.cwd(), 'source', 'memos')
-const MemoCSRDataDir = path.join(process.cwd(), 'public', 'data', 'memos')
-const NumPerPage = 12
+export const MEMOS_DIR = path.join(process.cwd(), 'source', 'memos')
+const MEMO_CSR_DATA_DIR = path.join(process.cwd(), 'public', 'data', 'memos')
+const NUM_PER_PAGE = 12
 
 type MemoPost = {
   title: string;
@@ -12,7 +12,7 @@ type MemoPost = {
 }
 
 const getFileNames = () => {
-  let fileNames = fs.readdirSync(MEMOSDIR);
+  let fileNames = fs.readdirSync(MEMOS_DIR);
   return fileNames.filter(f => {
     return f.endsWith(".md")
   }).sort((a, b) => {
@@ -21,6 +21,7 @@ const getFileNames = () => {
 }
 
 /**
+ * Get memos by page
  * @param page number from 0
  * @returns 
  */
@@ -29,8 +30,8 @@ export async function getMemoPosts(page: number): Promise<MemoPost[]> {
 
   // 左闭右开, start from 0
   const postRange = ((page: number) => {
-    const start = page * NumPerPage
-    const end = start + NumPerPage
+    const start = page * NUM_PER_PAGE
+    const end = start + NUM_PER_PAGE
     return [start, end]
   })(page)
 
@@ -40,7 +41,7 @@ export async function getMemoPosts(page: number): Promise<MemoPost[]> {
 
   // Generate memos
   for (const fileName of fileNames) {
-    const fileStream = fs.createReadStream(path.join(MEMOSDIR, fileName))
+    const fileStream = fs.createReadStream(path.join(MEMOS_DIR, fileName))
     const rl = readline.createInterface({
       input: fileStream,
       crlfDelay: Infinity
@@ -93,7 +94,7 @@ export async function getMemoPages(): Promise<number> {
   let count = 0;
 
   for (const fileName of fileNames) {
-    const fileStream = fs.createReadStream(path.join(MEMOSDIR, fileName))
+    const fileStream = fs.createReadStream(path.join(MEMOS_DIR, fileName))
     const rl = readline.createInterface({
       input: fileStream,
       crlfDelay: Infinity
@@ -106,14 +107,14 @@ export async function getMemoPages(): Promise<number> {
     rl.close()
     fileStream.close()
   }
-  return Math.ceil(count / NumPerPage)
+  return Math.ceil(count / NUM_PER_PAGE)
 }
 
 
 
 
 /**
- * Generate CSR data File.
+ * Generate CSR data File
  * Seperate memos into different files
  */
 export async function genMemoJsonFile() {
@@ -123,7 +124,7 @@ export async function genMemoJsonFile() {
   let posts: MemoPost[] = []
   let isFrontMatter = false
   for (const fileName of fileNames) {
-    const fileStream = fs.createReadStream(path.join(MEMOSDIR, fileName))
+    const fileStream = fs.createReadStream(path.join(MEMOS_DIR, fileName))
     const rl = readline.createInterface({
       input: fileStream,
       crlfDelay: Infinity
@@ -141,7 +142,7 @@ export async function genMemoJsonFile() {
         }
       }
       if (line.startsWith("## ")) {
-        if (posts.length === NumPerPage) {
+        if (posts.length === NUM_PER_PAGE) {
           writeToFs(page, posts)
           posts = []
           page++
@@ -164,8 +165,8 @@ export async function genMemoJsonFile() {
 }
 
 function writeToFs(page: number, posts: MemoPost[]) {
-  mkdirsSync(MemoCSRDataDir)
-  fs.writeFileSync(`${MemoCSRDataDir}/${page}.json`, JSON.stringify(posts))
+  mkdirsSync(MEMO_CSR_DATA_DIR)
+  fs.writeFileSync(`${MEMO_CSR_DATA_DIR}/${page}.json`, JSON.stringify(posts))
 }
 
 function mkdirsSync(dirname: string) {

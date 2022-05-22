@@ -1,15 +1,15 @@
-import React, { useEffect } from 'react'
 import { init } from '@waline/client';
 import '@waline/client/dist/waline.css';
-import { SiteInfo } from "../site.config";
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
+import { siteInfo } from "../site.config";
 
 const Waline = () => {
   useEffect(() => {
     // 挂载 waline 评论系统
     init({
       el: '#waline',
-      serverURL: SiteInfo.walineApi,
+      serverURL: siteInfo.walineApi,
       path: window.location.pathname
     });
   }, [])

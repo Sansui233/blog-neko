@@ -1,13 +1,13 @@
-import '../styles/global.css'
 import type { AppProps } from 'next/app'
-import { ThemeProvider } from 'styled-components'
-import { darkTheme, genSystemTheme, lightTheme } from '../styles/theme'
-import { GlobalStyle } from '../styles/global'
-import { useEffect, useRef, useState } from 'react'
-import { emitter, getAppTheme, ThemeEvtName, ThemeMsg, ThemeCallBack } from '../utils/app-states'
-import * as gtag from '../lib/gtag'
 import { useRouter } from 'next/router'
 import Script from 'next/script'
+import { useEffect, useRef, useState } from 'react'
+import { ThemeProvider } from 'styled-components'
+import { emitter, getAppTheme, ThemeCallBack, ThemeMsg, THEME_EVT_NAME } from '../lib/app-states'
+import * as gtag from '../lib/gtag'
+import { GlobalStyle } from '../styles/global'
+import '../styles/global.css'
+import { darkTheme, genSystemTheme, lightTheme } from '../styles/theme'
 
 function MyApp({ Component, pageProps }: AppProps) {
 
@@ -43,7 +43,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         darkTheme : themeText === 'light' ?
           lightTheme : genSystemTheme())
     }
-    emitter.on(ThemeEvtName, themeCallback);
+    emitter.on(THEME_EVT_NAME, themeCallback);
 
     const systemThemeCallBack = () => {
       if (themeRef.current.mode === 'system') {
@@ -53,7 +53,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', systemThemeCallBack)
 
     return () => {
-      emitter.removeListener(ThemeEvtName, themeCallback)
+      emitter.removeListener(THEME_EVT_NAME, themeCallback)
       window.matchMedia("(prefers-color-scheme: dark)").removeEventListener('change', systemThemeCallBack)
     }
   }, [themeRef])

@@ -1,9 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 
-type Props = {}
-
-const Footer = (props: Props) => {
+const Footer = () => {
   return (
     <Container>
       <a href="https://github.com/sansui233"><i className='icon-github-rounded'></i></a>

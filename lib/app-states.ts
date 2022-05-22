@@ -5,7 +5,7 @@ import { EventEmitter } from 'events';
 export const emitter = new EventEmitter();
 
 // Theme
-export const ThemeEvtName = 'theme changed'
+export const THEME_EVT_NAME = 'theme changed'
 export type ThemeMsg = 'light' | 'dark' | 'system'
 export type ThemeCallBack = (theme: ThemeMsg) => void
 
@@ -15,7 +15,7 @@ export type ThemeCallBack = (theme: ThemeMsg) => void
  * @returns 
  */
 export function setAppTheme(theme: ThemeMsg): boolean {
-  if (emitter.emit(ThemeEvtName, theme)) {
+  if (emitter.emit(THEME_EVT_NAME, theme)) {
     window.localStorage.setItem('theme', theme)
     return true
   } else {
@@ -25,8 +25,8 @@ export function setAppTheme(theme: ThemeMsg): boolean {
 
 
 /**
- * get theme filed from local storage
- * @returns 'dark' or 'light'
+ * Get theme field from local storage
+ * @returns 'dark' 'light' or 'system'
  */
 export function getAppTheme(): ThemeMsg {
   return window.localStorage.getItem('theme') as ThemeMsg;

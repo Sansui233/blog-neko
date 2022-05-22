@@ -1,11 +1,11 @@
+import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote';
+import { serialize } from 'next-mdx-remote/serialize';
 import Head from "next/head";
-import { CommonHeader, MainLayoutStyle, PageDescription } from ".";
-import { serialize } from 'next-mdx-remote/serialize'
-import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote'
-import { MarkdownStyle } from "../styles/markdown";
-import remarkGfm from 'remark-gfm'
+import remarkGfm from 'remark-gfm';
 import styled from "styled-components";
+import { CommonHeader, MainLayoutStyle, PageDescription } from ".";
 import Layout from "../components/Layout";
+import { MarkdownStyle } from "../styles/markdown";
 
 
 const mdText = `

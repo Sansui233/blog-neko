@@ -5,8 +5,8 @@ import React, { useMemo, useState } from 'react'
 import styled from 'styled-components'
 import Layout from '../components/Layout'
 import { NavDropper } from '../components/NavDropper'
+import { getAllCategories, getSortedPostsMeta } from '../lib/posts'
 import { cardBoxShadow } from '../styles/styles'
-import { getAllCategories, getSortedPostsMeta } from '../utils/posts'
 
 type PostType = {
   id: string,

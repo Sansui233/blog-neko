@@ -1,18 +1,18 @@
 import { GetStaticProps } from "next";
-import Head from "next/head";
-import styled from "styled-components";
-import { MarkdownStyle } from "../styles/markdown";
-import { genMemoJsonFile, getMemoPages, getMemoPosts } from "../utils/memos";
-import React, { useEffect, useState } from "react";
-import { CommonHeader, MainLayoutStyle, PageDescription } from ".";
-import { serialize } from "next-mdx-remote/serialize";
-import remarkGfm from "remark-gfm";
 import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote";
-import Layout from "../components/Layout";
-import { textBoxShadow } from "../styles/styles";
+import { serialize } from "next-mdx-remote/serialize";
+import Head from "next/head";
 import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
+import remarkGfm from "remark-gfm";
+import styled from "styled-components";
+import { CommonHeader, MainLayoutStyle, PageDescription } from ".";
+import Layout from "../components/Layout";
 import Pagination from "../components/Pagination";
 import Waline from "../components/Waline";
+import { genMemoJsonFile, getMemoPages, getMemoPosts } from "../lib/memos";
+import { MarkdownStyle } from "../styles/markdown";
+import { textBoxShadow } from "../styles/styles";
 
 const MemoCSRAPI = '/data/memos'
 

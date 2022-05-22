@@ -1,7 +1,7 @@
 import Link from "next/link"
-import styled, { ThemeContext } from "styled-components"
 import { useContext, useMemo } from "react"
-import { getAppTheme, setAppTheme, ThemeMsg } from "../utils/app-states"
+import styled, { ThemeContext } from "styled-components"
+import { getAppTheme, setAppTheme, ThemeMsg } from "../lib/app-states"
 import { textStroke } from "../styles/styles"
 import MenuIcon from "./MenuIcon"
 
