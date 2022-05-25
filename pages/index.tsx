@@ -4,7 +4,6 @@ import Link from 'next/link'
 import React, { useMemo, useState } from 'react'
 import styled from 'styled-components'
 import Layout from '../components/Layout'
-import DivInViewPort from '../components/MountOnScroll/DivInViewPort'
 import { NavDropper } from '../components/NavDropper'
 import { getAllCategories, getSortedPostsMeta } from '../lib/posts'
 import { bottomFadeIn } from '../styles/animations'
@@ -55,21 +54,19 @@ const Home: NextPage<Props> = ({ posts, categories }: Props) => {
         <MainLayoutStyle>
           <NavDropper items={categories} current={currCategory} setCurrent={setCurrCategory} />
           <PostGrids>
-            {filteredPosts.map(p => (
-              <DivInViewPort key={p.id} placeHolderHeight="91vh" threshold={0.1}>
-                <Link href={'/posts/' + p.id} passHref={true}>
-                  <Card>
-                    <div className='card-content'>
-                      <Title>{p.title}</Title>
-                      <div className='meta'>
-                        <span className='date'>{p.date}</span>
-                        <span>{` | `}</span>
-                        {p.categories}
-                      </div>
+            {filteredPosts.map((p, i) => (
+              <Link key={p.id} href={'/posts/' + p.id} passHref={true}>
+                <Card>
+                  <div className='card-content'>
+                    <Title>{p.title}</Title>
+                    <div className='meta'>
+                      <span className='date'>{p.date}</span>
+                      <span>{` | `}</span>
+                      {p.categories}
                     </div>
-                  </Card>
-                </Link>
-              </DivInViewPort>
+                  </div>
+                </Card>
+              </Link>
             ))}
           </PostGrids>
         </MainLayoutStyle>

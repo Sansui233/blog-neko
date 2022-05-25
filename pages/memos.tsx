@@ -8,7 +8,6 @@ import remarkGfm from "remark-gfm";
 import styled from "styled-components";
 import { CommonHeader, MainLayoutStyle, PageDescription } from ".";
 import Layout from "../components/Layout";
-import DivInViewPort from "../components/MountOnScroll/DivInViewPort";
 import Pagination from "../components/Pagination";
 import Waline from "../components/Waline";
 import { genMemoJsonFile, getMemoPages, getMemoPosts } from "../lib/memos";
@@ -82,9 +81,7 @@ export default function Memos({ memoposts, pagelimit }: Props) {
         <MemoLayout>
           <MemoDescription style={{ marginBottom: '-2rem' }}>| 记录碎碎念是坏习惯 |</MemoDescription>
           {postsData.map(m => (
-            <DivInViewPort key={m.title} placeHolderHeight={"91vh"} threshold={0.1}>
-              <MemoCard memoPost={m} />
-            </DivInViewPort>
+            <MemoCard key={m.title} memoPost={m} />
           ))}
           <Pagination
             currTitle={`PAGE ${currPage + 1}`}
