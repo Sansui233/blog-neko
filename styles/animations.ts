@@ -8,6 +8,16 @@ export const fadeIn = keyframes`
   opacity: 1;
 }`
 
+export const bottomFadeIn = keyframes`
+0% {
+  opacity: 0;
+  transform: translateY(10px);
+}
+100% {
+  opacity: 1;
+  transform: translateY(0);
+}`
+
 export const textFocusIn = keyframes`
 0% {
   -webkit-filter: blur(12px);

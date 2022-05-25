@@ -12,6 +12,7 @@ import Pagination from "../../components/Pagination"
 import Waline from "../../components/Waline"
 import { dateToYMD } from "../../lib/date"
 import { getAllPostIds, getSortedPostsMeta, POST_DIR } from "../../lib/posts"
+import { bottomFadeIn } from "../../styles/animations"
 import { MarkdownStyle } from "../../styles/markdown"
 import { textBoxShadow } from "../../styles/styles"
 
@@ -128,6 +129,7 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
 const PostLayout = styled(MainLayoutStyle)`
   max-width: 750px;
   margin-top: 72px;
+  animation: ${bottomFadeIn} 1s ease;
 `
 
 const PostTitle = styled.div`

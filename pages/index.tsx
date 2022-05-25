@@ -4,8 +4,10 @@ import Link from 'next/link'
 import React, { useMemo, useState } from 'react'
 import styled from 'styled-components'
 import Layout from '../components/Layout'
+import DivInViewPort from '../components/MountOnScroll/DivInViewPort'
 import { NavDropper } from '../components/NavDropper'
 import { getAllCategories, getSortedPostsMeta } from '../lib/posts'
+import { bottomFadeIn } from '../styles/animations'
 import { cardBoxShadow } from '../styles/styles'
 
 type PostType = {
@@ -54,18 +56,20 @@ const Home: NextPage<Props> = ({ posts, categories }: Props) => {
           <NavDropper items={categories} current={currCategory} setCurrent={setCurrCategory} />
           <PostGrids>
             {filteredPosts.map(p => (
-              <Link key={p.id} href={'/posts/' + p.id} passHref={true}>
-                <Card>
-                  <div className='card-content'>
-                    <Title>{p.title}</Title>
-                    <div className='meta'>
-                      <span className='date'>{p.date}</span>
-                      <span>{` | `}</span>
-                      {p.categories}
+              <DivInViewPort key={p.id} placeHolderHeight="91vh" threshold={0.1}>
+                <Link href={'/posts/' + p.id} passHref={true}>
+                  <Card>
+                    <div className='card-content'>
+                      <Title>{p.title}</Title>
+                      <div className='meta'>
+                        <span className='date'>{p.date}</span>
+                        <span>{` | `}</span>
+                        {p.categories}
+                      </div>
                     </div>
-                  </div>
-                </Card>
-              </Link>
+                  </Card>
+                </Link>
+              </DivInViewPort>
             ))}
           </PostGrids>
         </MainLayoutStyle>
@@ -123,7 +127,7 @@ const Card = styled.a`
   min-height: 6rem;
   cursor: pointer;
   position: relative;
-
+  animation: ${bottomFadeIn} 1s ease;
   transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.1s;
   @media (any-hover: hover) {
     &:hover{

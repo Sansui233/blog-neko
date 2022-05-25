@@ -33,7 +33,6 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   // Theme onchange
   useEffect(() => {
-    console.log('useEffect')
     setTheme(getAppTheme() === 'dark' ?
       darkTheme : getAppTheme() === 'light' ?
         lightTheme : genSystemTheme())

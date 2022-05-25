@@ -8,9 +8,11 @@ import remarkGfm from "remark-gfm";
 import styled from "styled-components";
 import { CommonHeader, MainLayoutStyle, PageDescription } from ".";
 import Layout from "../components/Layout";
+import DivInViewPort from "../components/MountOnScroll/DivInViewPort";
 import Pagination from "../components/Pagination";
 import Waline from "../components/Waline";
 import { genMemoJsonFile, getMemoPages, getMemoPosts } from "../lib/memos";
+import { bottomFadeIn } from '../styles/animations';
 import { MarkdownStyle } from "../styles/markdown";
 import { textBoxShadow } from "../styles/styles";
 
@@ -31,7 +33,6 @@ export default function Memos({ memoposts, pagelimit }: Props) {
   const [postsData, setpostsData] = useState(memoposts)
 
   useEffect(() => {
-    console.log('Update ', JSON.stringify(router.query))
     let page = 0
     if (typeof (router.query.p) === 'string') {
       page = parseInt(router.query.p)
@@ -81,7 +82,9 @@ export default function Memos({ memoposts, pagelimit }: Props) {
         <MemoLayout>
           <MemoDescription style={{ marginBottom: '-2rem' }}>| 记录碎碎念是坏习惯 |</MemoDescription>
           {postsData.map(m => (
-            <MemoCard memoPost={m} key={m.title} />
+            <DivInViewPort key={m.title} placeHolderHeight={"91vh"} threshold={0.1}>
+              <MemoCard memoPost={m} />
+            </DivInViewPort>
           ))}
           <Pagination
             currTitle={`PAGE ${currPage + 1}`}
@@ -171,6 +174,7 @@ const StyledCard = styled.section<{
   max-height: ${props => props.isCollapse === true ? "19rem" : "unset"};
   overflow: hidden;
   margin: 2rem 0;
+  animation: ${bottomFadeIn} 1s ease;
   h2.title {
     text-align: center;
     font-size: 1.5rem;
