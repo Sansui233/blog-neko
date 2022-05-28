@@ -112,7 +112,6 @@ async function generateFeed() {
     link: siteInfo.domain,
     language: "zh-CN", // optional, used only in RSS 2.0, possible values: http://www.w3.org/TR/REC-html40/struct/dirlang.html#langcodes
     // image: `${SiteInfo.domain}/avatar-white.png`,
-    generator: "awesome",
     favicon: `${siteInfo.domain}/favicon.ico`,
     copyright: "All rights reserved 2022, Sansui",
     // updated: new Date(2013, 6, 14), // optional, default = today
