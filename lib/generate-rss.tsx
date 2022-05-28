@@ -7,6 +7,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import readline from 'readline';
 import remarkGfm from "remark-gfm";
 import { siteInfo } from "../site.config";
+import { dateToYMD } from "./date";
 import { MEMOS_DIR } from "./memos";
 import { getFrontMatter, POST_DIR } from './posts';
 
@@ -33,7 +34,7 @@ async function getPosts(): Promise<Item[]> {
         category: [
           {
             name: frontmatter.categories,
-            domain: `${siteInfo.domain}/posts/${frontmatter.categories}`
+            domain: `${siteInfo.domain}/categories/${frontmatter.categories}`
           }],
         content: renderToStaticMarkup(
           <MDXRemote compiledSource={contentsource}></MDXRemote>
@@ -50,7 +51,7 @@ async function getPosts(): Promise<Item[]> {
   return allPosts
 }
 
-// 最新 memo 文件中最近 5 条生成 rss
+// 最新 memo 文件中最近 6 条生成 rss
 async function getMemo(): Promise<Item> {
   const f = fs.readdirSync(MEMOS_DIR).filter(f => {
     return f.endsWith(".md")
@@ -66,7 +67,7 @@ async function getMemo(): Promise<Item> {
   let content = ""
   for await (const line of rl) {
     if (line.startsWith("## ")) {
-      if (count === 6) break
+      if (count === 7) break
       count++
     }
     if (count != 0) content += line + "\n" // push content
@@ -82,10 +83,11 @@ async function getMemo(): Promise<Item> {
   fileStream.close()
 
   const matterResult = getFrontMatter(f, MEMOS_DIR)
+  const updateDate = dateToYMD(matterResult.data.date)
 
   const res = {
     title: matterResult.data.title,
-    id: `${siteInfo.domain}/memos`,
+    id: `${siteInfo.domain}/memos?id=${updateDate}`, // 修改时间戳将触发 rss 对于本内容的更新
     link: `${siteInfo.domain}/memos`,
     date: matterResult.data.date,
     description: matterResult.data.description ? matterResult.data.description : '',

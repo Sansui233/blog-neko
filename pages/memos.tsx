@@ -105,7 +105,7 @@ export default function Memos({ memoposts, pagelimit }: Props) {
 
 function MemoCard({ memoPost }: { memoPost: MemoPost }) {
   const [isCollapse, setfisCollapse] = useState(true)
-  const shouldCollapse = memoPost.content.compiledSource.length > 1014 ? true : false
+  const shouldCollapse = memoPost.content.compiledSource.length > 1111 ? true : false
 
   function handleExpand(e: React.MouseEvent<HTMLDivElement>) {
     setfisCollapse(!isCollapse)
