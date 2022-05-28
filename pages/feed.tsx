@@ -4,7 +4,7 @@ import { generateFeedFile } from "../lib/generate-rss"
 
 const Atom: React.FC = () => {
   useEffect(() => {
-    window.location.href = "/atom.xml"
+    window.location.href = "/feed.json"
   }, [])
 
   return null

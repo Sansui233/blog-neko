@@ -118,7 +118,7 @@ async function generateFeed() {
     // generator: "awesome", // optional, default = 'Feed for Node.js'
     feedLinks: {
       //   json: "https://example.com/json",
-      atom: `${siteInfo.domain}/atom.xml`,
+      atom: `${siteInfo.domain}/rss`,
     },
     author: {
       name: "Sansui",
@@ -139,4 +139,6 @@ async function generateFeed() {
 export async function generateFeedFile() {
   const feed = await generateFeed()
   fs.writeFileSync("./public/atom.xml", feed.atom1());
+  fs.writeFileSync("./public/rss", feed.rss2());
+  fs.writeFileSync("./public/feed.json", feed.json1());
 }
