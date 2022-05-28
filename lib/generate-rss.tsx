@@ -28,7 +28,9 @@ async function getPosts(): Promise<Item[]> {
       return {
         title: frontmatter.title,
         id: `${siteInfo.domain}/posts/${id}`,
+        guid: `${siteInfo.domain}/posts/${id}`,
         link: `${siteInfo.domain}/posts/${id}`,
+        published: frontmatter.date,
         date: frontmatter.date,
         description: frontmatter.description ? frontmatter.description : '',
         category: [
@@ -88,8 +90,10 @@ async function getMemo(): Promise<Item> {
   const res = {
     title: matterResult.data.title,
     id: `${siteInfo.domain}/memos?id=${updateDate}`, // 修改时间戳将触发 rss 对于本内容的更新
+    guid: `${siteInfo.domain}/memos?id=${updateDate}`, // 修改时间戳将触发 rss 对于本内容的更新
     link: `${siteInfo.domain}/memos`,
     date: matterResult.data.date,
+    published: matterResult.data.date,
     description: matterResult.data.description ? matterResult.data.description : '',
     category: [
       {
