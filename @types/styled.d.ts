@@ -19,6 +19,7 @@ declare module 'styled-components' {
       shadowBg: string,
       memoGradient: FlattenSimpleInterpolation,
       navBgGradient: FlattenInterpolation,
+      filterDarker?: FlattenSimpleInterpolation,
     },
   }
 }

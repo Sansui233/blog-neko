@@ -44,6 +44,12 @@ const Home: NextPage<Props> = ({ posts, categories }: Props) => {
     }
   }, [currCategory, posts, categories])
 
+  // const transition = useTransition(filteredPosts, {
+  //   trail: 100,
+  //   from: { opacity: 0, y:'10px' }, 
+  //   enter: { opacity: 1, y:'0px' }
+  // })
+
   return (
     <div>
       <Head>
@@ -54,24 +60,36 @@ const Home: NextPage<Props> = ({ posts, categories }: Props) => {
         <MainLayoutStyle>
           <NavDropper items={categories} current={currCategory} setCurrent={setCurrCategory} />
           <PostGrids>
-            {filteredPosts.map((p, i) => (
-              <Link key={p.id} href={'/posts/' + p.id} passHref={true}>
-                <Card>
-                  <div className='card-content'>
-                    <Title>{p.title}</Title>
-                    <div className='meta'>
-                      <span className='date'>{p.date}</span>
-                      <span>{` | `}</span>
-                      {p.categories}
-                    </div>
-                  </div>
-                </Card>
-              </Link>
-            ))}
+            {filteredPosts.map((post, i) => {
+              return (<ArticleItem key={post.id} p={post} i={i}/>)
+            })}
+            {/* {transition((style, p, _, i) => {
+              return <ArticleItem p={p} springStyle={style} key={p.id} index={i}/>
+            })} */}
           </PostGrids>
         </MainLayoutStyle>
       </Layout>
     </div>
+  )
+}
+
+function ArticleItem({p, i}:{
+  p: PostType,
+  i: number
+}){
+  return (
+      <Link href={'/posts/' + p.id} passHref={true}>
+        <Card style={{animationDelay: (i * 100).toString() + 'ms'}}>
+          <div className='card-content'>
+            <Title>{p.title}</Title>
+            <div className='meta'>
+              <span className='date'>{p.date}</span>
+              <span>{` | `}</span>
+              {p.categories}
+            </div>
+          </div>
+        </Card>
+      </Link>
   )
 }
 
@@ -121,15 +139,17 @@ const PostGrids = styled.section`
 
 const Card = styled.a`
   display: block;
-  min-height: 6rem;
+  min-height: 7rem;
+  border-radius: 1rem;
   cursor: pointer;
   position: relative;
-  animation: ${bottomFadeIn} 1s ease;
   transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.1s;
+  opacity: 0;
+  animation: ${bottomFadeIn} .5s ease;
+  animation-fill-mode: forwards;
   @media (any-hover: hover) {
     &:hover{
       ${() => cardBoxShadow}
-      transform: scale(1.1);
     }
   }
 

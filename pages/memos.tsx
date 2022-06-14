@@ -10,7 +10,7 @@ import { CommonHeader, MainLayoutStyle, PageDescription } from ".";
 import Layout from "../components/Layout";
 import Pagination from "../components/Pagination";
 import Waline from "../components/Waline";
-import { genMemoJsonFile, getMemoPages, getMemoPosts } from "../lib/memos";
+import { getMemoPages, getMemoPosts } from "../lib/memos";
 import { bottomFadeIn } from '../styles/animations';
 import { MarkdownStyle } from "../styles/markdown";
 import { textBoxShadow } from "../styles/styles";
@@ -105,6 +105,7 @@ export default function Memos({ memoposts, pagelimit }: Props) {
 
 function MemoCard({ memoPost }: { memoPost: MemoPost }) {
   const [isCollapse, setfisCollapse] = useState(true)
+  const ref = React.useRef<HTMLDivElement>(null)
   const shouldCollapse = memoPost.content.compiledSource.length > 1111 ? true : false
 
   function handleExpand(e: React.MouseEvent<HTMLDivElement>) {
@@ -112,7 +113,7 @@ function MemoCard({ memoPost }: { memoPost: MemoPost }) {
   }
 
   return (
-    <StyledCard isCollapse={shouldCollapse === false ? false : isCollapse}>
+    <StyledCard isCollapse={shouldCollapse === false ? false : isCollapse} ref={ref}>
       <h2 className="title">{memoPost.title}</h2>
       <MemoMarkdown bottomSpace={shouldCollapse}>
         <MDXRemote {...memoPost.content} />
@@ -145,7 +146,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   }))
 
   // 生成 CSR 所需 JSON
-  genMemoJsonFile()
+  // genMemoJsonFile()
 
   return {
     props: {
@@ -168,10 +169,11 @@ const StyledCard = styled.section<{
   isCollapse: boolean
 }>`
   position: relative;
-  max-height: ${props => props.isCollapse === true ? "19rem" : "unset"};
+  max-height: ${props => props.isCollapse === true ? "19rem" : "5000px"};
   overflow: hidden;
   margin: 2rem 0;
   animation: ${bottomFadeIn} 1s ease;
+  transition: max-height 1.5s ease;
   h2.title {
     text-align: center;
     font-size: 1.5rem;
