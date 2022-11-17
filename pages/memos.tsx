@@ -146,7 +146,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   }))
 
   // 生成 CSR 所需 JSON，SSR 需独立出逻辑
-  // genMemoJsonFile()
+  genMemoJsonFile()
 
   return {
     props: {
