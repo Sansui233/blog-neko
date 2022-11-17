@@ -64,7 +64,7 @@ export default function Memos({ memoposts, pagelimit }: Props) {
   const currPage = (() => {
     if (typeof (router.query.p) === 'string') {
       const page = parseInt(router.query.p)
-      if (isNaN(page)) {
+      if (!isNaN(page)) {
         return page
       }
     }
@@ -145,8 +145,8 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     }
   }))
 
-  // 生成 CSR 所需 JSON
-  genMemoJsonFile()
+  // 生成 CSR 所需 JSON，SSR 需独立出逻辑
+  // genMemoJsonFile()
 
   return {
     props: {
