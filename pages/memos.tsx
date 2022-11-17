@@ -35,7 +35,7 @@ export default function Memos({ memoposts, pagelimit }: Props) {
     let page = 0
     if (typeof (router.query.p) === 'string') {
       page = parseInt(router.query.p)
-      if (page === NaN) {
+      if (isNaN(page)) {
         console.error('Wrong query p=', router.query.p)
         return
       }
@@ -64,7 +64,7 @@ export default function Memos({ memoposts, pagelimit }: Props) {
   const currPage = (() => {
     if (typeof (router.query.p) === 'string') {
       const page = parseInt(router.query.p)
-      if (page !== NaN) {
+      if (isNaN(page)) {
         return page
       }
     }
