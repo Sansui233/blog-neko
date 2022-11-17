@@ -31,7 +31,7 @@ export default function Header() {
       }
     };
 
-    const throttled = throttle(onScroll, 500)
+    const throttled = throttle(onScroll, 80)
     globalThis.addEventListener("scroll", throttled, true);
 
     return () => window.removeEventListener("scroll", throttled);

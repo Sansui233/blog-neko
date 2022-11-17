@@ -10,7 +10,7 @@ import { CommonHeader, MainLayoutStyle, PageDescription } from ".";
 import Layout from "../components/Layout";
 import Pagination from "../components/Pagination";
 import Waline from "../components/Waline";
-import { getMemoPages, getMemoPosts } from "../lib/memos";
+import { genMemoJsonFile, getMemoPages, getMemoPosts } from "../lib/memos";
 import { bottomFadeIn } from '../styles/animations';
 import { MarkdownStyle } from "../styles/markdown";
 import { textBoxShadow } from "../styles/styles";
@@ -146,7 +146,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   }))
 
   // 生成 CSR 所需 JSON
-  // genMemoJsonFile()
+  genMemoJsonFile()
 
   return {
     props: {
