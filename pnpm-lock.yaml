@@ -20,7 +20,7 @@ specifiers:
   react-intersection-observer: ^9.2.2
   remark-gfm: ^3.0.1
   sass: ^1.51.0
-  styled-components: ^5.3.5
+  styled-components: ^5.3.6
   typescript: ^4.7
 
 dependencies:

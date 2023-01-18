@@ -14,9 +14,9 @@ export default function About() {
         <CommonHeader />
       </Head>
       <Layout>
-            <Hero>
-                <span>{"Hi, I'm Sansui"}</span>
-            </Hero>
+        <Hero>
+          <span>{"Hi, I'm Sansui"}</span>
+        </Hero>
         <MainLayoutStyle>
           <AboutDescription>| 记录一些思考和吐槽 |</AboutDescription>
           <AnimatedMarkdown>
@@ -63,6 +63,8 @@ const Hero = styled.h1`
   text-align: center;
   margin: 0px 0px 0.5em;
   padding: 15% 0px;
+  background-color: #666E6B;
+  background-image: #666E6B;
   background-image: url(/imgs/bg.jpg);
   background-size: cover;
   background-position: center 40%;
