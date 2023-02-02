@@ -149,7 +149,7 @@ const MetaStyle = styled.span`
     top: -.8em;
     left: 0;
     height: 1px;
-    width: 133%;
+    width: 100%;
     background: ${p => p.theme.colors.gold};
   }
   // border-top: 1px solid;
