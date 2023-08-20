@@ -9,7 +9,7 @@ import remarkGfm from "remark-gfm";
 import { siteInfo } from "../site.config";
 import { dateToYMD } from "./date";
 import { MEMOS_DIR } from "./memos";
-import { getFrontMatter, POST_DIR } from './posts';
+import { POST_DIR, getFrontMatter } from './posts';
 
 async function getPosts(): Promise<Item[]> {
   let fileNames = fs.readdirSync(POST_DIR);
@@ -39,7 +39,7 @@ async function getPosts(): Promise<Item[]> {
             domain: `${siteInfo.domain}/categories/${frontmatter.categories}`
           }],
         content: renderToStaticMarkup(
-          <MDXRemote compiledSource={contentsource}></MDXRemote>
+          <MDXRemote compiledSource={contentsource} scope={null} frontmatter={null}></MDXRemote>
         )
       }
     }))
@@ -100,7 +100,7 @@ async function getMemo(): Promise<Item> {
         name: matterResult.data.categories
       }],
     content: renderToStaticMarkup(
-      <MDXRemote compiledSource={mdxSource.compiledSource}></MDXRemote>
+      <MDXRemote compiledSource={mdxSource.compiledSource} scope={null} frontmatter={null}></MDXRemote>
     )
   }
 

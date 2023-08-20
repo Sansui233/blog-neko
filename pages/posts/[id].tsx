@@ -11,7 +11,7 @@ import Layout from "../../components/Layout"
 import Pagination from "../../components/Pagination"
 import Waline from "../../components/Waline"
 import { dateToYMD } from "../../lib/date"
-import { getAllPostIds, getSortedPostsMeta, POST_DIR } from "../../lib/posts"
+import { POST_DIR, getAllPostIds, getSortedPostsMeta } from "../../lib/posts"
 import { bottomFadeIn } from "../../styles/animations"
 import { MarkdownStyle } from "../../styles/markdown"
 import { textBoxShadow } from "../../styles/styles"
@@ -66,7 +66,7 @@ export default function Post({ mdxSource, nextPost, prevPost }: Props) {
             </MetaStyle>
           </PostTitle>
           <MarkdownStyle>
-            <MDXRemote compiledSource={source} />
+            <MDXRemote compiledSource={source} scope={null} frontmatter={null}/>
           </MarkdownStyle>
           <div style={{ textAlign: 'right', opacity: .5, fontSize: '0.875rem', margin: "4rem 0 2rem 0" }}>
             更新于 {frontmatter.date}
