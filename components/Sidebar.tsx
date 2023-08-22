@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { useContext, useMemo } from "react"
 import styled, { ThemeContext } from "styled-components"
-import { getAppTheme, setAppTheme, ThemeMsg } from "../lib/app-states"
+import { ThemeMsg, getAppTheme, setAppTheme } from "../lib/app-states"
 import { textStroke } from "../styles/styles"
 import MenuIcon from "./MenuIcon"
 
@@ -18,6 +18,7 @@ export default function Sidebar({ isShow, toggle }: Props) {
     const targetTheme = (t === 'system' ?
       'dark' : t === 'dark' ?
         'light' : 'system') as ThemeMsg;
+
     setAppTheme(targetTheme)
   }
 

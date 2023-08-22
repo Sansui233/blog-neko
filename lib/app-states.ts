@@ -5,7 +5,7 @@ import { EventEmitter } from 'events';
 export const emitter = new EventEmitter();
 
 // Theme
-export const THEME_EVT_NAME = 'theme changed'
+export const THEME_CHANGED_EVT = 'theme changed'
 export type ThemeMsg = 'light' | 'dark' | 'system'
 export type ThemeCallBack = (theme: ThemeMsg) => void
 
@@ -15,7 +15,7 @@ export type ThemeCallBack = (theme: ThemeMsg) => void
  * @returns 
  */
 export function setAppTheme(theme: ThemeMsg): boolean {
-  if (emitter.emit(THEME_EVT_NAME, theme)) {
+  if (emitter.emit(THEME_CHANGED_EVT, theme)) {
     window.localStorage.setItem('theme', theme)
     return true
   } else {
@@ -29,5 +29,11 @@ export function setAppTheme(theme: ThemeMsg): boolean {
  * @returns 'dark' 'light' or 'system'
  */
 export function getAppTheme(): ThemeMsg {
-  return window.localStorage.getItem('theme') as ThemeMsg;
+  const themeLS = window.localStorage.getItem('theme')
+  if (themeLS === null) {
+    // 无Cookie默认为跟随系统，在_app.tsx中首次加载也是跟随系统
+    return 'system'
+  }else {
+    return themeLS as ThemeMsg;
+  }
 }

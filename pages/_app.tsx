@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import Script from 'next/script'
 import { useEffect, useRef, useState } from 'react'
 import { ThemeProvider } from 'styled-components'
-import { emitter, getAppTheme, ThemeCallBack, ThemeMsg, THEME_EVT_NAME } from '../lib/app-states'
+import { THEME_CHANGED_EVT, ThemeCallBack, ThemeMsg, emitter, getAppTheme } from '../lib/app-states'
 import * as gtag from '../lib/gtag'
 import { GlobalStyle } from '../styles/global'
 import '../styles/global.css'
@@ -31,7 +31,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   useEffect(() => { themeRef.current = theme }, [theme])
 
-  // Theme onchange
+  // Set Global Theme Context
   useEffect(() => {
     setTheme(getAppTheme() === 'dark' ?
       darkTheme : getAppTheme() === 'light' ?
@@ -42,7 +42,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         darkTheme : themeText === 'light' ?
           lightTheme : genSystemTheme())
     }
-    emitter.on(THEME_EVT_NAME, themeCallback);
+    emitter.on(THEME_CHANGED_EVT, themeCallback);
 
     const systemThemeCallBack = () => {
       if (themeRef.current.mode === 'system') {
@@ -52,7 +52,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', systemThemeCallBack)
 
     return () => {
-      emitter.removeListener(THEME_EVT_NAME, themeCallback)
+      emitter.removeListener(THEME_CHANGED_EVT, themeCallback)
       window.matchMedia("(prefers-color-scheme: dark)").removeEventListener('change', systemThemeCallBack)
     }
   }, [themeRef])
