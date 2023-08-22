@@ -8,7 +8,7 @@ shopt -s extglob
 rm -r "$TARGETDIR"/!(".git"|".gitignore")
 
 # 将当前目录下的out文件夹中的所有文件复制到target directory
-cp out/* "$TARGETDIR"/
+cp -r out/* "$TARGETDIR"/
 
 # 进入target directory
 cd "$TARGETDIR"
