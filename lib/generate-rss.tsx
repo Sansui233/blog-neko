@@ -19,7 +19,16 @@ async function getPosts(): Promise<Item[]> {
   let allPosts: Item[] = await Promise.all(
     fileNames.map(async fileName => {
       const fileContents = fs.readFileSync(path.join(POST_DIR, fileName), 'utf-8')
-      const mdxSource = await serialize(fileContents, { parseFrontmatter: true })
+      const mdxSource = await serialize(
+        fileContents, 
+        { 
+          mdxOptions: {
+            remarkPlugins: [remarkGfm],
+            rehypePlugins: [],
+            format: 'mdx',
+          },
+          parseFrontmatter: true
+        })
 
       const frontmatter = mdxSource.frontmatter! as any
       const contentsource = mdxSource.compiledSource

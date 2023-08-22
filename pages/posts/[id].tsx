@@ -5,6 +5,7 @@ import { serialize } from 'next-mdx-remote/serialize'
 import Head from "next/head"
 import Link from "next/link"
 import path from "path"
+import remarkGfm from "remark-gfm"
 import styled from "styled-components"
 import { CommonHeader, MainLayoutStyle } from ".."
 import Layout from "../../components/Layout"
@@ -97,7 +98,16 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
   const id = params!.id as string
   const source = readFileSync(path.join(POST_DIR, `${id}.md`), 'utf-8')
-  const mdxSource = await serialize(source, { parseFrontmatter: true })
+  const mdxSource = await serialize(
+    source, 
+    { 
+      mdxOptions: {
+        remarkPlugins: [remarkGfm],
+        rehypePlugins: [],
+        format: 'mdx',
+      },
+      parseFrontmatter: true
+    })
 
   // Process Date
   const fm = mdxSource.frontmatter! as any
