@@ -21,7 +21,9 @@ export const siteInfo = {
 }
 ```
 
-4. `npm install`, `npm run build`,`npm run start` 即可。  
+4. `npm install`, `npm run build`,`npm run start` 即可。
+
+5. 部署参考 deploy.sh，需要修改目标文件夹和 git push 的分支名。我个人使用的是 github pages，同时 vercel 拉取 github 的分支。
 
 其他地方是写死配置，需要自行改动
 
