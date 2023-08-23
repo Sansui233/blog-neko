@@ -19,6 +19,7 @@ import { textBoxShadow } from "../../styles/styles"
 
 type Props = {
   mdxSource: MDXRemoteSerializeResult,
+  excerpt: string,
   nextPost?: {
     title: string,
     link: string,
@@ -29,15 +30,19 @@ type Props = {
   } | null
 }
 
-export default function Post({ mdxSource, nextPost, prevPost }: Props) {
+export default function Post({ mdxSource, nextPost, prevPost, excerpt }: Props) {
   const frontmatter = mdxSource.frontmatter! as any
   const source = mdxSource.compiledSource
 
-  function genTags(tags: any) {
-    tags = typeof (tags) === "string" ? [tags] : tags
+  const description = frontmatter.description ?
+    (frontmatter.description as string).concat(excerpt)
+    : excerpt
+
+  function genTags(tags: string | Array<string>) {
+    const tagList = typeof (tags) === "string" ? [tags] : tags
     return (
       <>
-        {tags.map((tag: string) => {
+        {tagList.map((tag: string) => {
           return <Link href={`/tags/${tag}`} passHref={true} key={tag}>
             <StyledLinkGray>{`#${tag} `}</StyledLinkGray>
           </Link>
@@ -46,10 +51,22 @@ export default function Post({ mdxSource, nextPost, prevPost }: Props) {
     )
   }
 
+  // use tags and keywords in frontmatter as keywords in <meta>
+  function getKeywords(fm: any) {
+    const tagList = typeof (fm.tags) === "string" ? [fm.tags] : fm.tags
+    if (fm.keywords !== null && typeof (fm.keywords) === "string") {
+      return tagList.join().concat(', ').concat(fm.keywords.replaceAll('，',', '))
+    } else {
+      return tagList.join()
+    }
+  }
+
   return (
     <>
       <Head>
         <title>{frontmatter.title}</title>
+        <meta name="description" content={description}></meta>
+        <meta name="keywords" content={getKeywords(frontmatter)}></meta>
         <CommonHeader />
       </Head>
       <Layout>
@@ -67,7 +84,7 @@ export default function Post({ mdxSource, nextPost, prevPost }: Props) {
             </MetaStyle>
           </PostTitle>
           <MarkdownStyle>
-            <MDXRemote compiledSource={source} scope={null} frontmatter={null}/>
+            <MDXRemote compiledSource={source} scope={null} frontmatter={null} />
           </MarkdownStyle>
           <div style={{ textAlign: 'right', opacity: .5, fontSize: '0.875rem', margin: "4rem 0 2rem 0" }}>
             更新于 {frontmatter.date}
@@ -97,10 +114,21 @@ export const getStaticPaths: GetStaticPaths = async () => {
 // ONE POST Data
 export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
   const id = params!.id as string
-  const source = readFileSync(path.join(POST_DIR, `${id}.md`), 'utf-8')
+  const mdContent = readFileSync(path.join(POST_DIR, `${id}.md`), 'utf-8') // TODO 没有处理mdx的后缀
+
+  // 获取摘要，分割YAML头和Markdown正文
+  const yamlSeparator = '---\r\n';
+  let sepIndex = mdContent.indexOf('---\n', 5)
+  if (sepIndex === -1) {
+    sepIndex = mdContent.indexOf('---\r\n', 5)
+  }
+  const mdBodyStart = mdContent.substring(sepIndex + yamlSeparator.length + 1); // Start at 5 to skip the first seperator
+  const excerpt = mdBodyStart.replace(/\n/g, ' ').substring(0, 144);
+
+  // Process Content
   const mdxSource = await serialize(
-    source, 
-    { 
+    mdContent,
+    {
       mdxOptions: {
         remarkPlugins: [remarkGfm],
         rehypePlugins: [],
@@ -132,6 +160,7 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
       mdxSource,
       prevPost: prevPost,
       nextPost: nextPost,
+      excerpt
     }
   }
 }

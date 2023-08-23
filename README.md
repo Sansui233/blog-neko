@@ -8,7 +8,8 @@ https://sansui233.com
 
 ## 使用
 1. 把 md 文件放在 source/posts/ 目录下。  
-  - yaml 头必须有 title, date, categories 和 tags。因为是自用没有写适配。  
+  - yaml 头必须有 title, date, categories 和 tags
+  - yaml 头可以选择添加 description 和 keywords（用于seo），具体见[source/posts](https://github.com/Sansui233/blog/tree/master/source/posts)中的示例
   - date 字段格式为：2022-05-16 05:20:16
 2. 把一个新的 md 文件放在 source/memos/ 目录下。  memo 用于短文吐槽（俗称灌水）， md 文件中的每一个二级标题生成一个 memo。除非更改 memo 的 yaml 头，否则 memo 不会生成新的 rss。不想要这个模块从 header 中删掉相应元素就行。
 3. 在工作目录下添加 `site.config.js`

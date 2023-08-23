@@ -4,6 +4,7 @@ date: 2016-03-24 19:23:17
 categories: 其他
 tags: 
   - blog
+keywords: 博客, hexo, next.js
 ---
 
 这个文件记录了此博客的外观变化。从2016年开始，使用 hexo 建立博客。
