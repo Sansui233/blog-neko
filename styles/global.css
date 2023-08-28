@@ -125,20 +125,20 @@ pre code {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-material-label:before {
+  content: "\e90e";
+}
+.icon-material-folder_open:before {
+  content: "\e90b";
+}
 .icon-heart-o:before {
   content: "\e900";
 }
 .icon-heart:before {
   content: "\e901";
 }
-.icon-tags:before {
-  content: "\e902";
-}
 .icon-tag:before {
   content: "\e903";
-}
-.icon-folder:before {
-  content: "\e904";
 }
 .icon-email-rounded:before {
   content: "\e905";
@@ -146,17 +146,11 @@ pre code {
 .icon-github-rounded:before {
   content: "\e906";
 }
-.icon-instagram-rounded:before {
-  content: "\e907";
-}
 .icon-rss-rounded:before {
   content: "\e908";
 }
 .icon-twitter-rounded:before {
   content: "\e909";
-}
-.icon-iconmonstr-rounded:before {
-  content: "\e90a";
 }
 .icon-arrow-right2:before {
   content: "\ea3c";
@@ -164,7 +158,6 @@ pre code {
 .icon-arrow-left2:before {
   content: "\ea40";
 }
-
 
 /*********************************************************************/
 /************************** Main *************************************/

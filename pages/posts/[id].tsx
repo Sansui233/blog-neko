@@ -43,7 +43,7 @@ export default function Post({ mdxSource, nextPost, prevPost, excerpt }: Props) 
       {tagList.map((tag: string) => {
         return (
           <StyledLink href={`/tags/${tag}`} passHref={true} key={tag}>
-            <IcoText className='icon-tag' />
+            <i style={{paddingRight:"0.15em"}} className='icon-material-label' />
             {`${tag} `}
           </StyledLink>
         );
@@ -78,7 +78,7 @@ export default function Post({ mdxSource, nextPost, prevPost, excerpt }: Props) 
             {genTags(frontmatter.tags)}
             {" in "}
             <StyledLink href={`/categories/${frontmatter.categories}`} passHref={true}>
-              <IcoText className='icon-folder' />
+              <i style={{paddingRight:"0.15em"}} className='icon-material-folder_open' />
               {frontmatter.categories}
             </StyledLink>
           </MetaStyle>
@@ -191,9 +191,6 @@ const MetaStyle = styled.span`
     background: ${p => p.theme.colors.gold};
   }
   // border-top: 1px solid;
-`
-const IcoText = styled.i`
-  padding: 0.15em;
 `
 
 const StyledLink = styled(Link)`

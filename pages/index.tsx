@@ -61,7 +61,7 @@ const Home: NextPage<Props> = ({ posts, categories }: Props) => {
           <NavDropper items={categories} current={currCategory} setCurrent={setCurrCategory} />
           <PostGrids>
             {filteredPosts.map((post, i) => {
-              return (<ArticleItem key={post.id} p={post} i={i}/>)
+              return (<ArticleItem key={post.id} p={post} i={i} />)
             })}
             {/* {transition((style, p, _, i) => {
               return <ArticleItem p={p} springStyle={style} key={p.id} index={i}/>
@@ -73,23 +73,22 @@ const Home: NextPage<Props> = ({ posts, categories }: Props) => {
   )
 }
 
-function ArticleItem({p, i}:{
+function ArticleItem({ p, i }: {
   p: PostType,
   i: number
-}){
+}) {
   return (
-    <Link href={'/posts/' + p.id} passHref={true} legacyBehavior>
-      <Card style={{animationDelay: (i * 100).toString() + 'ms'}}>
-        <div className='card-content'>
-          <Title>{p.title}</Title>
-          <div className='meta'>
-            <span className='date'>{p.date}</span>
-            <span>{` | `}</span>
-            {p.categories}
-          </div>
+    <Card href={'/posts/' + p.id} passHref={true} style={{ animationDelay: (i * 100).toString() + 'ms' }}>
+      <div className='card-content'>
+        <Title>{p.title}</Title>
+        <div className='meta'>
+          <span className='date'>{p.date}</span>
+          <span>{` | `}</span>
+          <i className='icon-material-folder_open' style={{padding: "0.2em"}}/>
+          {p.categories}
         </div>
-      </Card>
-    </Link>
+      </div>
+    </Card>
   );
 }
 
@@ -137,7 +136,7 @@ const PostGrids = styled.section`
   }
 `
 
-const Card = styled.a`
+const Card = styled(Link)`
   display: block;
   min-height: 7rem;
   border-radius: 1rem;
