@@ -15,45 +15,43 @@ export default function Categories({ categories, tags }: {
     [k: string]: number;
   }
 }) {
-  return (
-    <>
-      <Head>
-        <title>{"Sansui's Blog - Categories"}</title>
-        <CommonHeader />
-      </Head>
-      <Layout>
-        <CategoryLayoutStyle>
-          <CategoryTitle>
-            <span>CATEGORIES</span>
-            <h1>分类</h1>
-          </CategoryTitle>
-          <Container>
-            {Object.keys(categories).map(k => {
-              return (
-                <Link href={`/categories/${k}`} passHref={true} key={k}>
-                  <LabelStyle>{`${k}(${categories[k]})`}</LabelStyle>
-                </Link>
-              )
-            })}
-          </Container>
-          <CategoryTitle>
-            <span>TAGS</span>
-            <h1>标签</h1>
-          </CategoryTitle>
-          <Container>
-            {Object.keys(tags).map(k => {
-              if (tags[k] === 0) return
-              return (
-                <Link href={`/tags/${k}`} passHref={true} key={k}>
-                  <LabelStyle>{`${k}(${tags[k]})`}</LabelStyle>
-                </Link>
-              )
-            })}
-          </Container>
-        </CategoryLayoutStyle>
-      </Layout>
-    </>
-  )
+  return <>
+    <Head>
+      <title>{"Sansui's Blog - Categories"}</title>
+      <CommonHeader />
+    </Head>
+    <Layout>
+      <CategoryLayoutStyle>
+        <CategoryTitle>
+          <span>CATEGORIES</span>
+          <h1>分类</h1>
+        </CategoryTitle>
+        <Container>
+          {Object.keys(categories).map(k => {
+            return (
+              <Link href={`/categories/${k}`} passHref={true} key={k} legacyBehavior>
+                <LabelStyle>{`${k}(${categories[k]})`}</LabelStyle>
+              </Link>
+            );
+          })}
+        </Container>
+        <CategoryTitle>
+          <span>TAGS</span>
+          <h1>标签</h1>
+        </CategoryTitle>
+        <Container>
+          {Object.keys(tags).map(k => {
+            if (tags[k] === 0) return
+            return (
+              <Link href={`/tags/${k}`} passHref={true} key={k} legacyBehavior>
+                <LabelStyle>{`${k}(${tags[k]})`}</LabelStyle>
+              </Link>
+            );
+          })}
+        </Container>
+      </CategoryLayoutStyle>
+    </Layout>
+  </>;
 }
 
 export const getStaticProps: GetStaticProps = async () => {

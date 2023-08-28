@@ -39,8 +39,8 @@ export function getAllPostIds() {
       params: {
         id: f.replace(/\.mdx?$/, '')
       }
-    }
-  })
+    };
+  });
 }
 
 export function getSortedPostsMeta() {

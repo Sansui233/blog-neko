@@ -19,7 +19,7 @@ const Pagination: React.FC<Props> = (props) => {
     <Layout>
       {props.prevPage &&
         <div style={{ flex: "1 1 auto" }}>
-          <Link href={props.prevPage.link} passHref={true}>
+          <Link href={props.prevPage.link} passHref={true} legacyBehavior>
             <PageBtn style={{ justifyContent: "flex-start" }}><span><i className="icon-arrow-left2" />&nbsp;{props.prevPage.title}</span></PageBtn>
           </Link>
         </div>
@@ -27,13 +27,13 @@ const Pagination: React.FC<Props> = (props) => {
       <span>{props.currTitle ? props.currTitle : ''}</span>
       {props.nextPage &&
         <div style={{ flex: "1 1 auto" }}>
-          <Link href={props.nextPage.link} passHref={true}>
+          <Link href={props.nextPage.link} passHref={true} legacyBehavior>
             <PageBtn style={{ justifyContent: "flex-end" }}><span>{props.nextPage.title}&nbsp;<i className="icon-arrow-right2" /></span></PageBtn>
           </Link>
         </div>
       }
     </Layout>
-  )
+  );
 }
 
 const Layout = styled.div`

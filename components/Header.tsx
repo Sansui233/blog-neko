@@ -48,7 +48,7 @@ export default function Header() {
         <Avatar >
           <Link href="/" passHref={true}>
             {/*eslint-disable-next-line @next/next/no-img-element*/}
-            <a><img src={theme!.assets.favico} alt="Sansui" /></a>
+            <img src={theme!.assets.favico} alt="Sansui" />
           </Link>
         </Avatar>
         <Nav>
@@ -66,7 +66,7 @@ export default function Header() {
         人活着就是为了卡卡西
       </PlaceHolder>
     </React.Fragment>
-  )
+  );
 }
 
 const PlaceHolder = styled.div`

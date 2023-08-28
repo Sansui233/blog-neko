@@ -78,19 +78,19 @@ function ArticleItem({p, i}:{
   i: number
 }){
   return (
-      <Link href={'/posts/' + p.id} passHref={true}>
-        <Card style={{animationDelay: (i * 100).toString() + 'ms'}}>
-          <div className='card-content'>
-            <Title>{p.title}</Title>
-            <div className='meta'>
-              <span className='date'>{p.date}</span>
-              <span>{` | `}</span>
-              {p.categories}
-            </div>
+    <Link href={'/posts/' + p.id} passHref={true} legacyBehavior>
+      <Card style={{animationDelay: (i * 100).toString() + 'ms'}}>
+        <div className='card-content'>
+          <Title>{p.title}</Title>
+          <div className='meta'>
+            <span className='date'>{p.date}</span>
+            <span>{` | `}</span>
+            {p.categories}
           </div>
-        </Card>
-      </Link>
-  )
+        </div>
+      </Card>
+    </Link>
+  );
 }
 
 export const getStaticProps: GetStaticProps<Props> = async () => {

@@ -39,18 +39,18 @@ export default function Post({ mdxSource, nextPost, prevPost, excerpt }: Props) 
 
   function genTags(tags: string | Array<string>) {
     const tagList = typeof (tags) === "string" ? [tags] : tags
-    return (
-      <>
-        {tagList.map((tag: string) => {
-          return <Link href={`/tags/${tag}`} passHref={true} key={tag}>
+    return <>
+      {tagList.map((tag: string) => {
+        return (
+          <Link href={`/tags/${tag}`} passHref={true} key={tag} legacyBehavior>
             <StyledLinkGray>
               <IcoText className='icon-tag' />
               {`${tag} `}
             </StyledLinkGray>
           </Link>
-        })}
-      </>
-    )
+        );
+      })}
+    </>;
   }
 
   // use tags and keywords in frontmatter as keywords in <meta>
@@ -63,46 +63,47 @@ export default function Post({ mdxSource, nextPost, prevPost, excerpt }: Props) 
     }
   }
 
-  return (
-    <>
-      <Head>
-        <title>{frontmatter.title}</title>
-        <meta name="description" content={description}></meta>
-        <meta name="keywords" content={getKeywords(frontmatter)}></meta>
-        <CommonHeader />
-      </Head>
-      <Layout>
-        <PostLayout>
-          <PostTitle>
-            <h1>{frontmatter.title}</h1>
-            <MetaStyle>
-              {frontmatter.date}
-              {" | "}
-              {genTags(frontmatter.tags)}
-              {" in "}
-              <Link href={`/categories/${frontmatter.categories}`} passHref={true}>
-                <StyledLinkGray>
-                <IcoText className='icon-folder' />
-                  {frontmatter.categories}
-                </StyledLinkGray>
-              </Link>
-            </MetaStyle>
-          </PostTitle>
-          <MarkdownStyle>
-            <MDXRemote compiledSource={source} scope={null} frontmatter={null} />
-          </MarkdownStyle>
-          <div style={{ textAlign: 'right', opacity: .5, fontSize: '0.875rem', margin: "4rem 0 2rem 0" }}>
-            更新于 {frontmatter.date}
-          </div>
-          <Pagination
-            nextPage={nextPost ? nextPost : undefined}
-            prevPage={prevPost ? prevPost : undefined}
-          />
-          <Waline />
-        </PostLayout>
-      </Layout>
-    </>
-  )
+  return <>
+    <Head>
+      <title>{frontmatter.title}</title>
+      <meta name="description" content={description}></meta>
+      <meta name="keywords" content={getKeywords(frontmatter)}></meta>
+      <CommonHeader />
+    </Head>
+    <Layout>
+      <PostLayout>
+        <PostTitle>
+          <h1>{frontmatter.title}</h1>
+          <MetaStyle>
+            {frontmatter.date}
+            {" | "}
+            {genTags(frontmatter.tags)}
+            {" in "}
+            <Link
+              href={`/categories/${frontmatter.categories}`}
+              passHref={true}
+              legacyBehavior>
+              <StyledLinkGray>
+              <IcoText className='icon-folder' />
+                {frontmatter.categories}
+              </StyledLinkGray>
+            </Link>
+          </MetaStyle>
+        </PostTitle>
+        <MarkdownStyle>
+          <MDXRemote compiledSource={source} scope={null} frontmatter={null} />
+        </MarkdownStyle>
+        <div style={{ textAlign: 'right', opacity: .5, fontSize: '0.875rem', margin: "4rem 0 2rem 0" }}>
+          更新于 {frontmatter.date}
+        </div>
+        <Pagination
+          nextPage={nextPost ? nextPost : undefined}
+          prevPage={prevPost ? prevPost : undefined}
+        />
+        <Waline />
+      </PostLayout>
+    </Layout>
+  </>;
 }
 
 

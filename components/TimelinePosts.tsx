@@ -24,7 +24,7 @@ export default function TLContent({ mode, title, posts }: Props) {
     <CategoryLayoutStyle>
       <CategoryTitle>
         {/*  mode 的 index page 链接。逻辑上 tag 和 category 应该分开，但在自己的场景下是写一起的，共用一个 index page*/}
-        <Link href="/categories">{mode.toUpperCase()}</Link>
+        <Link href="/categories" legacyBehavior>{mode.toUpperCase()}</Link>
         <h1>{title}</h1>
       </CategoryTitle>
       {Object.keys(posts).sort((a, b) => a < b ? 1 : -1).map(year => {
@@ -33,17 +33,19 @@ export default function TLContent({ mode, title, posts }: Props) {
             <TLYearStyle>{year}</TLYearStyle>
             <TLPostsContainer>
               {posts[year].map(p => {
-                return (<li key={p.id}>
-                  <Link href={`/posts/${p.id}`}>{p.title}</Link>
-                  <TLDateStyle>{p.date.slice(5)}</TLDateStyle>
-                </li>)
+                return (
+                  <li key={p.id}>
+                    <Link href={`/posts/${p.id}`} legacyBehavior>{p.title}</Link>
+                    <TLDateStyle>{p.date.slice(5)}</TLDateStyle>
+                  </li>
+                );
               })}
             </TLPostsContainer>
           </TLSectionStyle>
-        )
+        );
       })}
     </CategoryLayoutStyle>
-  )
+  );
 }
 
 export const CategoryLayoutStyle = styled(MainLayoutStyle)`
