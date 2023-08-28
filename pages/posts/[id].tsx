@@ -15,7 +15,6 @@ import { dateToYMD } from "../../lib/date"
 import { POST_DIR, getAllPostIds, getSortedPostsMeta } from "../../lib/posts"
 import { bottomFadeIn } from "../../styles/animations"
 import { MarkdownStyle } from "../../styles/markdown"
-import { textBoxShadow } from "../../styles/styles"
 
 type Props = {
   mdxSource: MDXRemoteSerializeResult,
@@ -44,7 +43,10 @@ export default function Post({ mdxSource, nextPost, prevPost, excerpt }: Props) 
       <>
         {tagList.map((tag: string) => {
           return <Link href={`/tags/${tag}`} passHref={true} key={tag}>
-            <StyledLinkGray>{`#${tag} `}</StyledLinkGray>
+            <StyledLinkGray>
+              <IcoText className='icon-tag' />
+              {`${tag} `}
+            </StyledLinkGray>
           </Link>
         })}
       </>
@@ -79,7 +81,10 @@ export default function Post({ mdxSource, nextPost, prevPost, excerpt }: Props) 
               {genTags(frontmatter.tags)}
               {" in "}
               <Link href={`/categories/${frontmatter.categories}`} passHref={true}>
-                <StyledLinkBgblock>{frontmatter.categories}</StyledLinkBgblock>
+                <StyledLinkGray>
+                <IcoText className='icon-folder' />
+                  {frontmatter.categories}
+                </StyledLinkGray>
               </Link>
             </MetaStyle>
           </PostTitle>
@@ -193,6 +198,9 @@ const MetaStyle = styled.span`
   }
   // border-top: 1px solid;
 `
+const IcoText = styled.i`
+  padding-right: 0.2em;
+`
 
 const StyledLinkGray = styled.a`
 color: ${p => p.theme.colors.textGray};
@@ -202,14 +210,3 @@ color: ${p => p.theme.colors.textGray};
     color: ${p => p.theme.colors.gold};
   }
 `
-
-const StyledLinkBgblock = styled.a`
-  ${() => textBoxShadow.s}
-  transition: box-shadow 0.5s ease;
-
-  :hover {
-    ${() => textBoxShadow.f}
-  }
-
-`
-

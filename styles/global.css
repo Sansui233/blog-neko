@@ -98,26 +98,19 @@ pre code {
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
-
-/*********************************************************************/
-/************************** Main *************************************/
-/*********************************************************************/
-
-
 @font-face {
   font-family: 'icomoon';
-  src: url('/fonts/icomoon.eot?n6bh7j');
-  src: url('/fonts/icomoon.eot?n6bh7j#iefix') format('embedded-opentype'),
-    url('/fonts/icomoon.ttf?n6bh7j') format('truetype'),
-    url('/fonts/icomoon.woff?n6bh7j') format('woff'),
-    url('/fonts/icomoon.svg?n6bh7j#icomoon') format('svg');
+  src:  url('/fonts/icomoon.eot?ipbyw');
+  src:  url('/fonts/icomoon.eot?ipbyw#iefix') format('embedded-opentype'),
+    url('/fonts/icomoon.ttf?ipbyw') format('truetype'),
+    url('/fonts/icomoon.woff?ipbyw') format('woff'),
+    url('/fonts/icomoon.svg?ipbyw#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
 }
 
-[class^="icon-"],
-[class*=" icon-"] {
+[class^="icon-"], [class*=" icon-"] {
   /* use !important to prevent issues with browser extensions that change fonts */
   font-family: 'icomoon' !important;
   speak: never;
@@ -132,50 +125,50 @@ pre code {
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-email-rounded:before {
+.icon-heart-o:before {
   content: "\e900";
 }
-
-.icon-github-rounded:before {
+.icon-heart:before {
   content: "\e901";
 }
-
-.icon-instagram-rounded:before {
+.icon-tags:before {
   content: "\e902";
 }
-
-.icon-rss-rounded:before {
+.icon-tag:before {
   content: "\e903";
 }
-
-.icon-twitter-rounded:before {
+.icon-folder:before {
   content: "\e904";
 }
-
-.icon-iconmonstr-rounded:before {
+.icon-email-rounded:before {
   content: "\e905";
 }
-
-.icon-folder-open:before {
-  content: "\e930";
+.icon-github-rounded:before {
+  content: "\e906";
 }
-
-.icon-price-tag:before {
-  content: "\e935";
+.icon-instagram-rounded:before {
+  content: "\e907";
 }
-
-.icon-price-tags:before {
-  content: "\e936";
+.icon-rss-rounded:before {
+  content: "\e908";
 }
-
+.icon-twitter-rounded:before {
+  content: "\e909";
+}
+.icon-iconmonstr-rounded:before {
+  content: "\e90a";
+}
 .icon-arrow-right2:before {
   content: "\ea3c";
 }
-
 .icon-arrow-left2:before {
   content: "\ea40";
 }
 
+
+/*********************************************************************/
+/************************** Main *************************************/
+/*********************************************************************/
 
 html,
 body {

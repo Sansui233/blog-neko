@@ -48,7 +48,7 @@ export default function Header() {
         <Avatar >
           <Link href="/" passHref={true}>
             {/*eslint-disable-next-line @next/next/no-img-element*/}
-            <a><img src={theme.assets.favico} alt="Sansui" /></a>
+            <a><img src={theme!.assets.favico} alt="Sansui" /></a>
           </Link>
         </Avatar>
         <Nav>

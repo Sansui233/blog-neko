@@ -23,11 +23,11 @@ export default function Sidebar({ isShow, toggle }: Props) {
   }
 
   const themeText = useMemo(() => {
-    const t = themeContext.mode
+    const t = themeContext!.mode
     return t === 'system' ? '系统外观' :
       t === 'dark' ? '夜间模式'
         : '日间模式'
-  }, [themeContext.mode])
+  }, [themeContext])
 
   return (
     <Container className={isShow ? '' : 'hidden'}>

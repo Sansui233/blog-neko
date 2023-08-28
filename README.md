@@ -37,8 +37,11 @@ export const siteInfo = {
 - [x] 分页渲染
 - [x] 评论接入
 - [x] 统计接入
+- [ ] 搜索
 - [ ] 动画优化（尤其 CSR 等待部分）
 - [ ] （长期）设计、抠 Markdown 等
+- [ ] build 时单独进行rss解析，增加build option配置文件
+- [ ] export时大量博文时增量更新（不清楚目前状况但文章多了确实挺慢的）
 
 ## Thanks
 

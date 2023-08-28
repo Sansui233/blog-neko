@@ -39,15 +39,17 @@ export default function Memos({ memoposts, pagelimit }: Props) {
         console.error('Wrong query p=', router.query.p)
         return
       }
-    }
+  }
     fetch(`${MemoCSRAPI}/${page}.json`)
       .then(res => res.json())
       .then((data) => {
         const posts = data as Array<{ title: string, content: string }>
         const compiledPosts = Promise.all(posts.map(async p => {
+          
           const content = await serialize(p.content, {
             mdxOptions: {
-              remarkPlugins: [remarkGfm]
+              remarkPlugins: [remarkGfm],
+              // development: process.env.NODE_ENV === 'development', // a bug in next-remote-mdx v4.4.1, see https://github.com/hashicorp/next-mdx-remote/issues/350.
             }
           })
           return {
@@ -57,10 +59,14 @@ export default function Memos({ memoposts, pagelimit }: Props) {
         }))
         return compiledPosts
       })
-      .then(posts => {
-        setpostsData(posts)
+      .then(nextPosts => {
+        setpostsData(nextPosts)
+        console.log(nextPosts[0].content)
+        console.log(postsData[5].content)
       }).catch(console.error);
+    
   }, [router.query])
+  
   const currPage = (() => {
     if (typeof (router.query.p) === 'string') {
       const page = parseInt(router.query.p)
@@ -116,7 +122,8 @@ function MemoCard({ memoPost }: { memoPost: MemoPost }) {
     <StyledCard isCollapse={shouldCollapse === false ? false : isCollapse} ref={ref}>
       <h2 className="title">{memoPost.title}</h2>
       <MemoMarkdown bottomSpace={shouldCollapse}>
-        <MDXRemote {...memoPost.content} />
+        {/* <MDXRemote {...memoPost.content} /> */}
+        <MDXRemote compiledSource={memoPost.content.compiledSource} scope={null} frontmatter={null}/>
       </MemoMarkdown>
       <CardMask onClick={handleExpand} isCollapse={isCollapse} isShown={shouldCollapse}>
         <div className="rd-more">
