@@ -60,6 +60,11 @@ export default function About() {
 }
 
 const Hero = styled.h1`
+
+  span {
+    ${() => textStroke}
+  }
+
   text-align: center;
   margin: 0px 0px 0.5em;
   padding: 15% 0px;
@@ -70,10 +75,6 @@ const Hero = styled.h1`
   background-position: center 40%;
   color: white;
   ${(props) => props.theme.colors.filterDarker}};
-
-  span {
-    ${() => textStroke}
-  }
 `
 
 const AnimatedMarkdown = styled(MarkdownStyle)`
