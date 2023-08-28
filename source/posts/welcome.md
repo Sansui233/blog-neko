@@ -12,9 +12,7 @@ keywords: 博客, hexo, next.js
 ## 2019-03-24
 
 - [yilia](https://github.com/litten/hexo-theme-yilia)，一个hexo官网没有的但很多人都知道的主题。移动端的优化很好。偏重于内容，挺生活化的，搜索也很全。
-
 - [yilia接入gittalks评论](https://cloudy-liu.github.io/2018/07/14/Hexo%E6%9B%B4%E6%8D%A2%E4%B8%BAGitTalk%E8%AF%84%E8%AE%BA%E7%B3%BB%E7%BB%9F/)。
-
 - [Hexo yilia 主题一揽子使用方案](https://blog.csdn.net/lynnbest/article/details/79845944)
 
 ## 2020-11

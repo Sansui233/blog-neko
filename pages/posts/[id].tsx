@@ -4,6 +4,7 @@ import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote'
 import { serialize } from 'next-mdx-remote/serialize'
 import Head from "next/head"
 import Link from "next/link"
+import { useRouter } from "next/router"
 import path from "path"
 import remarkGfm from "remark-gfm"
 import styled from "styled-components"
@@ -30,6 +31,8 @@ type Props = {
 }
 
 export default function Post({ mdxSource, nextPost, prevPost, excerpt }: Props) {
+
+  const router = useRouter()
   const frontmatter = mdxSource.frontmatter! as any
   const source = mdxSource.compiledSource
 
@@ -43,8 +46,7 @@ export default function Post({ mdxSource, nextPost, prevPost, excerpt }: Props) 
       {tagList.map((tag: string) => {
         return (
           <StyledLink href={`/tags/${tag}`} passHref={true} key={tag}>
-            <i style={{paddingRight:"0.15em"}} className='icon-material-label' />
-            {`${tag} `}
+            {`#${tag} `}
           </StyledLink>
         );
       })}
@@ -72,16 +74,24 @@ export default function Post({ mdxSource, nextPost, prevPost, excerpt }: Props) 
       <PostLayout>
         <PostTitle>
           <h1>{frontmatter.title}</h1>
-          <MetaStyle>
-            {frontmatter.date}
-            {" | "}
-            {genTags(frontmatter.tags)}
-            {" in "}
-            <StyledLink href={`/categories/${frontmatter.categories}`} passHref={true}>
-              <i style={{paddingRight:"0.15em"}} className='icon-material-folder_open' />
-              {frontmatter.categories}
-            </StyledLink>
-          </MetaStyle>
+          <div style={{ display: "flex" }}>
+            <div style={{ flex: "1 1 0" }}>
+              <MetaStyle style={{ flex: "1 1 0" }}>
+                {frontmatter.date}
+                {" | "}
+                {genTags(frontmatter.tags)}
+                {" in "}
+                <StyledLink href={`/categories/${frontmatter.categories}`} passHref={true}>
+                  <i style={{ paddingRight: "0.15em" }} className='icon-material-folder_open' />
+                  {frontmatter.categories}
+                </StyledLink>
+              </MetaStyle>
+            </div>
+            <div style={{ flex: "0 0 0" }}>
+              <i style={{ paddingLeft: "0.5em", paddingRight: "0.3em" }} className='icon-material-eye' />
+              <span className="waline-pageview-count" data-path={router.basePath} />
+            </div>
+          </div>
         </PostTitle>
         <MarkdownStyle>
           <MDXRemote compiledSource={source} scope={null} frontmatter={null} />
@@ -181,6 +191,7 @@ const PostTitle = styled.div`
 const MetaStyle = styled.span`
   font-size: 0.875rem;
   position: relative;
+
   &::before {
     content:'';
     position: absolute;

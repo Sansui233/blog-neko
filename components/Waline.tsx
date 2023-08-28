@@ -1,6 +1,6 @@
 import { init } from '@waline/client';
 import '@waline/client/dist/waline.css';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import styled from 'styled-components';
 import { siteInfo } from "../site.config";
 
@@ -10,7 +10,9 @@ const Waline = () => {
     init({
       el: '#waline',
       serverURL: siteInfo.walineApi,
-      path: window.location.pathname
+      path: window.location.pathname,
+      pageview: true,
+      comment: true,
     });
   }, [])
 

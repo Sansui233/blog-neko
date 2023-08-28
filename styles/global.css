@@ -125,6 +125,21 @@ pre code {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-material-sunny:before {
+  content: "\e907";
+}
+.icon-material-brightness_4:before {
+  content: "\e90a";
+}
+.icon-material-moon:before {
+  content: "\e90c";
+}
+.icon-material-comment:before {
+  content: "\e904";
+}
+.icon-material-eye:before {
+  content: "\e902";
+}
 .icon-material-label:before {
   content: "\e90e";
 }
