@@ -44,7 +44,7 @@ export default function Header() {
   return (
     <React.Fragment>
       <Sidebar isShow={isSidebar} toggle={toggleSidebar} />
-      <Layout isHidden={isHidden}>
+      <Layout $isHidden={isHidden}>
         <Avatar >
           <Link href="/" passHref={true}>
             {/*eslint-disable-next-line @next/next/no-img-element*/}
@@ -81,7 +81,7 @@ const PlaceHolder = styled.div`
     opacity: .6;
 `
 const Layout = styled.header<{
-  isHidden: boolean
+  $isHidden: boolean
 }>`
   height: 63px;
   width: 100%;
@@ -91,7 +91,7 @@ const Layout = styled.header<{
   position: fixed;
   background-color: ${(props => props.theme.colors.bg)};
   z-index:10;
-  transform: ${props => props.isHidden ? "translateY(-100%)" : "translateY(0)"};
+  transform: ${props => props.$isHidden ? "translateY(-100%)" : "translateY(0)"};
   transition: transform .5s ease;
 `
 

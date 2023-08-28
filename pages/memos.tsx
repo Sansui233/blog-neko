@@ -39,13 +39,12 @@ export default function Memos({ memoposts, pagelimit }: Props) {
         console.error('Wrong query p=', router.query.p)
         return
       }
-  }
+    }
     fetch(`${MemoCSRAPI}/${page}.json`)
       .then(res => res.json())
       .then((data) => {
         const posts = data as Array<{ title: string, content: string }>
         const compiledPosts = Promise.all(posts.map(async p => {
-          
           const content = await serialize(p.content, {
             mdxOptions: {
               remarkPlugins: [remarkGfm],
@@ -61,12 +60,10 @@ export default function Memos({ memoposts, pagelimit }: Props) {
       })
       .then(nextPosts => {
         setpostsData(nextPosts)
-        console.log(nextPosts[0].content)
-        console.log(postsData[5].content)
       }).catch(console.error);
-    
+
   }, [router.query])
-  
+
   const currPage = (() => {
     if (typeof (router.query.p) === 'string') {
       const page = parseInt(router.query.p)
@@ -119,13 +116,13 @@ function MemoCard({ memoPost }: { memoPost: MemoPost }) {
   }
 
   return (
-    <StyledCard isCollapse={shouldCollapse === false ? false : isCollapse} ref={ref}>
+    <StyledCard $isCollapse={shouldCollapse === false ? false : isCollapse} ref={ref}>
       <h2 className="title">{memoPost.title}</h2>
-      <MemoMarkdown bottomSpace={shouldCollapse}>
+      <MemoMarkdown $bottomSpace={shouldCollapse}>
         {/* <MDXRemote {...memoPost.content} /> */}
-        <MDXRemote compiledSource={memoPost.content.compiledSource} scope={null} frontmatter={null}/>
+        <MDXRemote compiledSource={memoPost.content.compiledSource} scope={null} frontmatter={null} />
       </MemoMarkdown>
-      <CardMask onClick={handleExpand} isCollapse={isCollapse} isShown={shouldCollapse}>
+      <CardMask onClick={handleExpand} $isCollapse={isCollapse} $isShown={shouldCollapse}>
         <div className="rd-more">
           <span>{isCollapse ? "SHOW MORE" : "Hide"}</span>
         </div>
@@ -173,10 +170,10 @@ const MemoDescription = styled(PageDescription)`
 `
 
 const StyledCard = styled.section<{
-  isCollapse: boolean
+  $isCollapse: boolean
 }>`
   position: relative;
-  max-height: ${props => props.isCollapse === true ? "19rem" : "5000px"};
+  max-height: ${props => props.$isCollapse === true ? "19rem" : "5000px"};
   overflow: hidden;
   margin: 2rem 0;
   animation: ${bottomFadeIn} 1s ease;
@@ -189,17 +186,17 @@ const StyledCard = styled.section<{
 `
 
 const CardMask = styled.div<{
-  isCollapse: boolean,
-  isShown: boolean
+  $isCollapse: boolean,
+  $isShown: boolean
 }>`
-    display: ${props => props.isShown === true ? "block" : "none"};
+    display: ${props => props.$isShown === true ? "block" : "none"};
     position: absolute;
     bottom: 0;
     width: 100%;
     height: 7rem;
     cursor: pointer;
     text-align: center;
-    ${props => props.isCollapse === true ? props.theme.colors.memoGradient : ''}
+    ${props => props.$isCollapse === true ? props.theme.colors.memoGradient : ''}
 
     .rd-more {
       margin-top: 5.375rem;
@@ -218,9 +215,9 @@ const CardMask = styled.div<{
 `
 
 const MemoMarkdown = styled(MarkdownStyle) <{
-  bottomSpace: boolean,
+  $bottomSpace: boolean,
 }>`
-    padding-bottom: ${props => props.bottomSpace === true ? "2rem" : "inherit"};
+    padding-bottom: ${props => props.$bottomSpace === true ? "2rem" : "inherit"};
     h1,h2,h3,h4,h5,h6 {
       font-size: 1rem;
     }

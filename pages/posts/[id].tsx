@@ -42,12 +42,10 @@ export default function Post({ mdxSource, nextPost, prevPost, excerpt }: Props) 
     return <>
       {tagList.map((tag: string) => {
         return (
-          <Link href={`/tags/${tag}`} passHref={true} key={tag} legacyBehavior>
-            <StyledLinkGray>
-              <IcoText className='icon-tag' />
-              {`${tag} `}
-            </StyledLinkGray>
-          </Link>
+          <StyledLink href={`/tags/${tag}`} passHref={true} key={tag}>
+            <IcoText className='icon-tag' />
+            {`${tag} `}
+          </StyledLink>
         );
       })}
     </>;
@@ -57,7 +55,7 @@ export default function Post({ mdxSource, nextPost, prevPost, excerpt }: Props) 
   function getKeywords(fm: any) {
     const tagList = typeof (fm.tags) === "string" ? [fm.tags] : fm.tags
     if (fm.keywords !== null && typeof (fm.keywords) === "string") {
-      return tagList.join().concat(', ').concat(fm.keywords.replaceAll('，',', '))
+      return tagList.join().concat(', ').concat(fm.keywords.replaceAll('，', ', '))
     } else {
       return tagList.join()
     }
@@ -79,15 +77,10 @@ export default function Post({ mdxSource, nextPost, prevPost, excerpt }: Props) 
             {" | "}
             {genTags(frontmatter.tags)}
             {" in "}
-            <Link
-              href={`/categories/${frontmatter.categories}`}
-              passHref={true}
-              legacyBehavior>
-              <StyledLinkGray>
+            <StyledLink href={`/categories/${frontmatter.categories}`} passHref={true}>
               <IcoText className='icon-folder' />
-                {frontmatter.categories}
-              </StyledLinkGray>
-            </Link>
+              {frontmatter.categories}
+            </StyledLink>
           </MetaStyle>
         </PostTitle>
         <MarkdownStyle>
@@ -188,7 +181,7 @@ const PostTitle = styled.div`
 const MetaStyle = styled.span`
   font-size: 0.875rem;
   position: relative;
-  ::before {
+  &::before {
     content:'';
     position: absolute;
     top: -.8em;
@@ -200,11 +193,10 @@ const MetaStyle = styled.span`
   // border-top: 1px solid;
 `
 const IcoText = styled.i`
-  padding-right: 0.2em;
+  padding: 0.15em;
 `
 
-const StyledLinkGray = styled.a`
-color: ${p => p.theme.colors.textGray};
+const StyledLink = styled(Link)`
   transition: opacity .3s, color .3s;
 
   &:hover {

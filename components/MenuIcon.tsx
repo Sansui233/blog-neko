@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import styled, { css } from 'styled-components';
 
 type Props = {
@@ -8,11 +8,11 @@ type Props = {
   isCloseToggler?: () => void
 }
 
-const MenuIcon: React.FC<Props> = ({ width = "1em", height = "1em", isClose, isCloseToggler }) => {
+const MenuIcon: React.FC<Props> = ({ width = "1em", height = "1em", isClose: isClose, isCloseToggler: iscloseToggler }) => {
   return (
-    <Container width={width} height={height} onClick={isCloseToggler}>
+    <Container width={width} height={height} onClick={iscloseToggler}>
       <Line className={isClose ? 'is-close' : ''} />
-      <Middle isClose={isClose} />
+      <Middle $isClose={isClose} />
       <Line className={isClose ? 'is-close' : ''} />
     </Container>
   )
@@ -40,15 +40,12 @@ const Line = styled.div`
   }
 `
 
-const Middle = styled.div<
-  {
-    isClose: boolean
-  }>`
+const Middle = styled.div<{ $isClose: boolean }>`
   height: 2px;
   position: relative;
 
-  ::before,
-  ::after {
+  &::before,
+  &::after {
     content: '';
     position: absolute;
     top:0;
@@ -59,11 +56,11 @@ const Middle = styled.div<
     transition: all .3s;
   }
 
-  ::before {
-    ${p => p.isClose ? css`transform: rotate(45deg);` : ''}
+  &::before {
+    ${p => p.$isClose ? css`transform: rotate(45deg);` : ''}
   }
-  ::after {
-    ${p => p.isClose ? css`transform: rotate(-45deg);` : ''}
+  &::after {
+    ${p => p.$isClose ? css`transform: rotate(-45deg);` : ''}
   }
 `
 
