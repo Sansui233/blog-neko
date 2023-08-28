@@ -49,7 +49,7 @@ export default function Memos({ memoposts, pagelimit }: Props) {
           const content = await serialize(p.content, {
             mdxOptions: {
               remarkPlugins: [remarkGfm],
-              // development: process.env.NODE_ENV === 'development', // a bug in next-remote-mdx v4.4.1, see https://github.com/hashicorp/next-mdx-remote/issues/350.
+              development: process.env.NODE_ENV === 'development', // a bug in next-remote-mdx v4.4.1, see https://github.com/hashicorp/next-mdx-remote/issues/350.
             }
           })
           return {
