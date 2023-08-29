@@ -1,6 +1,6 @@
 import { GetStaticProps } from "next"
 import React, { useEffect } from "react"
-import { generateFeedFile } from "../lib/generate-rss"
+import { writeRss } from "../lib/rss"
 
 const Atom: React.FC = () => {
   useEffect(() => {
@@ -12,7 +12,7 @@ const Atom: React.FC = () => {
 
 // update static rss files
 export const getStaticProps: GetStaticProps = async () => {
-  generateFeedFile()
+  writeRss()
   return {
     props: {}
   }

@@ -43,7 +43,7 @@ export default function Sidebar({ isShow, toggle }: Props) {
           </OptionText>
         </div>
         <div><OptionText><Link href="/categories">分类</Link></OptionText></div>
-        <div><OptionText><Link href="/rss">RSS</Link></OptionText></div>
+        <div><OptionText><Link href="/atom.xml">RSS</Link></OptionText></div>
         <LastSection>
           <Icons>
             <a href="https://github.com/sansui233"><i className='icon-github-rounded'></i></a>
