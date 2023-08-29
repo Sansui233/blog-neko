@@ -5,6 +5,9 @@ import styled from 'styled-components';
 import { siteInfo } from "../site.config";
 
 const Waline = () => {
+  if ((!("walineApi" in siteInfo)) || siteInfo.walineApi === "") {
+    return <></>
+  }
   useEffect(() => {
     // 挂载 waline 评论系统
     init({

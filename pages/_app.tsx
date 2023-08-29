@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react'
 import { ThemeProvider } from 'styled-components'
 import { THEME_CHANGED_EVT, ThemeCallBack, ThemeMsg, emitter, getAppTheme } from '../lib/app-states'
 import * as gtag from '../lib/gtag'
+import { siteInfo } from '../site.config'
 import { GlobalStyle } from '../styles/global'
 import '../styles/global.css'
 import { darkTheme, genSystemTheme, lightTheme } from '../styles/theme'
@@ -17,6 +18,9 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   // Google Analystics
   useEffect(() => {
+    if ((!("GAId" in siteInfo)) || siteInfo.GAId === "") {
+      return
+    }
     const handleRouteChange = (url: string) => {
       gtag.pageview(url)
     }
