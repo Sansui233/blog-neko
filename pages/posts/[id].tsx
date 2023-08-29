@@ -73,6 +73,21 @@ export default function Post({ mdxSource, nextPost, prevPost, excerpt, headings 
     }
   }
 
+  const scrollToTarget = (event: React.MouseEvent<HTMLElement>, targetId: string) => {
+    event.preventDefault();
+    const targetElement = document.getElementById(targetId);
+    if (targetElement) {
+      const boundingClientRect = targetElement.getBoundingClientRect();
+      const scrollY = window.scrollY || window.pageYOffset;
+      const offset = 63;
+
+      window.scrollTo({
+        top: boundingClientRect.top + scrollY - offset,
+        behavior: 'smooth',
+      });
+    }
+  };
+
   return <>
     <Head>
       <title>{frontmatter.title}</title>
@@ -124,7 +139,7 @@ export default function Post({ mdxSource, nextPost, prevPost, excerpt, headings 
               目录
             </div>
             {headings.map((h) => {
-              return <TocAnchor $rank={h.rank} href={`#${h.id}`} key={h.id}>
+              return <TocAnchor $rank={h.rank} href={`#${h.id}`} onClick={(e) => { scrollToTarget(e, h.id) }} key={h.id}>
                 <span>{h.title}</span>
               </TocAnchor>
             })}
@@ -168,7 +183,7 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
       mdxOptions: {
         remarkPlugins: [remarkGfm],
         rehypePlugins: [
-          [rehypeAddAnchors],
+          [rehypeAddAnchors, { rank: [1, 2, 3] }],
           [rehypeExtractHeadings, { rank: [1, 2, 3], headings }],
         ],
         format: 'mdx',
