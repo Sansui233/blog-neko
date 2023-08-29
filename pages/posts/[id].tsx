@@ -6,15 +6,17 @@ import Head from "next/head"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import path from "path"
+import { useContext } from "react"
 import remarkGfm from "remark-gfm"
-import styled from "styled-components"
+import styled, { ThemeContext } from "styled-components"
 import { CommonHeader, MainLayoutStyle } from ".."
 import Layout from "../../components/Layout"
 import Pagination from "../../components/Pagination"
 import Waline from "../../components/Waline"
 import { dateToYMD } from "../../lib/date"
 import { POST_DIR, getAllPostIds, getSortedPostsMeta } from "../../lib/posts"
-import { bottomFadeIn } from "../../styles/animations"
+import { rehypeAddAnchors, rehypeExtractHeadings } from "../../lib/rehype-toc"
+import { bottomFadeIn, fadeInRight } from "../../styles/animations"
 import { MarkdownStyle } from "../../styles/markdown"
 
 type Props = {
@@ -27,12 +29,20 @@ type Props = {
   prevPost?: {
     title: string,
     link: string,
-  } | null
+  } | null,
+  headings: Array<PropHeading>
 }
 
-export default function Post({ mdxSource, nextPost, prevPost, excerpt }: Props) {
+type PropHeading = {
+  title: string,
+  rank: number,
+  id: string
+}
+
+export default function Post({ mdxSource, nextPost, prevPost, excerpt, headings }: Props) {
 
   const router = useRouter()
+  const theme = useContext(ThemeContext)
   const frontmatter = mdxSource.frontmatter! as any
   const source = mdxSource.compiledSource
 
@@ -71,40 +81,56 @@ export default function Post({ mdxSource, nextPost, prevPost, excerpt }: Props) 
       <CommonHeader />
     </Head>
     <Layout>
-      <PostLayout>
-        <PostTitle>
-          <h1>{frontmatter.title}</h1>
-          <div style={{ display: "flex" }}>
-            <div style={{ flex: "1 1 0" }}>
-              <MetaStyle style={{ flex: "1 1 0" }}>
-                {frontmatter.date}
-                {" | "}
-                {genTags(frontmatter.tags)}
-                {" in "}
-                <StyledLink href={`/categories/${frontmatter.categories}`} passHref={true}>
-                  <i style={{ paddingRight: "0.15em" }} className='icon-material-folder_open' />
-                  {frontmatter.categories}
-                </StyledLink>
-              </MetaStyle>
+      <div style={{ display: "flex", margin: "auto" }}>
+        <div style={{ flex: " 2 1 0" }}>
+          <PostLayout >
+            <PostTitle>
+              <h1>{frontmatter.title}</h1>
+              <div style={{ display: "flex" }}>
+                <div style={{ flex: "1 1 0" }}>
+                  <MetaStyle style={{ flex: "1 1 0" }}>
+                    {frontmatter.date}
+                    {" | "}
+                    {genTags(frontmatter.tags)}
+                    {" in "}
+                    <StyledLink href={`/categories/${frontmatter.categories}`} passHref={true}>
+                      <i style={{ paddingRight: "0.15em" }} className='icon-material-folder_open' />
+                      {frontmatter.categories}
+                    </StyledLink>
+                  </MetaStyle>
+                </div>
+                <div style={{ flex: "0 0 0" }}>
+                  <i style={{ paddingLeft: "0.5em", paddingRight: "0.3em" }} className='icon-material-eye' />
+                  <span className="waline-pageview-count" data-path={router.basePath} />
+                </div>
+              </div>
+            </PostTitle>
+            <MarkdownStyle>
+              <MDXRemote compiledSource={source} scope={null} frontmatter={null} />
+            </MarkdownStyle>
+            <div style={{ textAlign: 'right', opacity: .5, fontSize: '0.875rem', margin: "4rem 0 2rem 0" }}>
+              更新于 {frontmatter.date}
             </div>
-            <div style={{ flex: "0 0 0" }}>
-              <i style={{ paddingLeft: "0.5em", paddingRight: "0.3em" }} className='icon-material-eye' />
-              <span className="waline-pageview-count" data-path={router.basePath} />
-            </div>
-          </div>
-        </PostTitle>
-        <MarkdownStyle>
-          <MDXRemote compiledSource={source} scope={null} frontmatter={null} />
-        </MarkdownStyle>
-        <div style={{ textAlign: 'right', opacity: .5, fontSize: '0.875rem', margin: "4rem 0 2rem 0" }}>
-          更新于 {frontmatter.date}
+            <Pagination
+              nextPage={nextPost ? nextPost : undefined}
+              prevPage={prevPost ? prevPost : undefined}
+            />
+            <Waline />
+          </PostLayout>
         </div>
-        <Pagination
-          nextPage={nextPost ? nextPost : undefined}
-          prevPage={prevPost ? prevPost : undefined}
-        />
-        <Waline />
-      </PostLayout>
+        <ColumnRight>
+          <nav>
+            <div style={{ fontSize: "1.25rem", fontWeight: "bold", paddingBottom: "0.5rem", marginBottom: "0.5rem", borderBottom: `solid 1px ${theme?.colors.gold}` }}>
+              目录
+            </div>
+            {headings.map((h) => {
+              return <TocAnchor $rank={h.rank} href={`#${h.id}`} key={h.id}>
+                <span>{h.title}</span>
+              </TocAnchor>
+            })}
+          </nav>
+        </ColumnRight>
+      </div>
     </Layout>
   </>;
 }
@@ -120,7 +146,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   }
 }
 
-// ONE POST Data
+// get POST Data
 export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
   const id = params!.id as string
   const mdContent = readFileSync(path.join(POST_DIR, `${id}.md`), 'utf-8') // TODO 没有处理mdx的后缀
@@ -135,16 +161,30 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
   const excerpt = mdBodyStart.replace(/\n/g, ' ').substring(0, 144);
 
   // Process Content
+  let headings: any[] = []
   const mdxSource = await serialize(
     mdContent,
     {
       mdxOptions: {
         remarkPlugins: [remarkGfm],
-        rehypePlugins: [],
+        rehypePlugins: [
+          [rehypeAddAnchors],
+          [rehypeExtractHeadings, { rank: [1, 2, 3], headings }],
+        ],
         format: 'mdx',
       },
       parseFrontmatter: true
     })
+
+  // normalize heading rank
+  if (headings.length > 0) {
+    const minRank = Math.min(...headings.map(heading => heading.rank));
+    const offset = minRank - 1;
+    headings = headings.map(heading => ({
+      ...heading,
+      rank: heading.rank - offset
+    }));
+  }
 
   // Process Date
   const fm = mdxSource.frontmatter! as any
@@ -169,7 +209,8 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
       mdxSource,
       prevPost: prevPost,
       nextPost: nextPost,
-      excerpt
+      excerpt,
+      headings
     }
   }
 }
@@ -178,6 +219,24 @@ const PostLayout = styled(MainLayoutStyle)`
   max-width: 750px;
   margin-top: 72px;
   animation: ${bottomFadeIn} 1s ease;
+`
+
+const ColumnRight = styled.div`
+  max-width: 15em;
+  flex: 1 1 0;
+  margin-top: calc(1.375*1em + 72px);
+  position: sticky;
+  align-self: flex-start;
+  top: 63px;
+
+  animation: ${fadeInRight} 1s ease;
+
+  @media screen and (max-width: 780px) {
+    max-width: 10em;
+  }
+  @media screen and (max-width: 580px) {
+    display: none
+  }
 `
 
 const PostTitle = styled.div`
@@ -210,4 +269,20 @@ const StyledLink = styled(Link)`
   &:hover {
     color: ${p => p.theme.colors.gold};
   }
+
+`
+
+const TocAnchor = styled(Link) <{ $rank: number }>`
+  display: block;
+  padding-left: ${p => p.$rank - 1}em;
+  line-height: 1.8em;
+
+  & span {
+    transition: box-shadow .5s;
+  }
+
+  &:hover span {
+    box-shadow: inset 0 -0.5em 0 ${props => props.theme.colors.goldHover};
+  }
+
 `
