@@ -69,7 +69,10 @@ async function getPosts(): Promise<Item[]> {
       }
     }))
 
-  allPosts.push(await getMemo())
+  const memo = await getMemo()
+  if (memo !== null) {
+    allPosts.push(memo)
+  }
 
   allPosts = allPosts.sort((a, b) => {
     return a.date > b.date ? -1 : 1
@@ -89,13 +92,31 @@ async function getPosts(): Promise<Item[]> {
   return res
 }
 
-// 最新 memo 文件中最近 6 条生成 rss
-async function getMemo(): Promise<Item> {
-  const f = fs.readdirSync(MEMOS_DIR).filter(f => {
+// 最新（名称最大）的 memo 文件中，最近 6 条生成 rss
+// 名称最大是个人习惯，通常名称越大的越日期越新。一个文件里会写很多条，一个md写完都行。分文件只是为了好翻，毕竟没人想在整理文件时下拉一个巨大的txt
+async function getMemo(): Promise<Item | null>{
+  const files = fs.readdirSync(MEMOS_DIR).filter(f => {
     return f.endsWith(".md")
   }).sort((a, b) => {
     return a < b ? 1 : -1 // Desc for latest first
-  })[0]
+  })
+
+  // get recent non-draft memo file
+  let f = ""
+  for (let fileName in files){
+    const fm = getFrontMatter(fileName, MEMOS_DIR)
+    if ('draft' in fm && fm.draft == true){
+      continue
+    }else{
+      f = fileName;
+      break;
+    }
+  }
+
+  if(f === "") {
+    return  null
+  }
+
   const fileStream = fs.createReadStream(path.join(MEMOS_DIR, f))
   const rl = readline.createInterface({
     input: fileStream,
