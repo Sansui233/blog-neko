@@ -1,6 +1,6 @@
-import fs from 'fs'
+import fs from 'fs';
+import matter from 'gray-matter';
 import path from 'path';
-import matter from 'gray-matter'
 import { dateToYMD } from './date';
 
 export const POST_DIR = path.join(process.cwd(), 'source', 'posts')
@@ -15,7 +15,10 @@ type FrontMatter = {
   description?: string | string[],
 }
 
-const postsFileNames = (() => {
+/**
+ * 获取要处理的文件名
+ */
+const fileNames = (() => {
   let fileNames = fs.readdirSync(POST_DIR);
   fileNames = fileNames.filter(f => {
     return f.endsWith(".md") || f.endsWith(".mdx")
@@ -23,6 +26,9 @@ const postsFileNames = (() => {
   return fileNames
 })()
 
+/**
+ * Get front matter info from a local markdown file
+ */
 export function getFrontMatter(fileName: string, dir = POST_DIR) {
   const fullPath = path.join(dir, fileName)
   const fileContents = fs.readFileSync(fullPath, 'utf8')
@@ -34,7 +40,7 @@ export function getFrontMatter(fileName: string, dir = POST_DIR) {
  * @returns 
  */
 export function getAllPostIds() {
-  return postsFileNames.map(f => {
+  return fileNames.map(f => {
     return {
       params: {
         id: f.replace(/\.mdx?$/, '')
@@ -44,7 +50,7 @@ export function getAllPostIds() {
 }
 
 export function getSortedPostsMeta() {
-  const allPosts = postsFileNames.map(fileName => {
+  const allPosts = fileNames.map(fileName => {
     const id = fileName.replace(/\.mdx?$/, '')
     const frontMatter: FrontMatter = getFrontMatter(fileName).data
     const date = dateToYMD(frontMatter.date!)
@@ -63,7 +69,7 @@ export function getSortedPostsMeta() {
 
 export function getAllCategories() {
   const categories = new Map<string, number>()
-  const posts = postsFileNames // 取出防止重复计算
+  const posts = fileNames // 取出防止重复计算
   categories.set(CATEGORY_ALL, posts.length)
 
   posts.map(fileName => {
@@ -87,7 +93,7 @@ export function getPostsMetaInCategory(c: string) {
     date: Date,
   }[] = []
 
-  postsFileNames.map(fileName => {
+  fileNames.map(fileName => {
     const matterResult = getFrontMatter(fileName)
     if (c === CATEGORY_ALL ||
       (matterResult.data['categories'] && matterResult.data['categories'] === c)
@@ -110,7 +116,7 @@ export function getSortedTagPosts(t: string) {
     date: Date,
   }[] = []
 
-  postsFileNames.map(fileName => {
+  fileNames.map(fileName => {
     const matterResult = getFrontMatter(fileName)
     let fileTags = matterResult.data['tags']
     fileTags = typeof (fileTags) === 'string' ? [fileTags] : fileTags
@@ -130,7 +136,7 @@ export function getAllTags() {
   const tags = new Map<string, number>()
   tags.set(TAG_UNTAGGED, 0)
 
-  postsFileNames.map(fileName => {
+  fileNames.map(fileName => {
     const matterResult = getFrontMatter(fileName)
     if (matterResult.data['tags']) {
       let fileTags = matterResult.data['tags']
@@ -149,7 +155,10 @@ export function getAllTags() {
   return tags
 }
 
-export function reconstructPostsByTime(posts: {
+/**
+ * Group posts data by year in an Object
+ */
+export function groupByYear(posts: {
   id: string,
   title: string,
   date: Date,

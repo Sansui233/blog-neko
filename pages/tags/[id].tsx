@@ -3,7 +3,7 @@ import Head from "next/head";
 import { CommonHeader } from "..";
 import Layout from "../../components/Layout";
 import TLContent from "../../components/TimelinePosts";
-import { getAllTags, getSortedTagPosts, reconstructPostsByTime } from "../../lib/posts";
+import { getAllTags, getSortedTagPosts, groupByYear } from "../../lib/posts";
 
 type Props = {
   tag: string,
@@ -45,7 +45,7 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
   return {
     props: {
       tag: tag,
-      posts: reconstructPostsByTime(posts)
+      posts: groupByYear(posts)
     }
   }
 }

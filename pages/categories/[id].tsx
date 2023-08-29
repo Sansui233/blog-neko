@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { CommonHeader } from "..";
 import Layout from "../../components/Layout";
 import TLContent from "../../components/TimelinePosts";
-import { getAllCategories, getPostsMetaInCategory, reconstructPostsByTime } from "../../lib/posts";
+import { getAllCategories, getPostsMetaInCategory, groupByYear } from "../../lib/posts";
 import { textBoxShadow } from "../../styles/styles";
 
 type Props = {
@@ -106,7 +106,7 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
   return {
     props: {
       category: category,
-      posts: reconstructPostsByTime(posts)
+      posts: groupByYear(posts)
     }
   }
 }
