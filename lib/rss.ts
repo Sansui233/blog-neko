@@ -103,7 +103,7 @@ async function getMemo(): Promise<Item | null>{
 
   // get recent non-draft memo file
   let f = ""
-  for (let fileName in files){
+  for (let fileName of files){
     const fm = getFrontMatter(fileName, MEMOS_DIR)
     if ('draft' in fm && fm.draft == true){
       continue
