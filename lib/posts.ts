@@ -37,13 +37,12 @@ export function getFrontMatter(fileName: string, dir = POST_DIR) {
 
 /**
  * Get ids of all posts. Id is used in post url
- * @returns 
  */
 export function getAllPostIds() {
   return fileNames.map(f => {
     return {
       params: {
-        id: f.replace(/\.mdx?$/, '')
+        id: f.replace(/\.mdx?$/, '').replaceAll(" ","-")
       }
     };
   });
