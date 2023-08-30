@@ -10,7 +10,8 @@ import { CommonHeader, MainLayoutStyle, PageDescription } from ".";
 import Layout from "../components/Layout";
 import Pagination from "../components/Pagination";
 import Waline from "../components/Waline";
-import { getMemoPages, getMemoPosts, writeMemoJson } from "../lib/memos";
+import { getMemoPosts, writeMemoJson } from "../lib/memos";
+import { INFOFILE, MemoInfo } from "../lib/memos.common";
 import { bottomFadeIn } from '../styles/animations';
 import { MarkdownStyle } from "../styles/markdown";
 import { textBoxShadow } from "../styles/styles";
@@ -24,12 +25,22 @@ type MemoPost = {
 
 type Props = {
   memoposts: MemoPost[]
-  pagelimit: number
 }
 
-export default function Memos({ memoposts, pagelimit }: Props) {
+export default function Memos({ memoposts }: Props) {
   const router = useRouter()
   const [postsData, setpostsData] = useState(memoposts)
+  const [pagelimit, setpagelimit] = useState(1)
+
+  useEffect(() => {
+    fetch(`${MemoCSRAPI}/${INFOFILE}`)
+      .then(res => res.json())
+      .then((data) => {
+        const p = (data as MemoInfo).pages
+        setpagelimit(p + 1)
+      })
+  }, [])
+
 
   useEffect(() => {
     let page = 0
@@ -135,6 +146,9 @@ function MemoCard({ memoPost }: { memoPost: MemoPost }) {
 /** Rendering Control **/
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
+  // 生成 CSR 所需 JSON，SSR 需独立出逻辑
+  writeMemoJson()
+
   // 首屏 SEO 数据
   const posts = await getMemoPosts(0)
   const compiledPosts = await Promise.all(posts.map(async p => {
@@ -149,13 +163,10 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     }
   }))
 
-  // 生成 CSR 所需 JSON，SSR 需独立出逻辑
-  writeMemoJson()
 
   return {
     props: {
-      memoposts: compiledPosts,
-      pagelimit: await getMemoPages()
+      memoposts: compiledPosts
     }
   }
 }

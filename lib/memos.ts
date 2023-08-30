@@ -2,10 +2,10 @@ import fs from "fs";
 import path from "path";
 import readline from 'readline';
 import { getLastModTime, loadJson, writeToFs } from "./fs";
+import { FileInfo, INFOFILE, MemoInfo } from "./memos.common";
 
 export const MEMOS_DIR = path.join(process.cwd(), 'source', 'memos')
 const MEMO_CSR_DATA_DIR = path.join(process.cwd(), 'public', 'data', 'memos')
-const INFOFILE = "memosinfo.json"
 const NUM_PER_PAGE = 12
 
 type MemoPost = {
@@ -13,6 +13,9 @@ type MemoPost = {
   content: string;
 }
 
+/**
+ * Get markdown filename (with suffix) , sort by name desc
+ */
 const getSrcNames = () => {
   let fileNames = fs.readdirSync(MEMOS_DIR);
   return fileNames.filter(f => {
@@ -23,9 +26,8 @@ const getSrcNames = () => {
 }
 
 /**
- * Get memos by page
+ * Get memos by page. SSR only
  * @param page number from 0
- * @returns 
  */
 export async function getMemoPosts(page: number): Promise<MemoPost[]> {
   const fileNames = getSrcNames()
@@ -88,49 +90,8 @@ export async function getMemoPosts(page: number): Promise<MemoPost[]> {
 }
 
 /**
- * 返回 memo 可以分为多少页
- * @returns pageCount integer
- */
-export async function getMemoPages(): Promise<number> {
-  const fileNames = getSrcNames()
-  let count = 0;
-
-  for (const fileName of fileNames) {
-    const fileStream = fs.createReadStream(path.join(MEMOS_DIR, fileName))
-    const rl = readline.createInterface({
-      input: fileStream,
-      crlfDelay: Infinity
-    })
-    for await (const line of rl) {
-      if (line.startsWith("## ")) {
-        count++
-      }
-    }
-    rl.close()
-    fileStream.close()
-  }
-  return Math.ceil(count / NUM_PER_PAGE)
-}
-
-type MemoInfo = {
-  pages: number,
-  fileMap: FileInfo[]
-}
-type FileInfo = {
-  srcName: string,
-  lastModified: number,
-  startAt: {
-    page: number,
-    index: number,
-  },
-  endAt: {
-    page: number,
-    index: number,
-  }
-}
-
-/**
  * Generate CSR data File: {pagenumber}.json and memosinfo.json
+ * SSR only
  * Seperate memos into different files
  */
 export async function writeMemoJson() {
