@@ -1,9 +1,11 @@
 import fs from "fs";
-import readline from 'readline'
-import path from "path"
+import path from "path";
+import readline from 'readline';
+import { getLastModTime, loadJson, writeToFs } from "./fs";
 
 export const MEMOS_DIR = path.join(process.cwd(), 'source', 'memos')
 const MEMO_CSR_DATA_DIR = path.join(process.cwd(), 'public', 'data', 'memos')
+const INFOFILE = "memosinfo.json"
 const NUM_PER_PAGE = 12
 
 type MemoPost = {
@@ -11,7 +13,7 @@ type MemoPost = {
   content: string;
 }
 
-const getFileNames = () => {
+const getSrcNames = () => {
   let fileNames = fs.readdirSync(MEMOS_DIR);
   return fileNames.filter(f => {
     return f.endsWith(".md")
@@ -26,7 +28,7 @@ const getFileNames = () => {
  * @returns 
  */
 export async function getMemoPosts(page: number): Promise<MemoPost[]> {
-  const fileNames = getFileNames()
+  const fileNames = getSrcNames()
 
   // 左闭右开, start from 0
   const postRange = ((page: number) => {
@@ -90,7 +92,7 @@ export async function getMemoPosts(page: number): Promise<MemoPost[]> {
  * @returns pageCount integer
  */
 export async function getMemoPages(): Promise<number> {
-  const fileNames = getFileNames()
+  const fileNames = getSrcNames()
   let count = 0;
 
   for (const fileName of fileNames) {
@@ -110,27 +112,105 @@ export async function getMemoPages(): Promise<number> {
   return Math.ceil(count / NUM_PER_PAGE)
 }
 
-
-
+type MemoInfo = {
+  pages: number,
+  fileMap: FileInfo[]
+}
+type FileInfo = {
+  srcName: string,
+  lastModified: number,
+  startAt: {
+    page: number,
+    index: number,
+  },
+  endAt: {
+    page: number,
+    index: number,
+  }
+}
 
 /**
- * Generate CSR data File
+ * Generate CSR data File: {pagenumber}.json and memosinfo.json
  * Seperate memos into different files
  */
-export async function genMemoJsonFile() {
-  const fileNames = getFileNames()
+export async function writeMemoJson() {
+  const srcNames = getSrcNames() // with .md suffix
+  const oldInfo = await (loadJson(path.join(MEMO_CSR_DATA_DIR, "memosinfo.json"))) as MemoInfo // 边界条件：oldInfo 可能为 undefined
 
+  // result container
+  let memos: MemoPost[] = []
+  const memosInfo: MemoInfo = { pages: 0, fileMap: [] }
+
+  // status
   let page = 0
-  let posts: MemoPost[] = []
   let isFrontMatter = false
-  for (const fileName of fileNames) {
-    const fileStream = fs.createReadStream(path.join(MEMOS_DIR, fileName))
+  let startUpdate = false
+
+
+  // Traverse all memo md files, turn into {page.json}
+  // 基于fs的增量更新很难做，因为大量旧文件删除会影响页数，只能保证从修改的文件开始更新
+  for (const [i, srcName] of Object.entries(srcNames)) {
+
+    if (!startUpdate && oldInfo && oldInfo.fileMap.length !== 0) {
+
+      const oldFile = oldInfo.fileMap[Number.parseInt(i)]
+
+      const isIdentical = await (async function () {
+        if (oldFile.srcName === srcName) {
+          const lastModified = (await getLastModTime(path.join(MEMOS_DIR, srcName))).getTime()
+          if (oldFile.lastModified === lastModified) {
+            return true
+          }
+        }
+        return false
+      })()
+
+      // skip for unmodified md files
+      if (isIdentical) {
+        memosInfo.fileMap.push(oldFile)
+        memosInfo.pages = oldFile.endAt.page
+        console.debug('[memos.ts]', `skip re-parse for ${srcName} in ${MEMOS_DIR}`)
+        continue
+
+      } else {
+        // set update start point 
+        page = oldFile.startAt.page
+        memos = await loadJson(path.join(MEMO_CSR_DATA_DIR, `${page}.json`))
+        memos = memos.slice(0, oldFile.startAt.index)
+        startUpdate = true
+      }
+
+    } else {
+      startUpdate = true
+    }
+
+    console.debug('[memos.ts]', `parse memo file ${srcName} in ${MEMOS_DIR}`)
+
+    // update memosInfo
+    const fInfo: FileInfo = {
+      srcName: srcName,
+      lastModified: (await getLastModTime(path.join(MEMOS_DIR, srcName))).getTime(),
+      startAt: {
+        page: page,
+        index: memos.length
+      },
+      endAt: {
+        page: page,
+        index: memos.length
+      }
+
+    }
+
+    // Read file
+    const fileStream = fs.createReadStream(path.join(MEMOS_DIR, srcName))
     const rl = readline.createInterface({
       input: fileStream,
       crlfDelay: Infinity
     })
     let isFirstLine = true
+
     for await (const line of rl) {
+      // Skip yaml header at start
       if (line.startsWith("---") && isFirstLine) {
         if (isFrontMatter) {
           isFrontMatter = false
@@ -141,41 +221,44 @@ export async function genMemoJsonFile() {
           continue
         }
       }
+
+      // Parse memo
       if (line.startsWith("## ")) {
-        if (posts.length === NUM_PER_PAGE) {
-          writeToFs(page, posts)
-          posts = []
+        // Pagination
+        if (memos.length === NUM_PER_PAGE) {
+          writeToFs(MEMO_CSR_DATA_DIR, `${page}.json`, memos)
+          memos = []
           page++
         }
-        posts.push({
+        memos.push({
           title: line.slice(3),
           content: "",
         })
       } else {
+        // Skip yaml header at start
         if (isFrontMatter) continue
-        if (posts.length === 0) continue // Ignore the start of the first md file
-        posts[posts.length - 1].content += line + "\n" // push content
+        // Ignore the start of the first md file
+        if (memos.length === 0) continue
+
+        // Push memo data
+        memos[memos.length - 1].content += line + "\n"
+
+        // update status
+        memosInfo.pages = page
+        fInfo.endAt.page = page
+        fInfo.endAt.index = memos.length - 1 
       }
     }
+
+    // update status
+    memosInfo.fileMap.push(fInfo)
+
     rl.close()
     fileStream.close()
   }
-  if (posts.length !== 0) writeToFs(page, posts) // 最后的几个
-  console.log(`[memo.ts] ${page + 1} pages are generated`)
-}
 
-function writeToFs(page: number, posts: MemoPost[]) {
-  mkdirsSync(MEMO_CSR_DATA_DIR)
-  fs.writeFileSync(`${MEMO_CSR_DATA_DIR}/${page}.json`, JSON.stringify(posts))
-}
+  if (memos.length !== 0) writeToFs(MEMO_CSR_DATA_DIR, `${page}.json`, memos) // 最后的几个
+  writeToFs(MEMO_CSR_DATA_DIR, INFOFILE, memosInfo)
 
-function mkdirsSync(dirname: string) {
-  if (fs.existsSync(dirname)) {
-    return true;
-  } else {
-    if (mkdirsSync(path.dirname(dirname))) {
-      fs.mkdirSync(dirname);
-      return true;
-    }
-  }
+  console.log(`[memos.ts] ${memosInfo.pages + 1} pages are generated\n`)
 }
