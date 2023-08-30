@@ -135,7 +135,7 @@ const OptionText = styled.span`
   transition: box-shadow .3s ease;
   cursor: pointer;
 
-  :hover {
+  &:hover {
     box-shadow: inset 0 -0.5em 0 #ffffff55;
     transform: scale(1.2);
   }

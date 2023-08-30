@@ -79,7 +79,7 @@ const LabelStyle = styled.a`
   border-radius: 1em;
   transition: opacity .3s,transform .3s;
   font-size: 0.875rem;
-  :hover {
+  &:hover {
     opacity: 1;
     transform: scale(1.15);
   }
