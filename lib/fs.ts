@@ -12,6 +12,12 @@ export function mkdirsSync(dirname: string) {
   }
 }
 
+/**
+ * writeToFs(dir, "a.json", object)
+ * @param dir 
+ * @param filename 
+ * @param data 
+ */
 export function writeToFs(dir: string, filename: string, data: any) {
   mkdirsSync(dir)
   fs.writeFile(path.join(dir, filename), JSON.stringify(data), "utf8", (err) => {
@@ -30,6 +36,15 @@ export async function getLastModTime(filePath: string) {
   } catch (err) {
     console.error(`[fs.ts] Error when get last modifed time of ${filePath}, return Date to now`, err);
     return new Date()
+  }
+}
+
+export async function getStat(filePath: string) {
+  try {
+    return fs.promises.stat(filePath);
+  } catch (err) {
+    console.error(`[fs.ts] Error when get stat of ${filePath}, return undefined`, err);
+    return undefined
   }
 }
 
