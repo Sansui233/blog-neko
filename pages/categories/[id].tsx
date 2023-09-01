@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { CommonHeader } from "..";
 import Layout from "../../components/Layout";
 import TLContent from "../../components/TimelinePosts";
-import { getAllCategories, getPostsMetaInCategory, groupByYear } from "../../lib/posts";
+import { groupByYear, posts } from "../../lib/posts";
 import { textBoxShadow } from "../../styles/styles";
 
 type Props = {
@@ -90,7 +90,8 @@ export const TLPostsContainer = styled.ul`
 `
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const paths = Array.from(await getAllCategories()).map(v => {
+
+  const paths = Array.from(await posts.categories()).map(v => {
     return { params: { id: v[0] } }
   })
   return {
@@ -101,12 +102,12 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
   let category = params!.id as string
-  const posts = await getPostsMetaInCategory(category)
+  const p = await posts.inCategory(category)
 
   return {
     props: {
       category: category,
-      posts: groupByYear(posts)
+      posts: groupByYear(p)
     }
   }
 }

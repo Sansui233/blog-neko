@@ -5,7 +5,7 @@ import React, { useMemo, useState } from 'react'
 import styled from 'styled-components'
 import Layout from '../components/Layout'
 import { NavDropper } from '../components/NavDropper'
-import { getAllCategories, getSortedPostsMeta } from '../lib/posts'
+import { posts } from '../lib/posts'
 import { bottomFadeIn } from '../styles/animations'
 import { cardBoxShadow } from '../styles/styles'
 
@@ -95,8 +95,8 @@ function ArticleItem({ p, i }: {
 export const getStaticProps: GetStaticProps<Props> = async () => {
   return {
     props: {
-      posts: await getSortedPostsMeta(),
-      categories: Array.from(await getAllCategories())
+      posts: await posts.metas(),
+      categories: Array.from(await posts.categories())
     }
   }
 }
