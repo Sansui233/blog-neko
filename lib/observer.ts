@@ -4,7 +4,7 @@
 
 import fs from "fs";
 import path from "path";
-import { getStat, loadJson, writeToFs } from "./fs";
+import { getStat, loadJson, writeJson } from "./fs";
 import { DInfo, FInfo } from "./obeserver.common";
 
 /**
@@ -108,7 +108,7 @@ export async function observe<T extends DInfo<U>, U extends FInfo>(
   }
 
   if (updateInfoFile) {
-    writeToFs("", infoPath, newInfo)
+    writeJson("", infoPath, newInfo)
   }
 
   return list

@@ -18,22 +18,6 @@ export async function mkdir(dirname: string) {
   return false
 }
 
-/**
- * writeToFs(dir, "a.json", object)
- * @param dir 
- * @param filename 
- * @param data 
- */
-export function writeToFs(dir: string, filename: string, data: any) {
-  mkdir(dir)
-  fs.writeFile(path.join(dir, filename), JSON.stringify(data), "utf8", (err) => {
-    if (err) {
-      console.error(`[fs.ts] Wrtie ${filename} to ${dir} failed: `, err)
-      throw err
-    }
-  })
-}
-
 export async function getLastModTime(filePath: string) {
   try {
     const stats = await fs.promises.stat(filePath);
@@ -67,4 +51,20 @@ export async function loadJson(filePath: string) {
       throw err
     }
   }
+}
+
+/**
+ * writeToFs(dir, "a.json", object)
+ * @param dir 
+ * @param filename 
+ * @param data JSON object
+ */
+export function writeJson(dir: string, filename: string, data: object) {
+  mkdir(dir)
+  fs.writeFile(path.join(dir, filename), JSON.stringify(data), "utf8", (err) => {
+    if (err) {
+      console.error(`[fs.ts] Wrtie ${filename} to ${dir} failed: `, err)
+      throw err
+    }
+  })
 }

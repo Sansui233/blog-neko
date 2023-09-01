@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import readline from 'readline';
-import { getLastModTime, loadJson, writeToFs } from "./fs";
+import { getLastModTime, loadJson, writeJson } from "./fs";
 import { FileInfo, INFOFILE, MemoInfo } from "./memos.common";
 
 export const MEMOS_DIR = path.join(process.cwd(), 'source', 'memos')
@@ -187,7 +187,7 @@ export async function writeMemoJson() {
       if (line.startsWith("## ")) {
         // Pagination
         if (memos.length === NUM_PER_PAGE) {
-          writeToFs(MEMO_CSR_DATA_DIR, `${page}.json`, memos)
+          writeJson(MEMO_CSR_DATA_DIR, `${page}.json`, memos)
           memos = []
           page++
         }
@@ -218,8 +218,8 @@ export async function writeMemoJson() {
     fileStream.close()
   }
 
-  if (memos.length !== 0) writeToFs(MEMO_CSR_DATA_DIR, `${page}.json`, memos) // 最后的几个
-  writeToFs(MEMO_CSR_DATA_DIR, INFOFILE, memosInfo)
+  if (memos.length !== 0) writeJson(MEMO_CSR_DATA_DIR, `${page}.json`, memos) // 最后的几个
+  writeJson(MEMO_CSR_DATA_DIR, INFOFILE, memosInfo)
 
   console.log(`[memos.ts] ${memosInfo.pages + 1} pages are generated\n`)
 }
