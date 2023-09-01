@@ -1,4 +1,4 @@
-import { readFileSync } from "fs"
+import { readFile } from "fs/promises"
 import { GetStaticPaths, GetStaticProps } from "next"
 import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote'
 import { serialize } from 'next-mdx-remote/serialize'
@@ -154,7 +154,7 @@ export default function Post({ mdxSource, nextPost, prevPost, excerpt, headings 
 // ALL POSTS Dynamic Route 決定
 export const getStaticPaths: GetStaticPaths = async () => {
   // return all [id]
-  const paths = getAllPostIds();
+  const paths = await getAllPostIds();
   return {
     paths,
     fallback: false
@@ -164,7 +164,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 // get POST Data
 export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
   const id = params!.id as string
-  const mdContent = readFileSync(path.join(POST_DIR, `${id}.md`), 'utf-8') // TODO 没有处理mdx的后缀
+  const mdContent = await readFile(path.join(POST_DIR, `${id}.md`), 'utf-8') // TODO 没有处理mdx的后缀
 
   // 获取摘要，分割YAML头和Markdown正文
   const yamlSeparator = '---\r\n';
@@ -208,7 +208,7 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
   }
 
   // Get next and prev Post
-  const allPosts = getSortedPostsMeta()
+  const allPosts = await getSortedPostsMeta()
   const i = allPosts.findIndex(p => p.id === id)
   const prevPost = i - 1 < 0 ? null : {
     title: allPosts[i - 1].title!,

@@ -29,7 +29,7 @@ export default function TagPage({ tag, posts }: Props) {
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const paths = Array.from(getAllTags()).map(v => {
+  const paths = Array.from(await getAllTags()).map(v => {
     return { params: { id: v[0] } }
   })
   return {
@@ -40,7 +40,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
   let tag = params!.id as string
-  const posts = getSortedTagPosts(tag)
+  const posts = await getSortedTagPosts(tag)
 
   return {
     props: {

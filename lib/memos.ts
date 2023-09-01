@@ -16,8 +16,8 @@ type MemoPost = {
 /**
  * Get markdown filename (with suffix) , sort by name desc
  */
-const getSrcNames = () => {
-  let fileNames = fs.readdirSync(MEMOS_DIR);
+async function getSrcNames() {
+  let fileNames = await fs.promises.readdir(MEMOS_DIR);
   return fileNames.filter(f => {
     return f.endsWith(".md")
   }).sort((a, b) => {
@@ -30,7 +30,7 @@ const getSrcNames = () => {
  * @param page number from 0
  */
 export async function getMemoPosts(page: number): Promise<MemoPost[]> {
-  const fileNames = getSrcNames()
+  const fileNames = await getSrcNames()
 
   // 左闭右开, start from 0
   const postRange = ((page: number) => {
@@ -95,7 +95,7 @@ export async function getMemoPosts(page: number): Promise<MemoPost[]> {
  * Seperate memos into different files
  */
 export async function writeMemoJson() {
-  const srcNames = getSrcNames() // with .md suffix
+  const srcNames = await getSrcNames() // with .md suffix
   const oldInfo = await (loadJson(path.join(MEMO_CSR_DATA_DIR, "memosinfo.json"))) as MemoInfo // 边界条件：oldInfo 可能为 undefined
 
   // result container

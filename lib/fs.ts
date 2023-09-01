@@ -1,15 +1,21 @@
 import fs from "fs";
 import path from "path";
 
-export function mkdirsSync(dirname: string) {
+/**
+ * mkdir recursively
+ */
+export async function mkdir(dirname: string) {
   if (fs.existsSync(dirname)) {
     return true;
   } else {
-    if (mkdirsSync(path.dirname(dirname))) {
-      fs.mkdirSync(dirname);
+    // Recursively mkdir
+    if (await mkdir(path.dirname(dirname))) {
+      await fs.promises.mkdir(dirname);
       return true;
     }
   }
+  console.error(`[fs.ts] Error - mkdir ${dirname} failed`)
+  return false
 }
 
 /**
@@ -19,7 +25,7 @@ export function mkdirsSync(dirname: string) {
  * @param data 
  */
 export function writeToFs(dir: string, filename: string, data: any) {
-  mkdirsSync(dir)
+  mkdir(dir)
   fs.writeFile(path.join(dir, filename), JSON.stringify(data), "utf8", (err) => {
     if (err) {
       console.error(`[fs.ts] Wrtie ${filename} to ${dir} failed: `, err)

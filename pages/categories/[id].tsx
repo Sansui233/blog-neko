@@ -90,7 +90,7 @@ export const TLPostsContainer = styled.ul`
 `
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const paths = Array.from(getAllCategories()).map(v => {
+  const paths = Array.from(await getAllCategories()).map(v => {
     return { params: { id: v[0] } }
   })
   return {
@@ -101,7 +101,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
   let category = params!.id as string
-  const posts = getPostsMetaInCategory(category)
+  const posts = await getPostsMetaInCategory(category)
 
   return {
     props: {

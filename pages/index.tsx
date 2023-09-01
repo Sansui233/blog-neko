@@ -84,7 +84,7 @@ function ArticleItem({ p, i }: {
         <div className='meta'>
           <span className='date'>{p.date}</span>
           <span>{` | `}</span>
-          <i className='icon-material-folder_open' style={{padding: "0.2em"}}/>
+          <i className='icon-material-folder_open' style={{ padding: "0.2em" }} />
           {p.categories}
         </div>
       </div>
@@ -95,8 +95,8 @@ function ArticleItem({ p, i }: {
 export const getStaticProps: GetStaticProps<Props> = async () => {
   return {
     props: {
-      posts: getSortedPostsMeta(),
-      categories: Array.from(getAllCategories())
+      posts: await getSortedPostsMeta(),
+      categories: Array.from(await getAllCategories())
     }
   }
 }

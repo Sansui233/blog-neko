@@ -57,8 +57,8 @@ export default function Categories({ categories, tags }: {
 export const getStaticProps: GetStaticProps = async () => {
   return {
     props: {
-      categories: Object.fromEntries(getAllCategories()),
-      tags: Object.fromEntries(getAllTags())
+      categories: Object.fromEntries(await getAllCategories()),
+      tags: Object.fromEntries(await getAllTags())
     }
   }
 }

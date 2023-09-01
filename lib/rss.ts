@@ -20,13 +20,13 @@ interface ItemExt extends Item {
  * Get recent 10 post
  */
 async function getPosts(): Promise<Item[]> {
-  let fileNames = fs.readdirSync(POST_DIR);
+  let fileNames = await fs.promises.readdir(POST_DIR);
   fileNames = fileNames.filter(f => {
     return f.endsWith(".md") || f.endsWith(".mdx")
   })
   let allPosts: (Item | ItemExt)[] = await Promise.all(
     fileNames.map(async fileName => {
-      const fileContents = fs.readFileSync(path.join(POST_DIR, fileName), 'utf-8')
+      const fileContents = await fs.promises.readFile(path.join(POST_DIR, fileName), 'utf-8')
       const mdxSource = await serialize(
         fileContents,
         {
@@ -95,7 +95,7 @@ async function getPosts(): Promise<Item[]> {
 // 最新（名称最大）的 memo 文件中，最近 6 条生成 rss
 // 名称最大是个人习惯，通常名称越大的越日期越新。一个文件里会写很多条，一个md写完都行。分文件只是为了好翻，毕竟没人想在整理文件时下拉一个巨大的txt
 async function getMemo(): Promise<Item | null>{
-  const files = fs.readdirSync(MEMOS_DIR).filter(f => {
+  const files = (await fs.promises.readdir(MEMOS_DIR)).filter(f => {
     return f.endsWith(".md")
   }).sort((a, b) => {
     return a < b ? 1 : -1 // Desc for latest first
@@ -141,7 +141,7 @@ async function getMemo(): Promise<Item | null>{
   rl.close()
   fileStream.close()
 
-  const matterResult = getFrontMatter(f, MEMOS_DIR)
+  const matterResult = await getFrontMatter(f, MEMOS_DIR)
   const updateDate = dateToYMD(matterResult.data.date)
 
   const res = {
@@ -205,7 +205,7 @@ async function createRss() {
 
 export async function writeRss() {
   const feed = await createRss()
-  fs.writeFileSync("./public/atom.xml", feed.atom1());
-  fs.writeFileSync("./public/rss", feed.rss2());
-  fs.writeFileSync("./public/feed.json", feed.json1());
+  fs.promises.writeFile("./public/atom.xml", feed.atom1());
+  fs.promises.writeFile("./public/rss", feed.rss2());
+  fs.promises.writeFile("./public/feed.json", feed.json1());
 }

@@ -18,40 +18,40 @@ type FrontMatter = {
 /**
  * 获取要处理的文件名
  */
-const fileNames = (() => {
-  let fileNames = fs.readdirSync(POST_DIR);
+const fileNames = await ((async () => {
+  let fileNames = await fs.promises.readdir(POST_DIR);
   fileNames = fileNames.filter(f => {
     return f.endsWith(".md") || f.endsWith(".mdx")
   })
   return fileNames
-})()
+})())
 
 /**
  * Get front matter info from a local markdown file
  */
-export function getFrontMatter(fileName: string, dir = POST_DIR) {
+export async function getFrontMatter(fileName: string, dir = POST_DIR) {
   const fullPath = path.join(dir, fileName)
-  const fileContents = fs.readFileSync(fullPath, 'utf8')
+  const fileContents = await fs.promises.readFile(fullPath, 'utf8')
   return matter(fileContents)
 }
 
 /**
  * Get ids of all posts. Id is used in post url
  */
-export function getAllPostIds() {
+export async function getAllPostIds() {
   return fileNames.map(f => {
     return {
       params: {
-        id: f.replace(/\.mdx?$/, '').replaceAll(" ","-")
+        id: f.replace(/\.mdx?$/, '').replaceAll(" ", "-")
       }
     };
   });
 }
 
-export function getSortedPostsMeta() {
-  const allPosts = fileNames.map(fileName => {
+export async function getSortedPostsMeta() {
+  const promises = fileNames.map(async fileName => {
     const id = fileName.replace(/\.mdx?$/, '')
-    const frontMatter: FrontMatter = getFrontMatter(fileName).data
+    const frontMatter: FrontMatter = (await getFrontMatter(fileName)).data
     const date = dateToYMD(frontMatter.date!)
 
     return {
@@ -61,18 +61,20 @@ export function getSortedPostsMeta() {
     }
   })
 
+  const allPosts = await Promise.all(promises)
+
   return allPosts.sort((a, b) => {
     return a.date < b.date ? 1 : -1
   })
 }
 
-export function getAllCategories() {
+export async function getAllCategories() {
   const categories = new Map<string, number>()
   const posts = fileNames // 取出防止重复计算
   categories.set(CATEGORY_ALL, posts.length)
 
-  posts.map(fileName => {
-    const matterResult = getFrontMatter(fileName)
+  const promises = posts.map(async fileName => {
+    const matterResult = await getFrontMatter(fileName)
     if (matterResult.data['categories']) {
       const c = matterResult.data['categories']
       if (categories.has(c)) {
@@ -82,18 +84,21 @@ export function getAllCategories() {
       }
     }
   })
+
+  await Promise.all(promises)
+
   return categories
 }
 
-export function getPostsMetaInCategory(c: string) {
+export async function getPostsMetaInCategory(c: string) {
   const posts: {
     id: string,
     title: string,
     date: Date,
   }[] = []
 
-  fileNames.map(fileName => {
-    const matterResult = getFrontMatter(fileName)
+  const promises = fileNames.map(async fileName => {
+    const matterResult = await getFrontMatter(fileName)
     if (c === CATEGORY_ALL ||
       (matterResult.data['categories'] && matterResult.data['categories'] === c)
     ) {
@@ -105,18 +110,20 @@ export function getPostsMetaInCategory(c: string) {
     }
   })
 
+  await Promise.all(promises)
+
   return posts.sort((a, b) => a.date < b.date ? 1 : -1)
 }
 
-export function getSortedTagPosts(t: string) {
+export async function getSortedTagPosts(t: string) {
   const posts: {
     id: string,
     title: string,
     date: Date,
   }[] = []
 
-  fileNames.map(fileName => {
-    const matterResult = getFrontMatter(fileName)
+  const promises = fileNames.map(async  fileName => {
+    const matterResult = await getFrontMatter(fileName)
     let fileTags = matterResult.data['tags']
     fileTags = typeof (fileTags) === 'string' ? [fileTags] : fileTags
     if (fileTags.some((ft: string) => ft === t)) {
@@ -128,15 +135,17 @@ export function getSortedTagPosts(t: string) {
     }
   })
 
+  await Promise.all(promises)
+
   return posts.sort((a, b) => a.date < b.date ? 1 : -1)
 }
 
-export function getAllTags() {
+export async function getAllTags() {
   const tags = new Map<string, number>()
   tags.set(TAG_UNTAGGED, 0)
 
-  fileNames.map(fileName => {
-    const matterResult = getFrontMatter(fileName)
+  const promises = fileNames.map(async fileName => {
+    const matterResult = await getFrontMatter(fileName)
     if (matterResult.data['tags']) {
       let fileTags = matterResult.data['tags']
       fileTags = typeof (fileTags) === 'string' ? [fileTags] : fileTags
@@ -151,6 +160,9 @@ export function getAllTags() {
       tags.set(TAG_UNTAGGED, tags.get(TAG_UNTAGGED)! + 1)
     }
   })
+
+  await Promise.all(promises)
+  
   return tags
 }
 
