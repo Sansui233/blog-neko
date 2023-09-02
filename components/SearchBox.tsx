@@ -1,7 +1,8 @@
-import lunr from "lunr"; // TODO 要自己改库，Lunr不支持中文搜索
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import styled from "styled-components";
-import { SearchObj } from '../lib/search';
+import { Naive, Result } from '../lib/search';
+import { SearchObj } from '../lib/search/common';
+import { debounce } from '../lib/throttle';
 
 const SEARCHDOC = '/data/posts/index.json'
 
@@ -13,11 +14,11 @@ type Props = {
 
 
 function SearchBox({ ourSetSearch: outShow, stateToInner: outstate, iconEle }: Props) {
-  const [idx, setidx] = useState(lunr(function () { }))
-  const [res, setres] = useState<lunr.Index.Result[]>([])
+  const [idx, setidx] = useState<Naive<Result>>()
+  const [res, setres] = useState<Result[]>([])
   const [isShow, setIsShow] = useState(outstate)
   const containerRef = useRef<HTMLDivElement>(null)
-  const inputRef = useRef(null)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   const toggle = (b: boolean) => {
     outShow(b) // to outside
@@ -34,14 +35,11 @@ function SearchBox({ ourSetSearch: outShow, stateToInner: outstate, iconEle }: P
     fetch(SEARCHDOC)
       .then(res => res.json())
       .then((data) => {
-
-        const newIdx = lunr(function () {
-          this.ref('id');
-          this.field('content');
-
-          (data as SearchObj[]).forEach(doc => {
-            this.add(doc)
-          }, this);
+        const newIdx = new Naive({
+          data: data as SearchObj[],
+          ref: "id",
+          field: ["title", "content"],
+          notifier: setres
         })
 
         setidx(newIdx)
@@ -51,11 +49,10 @@ function SearchBox({ ourSetSearch: outShow, stateToInner: outstate, iconEle }: P
   // Click Outside to close
   useEffect(() => {
     function handleClick(e: MouseEvent) {
+      // https://developer.mozilla.org/en-US/docs/Web/API/Node inherit from EventTarget
       const clickSearchBox = containerRef.current && containerRef.current.contains((e.target as Node))
       const clickSearchIcon = iconEle.current && iconEle.current?.contains((e.target as Node))
-      console.log("%%%%%%%%%%%% click inside", clickSearchBox, clickSearchIcon)
       if (!clickSearchBox && !clickSearchIcon) {
-        // https://developer.mozilla.org/en-US/docs/Web/API/Node inherit from EventTarget
         toggle(false)
       }
     }
@@ -67,21 +64,15 @@ function SearchBox({ ourSetSearch: outShow, stateToInner: outstate, iconEle }: P
     }
   }, [])
 
-
-  const search = function (str: string) {
-    const res = idx.search(str)
-    return res
-  }
-
-  const handleInput = function (e: FormEvent<HTMLInputElement>) {
-    setres(search(e.currentTarget.value))
-  }
+  const handleInput = debounce(function (e: FormEvent<HTMLInputElement>) {
+    inputRef.current && idx?.search((e.target as HTMLInputElement).value)
+  }, 300)
 
   return (
     <Container ref={containerRef} className={isShow ? "" : "hidden"}>SearchBox
       <input type="text" placeholder="搜索" ref={inputRef} onInput={handleInput} />
-      <div>{res.map(r => {
-        return <div>{r.ref}</div>
+      <div>{res.map((r, i) => {
+        return <div key={i}>{r.ref}</div>
       })}</div>
     </Container>
   )

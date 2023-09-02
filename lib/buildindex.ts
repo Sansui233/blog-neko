@@ -4,24 +4,18 @@ import { dateToString } from "./date";
 import { loadJson, writeJson } from "./fs";
 import { observe } from "./observer";
 import { POST_DIR, getFrontMatter } from "./posts";
+import { SearchObj } from "./search";
 
-export type SearchObj = {
-  id: string,
-  title: string,
-  content: string,
-  description: string,
-  keywords: string,
-  date: string
-}
+
 
 const DATADIR = path.join(process.cwd(), 'public', 'data', 'posts')
 const SEARCHJSON = 'index.json'
 const OBSERVEINFO = 'status.json'
 
 /**
- * 索引文件
+ * generate index file
  */
-export async function buildIndex() {
+export async function buildIndex(dir=DATADIR,json=SEARCHJSON,status=OBSERVEINFO) {
 
   let index: Array<SearchObj> = []
 

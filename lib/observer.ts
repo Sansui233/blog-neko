@@ -152,8 +152,7 @@ export async function observe<U extends FInfo>(
     writeJson(infoPath, newInfo)
   }
 
-  console.debug(`[observer.ts] cuurent stat of ${dir}:`, newInfo.fileMap.map(p => p.name))
-  console.debug(`[observer.ts] modified list`, list)
+  // console.debug(`[observer.ts] modified list`, list)
 
   return list
 }
