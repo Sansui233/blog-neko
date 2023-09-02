@@ -19,4 +19,4 @@ export type FileInfo = {
   }
 }
 
-export const INFOFILE = "memosinfo.json"
+export const INFOFILE = "status.json"

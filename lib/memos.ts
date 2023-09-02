@@ -96,7 +96,7 @@ export async function getMemoPosts(page: number): Promise<MemoPost[]> {
  */
 export async function writeMemoJson() {
   const srcNames = await getSrcNames() // with .md suffix
-  const oldInfo = await (loadJson(path.join(MEMO_CSR_DATA_DIR, "memosinfo.json"))) as MemoInfo // 边界条件：oldInfo 可能为 undefined
+  const oldInfo = await (loadJson(path.join(MEMO_CSR_DATA_DIR, INFOFILE))) as MemoInfo // 边界条件：oldInfo 可能为 undefined
 
   // result container
   let memos: MemoPost[] = []
@@ -136,8 +136,10 @@ export async function writeMemoJson() {
       } else {
         // set update start point 
         page = oldFile.startAt.page
-        memos = await loadJson(path.join(MEMO_CSR_DATA_DIR, `${page}.json`))
-        memos = memos.slice(0, oldFile.startAt.index)
+        const oldmemos = await loadJson(path.join(MEMO_CSR_DATA_DIR, `${page}.json`))
+        if(oldmemos){
+          memos = oldmemos.slice(0, oldFile.startAt.index)
+        }
         startUpdate = true
       }
 
@@ -187,7 +189,7 @@ export async function writeMemoJson() {
       if (line.startsWith("## ")) {
         // Pagination
         if (memos.length === NUM_PER_PAGE) {
-          writeJson(MEMO_CSR_DATA_DIR, `${page}.json`, memos)
+          writeJson(path.join(MEMO_CSR_DATA_DIR, `${page}.json`), memos)
           memos = []
           page++
         }
@@ -218,8 +220,8 @@ export async function writeMemoJson() {
     fileStream.close()
   }
 
-  if (memos.length !== 0) writeJson(MEMO_CSR_DATA_DIR, `${page}.json`, memos) // 最后的几个
-  writeJson(MEMO_CSR_DATA_DIR, INFOFILE, memosInfo)
+  if (memos.length !== 0) writeJson(path.join(MEMO_CSR_DATA_DIR, `${page}.json`), memos) // 最后的几个
+  writeJson(path.join(MEMO_CSR_DATA_DIR, INFOFILE), memosInfo)
 
   console.log(`[memos.ts] ${memosInfo.pages + 1} pages are generated\n`)
 }

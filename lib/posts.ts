@@ -8,12 +8,16 @@ const CATEGORY_ALL = 'All Posts'
 const TAG_UNTAGGED = 'Untagged'
 
 
-type FrontMatter = {
-  title?: string,
-  date?: Date,
-  category?: string,
-  tags?: string | string[],
+/**
+ * parsed by gray-matter, not mdxResource
+ */
+export type FrontMatter = {
+  title: string,
+  date: Date,
+  category: string,
+  tags: string | string[],
   description?: string | string[],
+  keywords?: string
 }
 
 export const posts = {
@@ -72,7 +76,7 @@ export const posts = {
 
     const promises = self.names.map(async fileName => {
       const id = fileName.replace(/\.mdx?$/, '')
-      const frontMatter: FrontMatter = (await getFrontMatter(fileName)).data
+      const frontMatter = ((await getFrontMatter(fileName)).data) as FrontMatter
       const date = dateToYMD(frontMatter.date!)
 
       return {

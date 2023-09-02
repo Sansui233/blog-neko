@@ -1,6 +1,6 @@
 export interface FInfo {
   name: string,
-  mtime?: number,
+  mtime: number,
   md5?: string,
 }
 

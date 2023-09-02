@@ -6,6 +6,7 @@ import styled from 'styled-components'
 import Layout from '../components/Layout'
 import { NavDropper } from '../components/NavDropper'
 import { posts } from '../lib/posts'
+import { buildIndex } from '../lib/search'
 import { bottomFadeIn } from '../styles/animations'
 import { cardBoxShadow } from '../styles/styles'
 
@@ -93,6 +94,7 @@ function ArticleItem({ p, i }: {
 }
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
+  buildIndex()
   return {
     props: {
       posts: await posts.metas(),

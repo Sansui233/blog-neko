@@ -4,18 +4,20 @@ import path from "path";
 /**
  * mkdir recursively
  */
-export async function mkdir(dirname: string) {
+function mkdirSync(dirname: string) {
   if (fs.existsSync(dirname)) {
     return true;
+  } else if (dirname === "") {
+    console.debug("unexpected blank dir")
+    return true
   } else {
     // Recursively mkdir
-    if (await mkdir(path.dirname(dirname))) {
-      await fs.promises.mkdir(dirname);
+    if (mkdirSync(path.dirname(dirname))) {
+      fs.mkdirSync(dirname);
       return true;
     }
   }
-  console.error(`[fs.ts] Error - mkdir ${dirname} failed`)
-  return false
+
 }
 
 export async function getLastModTime(filePath: string) {
@@ -38,6 +40,9 @@ export async function getStat(filePath: string) {
   }
 }
 
+/**
+ * PLEASE CHeCK if returned obj exsits or not！
+ */
 export async function loadJson(filePath: string) {
   try {
     const data = await fs.promises.readFile(filePath, 'utf-8')
@@ -46,6 +51,7 @@ export async function loadJson(filePath: string) {
   } catch (err) {
     if ((err as NodeJS.ErrnoException).code === 'ENOENT') { // file not found error
       console.error(`[fs.ts] File not found ${filePath}`);
+      return null;
     } else {
       console.error(`[fs.ts] Error when Parse ${filePath}`, err);
       throw err
@@ -54,17 +60,13 @@ export async function loadJson(filePath: string) {
 }
 
 /**
- * writeToFs(dir, "a.json", object)
- * @param dir 
- * @param filename 
- * @param data JSON object
+ * writeJson(dir, "a.json", object)
  */
-export function writeJson(dir: string, filename: string, data: object) {
-  mkdir(dir)
-  fs.writeFile(path.join(dir, filename), JSON.stringify(data), "utf8", (err) => {
-    if (err) {
-      console.error(`[fs.ts] Wrtie ${filename} to ${dir} failed: `, err)
-      throw err
-    }
-  })
+export async function writeJson(filepath: string, data: object) {
+  mkdirSync(path.dirname(filepath))
+  try {
+    await fs.promises.writeFile(filepath, JSON.stringify(data), "utf8")
+  } catch (error) {
+    console.error(`[fs.ts] Wrtie ${filepath} failed: `, error)
+  }
 }

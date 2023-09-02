@@ -13,20 +13,21 @@ import { DInfo, FInfo } from "./obeserver.common";
  * @param dir directory to be observed
  * @param infoPath a full path where the status stored
  * @param isIdentical a callback that returns the comparison method
+ * @param handleInfo Update file Info for new files and write
  * @param filter a string that file name contains
- * @param updateInfoFile whether write InfoFile
  * @returns modifed-file list
  */
-export async function observe<T extends DInfo<U>, U extends FInfo>(
+export async function observe<U extends FInfo>(
   dir: string,
   infoPath: string,
   isIdentical: (oldstatus: U, newstatus: fs.Stats) => boolean,
+  infoUpdate: boolean,
+  handleInfo?: (info: FInfo) => U,
   filter?: string,
-  updateInfoFile = false,
 ) {
 
   // read old status
-  let oldInfo = (await loadJson(infoPath)) as T
+  let oldInfo = (await loadJson(infoPath)) as DInfo<U>
 
   // filter new files and sort
   let fileNames = await fs.promises.readdir(dir)
@@ -37,7 +38,7 @@ export async function observe<T extends DInfo<U>, U extends FInfo>(
   }
 
   fileNames = fileNames.sort((a, b) => {
-    return a < b ? -1 : 1 // ASC for old first
+    return a < b ? -1 : 1
   })
 
   // res
@@ -54,62 +55,105 @@ export async function observe<T extends DInfo<U>, U extends FInfo>(
   // 读 oldInfo 和 filenames，按排序后的名字比较
   let i = 0, j = 0;
   if (oldInfo) {
-    for (let i = 0; i < oldInfo.fileMap.length; i++) {
-      for (let j = 0; j < fileNames.length; j++) {
+    const fileMap = oldInfo.fileMap.sort((a, b) => {
+      return a.name < b.name ? -1 : 1;
+    })
 
-        const oldfile = oldInfo.fileMap[i].name
-        const oldstat = oldInfo.fileMap[i]
-        const newfile = fileNames[j]
-        const newstat = await (getStat(path.join(dir, newfile)));
+    // console.debug('[observer.ts] old file list', fileMap.map(p => p.name))
+    // console.debug('[observer.ts] new file list', fileNames)
 
-        if (updateInfoFile) {
-          newInfo.fileMap.push({
-            name: newfile
-          })
-        }
+    while (i < fileMap.length && j < fileNames.length) {
+      const oldfile = fileMap[i].name
+      const oldstat = fileMap[i]
+      const newfile = fileNames[j]
+      const newstat = await (getStat(path.join(dir, newfile)));
 
-        if (!newstat) {
-          j++;
-          continue
-        }
-
-        if (oldfile < newfile) {
-          list.del.push(oldfile);
-          i++;
-          break;
-        }
-
-        if (oldfile === newfile) {
-          const res = isIdentical(oldstat, newstat)
-          if (!res) {
-            list.mod.push(oldfile);
-          }
-          i++; j++;
-          continue
-        }
-
-        if (oldfile > newfile) {
-          list.create.push(newfile);
-          j++;
-          continue;
-        }
+      if (!newstat) {
+        console.error(`[observer.ts] unexpected ${newstat} not found`)
+        j++;
+        continue // TODO throw error
+      }
+      const finfo = {
+        name: newfile,
+        mtime: newstat ? newstat.mtime.getTime() : -1
+      }
+      if (handleInfo) {
+        const u = handleInfo(finfo)
+        newInfo.fileMap.push(u)
+      } else {
+        newInfo.fileMap.push(finfo)
       }
 
-      while (i < oldInfo.fileMap.length) {
-        list.del.push(oldInfo.fileMap[i].name)
-        i++
+
+      if (oldfile < newfile) {
+        list.del.push(oldfile);
+        i++;
+        continue;
       }
-      while (j < fileNames.length) {
-        list.create.push(fileNames[j])
-        j++
+
+      if (oldfile === newfile) {
+        const res = isIdentical(oldstat, newstat)
+        if (!res) {
+          list.mod.push(oldfile);
+        }
+        i++; j++;
+        continue;
+      }
+
+      if (oldfile > newfile) {
+        list.create.push(newfile);
+        j++;
+        continue;
       }
 
     }
+
+    // tail
+    while (i < fileMap.length) {
+      list.del.push(fileMap[i].name)
+      i++
+    }
+    while (j < fileNames.length) {
+      const newfile = fileNames[j]
+      const newstat = await (getStat(path.join(dir, newfile)));
+      const finfo = {
+        name: newfile,
+        mtime: newstat ? newstat.mtime.getTime() : -1
+      }
+      if (handleInfo) {
+        const u = handleInfo(finfo)
+        newInfo.fileMap.push(u)
+      } else {
+        newInfo.fileMap.push(finfo)
+      }
+      list.create.push(fileNames[j])
+      j++
+    }
+
+  } else {
+    await Promise.all(fileNames.map(async newfile => {
+      const newstat = await (getStat(path.join(dir, newfile)));
+      const finfo = {
+        name: newfile,
+        mtime: newstat ? newstat.mtime.getTime() : -1
+      }
+      if (handleInfo) {
+        const u = handleInfo(finfo)
+        newInfo.fileMap.push(u)
+      } else {
+        newInfo.fileMap.push(finfo)
+      }
+
+      list.create.push(newfile);
+    }))
   }
 
-  if (updateInfoFile) {
-    writeJson("", infoPath, newInfo)
+  if (handleInfo) {
+    writeJson(infoPath, newInfo)
   }
+
+  console.debug(`[observer.ts] cuurent stat of ${dir}:`, newInfo.fileMap.map(p => p.name))
+  console.debug(`[observer.ts] modified list`, list)
 
   return list
 }
