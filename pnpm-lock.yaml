@@ -64,6 +64,9 @@ devDependencies:
   '@svgr/webpack':
     specifier: ^8.1.0
     version: 8.1.0
+  '@types/lunr':
+    specifier: ^2.3.5
+    version: 2.3.5
   '@types/node':
     specifier: ^20.5.7
     version: 20.5.7
@@ -1822,6 +1825,10 @@ packages:
 
   /@types/json5@0.0.29:
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
+    dev: true
+
+  /@types/lunr@2.3.5:
+    resolution: {integrity: sha512-C4xYh7A4FRKg70AWJCe27oJYVPhUlEY5MQ4dKbRR7G6Xsb2HiqO672yWHRvWxl8/h7IuISvwDjv88ECHUEsV2A==}
     dev: true
 
   /@types/mdast@3.0.12:

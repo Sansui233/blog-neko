@@ -1,16 +1,19 @@
 import Link from "next/link"
 import { useRouter } from "next/router"
-import React, { useContext, useEffect, useState } from "react"
+import React, { useContext, useEffect, useRef, useState } from "react"
 import styled, { ThemeContext } from "styled-components"
 import { throttle } from "../lib/throttle"
 import MenuIcon from "./MenuIcon"
+import SearchBox from "./SearchBox"
 import Sidebar from "./Sidebar"
 
 export default function Header() {
   const theme = useContext(ThemeContext)
   const [isHidden, setisHidden] = useState(false)
   const [isSidebar, setIsSidebar] = useState(false)
+  const [isSearch, setisSearch] = useState(false)
   const router = useRouter()
+  const searchIcon = useRef<HTMLDivElement>(null)
 
   useEffect(() => { // This will be rendered twice?
     let previousTop = globalThis.scrollY
@@ -41,8 +44,17 @@ export default function Header() {
     setIsSidebar(!isSidebar)
   }
 
+  const clickSearch = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    setisSearch(!isSearch)
+  }
+
+  const updateSearch = (innerState: boolean) => {
+    setisSearch(innerState)
+  }
+
   return (
     <React.Fragment>
+      <SearchBox ourSetSearch={updateSearch} stateToInner={isSearch} iconEle={searchIcon} />
       <Sidebar isShow={isSidebar} toggle={toggleSidebar} />
       <Layout $isHidden={isHidden}>
         <Avatar >
@@ -56,8 +68,9 @@ export default function Header() {
           <ol className={router.pathname === "/memos" ? 'current' : ''}><Link href="/memos">Memos</Link></ol>
           <ol className={router.pathname === "/about" ? 'current' : ''}><Link href="/about">About</Link></ol>
         </Nav>
-        <More onClick={toggleSidebar}>
-          <div>
+        <More >
+          <div ref={searchIcon} onClick={(e) => { clickSearch(e) }} style={isSearch ? { color: "gold" } : undefined}>搜</div>
+          <div onClick={toggleSidebar}>
             <MenuIcon width={"24px"} height={"100%"} isClose={isSidebar} />
           </div>
         </More>
@@ -95,13 +108,38 @@ const Layout = styled.header<{
   transition: transform .5s ease;
 `
 
-const More = styled.div`
+// Common Property to make nav middle aligned
+const LeftRight = styled.div`
   flex: 1 1 auto;
+  max-width: 128px;
+  display: flex;
+
+`
+const Avatar = styled(LeftRight)`
+  flex: 1 1 auto;
+  max-width: 63px;
+  display: flex;
+  img {
+    margin-left: 10px;
+    z-index: 11;
+    width: 63px;
+    height: 63px;
+    float: left;
+    cursor: pointer;
+  }
+
+  @media screen and (max-width: 580px){
+    img {
+      width: 48px;
+      height: 48px;
+    }
+  }
+`
+
+const More = styled(LeftRight)`
   text-align: right;
   font-size: 0.875em;
   cursor: pointer;
-  max-width: 63px;
-  display: flex;
   
   & > div {
     display: inline-block;
@@ -163,24 +201,4 @@ const Nav = styled.nav`
     color: ${props => props.theme.colors.gold};
   }
 
-`
-const Avatar = styled.div`
-  flex: 1 1 auto;
-  max-width: 63px;
-  display: flex;
-  img {
-    margin-left: 10px;
-    z-index: 11;
-    width: 63px;
-    height: 63px;
-    float: left;
-    cursor: pointer;
-  }
-
-  @media screen and (max-width: 580px){
-    img {
-      width: 48px;
-      height: 48px;
-    }
-  }
 `

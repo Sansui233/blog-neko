@@ -5,7 +5,7 @@ import { loadJson, writeJson } from "./fs";
 import { observe } from "./observer";
 import { POST_DIR, getFrontMatter } from "./posts";
 
-type SearchObj = {
+export type SearchObj = {
   id: string,
   title: string,
   content: string,
