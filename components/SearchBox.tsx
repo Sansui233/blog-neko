@@ -51,6 +51,7 @@ function SearchBox({ ourSetSearch: outShow, stateToInner: outstate, iconEle }: P
   }, [])
 
   // Click Outside to close
+  // Esc to close
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       // https://developer.mozilla.org/en-US/docs/Web/API/Node inherit from EventTarget
@@ -63,8 +64,17 @@ function SearchBox({ ourSetSearch: outShow, stateToInner: outstate, iconEle }: P
 
     document.addEventListener('mousedown', (e) => handleClick(e), false);
 
+    function close(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        console.log('press')
+        toggle(false)
+      }
+    }
+    document.addEventListener('keydown', (e) => { close(e) }, false)
+
     return () => {
       document.removeEventListener('mousedown', (e) => handleClick(e), false);
+      document.removeEventListener('keydown', (e) => { close(e) }, false)
     }
   }, [])
 
