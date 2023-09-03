@@ -91,22 +91,20 @@ function SearchBox({ outSetSearch: outShow, stateToInner: outstate, iconEle }: P
 
   const renderResult = function () {
     // 列表太长了要做成infinte scroll，不然修改打分机制
-    const spacer = <div style={{ height: "0.5rem" }} />
 
     if (!isReady) {
-      return <div style={{ fontSize: "0.875rem", opacity: 0.5 }}>{spacer}
+      return <div style={{ fontSize: "0.875rem", opacity: 0.5 }}>
         <Excerpt>搜索初始化中……</Excerpt>
       </div>
     }
 
     if (res.length === 0) {
-      return <div style={{ fontSize: "0.875rem", opacity: 0.5 }}>{spacer}</div>
+      return <></>
     }
 
     return res.map((r, i) => {
       const id = r.ref.substring(0, r.ref.lastIndexOf(".")); // remove suffix
       return <Item href={`/posts/${id}`} key={i} onClick={() => { toggle(false) }}>
-        {i === 0 ? spacer : undefined}
         <span>{highlightSlot(r.title, r.matched)}</span>
         <Excerpt>{r.excerpt ?
           highlightSlot(r.excerpt, r.matched)
@@ -133,11 +131,26 @@ function SearchBox({ outSetSearch: outShow, stateToInner: outstate, iconEle }: P
 
   return (
     <Container ref={containerRef} className={isShow ? "" : "hidden"}>
-      <Input type="text" placeholder="关键词搜索" ref={inputRef} onInput={handleInput} />
-      {renderResult()}
+      <StickyContainer style={{ padding: "0.7rem 1rem 0 1rem" }}>
+        <Input type="text" placeholder="关键词搜索" ref={inputRef} onInput={handleInput} />
+      </StickyContainer>
+      <ScrollContainer style={{ padding: "0.5rem 1rem " }}>
+        {renderResult()}
+      </ScrollContainer>
     </Container>
   )
 }
+
+const ScrollContainer = styled.div`
+  overflow-y: scroll;
+  max-height: 60vh;
+`
+
+const StickyContainer = styled.div`
+  position: sticky;
+  top: 0;
+  background: ${p => p.theme.colors.bg};
+`
 
 const Input = styled.input`
   border: none;
@@ -147,6 +160,7 @@ const Input = styled.input`
   width: 100%;
   color: ${p => p.theme.colors.textPrimary};
 
+
   &:focus,
   &:focus-visible{
     outline: none;
@@ -155,11 +169,19 @@ const Input = styled.input`
 `
 
 const Item = styled(Link)`
-  padding: 0.2rem 0;
+  padding: 0.375rem 0;
+  display: block;
 
   
   &:hover>span{
     box-shadow: inset 0 -0.5em 0 ${props => props.theme.colors.goldHover};
+  }
+
+  &>span::before {
+    content: "▪";
+    font-size: 1rem;
+    margin-right: 0.67rem;
+    color: ${p => p.theme.colors.gold};
   }
   
   &>span {
@@ -173,13 +195,17 @@ const Excerpt = styled.div`
   overflow: hidden;
   white-space: nowrap;
   wrap: no-wrap;
+  padding-left: 1rem;
 `
 
 const Container = styled(PopOver)`
+  min-height: unset;
   position: fixed;
   top: 55px;
   right: 10px;
   width: 24rem;
+  overflow: hidden;
+
 
   &.hidden {
     display: none;
@@ -192,6 +218,7 @@ const Container = styled(PopOver)`
 
   @media screen and (max-width: 580px){
     width: 96%;
+    max-height:50%
   }
   
 `
