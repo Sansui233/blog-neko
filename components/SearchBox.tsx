@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { FormEvent, useEffect, useRef, useState } from 'react';
+import { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
 import styled from "styled-components";
 import { Naive, Result } from '../lib/search';
 import { SearchObj } from '../lib/search/common';
@@ -9,13 +9,13 @@ import PopOver from '../styles/components/PopOver';
 const SEARCHDOC = '/data/posts/index.json'
 
 type Props = {
-  ourSetSearch: (isShow: boolean) => void
+  outSetSearch: (isShow: boolean) => void
   stateToInner: boolean
   iconEle: React.RefObject<HTMLDivElement> // 这个组件有从内部控制外部，但外部的搜索图标是随便放的，在判断点击外部区部时要排除
 }
 
 
-function SearchBox({ ourSetSearch: outShow, stateToInner: outstate, iconEle }: Props) {
+function SearchBox({ outSetSearch: outShow, stateToInner: outstate, iconEle }: Props) {
   const [idx, setidx] = useState<Naive<Result>>()
   const [res, setres] = useState<Result[]>([])
   const [isShow, setIsShow] = useState(outstate)
@@ -23,10 +23,10 @@ function SearchBox({ ourSetSearch: outShow, stateToInner: outstate, iconEle }: P
   const inputRef = useRef<HTMLInputElement>(null)
   const [isReady, setisReady] = useState(false)
 
-  const toggle = (b: boolean) => {
+  const toggle = useCallback((b: boolean) => {
     outShow(b) // to outside
     setIsShow(b) // inside
-  }
+  }, [outShow])
 
   useEffect(() => {
     setIsShow(outstate)
@@ -76,7 +76,7 @@ function SearchBox({ ourSetSearch: outShow, stateToInner: outstate, iconEle }: P
       document.removeEventListener('mousedown', (e) => handleClick(e), false);
       document.removeEventListener('keydown', (e) => { close(e) }, false)
     }
-  }, [])
+  }, [iconEle, toggle])
 
   // Focus on open
   useEffect(() => {

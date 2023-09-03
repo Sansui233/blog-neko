@@ -54,7 +54,7 @@ export default function Header() {
 
   return (
     <React.Fragment>
-      <SearchBox ourSetSearch={updateSearch} stateToInner={isSearch} iconEle={searchIcon} />
+      <SearchBox outSetSearch={updateSearch} stateToInner={isSearch} iconEle={searchIcon} />
       <Sidebar isShow={isSidebar} toggle={toggleSidebar} />
       <Layout $isHidden={isHidden}>
         <Avatar >
