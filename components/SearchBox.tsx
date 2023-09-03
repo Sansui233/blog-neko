@@ -105,9 +105,9 @@ function SearchBox({ outSetSearch: outShow, stateToInner: outstate, iconEle }: P
 
     return res.map((r, i) => {
       const id = r.ref.substring(0, r.ref.lastIndexOf(".")); // remove suffix
-      return <Item key={i} >
+      return <Item href={`/posts/${id}`} key={i} onClick={() => { toggle(false) }}>
         {i === 0 ? spacer : undefined}
-        <Link href={`/posts/${id}`}>{highlightSlot(r.title, r.matched)}</Link>
+        <span>{highlightSlot(r.title, r.matched)}</span>
         <Excerpt>{r.excerpt ?
           highlightSlot(r.excerpt, r.matched)
           : undefined}</Excerpt>
@@ -142,6 +142,7 @@ function SearchBox({ outSetSearch: outShow, stateToInner: outstate, iconEle }: P
 const Input = styled.input`
   border: none;
   border-bottom: 1px solid ${p => p.theme.colors.uiLineGray};
+  border-radius: 0;
   background: ${p => p.theme.colors.bg};
   width: 100%;
   color: ${p => p.theme.colors.textPrimary};
@@ -153,16 +154,15 @@ const Input = styled.input`
   }
 `
 
-const Item = styled.div`
+const Item = styled(Link)`
   padding: 0.2rem 0;
-  cursor: pointer;
 
   
-  &:hover a{
+  &:hover>span{
     box-shadow: inset 0 -0.5em 0 ${props => props.theme.colors.goldHover};
   }
   
-  a {
+  &>span {
     transition: box-shadow .5s;
   }
 `
@@ -179,7 +179,7 @@ const Container = styled(PopOver)`
   position: fixed;
   top: 55px;
   right: 10px;
-  max-width: 24rem;
+  width: 24rem;
 
   &.hidden {
     display: none;
