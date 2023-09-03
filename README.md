@@ -6,6 +6,21 @@ https://sansui233.com
 
 基于 Next.js 的静态博客生成，可以在保留原来 hexo 博客用法的简便性的的同时，增加更多随意的个人定制页面，支持 mdx。~~顺便复习一下 React~~
 
+## Progress
+
+- [x] 基本框架完成，支持 mdx
+- [x] rss 完成
+- [x] Dark Mode
+- [x] 详细分类页
+- [x] 分页渲染
+- [x] 评论接入
+- [x] 统计接入
+- [x] 站内搜索（异步框架）
+- [ ] 动画优化（尤其 CSR 等待部分）
+- [ ] （长期）设计、抠 Markdown 等
+- [ ] build 时单独进行rss解析，增加build option配置文件
+- [x] CSR 索引增量更新
+
 ## 使用
 1. 把 md 文件放在 source/posts/ 目录下。  
   - yaml 头必须有 `title`, `date`, `categories` 和 `tags`  
@@ -33,22 +48,7 @@ export const siteInfo = {
 
 5. 部署参考 deploy.sh，需要修改目标文件夹和 git push 的分支名。我个人使用的是 github pages，同时 vercel 拉取 github 的分支。
 
-其他地方是写死配置，需要自行改动
-
-## Progress
-
-- [x] 基本框架完成，支持 mdx
-- [x] rss 完成
-- [x] Dark Mode
-- [x] 详细分类页
-- [x] 分页渲染
-- [x] 评论接入
-- [x] 统计接入
-- [ ] 搜索
-- [ ] 动画优化（尤其 CSR 等待部分）
-- [ ] （长期）设计、抠 Markdown 等
-- [ ] build 时单独进行rss解析，增加build option配置文件
-- [ ] export时大量博文时增量更新（不清楚目前状况但文章多了确实挺慢的）
+其他地方目前是写死配置，需要自行改动
 
 ## Thanks
 

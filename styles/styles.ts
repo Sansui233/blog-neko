@@ -5,7 +5,7 @@ export const textStroke = css`
   -webkit-text-fill-color: transparent;
 `
 
-export const textBoxShadow = {
+export const textShadow = {
   s: css`box-shadow: inset 0 -0.3em 0 ${props => props.theme.colors.hoverBg};`,
   m: css`box-shadow: inset 0 -0.5em 0 ${props => props.theme.colors.hoverBg};`,
   l: css`box-shadow: inset 0 -0.8em 0 ${props => props.theme.colors.hoverBg};`,

@@ -14,7 +14,7 @@ import { getMemoPosts, writeMemoJson } from "../lib/memos";
 import { INFOFILE, MemoInfo } from "../lib/memos.common";
 import { bottomFadeIn } from '../styles/animations';
 import { MarkdownStyle } from "../styles/markdown";
-import { textBoxShadow } from "../styles/styles";
+import { textShadow } from "../styles/styles";
 
 const MemoCSRAPI = '/data/memos'
 
@@ -207,20 +207,20 @@ const CardMask = styled.div<{
     height: 7rem;
     cursor: pointer;
     text-align: center;
-    ${props => props.$isCollapse === true ? props.theme.colors.memoGradient : ''}
+    ${props => props.$isCollapse === true ? props.theme.colors.maskGradient : ''}
 
     .rd-more {
       margin-top: 5.375rem;
       font-size: 0.875rem;
       padding: 0.2rem 0;
       span {
-        ${() => textBoxShadow.s}
+        ${() => textShadow.s}
         transition: box-shadow .3s;
       }
     }
 
     &:hover .rd-more span {
-      ${() => textBoxShadow.f}
+      ${() => textShadow.f}
     }
    
 `

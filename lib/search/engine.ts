@@ -31,6 +31,13 @@ export class Naive<R extends Result> extends Engine {
   }
 
   async search(s: string) {
+    s = s.replace(/^\s+|\s+$/g, "") // remove blank at start and end
+
+    if (s === "") {
+      this.notifyInstant([], true)
+      return
+    }
+
     this._tasks_add(s)
 
     await Promise.all(this.tasks)
@@ -51,27 +58,76 @@ export class Naive<R extends Result> extends Engine {
     this.res = []
   }
 
-  // Core function
   find(s: string, o: SearchObj, i?: number) {
 
     return new Promise<void>(resolve => {
-      const include = this.field.some(f => {
-        if (f in o) { // ?都在 if 里了这还不能自己推断类型吗，TS好麻烦
-          if (o[f as keyof SearchObj].includes(s)) {
-            return true
-          }
-        }
-        return false
-      })
+      for (let j = 0; j < this.field.length; j++) {
 
-      if (include) {
-        this.res.push({
-          ref: o.title
-        })
+        const f = this.field[j]
+        if (!(f in o)) {
+          continue
+        }
+
+        // search
+        const index = this._match(o[f], s)
+
+        if (index !== -1) {
+          // generate excerpt
+          const excerpt = (() => {
+            if (f !== "title") {
+              const start = (index - 10) < 0 ? 0 : index - 10
+              const end = (index + 40) > o[f].length ? o[f].length : index + 40
+              console.log(start, end, o[f].length)
+              return o[f].slice(start, end).replaceAll("\n","")
+            }
+          })()
+
+          console.log(excerpt)
+
+          this.res.push({
+            ref: o.id,
+            title: o.title,
+            excerpt: excerpt ? excerpt : undefined,
+            matched: s,
+          })
+          break;
+        }
       }
 
-      this.notify([...this.res])
+      // Notify observer
+      if (this.res.length !== 0) {
+        this.notify([...this.res])
+      }
       resolve();
     });
   }
+
+  /**
+   * Find index in 
+   * Optimze for Word split
+   * @param s source
+   * @param p pattern
+   * @returns index. -1 for not found
+   */
+  _match(s: string, p: string) {
+
+    s = s.toLowerCase();
+    p = p.toLowerCase();
+
+    // 带中文直接返回，分词在浏览器没法
+    if (!/^[A-Za-z]+$/.test(p)) {
+      return s.indexOf(p);
+    } else {
+      // English
+      const pattern = new RegExp(`\\b${p}\\b`, 'i');
+      const match = pattern.exec(s);
+      if (match) {
+        return match.index;
+      }
+    }
+
+    return -1;
+  }
+
+
 }

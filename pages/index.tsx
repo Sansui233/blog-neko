@@ -108,7 +108,7 @@ export default Home
 export const MainLayoutStyle = styled.div`
   max-width: 780px;
   margin: 0 auto;
-  padding: 0 48px 48px 48px;
+  padding: 0px 48px 48px 48px;
 
   @media screen and (max-width: 780px) {
     max-width: 580px;
@@ -141,7 +141,7 @@ const PostGrids = styled.section`
 const Card = styled(Link)`
   display: block;
   min-height: 7rem;
-  border-radius: 1rem;
+  border-radius: 5px;
   cursor: pointer;
   position: relative;
   transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.1s;

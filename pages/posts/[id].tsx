@@ -114,7 +114,7 @@ export default function Post({ mdxSource, nextPost, prevPost, excerpt, headings 
                     </StyledLink>
                   </MetaStyle>
                 </div>
-                <div style={{ flex: "0 0 0" }}>
+                <div style={{ flex: "0 0 0", fontSize: "0.875rem" }}>
                   <i style={{ paddingLeft: "0.5em", paddingRight: "0.3em" }} className='icon-material-eye' />
                   <span className="waline-pageview-count" data-path={router.basePath} />
                 </div>
@@ -234,6 +234,10 @@ const PostLayout = styled(MainLayoutStyle)`
   max-width: 750px;
   margin-top: 72px;
   animation: ${bottomFadeIn} 1s ease;
+
+  @media screen and (max-width: 580px) {
+    margin-top: 20px;
+  }
 `
 
 const ColumnRight = styled.div`

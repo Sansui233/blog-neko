@@ -1,7 +1,7 @@
 import Link from "next/link";
 import styled from "styled-components";
 import { MainLayoutStyle } from "../pages";
-import { textBoxShadow } from "../styles/styles";
+import { textShadow } from "../styles/styles";
 
 /**
  * 生成具体的标签页和分类页内容，以时间线排序
@@ -107,7 +107,7 @@ const TLPostsContainer = styled.ul`
   }
 
   a:hover {
-    ${() => textBoxShadow.s}
+    ${() => textShadow.s}
   }
 
   li {

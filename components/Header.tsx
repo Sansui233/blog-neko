@@ -69,9 +69,11 @@ export default function Header() {
           <ol className={router.pathname === "/about" ? 'current' : ''}><Link href="/about">About</Link></ol>
         </Nav>
         <More >
-          <div ref={searchIcon} onClick={(e) => { clickSearch(e) }} style={isSearch ? { color: "gold" } : undefined}>搜</div>
-          <div onClick={toggleSidebar}>
-            <MenuIcon width={"24px"} height={"100%"} isClose={isSidebar} />
+          <SearchIcon ref={searchIcon} onClick={(e) => { clickSearch(e) }} $isSearch={isSearch}>
+            <i className='icon-search' style={{ fontSize: "1.725rem" }} />
+          </SearchIcon>
+          <div onClick={toggleSidebar} style={{ marginRight: "20px", width: "22px" }}>
+            <MenuIcon width={"100%"} height={"21px"} isClose={isSidebar} />
           </div>
         </More>
       </Layout>
@@ -82,6 +84,15 @@ export default function Header() {
   );
 }
 
+const SearchIcon = styled.div<{ $isSearch: boolean }>`
+  ${p => p.$isSearch ? "color:" + p.theme.colors.gold + ";" : ""}
+  transform: translateY(0.145rem);
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: ${p => p.theme.colors.goldHover};
+  }
+`
 const PlaceHolder = styled.div`
     height: 63px;
     width: 100%;
@@ -111,13 +122,14 @@ const Layout = styled.header<{
 // Common Property to make nav middle aligned
 const LeftRight = styled.div`
   flex: 1 1 auto;
-  max-width: 128px;
   display: flex;
+  align-items: center;
+  height: 100%;
+  justify-content: flex-end;
 
 `
 const Avatar = styled(LeftRight)`
   flex: 1 1 auto;
-  max-width: 63px;
   display: flex;
   img {
     margin-left: 10px;
@@ -127,12 +139,16 @@ const Avatar = styled(LeftRight)`
     float: left;
     cursor: pointer;
   }
+  justify-content: flex-start;
 
   @media screen and (max-width: 580px){
     img {
       width: 48px;
       height: 48px;
     }
+  }
+  @media screen and (max-width: 350px){
+    display: none
   }
 `
 
@@ -143,10 +159,7 @@ const More = styled(LeftRight)`
   
   & > div {
     display: inline-block;
-    margin-left: auto;
-    margin-right: 20px;
-    height: 20px;
-    position: relative;
+    margin-right: 15px;
   }
 
   @media screen and (max-width: 580px) {

@@ -52,7 +52,7 @@ export async function buildIndex(dir=DATADIR,json=SEARCHJSON,status=OBSERVEINFO)
     index[i] = ({
       id: n,
       title: fm.data['title'],
-      content: await getContent(path.join(POST_DIR, n)),
+      content:(await getContent(path.join(POST_DIR, n))).replaceAll("\n",""),
       description: fm.data['description'] ? fm.data['description'] : "",
       keywords: fm.data['keywords'] ? fm.data['keywords'] : "",
       date: dateToString(fm.data['date'])
@@ -76,7 +76,9 @@ export async function buildIndex(dir=DATADIR,json=SEARCHJSON,status=OBSERVEINFO)
 
   index = index.sort((a, b) => a.date < b.date ? 1 : -1)
   writeJson(path.join(DATADIR, SEARCHJSON), index)
-  console.log("[search.ts]", index.length, "pages are indexed")
+
+  console.log("[buildindex.ts]", fl.create.length + fl.del.length + fl.mod.length, "pages updated")
+  console.log("[buildindex.ts]", index.length, "pages are indexed")
 }
 
 function find(index: SearchObj[], id: string) {

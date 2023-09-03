@@ -5,7 +5,7 @@ import { CommonHeader } from "..";
 import Layout from "../../components/Layout";
 import TLContent from "../../components/TimelinePosts";
 import { groupByYear, posts } from "../../lib/posts";
-import { textBoxShadow } from "../../styles/styles";
+import { textShadow } from "../../styles/styles";
 
 type Props = {
   category: string,
@@ -74,7 +74,7 @@ export const TLPostsContainer = styled.ul`
   }
 
   a:hover {
-    ${() => textBoxShadow.m}
+    ${() => textShadow.m}
   }
 
   li {

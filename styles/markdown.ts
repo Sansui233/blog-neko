@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { textBoxShadow } from "./styles";
 
 export const MarkdownStyle = styled.div`
   text-align: justify;

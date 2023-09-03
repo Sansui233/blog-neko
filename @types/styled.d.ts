@@ -17,9 +17,10 @@ declare module 'styled-components' {
       hoverBg: string,
       codeBlockBg: string,
       shadowBg: string,
-      memoGradient: FlattenSimpleInterpolation,
+      maskGradient: FlattenSimpleInterpolation,
       navBgGradient: FlattenInterpolation,
       filterDarker?: FlattenSimpleInterpolation,
+      uiLineGray: string,
     },
   }
 }

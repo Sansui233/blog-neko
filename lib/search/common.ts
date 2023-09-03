@@ -9,8 +9,9 @@ export type SearchObj = {
 
 export interface Result {
   ref: string
-  title?: string
+  title: string
   excerpt?: string
+  matched: string
 }
 
 export abstract class Engine {

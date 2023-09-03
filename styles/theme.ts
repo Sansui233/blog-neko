@@ -15,7 +15,7 @@ export const lightTheme: DefaultTheme = {
     hoverBg: '#00000022',
     shadowBg: `rgb(0 0 0 / 5%)`,
     codeBlockBg: '#eeeeee',
-    memoGradient: css`
+    maskGradient: css`
     background-image: -webkit-linear-gradient(top,rgba(255,255,255,0) 0%,rgba(255,255,255,.8) 40%,rgba(255,255,255,1) 75%);
     background-image: -moz-linear-gradient(top,rgba(255,255,255,0) 0%,rgba(255,255,255,.8) 40%,rgba(255,255,255,1) 75%);
     background-image: -o-linear-gradient(top,rgba(255,255,255,0) 0%,rgba(255,255,255,.8) 40%,rgba(255,255,255,1) 75%);
@@ -26,7 +26,8 @@ export const lightTheme: DefaultTheme = {
     background: -moz-linear-linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 14%, rgba(255,255,255,1) 23%, rgba(255,255,255,1) 100%);
     background: -o-linear-linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 14%, rgba(255,255,255,1) 23%, rgba(255,255,255,1) 100%);
     background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 14%, rgba(255,255,255,1) 23%, rgba(255,255,255,1) 100%);
-    `
+    `,
+    uiLineGray: "#a2a2a280",
   }
 }
 export const darkTheme: DefaultTheme = {
@@ -44,7 +45,7 @@ export const darkTheme: DefaultTheme = {
     hoverBg: '#ffffff55',
     shadowBg: `rgb(255 255 255 / 5%)`,
     codeBlockBg: '#3b3b3b',
-    memoGradient: css`
+    maskGradient: css`
     background-image: -webkit-linear-gradient(top,rgba(36,36,36,0) 0%,rgba(36,36,36,.8) 40%,rgba(36,36,36,1) 75%);
     background-image: -moz-linear-gradient(top,rgba(36,36,36,0) 0%,rgba(36,36,36,.8) 40%,rgba(36,36,36,1) 75%);
     background-image: -o-linear-gradient(top,rgba(36,36,36,0) 0%,rgba(36,36,36,.8) 40%,rgba(36,36,36,1) 75%);
@@ -56,7 +57,8 @@ export const darkTheme: DefaultTheme = {
     background: -o-linear-linear-gradient(to right, rgba(36,36,36,0) 0%, rgba(36,36,36,0.8) 14%, rgba(36,36,36,1) 23%, rgba(36,36,36,1) 100%);
     background: linear-gradient(to right, rgba(36,36,36,0) 0%, rgba(36,36,36,0.8) 14%, rgba(36,36,36,1) 23%, rgba(36,36,36,1) 100%);
     `,
-    filterDarker: css`filter: brightness(0.8);`
+    filterDarker: css`filter: brightness(0.8);`,
+    uiLineGray: "#a2a2a280",
   }
 }
 
