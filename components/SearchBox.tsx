@@ -131,8 +131,8 @@ function SearchBox({ outSetSearch: outShow, stateToInner: outstate, iconEle }: P
 
   return (
     <Container ref={containerRef} className={isShow ? "" : "hidden"}>
-      <StickyContainer style={{ padding: "0.7rem 1rem 0 1rem" }}>
-        <Input type="text" placeholder="关键词搜索" ref={inputRef} onInput={handleInput} />
+      <StickyContainer style={{ padding: "1rem 1rem 0 1rem" }}>
+        <Input type="text" placeholder="关键词搜索..." ref={inputRef} onInput={handleInput} />
       </StickyContainer>
       <ScrollContainer style={{ padding: "0.5rem 1rem " }}>
         {renderResult()}
@@ -154,7 +154,7 @@ const StickyContainer = styled.div`
 
 const Input = styled.input`
   border: none;
-  border-bottom: 1px solid ${p => p.theme.colors.uiLineGray};
+  /*border-bottom: 1px solid ${p => p.theme.colors.uiLineGray};*/
   border-radius: 0;
   background: ${p => p.theme.colors.bg};
   width: 100%;
@@ -164,29 +164,38 @@ const Input = styled.input`
   &:focus,
   &:focus-visible{
     outline: none;
-    border-bottom: 1px solid ${p => p.theme.colors.goldHover};
+    /*border-bottom: 1px solid ${p => p.theme.colors.goldHover};*/
   }
 `
 
 const Item = styled(Link)`
   padding: 0.375rem 0;
   display: block;
+  padding-left: 1rem;
 
   
   &:hover>span{
     box-shadow: inset 0 -0.5em 0 ${props => props.theme.colors.goldHover};
   }
 
-  &>span::before {
-    content: "▪";
-    font-size: 1rem;
-    margin-right: 0.67rem;
-    color: ${p => p.theme.colors.gold};
-  }
-  
   &>span {
     transition: box-shadow .5s;
+    position: relative;
   }
+
+  &>span::before {
+    content: "";
+    margin-right: 0.67rem;
+    color: ${p => p.theme.colors.gold};
+    background: ${p => p.theme.colors.gold};
+
+    position: absolute;
+    transform: translateY(0.5rem) translateX(-0.8rem);
+    height: 0.3rem;
+    width: 0.3rem;
+    border-radius: 1rem;
+  }
+  
 `
 
 const Excerpt = styled.div`
@@ -195,16 +204,16 @@ const Excerpt = styled.div`
   overflow: hidden;
   white-space: nowrap;
   wrap: no-wrap;
-  padding-left: 1rem;
 `
 
 const Container = styled(PopOver)`
   min-height: unset;
   position: fixed;
   top: 55px;
-  right: 10px;
+  right: 0px;
   width: 24rem;
   overflow: hidden;
+  margin: 0 10px;
 
 
   &.hidden {
