@@ -29,9 +29,6 @@ dependencies:
   install:
     specifier: ^0.13.0
     version: 0.13.0
-  lunr:
-    specifier: ^2.3.9
-    version: 2.3.9
   next:
     specifier: latest
     version: 13.4.19(@babel/core@7.22.11)(react-dom@18.2.0)(react@18.2.0)(sass@1.66.1)
@@ -50,6 +47,9 @@ dependencies:
   remark-gfm:
     specifier: ^3.0.1
     version: 3.0.1
+  stopwords-zh:
+    specifier: ^0.4.0
+    version: 0.4.0
   styled-components:
     specifier: ^6.0.7
     version: 6.0.7(react-dom@18.2.0)(react@18.2.0)
@@ -64,9 +64,6 @@ devDependencies:
   '@svgr/webpack':
     specifier: ^8.1.0
     version: 8.1.0
-  '@types/lunr':
-    specifier: ^2.3.5
-    version: 2.3.5
   '@types/node':
     specifier: ^20.5.7
     version: 20.5.7
@@ -1825,10 +1822,6 @@ packages:
 
   /@types/json5@0.0.29:
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
-    dev: true
-
-  /@types/lunr@2.3.5:
-    resolution: {integrity: sha512-C4xYh7A4FRKg70AWJCe27oJYVPhUlEY5MQ4dKbRR7G6Xsb2HiqO672yWHRvWxl8/h7IuISvwDjv88ECHUEsV2A==}
     dev: true
 
   /@types/mdast@3.0.12:
@@ -3815,10 +3808,6 @@ packages:
       yallist: 4.0.0
     dev: true
 
-  /lunr@2.3.9:
-    resolution: {integrity: sha512-zTU3DaZaF3Rt9rhN3uBMGQD3dD2/vFQqnvZCDv4dl5iOzq2IZQqTxu90r4E5J+nP70J3ilqVCrbho2eWaeW8Ow==}
-    dev: false
-
   /magic-string@0.30.3:
     resolution: {integrity: sha512-B7xGbll2fG/VjP+SWg4sX3JynwIU0mjoTc6MPpKNuIvftk6u6vqhDnk1R80b8C2GBR6ywqy+1DcKBrevBg+bmw==}
     engines: {node: '>=12'}
@@ -5013,6 +5002,11 @@ packages:
 
   /sprintf-js@1.0.3:
     resolution: {integrity: sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g==}
+    dev: false
+
+  /stopwords-zh@0.4.0:
+    resolution: {integrity: sha512-GubthnCFSrKYyAiR/0uGIuEZ9XB6jy27cWCloBOTEZKWWXQIi/oLPf/W3/MsJjddKpgl4nytfnkHyZrC5VdUZQ==}
+    engines: {node: '>=0.10.0'}
     dev: false
 
   /streamsearch@1.1.0:

@@ -10,11 +10,17 @@ export type SearchObj = {
 export interface Result {
   ref: string
   title: string
-  excerpt?: string
-  matched: string
+  excerpts?: {
+    word: string,
+    excerpt?: string,
+  }[]
 }
 
 export abstract class Engine {
-  abstract search(s: string): any
+  abstract search(s: string | string[]): any
 }
 
+// Type reference tools
+export type WithRequiredProperty<Type, Key extends keyof Type> = Type & {
+  [Property in Key]-?: Type[Property];
+};

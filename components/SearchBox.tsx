@@ -66,7 +66,6 @@ function SearchBox({ outSetSearch: outShow, stateToInner: outstate, iconEle }: P
 
     function close(e: KeyboardEvent) {
       if (e.key === "Escape") {
-        console.log('press')
         toggle(false)
       }
     }
@@ -86,7 +85,8 @@ function SearchBox({ outSetSearch: outShow, stateToInner: outstate, iconEle }: P
   }, [isShow])
 
   const handleInput = debounce(function (e: FormEvent<HTMLInputElement>) {
-    inputRef.current && idx?.search((e.target as HTMLInputElement).value)
+    const strs = (e.target as HTMLInputElement).value.split(" ")
+    inputRef.current && idx?.search(strs)
   }, 300)
 
   const renderResult = function () {
@@ -105,24 +105,36 @@ function SearchBox({ outSetSearch: outShow, stateToInner: outstate, iconEle }: P
     return res.map((r, i) => {
       const id = r.ref.substring(0, r.ref.lastIndexOf(".")); // remove suffix
       return <Item href={`/posts/${id}`} key={i} onClick={() => { toggle(false) }}>
-        <span>{highlightSlot(r.title, r.matched)}</span>
-        <Excerpt>{r.excerpt ?
-          highlightSlot(r.excerpt, r.matched)
-          : undefined}</Excerpt>
+        <span>{highlightSlot(r.title, r.excerpts?.map(e => e.word))}</span>
+        {r.excerpts?.map(
+          e => e.excerpt ? <Excerpt key={e.word}>{highlightSlot(e.excerpt, e.word)}</Excerpt> : undefined
+        )}
       </Item>
     })
 
   }
 
-  function highlightSlot(s1: string, pattern: string) {
-    const regex = new RegExp(`(${pattern})`, 'gi');
-    const parts = s1.split(regex);
+  function highlightSlot(s: string, patterns: string | string[] | undefined) {
+    if (!patterns) return s
+
+    if (typeof patterns === "string") {
+      patterns = [patterns]
+    }
+
+    const regexPattern = new RegExp(`(${patterns.join('|')})`, 'gi');
+    const matches = s.split(regexPattern);
 
     return (
       <>
-        {parts.map((part, index) => (
-          regex.test(part) ? <mark key={index}>{part}</mark> : part // 好牛逼的写法，但速度不如for
-        ))}
+        {matches.map((match, index) => {
+
+          if (regexPattern.test(match)) {
+            return <mark key={index}>{match}</mark>;
+          } else {
+            return <span key={index}>{match}</span>;
+          }
+
+        })}
       </>
     );
 
@@ -132,7 +144,7 @@ function SearchBox({ outSetSearch: outShow, stateToInner: outstate, iconEle }: P
   return (
     <Container ref={containerRef} className={isShow ? "" : "hidden"}>
       <StickyContainer style={{ padding: "1rem 1rem 0 1rem" }}>
-        <Input type="text" placeholder="关键词搜索..." ref={inputRef} onInput={handleInput} />
+        <Input type="text" placeholder="搜索你感兴趣的内容，以空格分词" ref={inputRef} onInput={handleInput} />
       </StickyContainer>
       <ScrollContainer style={{ padding: "0.5rem 1rem " }}>
         {renderResult()}

@@ -1,5 +1,6 @@
-import { throttle } from "../throttle"
-import { Engine, Result, SearchObj } from "./common"
+import { throttle } from "../throttle";
+import { Engine, Result, SearchObj, WithRequiredProperty } from "./common";
+import stopwords from "./stopwords/zh.json";
 
 type Config = {
   data: SearchObj[]
@@ -14,7 +15,7 @@ export class Naive<R extends Result> extends Engine {
   declare field: Array<keyof SearchObj>
 
   declare tasks: Array<Promise<void>>
-  declare res: Result[] // TODO Customize result Interface
+  declare res: Array<WithRequiredProperty<Result, "excerpts">>
   declare notify: (res: Result[]) => void // throttled Notify
   declare notifyInstant: (res: Result[], isDone: boolean) => void // 向外传递结果和状态
 
@@ -30,24 +31,28 @@ export class Naive<R extends Result> extends Engine {
     this.notifyInstant = conf.notifier // Update 最后的结果
   }
 
-  async search(s: string) {
-    s = s.replace(/^\s+|\s+$/g, "") // remove blank at start and end
+  async search(strs: string[]) {
+    strs = strs.map(s => s.replace(/^\s+|\s+$/g, "")).filter(v => v !== "")// remove blank at start and end
 
-    if (s === "") {
+    if (strs.length === 0) {
       this.notifyInstant([], true)
       return
     }
 
-    this._tasks_add(s)
-
+    this._tasks_add(strs)
     await Promise.all(this.tasks)
+
+    // Sort Object
+    this.res = this.res.sort((a, b) => {
+      return a.excerpts?.length >= b.excerpts?.length? -1 : 1
+    })
 
     this.notifyInstant([...this.res], true)
     this._clear()
     return
   }
 
-  _tasks_add(s: string) {
+  _tasks_add(s: string[]) {
     this.data.forEach((o) => {
       this.tasks.push(this.find(s, o))
     })
@@ -58,7 +63,12 @@ export class Naive<R extends Result> extends Engine {
     this.res = []
   }
 
-  find(s: string, o: SearchObj, i?: number) {
+  /**
+   * Find if all strings in an array are in a search Object
+   * 以 SearchObj为粒度的搜索
+   * 目前的实现非跨field搜索， 关键词之间为 And 逻辑
+   */
+  find(strs: string[], o: SearchObj, i?: number) {
 
     return new Promise<void>(resolve => {
       for (let j = 0; j < this.field.length; j++) {
@@ -68,29 +78,30 @@ export class Naive<R extends Result> extends Engine {
           continue
         }
 
-        // search
-        const index = this._match(o[f], s)
+        // search in lower case mode
+        const indexs = this._match(o[f].toLowerCase(), strs.map(s => s.toLocaleLowerCase()))
 
-        if (index !== -1) {
-          // generate excerpt
-          const excerpt = (() => {
-            if (f !== "title") {
-              const start = (index - 10) < 0 ? 0 : index - 10
-              const end = (index + 40) > o[f].length ? o[f].length : index + 40
-              console.log(start, end, o[f].length)
-              return o[f].slice(start, end).replaceAll("\n","")
+        // build result
+        if (indexs.length !== 0) {
+          const excerpts = indexs.map(i => {
+
+            const start = (i.index - 10) < 0 ? 0 : i.index - 10
+            const end = (i.index + 40) > o[f].length ? o[f].length : i.index + 40
+            // console.log(start, end, o[f].length)
+            return {
+              word: i.word,
+              excerpt: f !== "title" ? o[f].slice(start, end).replaceAll("\n", "") : undefined
             }
-          })()
-
-          console.log(excerpt)
+          })
 
           this.res.push({
             ref: o.id,
             title: o.title,
-            excerpt: excerpt ? excerpt : undefined,
-            matched: s,
+            excerpts: excerpts
           })
-          break;
+
+
+          break; // 在任何一个域中找全就停止field search
         }
       }
 
@@ -99,35 +110,51 @@ export class Naive<R extends Result> extends Engine {
         this.notify([...this.res])
       }
       resolve();
+
     });
   }
 
   /**
-   * Find index in 
-   * Optimze for Word split
-   * @param s source
-   * @param p pattern
-   * @returns index. -1 for not found
+   * get index in
+   * matches is both
    */
-  _match(s: string, p: string) {
+  _match(s: string, patterns: string[]): {
+    word: string,
+    index: number,
+  }[] {
 
-    s = s.toLowerCase();
-    p = p.toLowerCase();
+    const res: { word: string, index: number }[] = []
 
-    // 带中文直接返回，分词在浏览器没法
-    if (!/^[A-Za-z]+$/.test(p)) {
-      return s.indexOf(p);
-    } else {
-      // English
-      const pattern = new RegExp(`\\b${p}\\b`, 'i');
-      const match = pattern.exec(s);
-      if (match) {
-        return match.index;
+    for (const p of patterns) {
+      if (stopwords.includes(p)) {
+        break
+      }
+
+      if (!/^[A-Za-z]+$/.test(p)) {
+        // 带中文直接返回，分词在浏览器没法
+        const index = s.indexOf(p)
+        if (index !== -1) {
+          res.push({ word: p, index: index })
+        } else { // once pattern match fails then return false
+          break
+        }
+      } else {
+        // English with word split
+        const reg = new RegExp(`\\b${p}\\b`, 'i');
+        const match = reg.exec(s);
+        if (match) {
+          res.push({ word: p, index: match.index })
+        } else {
+          break
+        }
       }
     }
 
-    return -1;
+    return res;
   }
 
+  _isStopword(s: string) {
+    if (stopwords.includes(s)) { return true }
+  }
 
 }
