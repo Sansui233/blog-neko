@@ -17,7 +17,7 @@ const OBSERVEINFO = 'status.json'
  */
 export async function buildIndex(dir=DATADIR,json=SEARCHJSON,status=OBSERVEINFO) {
 
-  let index: Array<SearchObj> = []
+  let index: Array<Required<SearchObj>> = []
 
   // 增量更新部分条目
   const fl = await observe(
@@ -31,7 +31,7 @@ export async function buildIndex(dir=DATADIR,json=SEARCHJSON,status=OBSERVEINFO)
     ".md",
   )
 
-  index = await loadJson(path.join(DATADIR, SEARCHJSON)) as Array<SearchObj>
+  index = await loadJson(path.join(DATADIR, SEARCHJSON))
   if (!index) {
     index = []
   }

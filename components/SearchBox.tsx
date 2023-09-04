@@ -39,7 +39,7 @@ function SearchBox({ outSetSearch: outShow, stateToInner: outstate, iconEle }: P
       .then(res => res.json())
       .then((data) => {
         const newIdx = new Naive({
-          data: data as SearchObj[],
+          data: data as Required<SearchObj>[],
           ref: "id",
           field: ["title", "description", "keywords", "content"],
           notifier: setres
@@ -105,8 +105,8 @@ function SearchBox({ outSetSearch: outShow, stateToInner: outstate, iconEle }: P
     return res.map((r, i) => {
       const id = r.ref.substring(0, r.ref.lastIndexOf(".")); // remove suffix
       return <Item href={`/posts/${id}`} key={i} onClick={() => { toggle(false) }}>
-        <span>{highlightSlot(r.title, r.excerpts?.map(e => e.word))}</span>
-        {r.excerpts?.map(
+        <span>{highlightSlot(r.title, r.matches?.map(e => e.word))}</span>
+        {r.matches?.map(
           e => e.excerpt ? <Excerpt key={e.word}>{highlightSlot(e.excerpt, e.word)}</Excerpt> : undefined
         )}
       </Item>
