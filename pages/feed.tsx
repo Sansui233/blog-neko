@@ -1,8 +1,8 @@
 import { GetStaticProps } from "next"
-import React, { useEffect } from "react"
+import { useEffect } from "react"
 import { writeRss } from "../lib/rss"
 
-const Atom: React.FC = () => {
+const Atom = () => {
   useEffect(() => {
     window.location.href = "/feed.json"
   }, [])

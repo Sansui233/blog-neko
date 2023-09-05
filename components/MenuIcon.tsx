@@ -1,4 +1,3 @@
-import React from 'react';
 import styled, { css } from 'styled-components';
 
 type Props = {
@@ -8,7 +7,7 @@ type Props = {
   isCloseToggler?: () => void
 }
 
-const MenuIcon: React.FC<Props> = ({ width = "1em", height = "1em", isClose: isClose, isCloseToggler: iscloseToggler }) => {
+const MenuIcon = ({ width = "1em", height = "1em", isClose: isClose, isCloseToggler: iscloseToggler }: Props) => {
   return (
     <Container width={width} height={height} onClick={iscloseToggler}>
       <Line className={isClose ? 'is-close' : ''} />

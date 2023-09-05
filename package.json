@@ -10,6 +10,7 @@
     "export": "next build && next export"
   },
   "dependencies": {
+    "@mdx-js/react": "^2.3.0",
     "@react-spring/web": "^9.7.3",
     "events": "^3.3.0",
     "feed": "^4.2.2",

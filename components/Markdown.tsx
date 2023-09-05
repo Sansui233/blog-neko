@@ -1,4 +1,21 @@
+import { DetailedHTMLProps, ImgHTMLAttributes, useRef, useState } from "react";
 import styled from "styled-components";
+import ImgModel from "./ImgModel";
+
+export function MDImg(props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>) {
+  const imgNode = useRef<HTMLImageElement>(null)
+  const [isModel, setisModel] = useState(false)
+
+  return <>
+    {isModel
+      ? <ImgModel imgProps={props} isModel={isModel} setModel={setisModel} />
+      : undefined}
+    <img ref={imgNode} {...props} onClick={e => setisModel(true)} style={{
+      cursor: "zoom-in"
+    }}></img>
+  </>
+}
+
 
 export const MarkdownStyle = styled.div`
   text-align: justify;

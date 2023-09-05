@@ -2,8 +2,8 @@ import Head from "next/head";
 import styled from "styled-components";
 import { CommonHeader, MainLayoutStyle, PageDescription } from ".";
 import Layout from "../components/Layout";
+import { MarkdownStyle } from "../components/Markdown";
 import { bottomFadeIn } from "../styles/animations";
-import { MarkdownStyle } from "../styles/markdown";
 import { textStroke } from "../styles/styles";
 
 export default function About() {

@@ -1,3 +1,4 @@
+import { MDXProvider } from '@mdx-js/react'
 import { readFile } from "fs/promises"
 import { GetStaticPaths, GetStaticProps } from "next"
 import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote'
@@ -11,13 +12,13 @@ import remarkGfm from "remark-gfm"
 import styled, { ThemeContext } from "styled-components"
 import { CommonHeader, MainLayoutStyle } from ".."
 import Layout from "../../components/Layout"
+import { MDImg, MarkdownStyle } from "../../components/Markdown"
 import Pagination from "../../components/Pagination"
 import Waline from "../../components/Waline"
 import { dateToYMD } from "../../lib/date"
 import { POST_DIR, posts } from "../../lib/posts"
 import { rehypeAddAnchors, rehypeExtractHeadings } from "../../lib/rehype-toc"
 import { bottomFadeIn, fadeInRight } from "../../styles/animations"
-import { MarkdownStyle } from "../../styles/markdown"
 
 type Props = {
   mdxSource: MDXRemoteSerializeResult,
@@ -88,6 +89,9 @@ export default function Post({ mdxSource, nextPost, prevPost, excerpt, headings 
     }
   };
 
+  const renderMDX = () => {
+    return <MarkdownStyle><MDXRemote compiledSource={source} scope={null} frontmatter={null} /></MarkdownStyle>
+  }
   return <>
     <Head>
       <title>{frontmatter.title}</title>
@@ -120,9 +124,11 @@ export default function Post({ mdxSource, nextPost, prevPost, excerpt, headings 
                 </div>
               </div>
             </PostTitle>
-            <MarkdownStyle>
-              <MDXRemote compiledSource={source} scope={null} frontmatter={null} />
-            </MarkdownStyle>
+            <MDXProvider components={{
+              img: MDImg
+            }}>
+              {renderMDX()}
+            </MDXProvider>
             <div style={{ textAlign: 'right', opacity: .5, fontSize: '0.875rem', margin: "4rem 0 2rem 0" }}>
               更新于 {frontmatter.date}
             </div>

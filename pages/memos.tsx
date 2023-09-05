@@ -8,12 +8,12 @@ import remarkGfm from "remark-gfm";
 import styled from "styled-components";
 import { CommonHeader, MainLayoutStyle, PageDescription } from ".";
 import Layout from "../components/Layout";
+import { MarkdownStyle } from "../components/Markdown";
 import Pagination from "../components/Pagination";
 import Waline from "../components/Waline";
 import { getMemoPosts, writeMemoJson } from "../lib/memos";
 import { INFOFILE, MemoInfo } from "../lib/memos.common";
 import { bottomFadeIn } from '../styles/animations';
-import { MarkdownStyle } from "../styles/markdown";
 import { textShadow } from "../styles/styles";
 
 const MemoCSRAPI = '/data/memos'
