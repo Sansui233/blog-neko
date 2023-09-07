@@ -10,8 +10,8 @@ type Props = {
 const ImgModel = ({ imgProps, isModel, setModel }: Props) => {
   return (
     <MaskedContainer $isOpen={isModel} onClick={e => setModel(false)}>
-      {/* add class model for StyledComponents render order */}
-      <img className="model" {...imgProps} />
+      {/*eslint-disable-next-line @next/next/no-img-element*/} {/* eslint-disable-next-line jsx-a11y/alt-text */}
+      <img loading="lazy" className="model" {...imgProps} /> {/* add class model for StyledComponents render order */}
     </MaskedContainer>
   )
 }
@@ -28,6 +28,7 @@ const MaskedContainer = styled.div< { $isOpen: boolean }>`
   align-items: center;
   justify-content: center;
   cursor: zoom-out;
+
   & img.model {
     display:block;
   }

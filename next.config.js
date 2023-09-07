@@ -1,5 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  images: {
+    loader: 'custom',
+    loaderFile: './utils/imageloader.ts',
+  },
   reactStrictMode: true,
   compiler: {
     // Enables the styled-components SWC transform

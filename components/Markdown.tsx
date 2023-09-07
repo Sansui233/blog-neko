@@ -1,16 +1,17 @@
-import { DetailedHTMLProps, ImgHTMLAttributes, useRef, useState } from "react";
+
+import { DetailedHTMLProps, ImgHTMLAttributes, useState } from "react";
 import styled from "styled-components";
 import ImgModel from "./ImgModel";
 
 export function MDImg(props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>) {
-  const imgNode = useRef<HTMLImageElement>(null)
   const [isModel, setisModel] = useState(false)
 
   return <>
     {isModel
       ? <ImgModel imgProps={props} isModel={isModel} setModel={setisModel} />
       : undefined}
-    <img ref={imgNode} {...props} onClick={e => setisModel(true)} style={{
+    {/*eslint-disable-next-line @next/next/no-img-element*/}{/* eslint-disable-next-line jsx-a11y/alt-text */}
+    <img loading="lazy" {...props} onClick={() => setisModel(true)} style={{
       cursor: "zoom-in"
     }}></img>
   </>
@@ -25,7 +26,8 @@ export const MarkdownStyle = styled.div`
   }
 
   img, picture, video, canvas, svg, pre{
-    margin: 1.625rem 0;
+    margin: 1.625rem auto;
+    display: block;
   }
 
   p,ul,ol {
