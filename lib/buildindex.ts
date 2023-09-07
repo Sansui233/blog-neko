@@ -3,26 +3,24 @@ import path from "path";
 import { dateToString } from "./date";
 import { loadJson, writeJson } from "./fs";
 import { observe } from "./observer";
-import { POST_DIR, getFrontMatter } from "./posts";
+import { getFrontMatter } from "./posts";
 import { SearchObj } from "./search";
 
-
-
-const DATADIR = path.join(process.cwd(), 'public', 'data', 'posts')
+const DATADIR = path.join(process.cwd(), 'public', 'data')
 const SEARCHJSON = 'index.json'
 const OBSERVEINFO = 'status.json'
 
 /**
  * generate index file
  */
-export async function buildIndex(dir=DATADIR,json=SEARCHJSON,status=OBSERVEINFO) {
+export async function buildIndex(src_dir: string, data_dir = DATADIR, json = SEARCHJSON, status = OBSERVEINFO) {
 
   let index: Array<Required<SearchObj>> = []
 
   // 增量更新部分条目
   const fl = await observe(
-    POST_DIR,
-    path.join(DATADIR, OBSERVEINFO),
+    src_dir,
+    path.join(data_dir, status),
     (o, n) => { return o.mtime === n.mtime.getTime() },
     true,
     (info) => {
@@ -31,7 +29,7 @@ export async function buildIndex(dir=DATADIR,json=SEARCHJSON,status=OBSERVEINFO)
     ".md",
   )
 
-  index = await loadJson(path.join(DATADIR, SEARCHJSON))
+  index = await loadJson(path.join(data_dir, json))
   if (!index) {
     index = []
   }
@@ -52,7 +50,7 @@ export async function buildIndex(dir=DATADIR,json=SEARCHJSON,status=OBSERVEINFO)
     index[i] = ({
       id: n,
       title: fm.data['title'],
-      content:(await getContent(path.join(POST_DIR, n))).replaceAll("\n",""),
+      content: (await getContent(path.join(src_dir, n))).replaceAll("\n", ""),
       description: fm.data['description'] ? fm.data['description'] : "",
       keywords: fm.data['keywords'] ? fm.data['keywords'] : "",
       date: dateToString(fm.data['date'])
@@ -65,7 +63,7 @@ export async function buildIndex(dir=DATADIR,json=SEARCHJSON,status=OBSERVEINFO)
     index.push({
       id: n,
       title: fm.data['title'],
-      content: await getContent(path.join(POST_DIR, n)),
+      content: await getContent(path.join(src_dir, n)),
       description: fm.data['description'] ? fm.data['description'] : "",
       keywords: fm.data['keywords'] ? fm.data['keywords'] : "",
       date: dateToString(fm.data['date'])
@@ -75,7 +73,7 @@ export async function buildIndex(dir=DATADIR,json=SEARCHJSON,status=OBSERVEINFO)
   await Promise.all(modPromise.concat(createPromise))
 
   index = index.sort((a, b) => a.date < b.date ? 1 : -1)
-  writeJson(path.join(DATADIR, SEARCHJSON), index)
+  writeJson(path.join(data_dir, json), index)
 
   console.log("[buildindex.ts]", fl.create.length + fl.del.length + fl.mod.length, "pages updated")
   console.log("[buildindex.ts]", index.length, "pages are indexed")

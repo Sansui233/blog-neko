@@ -6,7 +6,7 @@ import styled from 'styled-components'
 import Layout from '../components/Layout'
 import { NavDropper } from '../components/NavDropper'
 import { buildIndex } from '../lib/buildindex'
-import { posts } from '../lib/posts'
+import { POST_DIR, posts } from '../lib/posts'
 import { bottomFadeIn } from '../styles/animations'
 import { cardBoxShadow } from '../styles/styles'
 
@@ -94,7 +94,7 @@ function ArticleItem({ p, i }: {
 }
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
-  buildIndex()
+  buildIndex(POST_DIR, require("path").join(process.cwd(), 'public', 'data', 'posts'))
   return {
     props: {
       posts: await posts.metas(),
