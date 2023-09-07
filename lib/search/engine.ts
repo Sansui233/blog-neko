@@ -44,7 +44,7 @@ export class Naive<R extends Result> extends Engine {
 
     // Sort Object
     this.res = this.res.sort((a, b) => {
-      return a.matches.length >= b.matches.length? -1 : 1
+      return a.matches.length > b.matches.length? -1 : 1
     })
 
     this.notifyInstant([...this.res], true)
