@@ -11,7 +11,8 @@ type Props = {
     title: string,
     link: string,
   },
-  currTitle?: string
+  currTitle?: string,
+  maxPage?: string
 }
 
 const Pagination: React.FC<Props> = (props) => {
@@ -19,14 +20,19 @@ const Pagination: React.FC<Props> = (props) => {
     <Layout>
       {props.prevPage &&
         <div style={{ flex: "1 1 auto" }}>
-          <PageBtn href={props.prevPage.link} passHref={true} style={{ justifyContent: "flex-start" }}><span><i className="icon-arrow-left2" />&nbsp;{props.prevPage.title}</span></PageBtn>
+          <PageBtn href={props.prevPage.link} passHref={true} style={{ justifyContent: "flex-start" }}>
+            <span><i className="icon-arrow-left2" />&nbsp;{props.prevPage.title}</span>
+          </PageBtn>
         </div>
       }
-      <span>{props.currTitle ? props.currTitle : ''}</span>
-      {
-        props.nextPage &&
+      <span>{props.currTitle ? props.currTitle.concat((props.maxPage
+        ? " / ".concat(props.maxPage) : "")) : ''}</span>
+
+      {props.nextPage &&
         <div style={{ flex: "1 1 auto" }}>
-          <PageBtn href={props.nextPage.link} passHref={true} style={{ justifyContent: "flex-end" }}><span>{props.nextPage.title}&nbsp;<i className="icon-arrow-right2" /></span></PageBtn>
+          <PageBtn href={props.nextPage.link} passHref={true} style={{ justifyContent: "flex-end" }}>
+            <span>{props.nextPage.title}&nbsp;<i className="icon-arrow-right2" /></span>
+          </PageBtn>
         </div>
       }
     </Layout >

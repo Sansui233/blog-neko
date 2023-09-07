@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { exit } from "process";
 import readline from 'readline';
 import { getLastModTime, loadJson, writeJson } from "./fs";
 import { FileInfo, INFOFILE, MemoInfo } from "./memos.common";
@@ -116,33 +117,37 @@ export async function writeMemoJson() {
 
       const oldFile = oldInfo.fileMap[Number.parseInt(i)]
 
-      const isIdentical = await (async function () {
-        if (oldFile.srcName === srcName) {
-          const lastModified = (await getLastModTime(path.join(MEMOS_DIR, srcName))).getTime()
-          if (oldFile.lastModified === lastModified) {
-            return true
+      if(!oldFile){ // 非常非常非常特殊的情况：增加了旧文件且在旧文件名字最小
+        console.error(`[memo.ts] Error: Please clear ${MEMOS_DIR} and rebuild memos`)
+        exit(1)
+      }else{
+        const isIdentical = await (async function () {
+          if (oldFile.srcName === srcName) {
+            const lastModified = (await getLastModTime(path.join(MEMOS_DIR, srcName))).getTime()
+            if (oldFile.lastModified === lastModified) {
+              return true
+            }
           }
+          return false
+        })()
+  
+        // skip for unmodified md files
+        if (isIdentical) {
+          memosInfo.fileMap.push(oldFile)
+          memosInfo.pages = oldFile.endAt.page
+          console.debug('[memos.ts]', `skip re-parse for ${srcName} in ${MEMOS_DIR}`)
+          continue
+  
+        } else {
+          // set update start point 
+          page = oldFile.startAt.page
+          const oldmemos = await loadJson(path.join(MEMO_CSR_DATA_DIR, `${page}.json`))
+          if(oldmemos){
+            memos = oldmemos.slice(0, oldFile.startAt.index)
+          }
+          startUpdate = true
         }
-        return false
-      })()
-
-      // skip for unmodified md files
-      if (isIdentical) {
-        memosInfo.fileMap.push(oldFile)
-        memosInfo.pages = oldFile.endAt.page
-        console.debug('[memos.ts]', `skip re-parse for ${srcName} in ${MEMOS_DIR}`)
-        continue
-
-      } else {
-        // set update start point 
-        page = oldFile.startAt.page
-        const oldmemos = await loadJson(path.join(MEMO_CSR_DATA_DIR, `${page}.json`))
-        if(oldmemos){
-          memos = oldmemos.slice(0, oldFile.startAt.index)
-        }
-        startUpdate = true
       }
-
     } else {
       startUpdate = true
     }

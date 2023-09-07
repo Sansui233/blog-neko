@@ -6,7 +6,7 @@ site.config.ts
 
 # posts source
 source/*/*
-!source/*/[welcome|markdowntest]*
+# !source/*/[welcome|markdowntest]*
 public/atom.xml
 public/feed.json
 public/rss

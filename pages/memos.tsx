@@ -98,17 +98,17 @@ export default function Memos({ memoposts }: Props) {
             <MemoCard key={m.title} memoPost={m} />
           ))}
           <Pagination
+
             currTitle={`PAGE ${currPage + 1}`}
             prevPage={currPage > 0 ? {
               title: "PREV",
               link: `/memos?p=${currPage - 1}`
-            } : undefined
-            }
+            } : undefined}
             nextPage={currPage + 1 < pagelimit ? {
               title: "NEXT",
               link: `/memos?p=${currPage + 1}`
-            } : undefined
-            }
+            } : undefined}
+            maxPage={pagelimit.toString()}
           />
           <Waline />
         </MemoLayout>
