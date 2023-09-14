@@ -8,6 +8,7 @@ import Link from "next/link"
 import { useRouter } from "next/router"
 import path from "path"
 import { useContext } from "react"
+import rehypeHighlight from 'rehype-highlight'
 import remarkGfm from "remark-gfm"
 import styled, { ThemeContext } from "styled-components"
 import { CommonHeader, MainLayoutStyle } from ".."
@@ -65,8 +66,8 @@ export default function Post({ mdxSource, nextPost, prevPost, excerpt, headings 
   }
 
   // use tags and keywords in frontmatter as keywords in <meta>
-  function getKeywords(fm: any) {
-    const tagList = typeof (fm.tags) === "string" ? [fm.tags] : fm.tags
+  function getKeywords(fm: Record<string, unknown>) {
+    const tagList = typeof (fm.tags) === "string" ? [fm.tags] : (fm.tags) as Array<string>
     if (fm.keywords !== null && typeof (fm.keywords) === "string") {
       return tagList.join().concat(', ').concat(fm.keywords.replaceAll('，', ', '))
     } else {
@@ -90,8 +91,15 @@ export default function Post({ mdxSource, nextPost, prevPost, excerpt, headings 
   };
 
   const renderMDX = () => {
-    return <MarkdownStyle><MDXRemote compiledSource={source} scope={null} frontmatter={null} /></MarkdownStyle>
+    return <MDXProvider components={{
+      img: MDImg
+    }}>
+      <MarkdownStyle>
+        <MDXRemote compiledSource={source} scope={null} frontmatter={null} />
+      </MarkdownStyle>
+    </MDXProvider>
   }
+
   return <>
     <Head>
       <title>{frontmatter.title}</title>
@@ -101,7 +109,7 @@ export default function Post({ mdxSource, nextPost, prevPost, excerpt, headings 
     </Head>
     <Layout>
       <div style={{ display: "flex", margin: "auto" }}>
-        <div style={{ flex: " 2 1 0" }}>
+        <ColumnLeft>
           <PostLayout >
             <PostTitle>
               <h1>{frontmatter.title}</h1>
@@ -124,11 +132,7 @@ export default function Post({ mdxSource, nextPost, prevPost, excerpt, headings 
                 </div>
               </div>
             </PostTitle>
-            <MDXProvider components={{
-              img: MDImg
-            }}>
-              {renderMDX()}
-            </MDXProvider>
+            {renderMDX()}
             <div style={{ textAlign: 'right', opacity: .5, fontSize: '0.875rem', margin: "4rem 0 2rem 0" }}>
               更新于 {frontmatter.date}
             </div>
@@ -138,7 +142,7 @@ export default function Post({ mdxSource, nextPost, prevPost, excerpt, headings 
             />
             <Waline />
           </PostLayout>
-        </div>
+        </ColumnLeft>
         <ColumnRight>
           <nav>
             <div style={{ fontSize: "1.25rem", fontWeight: "bold", paddingBottom: "0.5rem", marginBottom: "0.5rem", borderBottom: `solid 1px ${theme?.colors.gold}` }}>
@@ -191,6 +195,7 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
         rehypePlugins: [
           [rehypeAddAnchors, { rank: [1, 2, 3] }],
           [rehypeExtractHeadings, { rank: [1, 2, 3], headings }],
+          rehypeHighlight,
         ],
         format: 'mdx',
       },
@@ -237,17 +242,21 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
 }
 
 const PostLayout = styled(MainLayoutStyle)`
-  max-width: 750px;
+  max-width: 800px;
   margin-top: 72px;
   animation: ${bottomFadeIn} 1s ease;
 
   @media screen and (max-width: 580px) {
-    margin-top: 20px;
+    margin-top: 36px;
   }
+`
+const ColumnLeft = styled.div`
+  width: 0;
+  flex: 2 1 0;
 `
 
 const ColumnRight = styled.div`
-  max-width: 15em;
+  max-width: min(18em,20vw);
   flex: 1 1 0;
   margin-top: calc(1.375*1em + 72px);
   position: sticky;
@@ -256,9 +265,6 @@ const ColumnRight = styled.div`
 
   animation: ${fadeInRight} 1s ease;
 
-  @media screen and (max-width: 780px) {
-    max-width: 10em;
-  }
   @media screen and (max-width: 580px) {
     display: none
   }
@@ -299,8 +305,21 @@ const StyledLink = styled(Link)`
 
 const TocAnchor = styled(Link) <{ $rank: number }>`
   display: block;
-  padding-left: ${p => p.$rank - 1}em;
+  padding-left: ${p => p.$rank}em;
   line-height: 1.8em;
+
+  &::before {
+    content: "";
+    margin-right: 0.67rem;
+    color: ${p => p.theme.colors.gold};
+    background: ${p => p.theme.colors.gold};
+
+    position: absolute;
+    transform: translateY(0.65rem) translateX(-0.8rem);
+    height: 0.3rem;
+    width: 0.3rem;
+    border-radius: 1rem;
+  }
 
   & span {
     transition: box-shadow .5s;
@@ -309,5 +328,4 @@ const TocAnchor = styled(Link) <{ $rank: number }>`
   &:hover span {
     box-shadow: inset 0 -0.5em 0 ${props => props.theme.colors.goldHover};
   }
-
 `

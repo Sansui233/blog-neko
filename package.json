@@ -24,6 +24,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-intersection-observer": "^9.5.2",
+    "rehype-highlight": "^6.0.0",
     "remark-gfm": "^3.0.1",
     "stopwords-zh": "^0.4.0",
     "styled-components": "^6.0.7",

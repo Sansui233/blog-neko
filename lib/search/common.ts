@@ -17,7 +17,7 @@ export interface Result {
 }
 
 export abstract class Engine {
-  abstract search(s: string | string[]): any
+  abstract search(s: string | string[]): unknown
 }
 
 // Type reference tools

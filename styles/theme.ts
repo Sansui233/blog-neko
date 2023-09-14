@@ -14,7 +14,7 @@ export const lightTheme: DefaultTheme = {
     bgInverse: "#292929",
     hoverBg: '#00000022',
     shadowBg: `rgb(0 0 0 / 5%)`,
-    codeBlockBg: '#eeeeee',
+    codeBlockBg: '#f3f3f3',
     maskGradient: css`
     background-image: -webkit-linear-gradient(top,rgba(255,255,255,0) 0%,rgba(255,255,255,.8) 40%,rgba(255,255,255,1) 75%);
     background-image: -moz-linear-gradient(top,rgba(255,255,255,0) 0%,rgba(255,255,255,.8) 40%,rgba(255,255,255,1) 75%);
