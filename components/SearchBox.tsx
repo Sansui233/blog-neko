@@ -196,16 +196,10 @@ const Item = styled(Link)`
   }
 
   &>span::before {
-    content: "";
-    margin-right: 0.67rem;
+    content: "•";
     color: ${p => p.theme.colors.gold};
-    background: ${p => p.theme.colors.gold};
-
+    left: -0.875rem;
     position: absolute;
-    transform: translateY(0.5rem) translateX(-0.8rem);
-    height: 0.3rem;
-    width: 0.3rem;
-    border-radius: 1rem;
   }
   
 `
