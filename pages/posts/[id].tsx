@@ -305,12 +305,14 @@ const StyledLink = styled(Link)`
 const TocAnchor = styled(Link) <{ $rank: number }>`
   display: block;
   padding-left: ${p => p.$rank}em;
+  padding-top: 0.1em;
+  padding-bottom: 0.1em;
   line-height: 1.8em;
 
   &::before {
     content: "•";
     color: ${p => p.theme.colors.gold};
-    left: 0rem;
+    left: ${p => p.$rank - 1}em;
     position: absolute;
   }
 

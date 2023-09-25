@@ -1,6 +1,7 @@
 
 import { DetailedHTMLProps, ImgHTMLAttributes, useState } from "react";
 import styled from "styled-components";
+import { linkHoverBS } from "../styles/styles";
 import ImgModel from "./ImgModel";
 
 export function MDImg(props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>) {
@@ -32,7 +33,6 @@ export const MarkdownStyle = styled.div`
 
   p,ul,ol {
     line-height: 1.8rem;
-    margin: 1.5rem 0;
   }
 
   blockquote {
@@ -47,7 +47,7 @@ export const MarkdownStyle = styled.div`
   }
 
   a:hover {
-    box-shadow: inset 0 -0.5em 0 ${props => props.theme.colors.goldHover};
+    ${linkHoverBS}
   }
   
   code {

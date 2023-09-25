@@ -2,7 +2,7 @@ import Link from "next/link"
 import { useContext, useMemo } from "react"
 import styled, { ThemeContext } from "styled-components"
 import { ThemeMsg, getAppTheme, setAppTheme } from "../lib/app-states"
-import { textStroke } from "../styles/styles"
+import { linkHoverBS, textStroke } from "../styles/styles"
 import MenuIcon from "./MenuIcon"
 
 type Props = {
@@ -38,7 +38,7 @@ export default function Sidebar({ isShow, toggle }: Props) {
           </span>
         </h1>
         <div onClick={handleThemeChange}>
-          <OptionText style={{ fontSize: '1.625rem' }}>
+          <OptionText>
             {themeText}
           </OptionText>
         </div>
@@ -136,7 +136,7 @@ const OptionText = styled.span`
   cursor: pointer;
 
   &:hover {
-    box-shadow: inset 0 -0.5em 0 #ffffff55;
+    ${linkHoverBS}
     transform: scale(1.2);
   }
 `
