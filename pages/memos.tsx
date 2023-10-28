@@ -11,8 +11,8 @@ import Layout from "../components/Layout";
 import { MarkdownStyle } from "../components/Markdown";
 import Pagination from "../components/Pagination";
 import Waline from "../components/Waline";
-import { getMemoPosts, writeMemoJson } from "../lib/memos";
-import { INFOFILE, MemoInfo } from "../lib/memos.common";
+import { memo_db, writeMemoJson } from "../lib/data/memos";
+import { INFOFILE, MemoInfo } from "../lib/data/memos.common";
 import { bottomFadeIn } from '../styles/animations';
 import { textShadow } from "../styles/styles";
 
@@ -150,7 +150,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   writeMemoJson()
 
   // 首屏 SEO 数据
-  const posts = await getMemoPosts(0)
+  const posts = await memo_db.atPage(0)
   const compiledPosts = await Promise.all(posts.map(async p => {
     const content = await serialize(p.content, {
       mdxOptions: {

@@ -21,7 +21,6 @@ export async function observe<U extends FInfo>(
   dir: string,
   infoPath: string,
   isIdentical: (oldstatus: U, newstatus: fs.Stats) => boolean,
-  infoUpdate: boolean,
   handleInfo?: (info: FInfo) => U,
   filter?: string,
 ) {

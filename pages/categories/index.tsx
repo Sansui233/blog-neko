@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { CommonHeader } from "..";
 import Layout from "../../components/Layout";
 import { CategoryLayoutStyle, CategoryTitle } from "../../components/TimelinePosts";
-import { posts } from "../../lib/posts";
+import { posts_db } from "../../lib/data/posts";
 
 export default function Categories({ categories, tags }: {
   categories: {
@@ -57,8 +57,8 @@ export default function Categories({ categories, tags }: {
 export const getStaticProps: GetStaticProps = async () => {
   return {
     props: {
-      categories: Object.fromEntries(await posts.categories()),
-      tags: Object.fromEntries(await posts.tags())
+      categories: Object.fromEntries(await posts_db.categories()),
+      tags: Object.fromEntries(await posts_db.tags())
     }
   }
 }

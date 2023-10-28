@@ -1,7 +1,7 @@
 import fs from 'fs';
 import matter from 'gray-matter';
 import path from 'path';
-import { dateToYMD } from './date';
+import { dateToYMD } from '../date';
 
 export const POST_DIR = path.join(process.cwd(), 'source', 'posts')
 const CATEGORY_ALL = 'All Posts'
@@ -20,8 +20,14 @@ export type FrontMatter = {
   keywords?: string
 }
 
-export const posts = {
+/**
+ * posts database
+ */
+export const posts_db = {
 
+  /*
+  * source file names
+  */
   names: await ((async () => {
     let fileNames = await fs.promises.readdir(POST_DIR);
     fileNames = fileNames.filter(f => {
@@ -69,7 +75,7 @@ export const posts = {
   },
 
   /**
-   * metas sorst by date
+   * metas sorted by date
    */
   metas: async function () {
     const self = this;
@@ -120,7 +126,7 @@ export const posts = {
   },
 
   /**
- * posts in Tag sorted by date
+ * return posts in tag t, sorted by date
  */
   inTag: async function (t: string) {
     const self = this
@@ -145,7 +151,7 @@ export const posts = {
   },
 
   /**
- * posts in category sorted by date
+ * return posts in category c, sorted by date
  */
   inCategory: async function (c: string) {
     const self = this
@@ -180,7 +186,6 @@ export async function getFrontMatter(fileName: string, dir = POST_DIR) {
   const fileContents = await fs.promises.readFile(fullPath, 'utf8')
   return matter(fileContents)
 }
-
 
 
 /**

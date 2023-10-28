@@ -3,7 +3,7 @@ import Head from "next/head";
 import { CommonHeader } from "..";
 import Layout from "../../components/Layout";
 import TLContent from "../../components/TimelinePosts";
-import { groupByYear, posts } from "../../lib/posts";
+import { groupByYear, posts_db } from "../../lib/data/posts";
 
 type Props = {
   tag: string,
@@ -29,7 +29,7 @@ export default function TagPage({ tag, posts }: Props) {
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const paths = Array.from(await posts.tags()).map(v => {
+  const paths = Array.from(await posts_db.tags()).map(v => {
     return { params: { id: v[0] } }
   })
   return {
@@ -40,7 +40,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
   let tag = params!.id as string
-  const p = await posts.inTag(tag)
+  const p = await posts_db.inTag(tag)
 
   return {
     props: {

@@ -7,8 +7,8 @@ import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import readline from 'readline';
 import remarkGfm from "remark-gfm";
-import { siteInfo } from "../site.config";
-import { dateToYMD } from "./date";
+import { siteInfo } from "../../site.config";
+import { dateToYMD } from "../date";
 import { MEMOS_DIR } from "./memos";
 import { POST_DIR, getFrontMatter } from './posts';
 

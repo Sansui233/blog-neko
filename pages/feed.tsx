@@ -1,6 +1,6 @@
 import { GetStaticProps } from "next"
 import { useEffect } from "react"
-import { writeRss } from "../lib/rss"
+import { writeRss } from "../lib/data/rss"
 
 const Atom = () => {
   useEffect(() => {

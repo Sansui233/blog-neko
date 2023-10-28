@@ -5,8 +5,8 @@ import React, { useMemo, useState } from 'react'
 import styled from 'styled-components'
 import Layout from '../components/Layout'
 import { NavDropper } from '../components/NavDropper'
-import { buildIndex } from '../lib/buildindex'
-import { POST_DIR, posts } from '../lib/posts'
+import { POST_DIR, posts_db } from '../lib/data/posts'
+import { buildIndex } from '../lib/data/searchindex'
 import { bottomFadeIn } from '../styles/animations'
 import { cardBoxShadow } from '../styles/styles'
 
@@ -97,8 +97,8 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   buildIndex(POST_DIR, require("path").join(process.cwd(), 'public', 'data', 'posts'))
   return {
     props: {
-      posts: await posts.metas(),
-      categories: Array.from(await posts.categories())
+      posts: await posts_db.metas(),
+      categories: Array.from(await posts_db.categories())
     }
   }
 }

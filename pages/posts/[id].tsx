@@ -16,8 +16,8 @@ import Layout from "../../components/Layout"
 import { MDImg, MarkdownStyle } from "../../components/Markdown"
 import Pagination from "../../components/Pagination"
 import Waline from "../../components/Waline"
+import { POST_DIR, posts_db } from "../../lib/data/posts"
 import { dateToYMD } from "../../lib/date"
-import { POST_DIR, posts } from "../../lib/posts"
 import { rehypeAddAnchors, rehypeExtractHeadings } from "../../lib/rehype-toc"
 import { bottomFadeIn, fadeInRight } from "../../styles/animations"
 
@@ -164,7 +164,7 @@ export default function Post({ mdxSource, nextPost, prevPost, excerpt, headings 
 // ALL POSTS Dynamic Route 決定
 export const getStaticPaths: GetStaticPaths = async () => {
   // return all [id]
-  const paths = posts.ids();
+  const paths = posts_db.ids();
   return {
     paths,
     fallback: false
@@ -219,7 +219,7 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
   }
 
   // Get next and prev Post
-  const allPosts = await posts.metas()
+  const allPosts = await posts_db.metas()
   const i = allPosts.findIndex(p => p.id === id)
   const prevPost = i - 1 < 0 ? null : {
     title: allPosts[i - 1].title!,

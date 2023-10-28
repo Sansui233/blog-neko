@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import { exit } from "process";
 import readline from 'readline';
-import { getLastModTime, loadJson, writeJson } from "./fs";
+import { getLastModTime, loadJson, writeJson } from "../fs/fs";
 import { FileInfo, INFOFILE, MemoInfo } from "./memos.common";
 
 export const MEMOS_DIR = path.join(process.cwd(), 'source', 'memos')
@@ -15,79 +15,86 @@ type MemoPost = {
 }
 
 /**
- * Get markdown filename (with suffix) , sort by name desc
+ * memos database
  */
-async function getSrcNames() {
-  let fileNames = await fs.promises.readdir(MEMOS_DIR);
-  return fileNames.filter(f => {
-    return f.endsWith(".md")
-  }).sort((a, b) => {
-    return a < b ? 1 : -1 // Desc for latest first
-  })
-}
-
-/**
- * Get memos by page. SSR only
- * @param page number from 0
- */
-export async function getMemoPosts(page: number): Promise<MemoPost[]> {
-  const fileNames = await getSrcNames()
-
-  // 左闭右开, start from 0
-  const postRange = ((page: number) => {
-    const start = page * NUM_PER_PAGE
-    const end = start + NUM_PER_PAGE
-    return [start, end]
-  })(page)
-
-  const memos: MemoPost[] = []
-  let counter = -1 //由于 counter 需要从 0 开始，而后面是先加再算，所以这里是-1
-  let isFrontMatter = false
-
-  // Generate memos
-  for (const fileName of fileNames) {
-    const fileStream = fs.createReadStream(path.join(MEMOS_DIR, fileName))
-    const rl = readline.createInterface({
-      input: fileStream,
-      crlfDelay: Infinity
+export const memo_db = {
+  /**
+   * source file names
+   */
+  names: await((async () => {
+    let fileNames = await fs.promises.readdir(MEMOS_DIR);
+    return fileNames.filter(f => {
+      return f.endsWith(".md")
+    }).sort((a, b) => {
+      return a < b ? 1 : -1 // Desc for latest first
     })
-    let isFirstLine = true
-    for await (const line of rl) {
-      if (line.startsWith("---") && isFirstLine) {
-        if (isFrontMatter) {
-          isFrontMatter = false
-          isFirstLine = false
-          continue
-        } else {
-          isFrontMatter = true
-          continue
-        }
-      }
-      if (line.startsWith("## ")) {
-        counter++
-        if (counter < postRange[0]) {
-          continue
-        }
-        if (counter >= postRange[1]) {
-          break
-        }
-        // create a new post
-        memos.push({
-          title: line.slice(3),
-          content: "",
-        })
-      } else {
-        if (isFrontMatter) continue
-        if (memos.length === 0) continue // Ignore the start of a md file
-        memos[memos.length - 1].content += line + "\n" // push content
-      }
-    }
-    rl.close()
-    fileStream.close()
-  }
+  })()),
 
-  // convert to html
-  return memos
+  /**
+   * Get memos by page. SSR only
+   * @param page number from 0
+   */
+  atPage: async function (page: number): Promise<MemoPost[]> {
+    const self = this;
+    const fileNames = self.names;
+  
+    // 左闭右开, start from 0
+    const postRange = ((page: number) => {
+      const start = page * NUM_PER_PAGE
+      const end = start + NUM_PER_PAGE
+      return [start, end]
+    })(page)
+  
+    const memos: MemoPost[] = []
+    let counter = -1 //由于 counter 需要从 0 开始，而后面是先加再算，所以这里是-1
+    let isFrontMatter = false
+  
+    // Generate memos
+    for (const fileName of fileNames) {
+      const fileStream = fs.createReadStream(path.join(MEMOS_DIR, fileName))
+      const rl = readline.createInterface({
+        input: fileStream,
+        crlfDelay: Infinity
+      })
+      let isFirstLine = true
+      for await (const line of rl) {
+        if (line.startsWith("---") && isFirstLine) {
+          if (isFrontMatter) {
+            isFrontMatter = false
+            isFirstLine = false
+            continue
+          } else {
+            isFrontMatter = true
+            continue
+          }
+        }
+        if (line.startsWith("## ")) {
+          counter++
+          if (counter < postRange[0]) {
+            continue
+          }
+          if (counter >= postRange[1]) {
+            break
+          }
+          // create a new post
+          memos.push({
+            title: line.slice(3),
+            content: "",
+          })
+        } else {
+          if (isFrontMatter) continue
+          if (memos.length === 0) continue // Ignore the start of a md file
+          memos[memos.length - 1].content += line + "\n" // push content
+        }
+      }
+      rl.close()
+      fileStream.close()
+    }
+  
+    // convert to html
+    return memos
+  },
+
 }
 
 /**
@@ -96,7 +103,7 @@ export async function getMemoPosts(page: number): Promise<MemoPost[]> {
  * Seperate memos into different files
  */
 export async function writeMemoJson() {
-  const srcNames = await getSrcNames() // with .md suffix
+  const srcNames = memo_db.names // with .md suffix
   const oldInfo = await (loadJson(path.join(MEMO_CSR_DATA_DIR, INFOFILE))) as MemoInfo // 边界条件：oldInfo 可能为 undefined
 
   // result container

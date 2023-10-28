@@ -41,7 +41,7 @@ export async function getStat(filePath: string) {
 }
 
 /**
- * PLEASE CHeCK if returned obj exsits or not！
+ * PLEASE CHECK if returned obj exsits or not！
  */
 export async function loadJson(filePath: string) {
   try {
