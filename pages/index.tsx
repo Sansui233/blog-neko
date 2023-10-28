@@ -55,7 +55,7 @@ const Home: NextPage<Props> = ({ posts, categories }: Props) => {
   return (
     <div>
       <Head>
-        <title>${siteInfo.author} - Blog</title>
+        <title>{siteInfo.author} - Blog</title>
         <CommonHeader />
       </Head>
       <Layout>

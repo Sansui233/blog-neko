@@ -154,7 +154,10 @@ function MemoCard({ memoPost }: { memoPost: MemoPost }) {
           <img src={theme!.assets.favico} alt={siteInfo.author} />
           <div>
             <div>{siteInfo.author}</div>
-            <div className="date">{memoPost.title}</div>
+            <div className="date">
+              {memoPost.title}&nbsp;&nbsp;
+              <span className="word-count">{memoPost.length}&nbsp;字</span>
+            </div>
           </div>
         </CardMeta>
         <MemoMarkdown $bottomSpace={shouldCollapse}>
@@ -247,24 +250,6 @@ const StyledCard = styled.section<{
     overflow: hidden;
     /* transition: height 0.5s ease; */
   }
-
-  & .date {
-    font-size: 0.9rem;
-    font-family: Dosis;
-    color: ${p => p.theme.colors.textGray};
-  }
-  
-`
-
-const MemoMarkdown = styled(MarkdownStyle) <{
-  $bottomSpace: boolean,
-}>`
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
-    padding-bottom: ${props => props.$bottomSpace === true ? "2rem" : "inherit"};
-    h1,h2,h3,h4,h5,h6 {
-      font-size: 1rem;
-    }
 `
 
 const CardMeta = styled.div`
@@ -283,7 +268,30 @@ const CardMeta = styled.div`
       flex-direction: column;
       justify-content: flex-end;
     }
+
+    & .date {
+      font-size: 0.9rem;
+      font-family: Dosis;
+      color: ${p => p.theme.colors.textGray};
+    }
+
+    & .word-count {
+      position: absolute;
+      right: 0;
+    }
 `
+
+const MemoMarkdown = styled(MarkdownStyle) <{
+  $bottomSpace: boolean,
+}>`
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    padding-bottom: ${props => props.$bottomSpace === true ? "2rem" : "inherit"};
+    h1,h2,h3,h4,h5,h6 {
+      font-size: 1rem;
+    }
+`
+
 
 const CardMask = styled.div<{
   $isCollapse: boolean,
