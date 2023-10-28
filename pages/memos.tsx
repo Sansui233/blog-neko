@@ -281,7 +281,7 @@ const CardMeta = styled.div`
       margin-left: 0.5rem;
       display: flex;
       flex-direction: column;
-      justify-content: space-evenly;
+      justify-content: flex-end;
     }
 `
 
