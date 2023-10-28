@@ -171,14 +171,14 @@ async function getMemo(): Promise<Item | null>{
 async function createRss() {
   /** File Info */
   const feed = new Feed({
-    title: "Sansui's blog",
+    title: `${siteInfo.author}'s blog`,
     description: "记录学习和生活的个人博客",
     id: siteInfo.domain,
     link: siteInfo.domain,
     language: "zh-CN", // optional, used only in RSS 2.0, possible values: http://www.w3.org/TR/REC-html40/struct/dirlang.html#langcodes
     // image: `${SiteInfo.domain}/avatar-white.png`,
     favicon: `${siteInfo.domain}/favicon.ico`,
-    copyright: "All rights reserved 2022, Sansui",
+    copyright: `All rights reserved 2022, ${siteInfo.author}`,
     // updated: new Date(2013, 6, 14), // optional, default = today
     // generator: "awesome", // optional, default = 'Feed for Node.js'
     feedLinks: {
@@ -188,8 +188,8 @@ async function createRss() {
       rss: `${siteInfo.domain}/rss`,
     },
     author: {
-      name: "Sansui",
-      email: "sansuilnm@gmail.com",
+      name: siteInfo.author,
+      email: siteInfo.social.email,
       link: `${siteInfo.domain}/about.ico`
     }
   });

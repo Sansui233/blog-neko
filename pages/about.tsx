@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { CommonHeader, MainLayoutStyle, PageDescription } from ".";
 import Layout from "../components/Layout";
 import { MarkdownStyle } from "../components/Markdown";
+import { siteInfo } from "../site.config";
 import { bottomFadeIn } from "../styles/animations";
 import { textStroke } from "../styles/styles";
 
@@ -10,12 +11,12 @@ export default function About() {
   return (
     <div>
       <Head>
-        <title>About Sansui</title>
+        <title>About {siteInfo.author}</title>
         <CommonHeader />
       </Head>
       <Layout>
         <Hero>
-          <span>{"Hi, I'm Sansui"}</span>
+          <span>{`Hi, I'm ${siteInfo.author}`}</span>
         </Hero>
         <MainLayoutStyle>
           <AboutDescription>| 记录一些思考和吐槽 |</AboutDescription>
@@ -82,5 +83,4 @@ const AnimatedMarkdown = styled(MarkdownStyle)`
 `
 
 const AboutDescription = styled(PageDescription)`
-  margin-bottom: -2rem;
 `

@@ -8,9 +8,11 @@ export const lightTheme: DefaultTheme = {
   colors: {
     textPrimary: 'black',
     textGray: '#666666',
+    textGray2: '#939393',
     gold: '#ae8d0b',
     goldHover: '#e0c56e',
     bg: 'white',
+    bg2: '#f4f5f7',
     bgInverse: "#292929",
     hoverBg: '#00000022',
     shadowBg: `rgb(0 0 0 / 5%)`,
@@ -38,9 +40,11 @@ export const darkTheme: DefaultTheme = {
   colors: {
     textPrimary: 'white',
     textGray: '#aaaaaa',
+    textGray2: '#8e8e8e',
     gold: '#c4a747',
     goldHover: '#ae8d0b',
     bg: '#242424',
+    bg2: '#1e1e1e',
     bgInverse: 'white',
     hoverBg: '#ffffff55',
     shadowBg: `rgb(255 255 255 / 5%)`,

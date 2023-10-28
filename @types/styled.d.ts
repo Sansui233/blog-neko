@@ -10,9 +10,11 @@ declare module 'styled-components' {
     colors: {
       textPrimary: string,
       textGray: string,
+      textGray2: string,
       gold: string,
       goldHover: string,
       bg: string,
+      bg2: string,
       bgInverse: string,
       hoverBg: string,
       codeBlockBg: string,

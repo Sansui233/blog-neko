@@ -7,6 +7,7 @@ import Layout from '../components/Layout'
 import { NavDropper } from '../components/NavDropper'
 import { POST_DIR, posts_db } from '../lib/data/posts'
 import { buildIndex } from '../lib/data/searchindex'
+import { siteInfo } from '../site.config'
 import { bottomFadeIn } from '../styles/animations'
 import { cardBoxShadow } from '../styles/styles'
 
@@ -54,7 +55,7 @@ const Home: NextPage<Props> = ({ posts, categories }: Props) => {
   return (
     <div>
       <Head>
-        <title>Sansui - Blog</title>
+        <title>${siteInfo.author} - Blog</title>
         <CommonHeader />
       </Head>
       <Layout>
@@ -120,7 +121,6 @@ export const MainLayoutStyle = styled.div`
 `
 
 export const PageDescription = styled.div`
-  margin-top: 2rem;
   font-style: italic;
   font-size: 0.875rem;
   color: ${props => props.theme.colors.textGray};

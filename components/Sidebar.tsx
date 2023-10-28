@@ -2,6 +2,7 @@ import Link from "next/link"
 import { useContext, useMemo } from "react"
 import styled, { ThemeContext } from "styled-components"
 import { ThemeMsg, getAppTheme, setAppTheme } from "../lib/app-states"
+import { siteInfo } from "../site.config"
 import { linkHoverBS, textStroke } from "../styles/styles"
 import MenuIcon from "./MenuIcon"
 
@@ -46,8 +47,8 @@ export default function Sidebar({ isShow, toggle }: Props) {
         <div><OptionText><Link href="/atom.xml">RSS</Link></OptionText></div>
         <LastSection>
           <Icons>
-            <a href="https://github.com/sansui233"><i className='icon-github-rounded'></i></a>
-            <a href="mailto:sansuilnm@gmail.com"><i className='icon-email-rounded'></i></a>
+            <a href={siteInfo.social.github}><i className='icon-github-rounded'></i></a>
+            <a href={`mailto:${siteInfo.social.email}`}><i className='icon-email-rounded'></i></a>
             <a href="/rss"><i className='icon-rss-rounded'></i></a>
           </Icons>
           <div>Sansui 2022 All rights reserved</div>

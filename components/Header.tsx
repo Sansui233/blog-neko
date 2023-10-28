@@ -3,6 +3,7 @@ import { useRouter } from "next/router"
 import React, { useContext, useEffect, useRef, useState } from "react"
 import styled, { ThemeContext } from "styled-components"
 import { throttle } from "../lib/throttle"
+import { siteInfo } from "../site.config"
 import MenuIcon from "./MenuIcon"
 import SearchBox from "./SearchBox"
 import Sidebar from "./Sidebar"
@@ -60,7 +61,7 @@ export default function Header() {
         <Avatar >
           <Link href="/" passHref={true}>
             {/*eslint-disable-next-line @next/next/no-img-element*/}
-            <img src={theme!.assets.favico} alt="Sansui" />
+            <img src={theme!.assets.favico} alt={siteInfo.author} />
           </Link>
         </Avatar>
         <Nav>

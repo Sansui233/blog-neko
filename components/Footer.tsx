@@ -1,12 +1,13 @@
 import styled from 'styled-components'
+import { siteInfo } from '../site.config'
 
 const Footer = () => {
   return (
     <Container>
-      <a href="https://github.com/sansui233"><i className='icon-github-rounded'></i></a>
-      <a href="mailto:sansuilnm@gmail.com"><i className='icon-email-rounded'></i></a>
+      <a href={siteInfo.social.github}><i className='icon-github-rounded'></i></a>
+      <a href={`mailto:${siteInfo.social.email}`}><i className='icon-email-rounded'></i></a>
       <a href="/rss"><i className='icon-rss-rounded'></i></a>
-      <div>{"Code & Design by Sansui 2022"} <br /> {"All rights reserved"}</div>
+      <div>{"Code & Design by Sansui 2023"} <br /> {"All rights reserved"}</div>
     </Container>
   )
 }

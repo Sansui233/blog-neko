@@ -6,6 +6,7 @@ import { CommonHeader } from "..";
 import Layout from "../../components/Layout";
 import { CategoryLayoutStyle, CategoryTitle } from "../../components/TimelinePosts";
 import { posts_db } from "../../lib/data/posts";
+import { siteInfo } from "../../site.config";
 
 export default function Categories({ categories, tags }: {
   categories: {
@@ -17,7 +18,7 @@ export default function Categories({ categories, tags }: {
 }) {
   return <>
     <Head>
-      <title>{"Sansui's Blog - Categories"}</title>
+      <title>{`${siteInfo.author}'s Blog - Categories`}</title>
       <CommonHeader />
     </Head>
     <Layout>

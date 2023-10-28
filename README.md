@@ -42,6 +42,12 @@ git clone --depth=1 https://github.com/Sansui233/next-blog-paper.git
 
 ```ts
 export const siteInfo = {
+    author: "Sansui",
+  social: {
+    email: "sansuilnm@gmail.com",
+    github: "https://github.com/sansui233"
+  },
+  // Sites
   domain: "https://sansui233.com", // Used to generate rss at build time
   walineApi: serverAPI, // 可选项，Waline 评论系统后端地址
   GAId: "G-xxxxxx" // 可选项，Google Analytics id

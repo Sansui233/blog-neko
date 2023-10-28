@@ -3,16 +3,17 @@ import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote";
 import { serialize } from "next-mdx-remote/serialize";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import remarkGfm from "remark-gfm";
-import styled from "styled-components";
-import { CommonHeader, MainLayoutStyle, PageDescription } from ".";
+import styled, { ThemeContext } from "styled-components";
+import { CommonHeader, PageDescription } from ".";
 import Layout from "../components/Layout";
 import { MarkdownStyle } from "../components/Markdown";
 import Pagination from "../components/Pagination";
 import Waline from "../components/Waline";
 import { memo_db, writeMemoJson } from "../lib/data/memos";
 import { INFOFILE, MemoInfo } from "../lib/data/memos.common";
+import { siteInfo } from "../site.config";
 import { bottomFadeIn } from '../styles/animations';
 import { textShadow } from "../styles/styles";
 
@@ -20,7 +21,8 @@ const MemoCSRAPI = '/data/memos'
 
 type MemoPost = {
   title: string,
-  content: MDXRemoteSerializeResult
+  content: MDXRemoteSerializeResult,
+  length: number,
 }
 
 type Props = {
@@ -64,7 +66,8 @@ export default function Memos({ memoposts }: Props) {
           })
           return {
             title: p.title,
-            content: content
+            content: content,
+            length: p.content.length,
           }
         }))
         return compiledPosts
@@ -88,29 +91,31 @@ export default function Memos({ memoposts }: Props) {
   return (
     <>
       <Head>
-        <title>Sansui - Memos</title>
+        <title>{siteInfo.author} - Memos</title>
         <CommonHeader />
       </Head>
       <Layout>
         <MemoLayout>
-          <MemoDescription style={{ marginBottom: '-2rem' }}>| 记录碎碎念是坏习惯 |</MemoDescription>
-          {postsData.map(m => (
-            <MemoCard key={m.title} memoPost={m} />
-          ))}
-          <Pagination
+          <div>
+            <MemoDescription>| 记录碎碎念是坏习惯 |</MemoDescription>
+            {postsData.map(m => (
+              <MemoCard key={m.title} memoPost={m} />
+            ))}
+            <Pagination
 
-            currTitle={`PAGE ${currPage + 1}`}
-            prevPage={currPage > 0 ? {
-              title: "PREV",
-              link: `/memos?p=${currPage - 1}`
-            } : undefined}
-            nextPage={currPage + 1 < pagelimit ? {
-              title: "NEXT",
-              link: `/memos?p=${currPage + 1}`
-            } : undefined}
-            maxPage={pagelimit.toString()}
-          />
-          <Waline />
+              currTitle={`PAGE ${currPage + 1}`}
+              prevPage={currPage > 0 ? {
+                title: "PREV",
+                link: `/memos?p=${currPage - 1}`
+              } : undefined}
+              nextPage={currPage + 1 < pagelimit ? {
+                title: "NEXT",
+                link: `/memos?p=${currPage + 1}`
+              } : undefined}
+              maxPage={pagelimit.toString()}
+            />
+            <Waline />
+          </div>
         </MemoLayout>
       </Layout>
     </>
@@ -119,25 +124,49 @@ export default function Memos({ memoposts }: Props) {
 
 function MemoCard({ memoPost }: { memoPost: MemoPost }) {
   const [isCollapse, setfisCollapse] = useState(true)
+  const theme = useContext(ThemeContext)
   const ref = React.useRef<HTMLDivElement>(null)
-  const shouldCollapse = memoPost.content.compiledSource.length > 1111 ? true : false
+
+  const shouldCollapse = memoPost.length > 200 ? true : false
 
   function handleExpand(e: React.MouseEvent<HTMLDivElement>) {
+    // Scroll back
+    if (!isCollapse) {
+      const element = ref.current;
+      if (element) {
+        const elementTop = element.getBoundingClientRect().top;
+        if (elementTop < 0 || elementTop > window.innerHeight) {
+          window.scrollTo({
+            top: elementTop + window.scrollY,
+            behavior: "smooth",
+          });
+        }
+      }
+    }
     setfisCollapse(!isCollapse)
   }
 
   return (
     <StyledCard $isCollapse={shouldCollapse === false ? false : isCollapse} ref={ref}>
-      <h2 className="title">{memoPost.title}</h2>
-      <MemoMarkdown $bottomSpace={shouldCollapse}>
-        {/* <MDXRemote {...memoPost.content} /> */}
-        <MDXRemote compiledSource={memoPost.content.compiledSource} scope={null} frontmatter={null} />
-      </MemoMarkdown>
-      <CardMask onClick={handleExpand} $isCollapse={isCollapse} $isShown={shouldCollapse}>
-        <div className="rd-more">
-          <span>{isCollapse ? "SHOW MORE" : "Hide"}</span>
-        </div>
-      </CardMask>
+      <div className="content">
+        <CardMeta>
+          {/*eslint-disable-next-line @next/next/no-img-element*/}
+          <img src={theme!.assets.favico} alt={siteInfo.author} />
+          <div>
+            <div>{siteInfo.author}</div>
+            <div className="date">{memoPost.title}</div>
+          </div>
+        </CardMeta>
+        <MemoMarkdown $bottomSpace={shouldCollapse}>
+          <MDXRemote compiledSource={memoPost.content.compiledSource} scope={null} frontmatter={null} />
+        </MemoMarkdown>
+        <CardMask $isCollapse={isCollapse} $isShown={shouldCollapse}>
+          <div onClick={handleExpand} className="rd-more">
+            <span>{isCollapse ? "SHOW MORE" : "Hide"}</span>
+          </div>
+        </CardMask>
+      </div>
+
     </StyledCard>
   )
 }
@@ -159,7 +188,8 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     })
     return {
       title: p.title,
-      content: content
+      content: content,
+      length: p.content.length,
     }
   }))
 
@@ -172,28 +202,87 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 }
 
 /** Styles **/
-const MemoLayout = styled(MainLayoutStyle)`
-  max-width: 720px;
+const MemoLayout = styled.div`
+  background: ${p => p.theme.colors.bg2};
+  padding: 2rem 0;
+
+  & > div {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0px 16px 48px 16px;
+  
+    @media screen and (max-width: 780px) {
+      max-width: 100%;
+    }
+  
+    @media screen and (max-width: 580px) {
+      padding: 0 0 48px 0;
+    }
+  }
 `
 
 const MemoDescription = styled(PageDescription)`
-  
 `
 
 const StyledCard = styled.section<{
   $isCollapse: boolean
 }>`
-  position: relative;
-  max-height: ${props => props.$isCollapse === true ? "19rem" : "5000px"};
-  overflow: hidden;
-  margin: 2rem 0;
+  background: ${p => p.theme.colors.bg};
+  margin: 1rem 0;
+  padding: 1.25rem 1.5rem;
+  box-shadow: rgb(0 0 0 / 10%) 0px 2px 4px;
   animation: ${bottomFadeIn} 1s ease;
-  transition: max-height 1.5s ease;
-  h2.title {
-    text-align: center;
-    font-size: 1.5rem;
-    margin-top: 2.5rem;
+
+  @media screen and (max-width: 780px) {
+    padding: 1.25rem 1.5rem;
   }
+
+  @media screen and (max-width: 580px) {
+    padding: 1.25rem 1rem;
+  }
+  
+  & > .content {
+    position: relative;
+    height: ${props => props.$isCollapse === true ? "19rem" : "auto"};
+    overflow: hidden;
+    /* transition: height 0.5s ease; */
+  }
+
+  & .date {
+    font-size: 0.9rem;
+    font-family: Dosis;
+    color: ${p => p.theme.colors.textGray};
+  }
+  
+`
+
+const MemoMarkdown = styled(MarkdownStyle) <{
+  $bottomSpace: boolean,
+}>`
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    padding-bottom: ${props => props.$bottomSpace === true ? "2rem" : "inherit"};
+    h1,h2,h3,h4,h5,h6 {
+      font-size: 1rem;
+    }
+`
+
+const CardMeta = styled.div`
+    display: flex;
+
+    & > img {
+      width: 3rem;
+      height: 3rem;
+      border-radius: 50%;
+      border: 1px solid ${p => p.theme.colors.uiLineGray};
+    }
+
+    & > div{
+      margin-left: 0.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-evenly;
+    }
 `
 
 const CardMask = styled.div<{
@@ -205,31 +294,22 @@ const CardMask = styled.div<{
     bottom: 0;
     width: 100%;
     height: 7rem;
-    cursor: pointer;
-    text-align: center;
+    text-align: right;
+    color: ${p => p.theme.colors.gold};
     ${props => props.$isCollapse === true ? props.theme.colors.maskGradient : ''}
 
     .rd-more {
       margin-top: 5.375rem;
       font-size: 0.875rem;
       padding: 0.2rem 0;
+      cursor: pointer;
       span {
-        ${() => textShadow.s}
         transition: box-shadow .3s;
       }
     }
 
-    &:hover .rd-more span {
+    & .rd-more:hover span {
       ${() => textShadow.f}
     }
    
-`
-
-const MemoMarkdown = styled(MarkdownStyle) <{
-  $bottomSpace: boolean,
-}>`
-    padding-bottom: ${props => props.$bottomSpace === true ? "2rem" : "inherit"};
-    h1,h2,h3,h4,h5,h6 {
-      font-size: 1rem;
-    }
 `
