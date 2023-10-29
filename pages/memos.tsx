@@ -28,9 +28,13 @@ type MemoPost = Omit<MemoPostRemote, 'content'> & {
 
 type Props = {
   memos: MemoPost[]
+  sider: {
+    memotags: [string, string[]][], // tagname, memo list
+
+  }
 }
 
-export default function Memos({ memos }: Props) {
+export default function Memos({ memos, sider }: Props) {
   const router = useRouter()
   const [postsData, setpostsData] = useState(memos)
   const [pagelimit, setpagelimit] = useState(1)
@@ -111,9 +115,11 @@ export default function Memos({ memos }: Props) {
           >
             <MemoCol>
               <MemoDescription>| 记录碎碎念是坏习惯 |</MemoDescription>
-              {postsData.map(m => (
-                <MemoCard key={m.id} memoPost={m} />
-              ))}
+              <div style={{ minHeight: "100vh" }}>
+                {postsData.map(m => (
+                  <MemoCard key={m.id} memoPost={m} />
+                ))}
+              </div>
               <Pagination
 
                 currTitle={`PAGE ${currPage + 1}`}
@@ -132,7 +138,9 @@ export default function Memos({ memos }: Props) {
             </MemoCol>
             <SiderCol>
               <SmallCard>
-                我是一个可怜的测试；
+                常用标签: {sider.memotags.map(t => {
+                  return <span key={t[0]}>{t[0]}</span>
+                })}
               </SmallCard>
             </SiderCol>
           </TwoColLayout>
@@ -222,7 +230,10 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 
   return {
     props: {
-      memos: compiledMemos
+      memos: compiledMemos,
+      sider: {
+        memotags: Array.from(memo_db.tags),
+      }
     }
   }
 }
