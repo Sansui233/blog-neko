@@ -8,7 +8,7 @@ import MenuIcon from "./MenuIcon"
 import SearchBox from "./SearchBox"
 import Sidebar from "./Sidebar"
 
-export default function Header() {
+export default function Topbar() {
   const theme = useContext(ThemeContext)
   const [isHidden, setisHidden] = useState(false)
   const [isSidebar, setIsSidebar] = useState(false)

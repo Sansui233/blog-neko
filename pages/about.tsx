@@ -1,7 +1,7 @@
 import Head from "next/head";
 import styled from "styled-components";
-import { CommonHeader, MainLayoutStyle, PageDescription } from ".";
-import Layout from "../components/Layout";
+import { CommonHeader, PageDescription } from ".";
+import LayoutContainer, { OneColLayout } from "../components/Layout";
 import { MarkdownStyle } from "../components/Markdown";
 import { siteInfo } from "../site.config";
 import { bottomFadeIn } from "../styles/animations";
@@ -14,11 +14,11 @@ export default function About() {
         <title>About {siteInfo.author}</title>
         <CommonHeader />
       </Head>
-      <Layout>
+      <LayoutContainer>
         <Hero>
           <span>{`Hi, I'm ${siteInfo.author}`}</span>
         </Hero>
-        <MainLayoutStyle>
+        <OneColLayout>
           <AboutDescription>| 记录一些思考和吐槽 |</AboutDescription>
           <AnimatedMarkdown>
             <p>Github: <a href="https://github.com/sansui233">Sansui233</a><br />
@@ -54,8 +54,8 @@ export default function About() {
               <li>塞尔达旷野之息</li>
             </ul>
           </AnimatedMarkdown>
-        </MainLayoutStyle>
-      </Layout>
+        </OneColLayout>
+      </LayoutContainer>
     </div>
   )
 }

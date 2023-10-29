@@ -4,25 +4,26 @@ import { serialize } from "next-mdx-remote/serialize";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import React, { useContext, useEffect, useState } from "react";
+import rehypeHighlight from 'rehype-highlight';
 import remarkGfm from "remark-gfm";
 import styled, { ThemeContext } from "styled-components";
 import { CommonHeader, PageDescription } from ".";
-import Layout from "../components/Layout";
+import LayoutContainer, { TwoColLayout } from "../components/Layout";
 import { MarkdownStyle } from "../components/Markdown";
 import Pagination from "../components/Pagination";
 import Waline from "../components/Waline";
 import { memo_db, writeMemoJson } from "../lib/data/memos";
 import { INFOFILE, MemoInfo, MemoPost as MemoPostRemote } from "../lib/data/memos.common";
+import { rehypeTag } from "../lib/rehype/rehype-tag";
 import { siteInfo } from "../site.config";
 import { bottomFadeIn } from '../styles/animations';
-import { textShadow } from "../styles/styles";
+import { paperCard, textShadow } from "../styles/styles";
 
 const MemoCSRAPI = '/data/memos'
 
-type MemoPost = {
-  id: string,
-  content: MDXRemoteSerializeResult,
-  length: number,
+type MemoPost = Omit<MemoPostRemote, 'content'> & {
+  content: MDXRemoteSerializeResult
+  length: number;
 }
 
 type Props = {
@@ -33,6 +34,8 @@ export default function Memos({ memos }: Props) {
   const router = useRouter()
   const [postsData, setpostsData] = useState(memos)
   const [pagelimit, setpagelimit] = useState(1)
+  const theme = useContext(ThemeContext)
+
 
   useEffect(() => {
     fetch(`${MemoCSRAPI}/${INFOFILE}`)
@@ -56,6 +59,7 @@ export default function Memos({ memos }: Props) {
       }
     }
 
+
     fetch(`${MemoCSRAPI}/${page}.json`)
       .then(res => res.json())
       .then((data) => {
@@ -64,11 +68,12 @@ export default function Memos({ memos }: Props) {
           const content = await serialize(p.content, {
             mdxOptions: {
               remarkPlugins: [remarkGfm],
+              rehypePlugins: [rehypeTag],
               development: process.env.NODE_ENV === 'development', // a bug in next-remote-mdx v4.4.1, see https://github.com/hashicorp/next-mdx-remote/issues/350.
             }
           })
           return {
-            id: p.id,
+            ...p,
             content: content,
             length: p.content.length,
           }
@@ -98,30 +103,41 @@ export default function Memos({ memos }: Props) {
         <title>{siteInfo.author} - Memos</title>
         <CommonHeader />
       </Head>
-      <Layout>
-        <MemoLayout>
-          <div>
-            <MemoDescription>| 记录碎碎念是坏习惯 |</MemoDescription>
-            {postsData.map(m => (
-              <MemoCard key={m.id} memoPost={m} />
-            ))}
-            <Pagination
+      <LayoutContainer style={{ backgroundColor: theme?.colors.bg2 }}>
+        <OneColLayout>
+          <TwoColLayout
+            sep={1}
+            siderLocation="right"
+          >
+            <MemoCol>
+              <MemoDescription>| 记录碎碎念是坏习惯 |</MemoDescription>
+              {postsData.map(m => (
+                <MemoCard key={m.id} memoPost={m} />
+              ))}
+              <Pagination
 
-              currTitle={`PAGE ${currPage + 1}`}
-              prevPage={currPage > 0 ? {
-                title: "PREV",
-                link: `/memos?p=${currPage - 1}`
-              } : undefined}
-              nextPage={currPage + 1 < pagelimit ? {
-                title: "NEXT",
-                link: `/memos?p=${currPage + 1}`
-              } : undefined}
-              maxPage={pagelimit.toString()}
-            />
-            <Waline />
-          </div>
-        </MemoLayout>
-      </Layout>
+                currTitle={`PAGE ${currPage + 1}`}
+                prevPage={currPage > 0 ? {
+                  title: "PREV",
+                  link: `/memos?p=${currPage - 1}`
+                } : undefined}
+                nextPage={currPage + 1 < pagelimit ? {
+                  title: "NEXT",
+                  link: `/memos?p=${currPage + 1}`
+                } : undefined}
+                maxPage={pagelimit.toString()}
+
+              />
+              <Waline />
+            </MemoCol>
+            <SiderCol>
+              <SmallCard>
+                我是一个可怜的测试；
+              </SmallCard>
+            </SiderCol>
+          </TwoColLayout>
+        </OneColLayout>
+      </LayoutContainer>
     </>
   )
 }
@@ -190,13 +206,16 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   const compiledMemos = await Promise.all(memos.map(async p => {
     const content = await serialize(p.content, {
       mdxOptions: {
-        remarkPlugins: [remarkGfm]
+        remarkPlugins: [remarkGfm],
+        rehypePlugins: [
+          rehypeHighlight,
+        ]
       }
     })
     return {
-      id: p.id,
+      ...p,
       content: content,
-      length: p.content.length,
+      length: p.content.length
     }
   }))
 
@@ -208,23 +227,41 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   }
 }
 
-/** Styles **/
-const MemoLayout = styled.div`
-  background: ${p => p.theme.colors.bg2};
-  padding: 2rem 0;
+const OneColLayout = styled.div`
+  max-width: 1080px;
+  margin: 0 auto;
 
-  & > div {
-    max-width: 780px;
-    margin: 0 auto;
-    padding: 0px 16px 48px 16px;
+  @media screen and (max-width: 780px) {
+    max-width: 100%;
+  }
+
+  @media screen and (max-width: 580px) {
+  }
+`
+
+/** Styles **/
+const MemoCol = styled.div`
+  margin: 2rem 0;
+  max-width: 780px;
+  padding: 0px 16px 48px 16px;
+  align-self: flex-end;
   
-    @media screen and (max-width: 780px) {
-      max-width: 100%;
-    }
-  
-    @media screen and (max-width: 580px) {
-      padding: 0 0 48px 0;
-    }
+
+  @media screen and (max-width: 780px) {
+    max-width: 100%;
+  }
+
+  @media screen and (max-width: 580px) {
+    padding: 0 0 48px 0;
+  }
+
+`
+
+const SiderCol = styled.div`
+  max-width: 20em;
+  padding-top: 69px;
+  @media screen and (max-width: 780px) {
+    max-width: unset;
   }
 `
 
@@ -234,10 +271,10 @@ const MemoDescription = styled(PageDescription)`
 const StyledCard = styled.section<{
   $isCollapse: boolean
 }>`
-  background: ${p => p.theme.colors.bg};
+
+  ${paperCard}
   margin: 1rem 0;
   padding: 1.25rem 1.5rem;
-  box-shadow: rgb(0 0 0 / 10%) 0px 2px 4px;
   animation: ${bottomFadeIn} 1s ease;
 
   @media screen and (max-width: 780px) {
@@ -294,6 +331,15 @@ const MemoMarkdown = styled(MarkdownStyle) <{
     h1,h2,h3,h4,h5,h6 {
       font-size: 1rem;
     }
+
+    & .tag {
+      color: ${p => p.theme.colors.gold};
+    }
+
+    & .tag:hover {
+      cursor: pointer;
+      color: ${p => p.theme.colors.goldHover};
+    }
 `
 
 
@@ -324,4 +370,10 @@ const CardMask = styled.div<{
       ${() => textShadow.f}
     }
    
+`
+
+const SmallCard = styled.div<{
+}>`
+  ${paperCard}
+  min-height: 22em;
 `

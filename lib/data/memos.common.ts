@@ -28,12 +28,9 @@ export type MemoPost = {
   sourceFile: string;
   csrIndex: [number, number]; // page index
 };
-export type MemoTag = {
-  name: string;
-  list: {
-    memoId: string;
-    sourceFile: string;
-    csrPage: number;
-  }[];
-};
+
+/**
+ * map<name,memoIds>
+ */
+export type MemoTag = Map<string, string[]>
 

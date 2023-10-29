@@ -25,7 +25,7 @@ export const memo_db = await (async function () {
       return a < b ? 1 : -1 // Desc for latest first
     })
   })())
-  const tags: MemoTag[] = []
+  const tags: MemoTag = new Map<string, string[]>();
   const memos: MemoPost[] = []
 
   /**
@@ -52,6 +52,7 @@ export const memo_db = await (async function () {
     // state
     let isFirstLine = true
     let isFrontMatter = false
+    let currId = ""
 
     const fileStream = fs.createReadStream(path.join(MEMOS_DIR, src_file))
     const rl = readline.createInterface({
@@ -77,23 +78,44 @@ export const memo_db = await (async function () {
           csrIndex = 0;
         }
 
+        currId = line.slice(3)
+
         // add new memo
         memos.push({
-          id: line.slice(3),
+          id: currId,
           content: "",
           imgurls: [],
           sourceFile: src_file,
           csrIndex: [csrPage, csrIndex],
         })
       } else {
-        // TODO parse tag
 
-        // TODO parse imgs
+        // Step1 detect imgs
+        const imgreg  = /\!\[.*\]\(.+\)/g;
+        const matches = line.match(imgreg);
+        if(matches){
+          memos[memos.length - 1].imgurls.concat(matches)
+        }else{
 
-        // update memo content
-        if (memos.length === 0) continue // 忽略 yaml 和 ## 之间的空行
-        const m = memos[memos.length - 1]
-        m.content += line + "\n"
+          // Step2 collect text content
+          // 2.1 detect tags
+          const regex = /#([^#\s]+)(?=\s|$)/g;
+          const matches = line.match(regex);
+          if (matches){
+            matches.map(match => match.substring(1)).map(t => {
+              if(tags.has(t)){
+                tags.get(t)?.push(currId)
+              }else{
+                tags.set(t, [currId])
+              }
+            })
+          }
+
+          // Step2.2 update memo content
+          if (memos.length === 0) continue // 忽略 yaml 和 ## 之间的空行
+          const m = memos[memos.length - 1]
+          m.content += line + "\n"
+        }
       }
     }
 

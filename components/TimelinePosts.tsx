@@ -1,7 +1,7 @@
 import Link from "next/link";
 import styled from "styled-components";
-import { MainLayoutStyle } from "../pages";
 import { textShadow } from "../styles/styles";
+import { OneColLayout } from './Layout';
 
 /**
  * 生成具体的标签页和分类页内容，以时间线排序
@@ -48,7 +48,7 @@ export default function TLContent({ mode, title, posts }: Props) {
   );
 }
 
-export const CategoryLayoutStyle = styled(MainLayoutStyle)`
+export const CategoryLayoutStyle = styled(OneColLayout)`
   @media screen and (max-width: 580px) {
     padding: 0 48px 48px 48px;
   }

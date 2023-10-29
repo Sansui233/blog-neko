@@ -1,5 +1,5 @@
 import { styled } from "styled-components";
-import { cardBoxShadow } from "../styles";
+import { floatBoxShadow } from "../styles";
 
 const PopOver = styled.div`
   min-width: 60px;
@@ -9,7 +9,7 @@ const PopOver = styled.div`
   border: 1px solid ${p => p.theme.colors.uiLineGray};
   border-radius: 5px;
   transform: scale3d(1, 1, 1); /* New layer*/
-  ${() => cardBoxShadow}
+  ${() => floatBoxShadow}
 `
 
 export default PopOver;

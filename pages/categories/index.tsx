@@ -3,7 +3,7 @@ import Head from "next/head";
 import Link from "next/link";
 import styled from "styled-components";
 import { CommonHeader } from "..";
-import Layout from "../../components/Layout";
+import LayoutContainer from "../../components/Layout";
 import { CategoryLayoutStyle, CategoryTitle } from "../../components/TimelinePosts";
 import { posts_db } from "../../lib/data/posts";
 import { siteInfo } from "../../site.config";
@@ -21,7 +21,7 @@ export default function Categories({ categories, tags }: {
       <title>{`${siteInfo.author}'s Blog - Categories`}</title>
       <CommonHeader />
     </Head>
-    <Layout>
+    <LayoutContainer>
       <CategoryLayoutStyle>
         <CategoryTitle>
           <span>CATEGORIES</span>
@@ -51,7 +51,7 @@ export default function Categories({ categories, tags }: {
           })}
         </Container>
       </CategoryLayoutStyle>
-    </Layout>
+    </LayoutContainer>
   </>;
 }
 

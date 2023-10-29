@@ -3,13 +3,13 @@ import Head from 'next/head'
 import Link from 'next/link'
 import React, { useMemo, useState } from 'react'
 import styled from 'styled-components'
-import Layout from '../components/Layout'
+import LayoutContainer, { OneColLayout } from '../components/Layout'
 import { NavDropper } from '../components/NavDropper'
 import { POST_DIR, posts_db } from '../lib/data/posts'
 import { buildIndex } from '../lib/data/searchindex'
 import { siteInfo } from '../site.config'
 import { bottomFadeIn } from '../styles/animations'
-import { cardBoxShadow } from '../styles/styles'
+import { floatBoxShadow } from '../styles/styles'
 
 type PostType = {
   id: string,
@@ -58,8 +58,8 @@ const Home: NextPage<Props> = ({ posts, categories }: Props) => {
         <title>{siteInfo.author} - Blog</title>
         <CommonHeader />
       </Head>
-      <Layout>
-        <MainLayoutStyle>
+      <LayoutContainer>
+        <OneColLayout>
           <NavDropper items={categories} current={currCategory} setCurrent={setCurrCategory} />
           <PostGrids>
             {filteredPosts.map((post, i) => {
@@ -69,8 +69,8 @@ const Home: NextPage<Props> = ({ posts, categories }: Props) => {
               return <ArticleItem p={p} springStyle={style} key={p.id} index={i}/>
             })} */}
           </PostGrids>
-        </MainLayoutStyle>
-      </Layout>
+        </OneColLayout>
+      </LayoutContainer>
     </div>
   )
 }
@@ -106,20 +106,6 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 
 export default Home
 
-export const MainLayoutStyle = styled.div`
-  max-width: 780px;
-  margin: 0 auto;
-  padding: 0px 48px 48px 48px;
-
-  @media screen and (max-width: 780px) {
-    max-width: 580px;
-  }
-
-  @media screen and (max-width: 580px) {
-    padding: 0 20px 48px 20px;
-  }
-`
-
 export const PageDescription = styled.div`
   font-style: italic;
   font-size: 0.875rem;
@@ -150,13 +136,13 @@ const Card = styled(Link)`
   animation-fill-mode: forwards;
   @media (any-hover: hover) {
     &:hover{
-      ${() => cardBoxShadow}
+      ${() => floatBoxShadow}
     }
   }
 
   @media (any-hover: none) {
     &:active{
-      ${() => cardBoxShadow}
+      ${() => floatBoxShadow}
     }
   }
 

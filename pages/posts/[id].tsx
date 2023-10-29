@@ -11,14 +11,14 @@ import { useContext } from "react"
 import rehypeHighlight from 'rehype-highlight'
 import remarkGfm from "remark-gfm"
 import styled, { ThemeContext } from "styled-components"
-import { CommonHeader, MainLayoutStyle } from ".."
-import Layout from "../../components/Layout"
+import { CommonHeader } from ".."
+import LayoutContainer, { OneColLayout } from "../../components/Layout"
 import { MDImg, MarkdownStyle } from "../../components/Markdown"
 import Pagination from "../../components/Pagination"
 import Waline from "../../components/Waline"
 import { POST_DIR, posts_db } from "../../lib/data/posts"
 import { dateToYMD } from "../../lib/date"
-import { rehypeAddAnchors, rehypeExtractHeadings } from "../../lib/rehype-toc"
+import { rehypeAddAnchors, rehypeExtractHeadings } from "../../lib/rehype/rehype-toc"
 import { bottomFadeIn, fadeInRight } from "../../styles/animations"
 
 type Props = {
@@ -107,7 +107,7 @@ export default function Post({ mdxSource, nextPost, prevPost, excerpt, headings 
       <meta name="keywords" content={getKeywords(frontmatter)}></meta>
       <CommonHeader />
     </Head>
-    <Layout>
+    <LayoutContainer>
       <div style={{ display: "flex", margin: "auto" }}>
         <ColumnLeft>
           <PostLayout >
@@ -156,7 +156,7 @@ export default function Post({ mdxSource, nextPost, prevPost, excerpt, headings 
           </nav>
         </ColumnRight>
       </div>
-    </Layout>
+    </LayoutContainer>
   </>;
 }
 
@@ -241,7 +241,7 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
   }
 }
 
-const PostLayout = styled(MainLayoutStyle)`
+const PostLayout = styled(OneColLayout)`
   max-width: 800px;
   margin-top: 72px;
   animation: ${bottomFadeIn} 1s ease;

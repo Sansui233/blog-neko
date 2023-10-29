@@ -2,7 +2,7 @@ import { GetStaticPaths, GetStaticProps } from 'next';
 import Head from "next/head";
 import styled from "styled-components";
 import { CommonHeader } from "..";
-import Layout from "../../components/Layout";
+import LayoutContainer from "../../components/Layout";
 import TLContent from "../../components/TimelinePosts";
 import { groupByYear, posts_db } from "../../lib/data/posts";
 import { textShadow } from "../../styles/styles";
@@ -26,9 +26,9 @@ export default function CategoryPage({ category, posts }: Props) {
         <title>Category - {category}</title>
         <CommonHeader />
       </Head>
-      <Layout>
+      <LayoutContainer>
         <TLContent mode='category' title={category} posts={posts} />
-      </Layout>
+      </LayoutContainer>
     </>
   )
 }
