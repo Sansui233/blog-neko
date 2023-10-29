@@ -26,7 +26,7 @@ export type FrontMatter = {
  */
 export const posts_db = await (async function () {
 
-  console.log("[posts.ts] init posts_db")
+  console.log("[posts.ts] collecting posts data...")
 
   /*
   * source file names

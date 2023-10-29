@@ -25,7 +25,7 @@ type Props = {
 }
 
 
-export const CommonHeader = () => (
+export const CommonHead = () => (
   <React.Fragment>
     <meta name="description" content="A personal blog about work and life" />
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
@@ -55,8 +55,8 @@ const Home: NextPage<Props> = ({ posts, categories }: Props) => {
   return (
     <div>
       <Head>
-        <title>{siteInfo.author} - Blog</title>
-        <CommonHeader />
+        <title>{`${siteInfo.author} - Blog`}</title>
+        <CommonHead />
       </Head>
       <LayoutContainer>
         <OneColLayout>

@@ -1,6 +1,6 @@
 import Head from "next/head";
 import styled from "styled-components";
-import { CommonHeader, PageDescription } from ".";
+import { CommonHead, PageDescription } from ".";
 import LayoutContainer, { OneColLayout } from "../components/Layout";
 import { MarkdownStyle } from "../components/Markdown";
 import { siteInfo } from "../site.config";
@@ -11,8 +11,8 @@ export default function About() {
   return (
     <div>
       <Head>
-        <title>About {siteInfo.author}</title>
-        <CommonHeader />
+        <title>{`About ${siteInfo.author}`}</title>
+        <CommonHead />
       </Head>
       <LayoutContainer>
         <Hero>

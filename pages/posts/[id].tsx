@@ -11,7 +11,7 @@ import { useContext } from "react"
 import rehypeHighlight from 'rehype-highlight'
 import remarkGfm from "remark-gfm"
 import styled, { ThemeContext } from "styled-components"
-import { CommonHeader } from ".."
+import { CommonHead } from ".."
 import LayoutContainer, { OneColLayout } from "../../components/Layout"
 import { MDImg, MarkdownStyle } from "../../components/Markdown"
 import Pagination from "../../components/Pagination"
@@ -105,7 +105,7 @@ export default function Post({ mdxSource, nextPost, prevPost, excerpt, headings 
       <title>{frontmatter.title}</title>
       <meta name="description" content={description}></meta>
       <meta name="keywords" content={getKeywords(frontmatter)}></meta>
-      <CommonHeader />
+      <CommonHead />
     </Head>
     <LayoutContainer>
       <div style={{ display: "flex", margin: "auto" }}>

@@ -7,7 +7,7 @@ import React, { useContext, useEffect, useState } from "react";
 import rehypeHighlight from 'rehype-highlight';
 import remarkGfm from "remark-gfm";
 import styled, { ThemeContext } from "styled-components";
-import { CommonHeader, PageDescription } from ".";
+import { CommonHead, PageDescription } from ".";
 import LayoutContainer, { TwoColLayout } from "../components/Layout";
 import { MarkdownStyle } from "../components/Markdown";
 import Pagination from "../components/Pagination";
@@ -104,8 +104,8 @@ export default function Memos({ memos, sider }: Props) {
   return (
     <>
       <Head>
-        <title>{siteInfo.author} - Memos</title>
-        <CommonHeader />
+        <title>{`${siteInfo.author} - Memos`}</title>
+        <CommonHead />
       </Head>
       <LayoutContainer style={{ backgroundColor: theme?.colors.bg2 }}>
         <OneColLayout>

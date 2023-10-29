@@ -42,7 +42,7 @@ export const memo_db = await (async function () {
    *   Core Initialize
    **/
 
-  console.log("[memos.ts] parsing memos......")
+  console.log("[memos.ts] parsing memos...")
 
   let csrPage = 0;
   let csrIndex = -1; // 由於是新建条目前更新状态，因此從-1開始
@@ -128,6 +128,7 @@ export const memo_db = await (async function () {
     fileStream.close()
   }
 
+  console.log(`[memos.ts] ${memos.length} memos in total`)
 
   return {
     names,

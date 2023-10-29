@@ -2,7 +2,7 @@ import { GetStaticProps } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import styled from "styled-components";
-import { CommonHeader } from "..";
+import { CommonHead } from "..";
 import LayoutContainer from "../../components/Layout";
 import { CategoryLayoutStyle, CategoryTitle } from "../../components/TimelinePosts";
 import { posts_db } from "../../lib/data/posts";
@@ -19,7 +19,7 @@ export default function Categories({ categories, tags }: {
   return <>
     <Head>
       <title>{`${siteInfo.author}'s Blog - Categories`}</title>
-      <CommonHeader />
+      <CommonHead />
     </Head>
     <LayoutContainer>
       <CategoryLayoutStyle>

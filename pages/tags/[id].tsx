@@ -1,6 +1,6 @@
 import { GetStaticPaths, GetStaticProps } from "next";
 import Head from "next/head";
-import { CommonHeader } from "..";
+import { CommonHead } from "..";
 import LayoutContainer from "../../components/Layout";
 import TLContent from "../../components/TimelinePosts";
 import { groupByYear, posts_db } from "../../lib/data/posts";
@@ -19,8 +19,8 @@ type Props = {
 export default function TagPage({ tag, posts }: Props) {
   return (<>
     <Head>
-      <title>Tag - {tag}</title>
-      <CommonHeader />
+      <title>{`Tag - ${tag}`}</title>
+      <CommonHead />
     </Head>
     <LayoutContainer>
       <TLContent mode='tag' title={tag} posts={posts} />
