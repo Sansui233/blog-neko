@@ -1,239 +1,139 @@
 import fs from "fs";
 import path from "path";
-import { exit } from "process";
-import readline from 'readline';
-import { getLastModTime, loadJson, writeJson } from "../fs/fs";
-import { FileInfo, INFOFILE, MemoInfo } from "./memos.common";
+import readline from "readline";
+import { writeJson } from "../fs/fs";
+import { INFOFILE, MemoInfo, MemoPost, MemoTag } from "./memos.common";
 
 export const MEMOS_DIR = path.join(process.cwd(), 'source', 'memos')
 const MEMO_CSR_DATA_DIR = path.join(process.cwd(), 'public', 'data', 'memos')
 const NUM_PER_PAGE = 12
 
-type MemoPost = {
-  title: string;
-  content: string;
-}
-
 /**
  * memos database
+ * 构造函数返回一个 memo_db 对象
  */
-export const memo_db = {
+export const memo_db = await (async function () {
+
   /**
-   * source file names
+   * Exported properies
    */
-  names: await((async () => {
+  const names = await ((async () => {
     let fileNames = await fs.promises.readdir(MEMOS_DIR);
     return fileNames.filter(f => {
       return f.endsWith(".md")
     }).sort((a, b) => {
       return a < b ? 1 : -1 // Desc for latest first
     })
-  })()),
+  })())
+  const tags: MemoTag[] = []
+  const memos: MemoPost[] = []
 
   /**
    * Get memos by page. SSR only
    * @param page number from 0
    */
-  atPage: async function (page: number): Promise<MemoPost[]> {
-    const self = this;
-    const fileNames = self.names;
-  
-    // 左闭右开, start from 0
-    const postRange = ((page: number) => {
-      const start = page * NUM_PER_PAGE
-      const end = start + NUM_PER_PAGE
-      return [start, end]
-    })(page)
-  
-    const memos: MemoPost[] = []
-    let counter = -1 //由于 counter 需要从 0 开始，而后面是先加再算，所以这里是-1
+  const atPage = function (page: number) {
+    return memos.filter(m => {
+      m.csrIndex[0] === page
+    })
+  }
+
+  /**
+   *   Core Initialize
+   **/
+
+  console.log("[memos.ts] parsing memos......")
+
+  let csrPage = 0;
+  let csrIndex = -1; // 由於是新建条目前更新状态，因此從-1開始
+
+  for (const src_file of names) {
+
+    // state
+    let isFirstLine = true
     let isFrontMatter = false
-  
-    // Generate memos
-    for (const fileName of fileNames) {
-      const fileStream = fs.createReadStream(path.join(MEMOS_DIR, fileName))
-      const rl = readline.createInterface({
-        input: fileStream,
-        crlfDelay: Infinity
-      })
-      let isFirstLine = true
-      for await (const line of rl) {
-        if (line.startsWith("---") && isFirstLine) {
-          if (isFrontMatter) {
-            isFrontMatter = false
-            isFirstLine = false
-            continue
-          } else {
-            isFrontMatter = true
-            continue
-          }
-        }
-        if (line.startsWith("## ")) {
-          counter++
-          if (counter < postRange[0]) {
-            continue
-          }
-          if (counter >= postRange[1]) {
-            break
-          }
-          // create a new post
-          memos.push({
-            title: line.slice(3),
-            content: "",
-          })
-        } else {
-          if (isFrontMatter) continue
-          if (memos.length === 0) continue // Ignore the start of a md file
-          memos[memos.length - 1].content += line + "\n" // push content
-        }
-      }
-      rl.close()
-      fileStream.close()
-    }
-  
-    // convert to html
-    return memos
-  },
 
-}
-
-/**
- * Generate CSR data File: {pagenumber}.json and memosinfo.json
- * SSR only
- * Seperate memos into different files
- */
-export async function writeMemoJson() {
-  const srcNames = memo_db.names // with .md suffix
-  const oldInfo = await (loadJson(path.join(MEMO_CSR_DATA_DIR, INFOFILE))) as MemoInfo // 边界条件：oldInfo 可能为 undefined
-
-  // result container
-  let memos: MemoPost[] = []
-  const memosInfo: MemoInfo = { pages: 0, fileMap: [] }
-
-  // status
-  let page = 0
-  let isFrontMatter = false
-  let startUpdate = false
-
-
-  // Traverse all memo md files, turn into {page.json}
-  // 基于fs的增量更新很难做，因为大量旧文件删除会影响页数，只能保证从修改的文件开始更新
-  for (const [i, srcName] of Object.entries(srcNames)) {
-
-    if (!startUpdate && oldInfo && oldInfo.fileMap.length !== 0) {
-
-      const oldFile = oldInfo.fileMap[Number.parseInt(i)]
-
-      if(!oldFile){ // 非常非常非常特殊的情况：增加了旧文件且在旧文件名字最小
-        console.error(`[memo.ts] Error: Please clear ${MEMOS_DIR} and rebuild memos`)
-        exit(1)
-      }else{
-        const isIdentical = await (async function () {
-          if (oldFile.srcName === srcName) {
-            const lastModified = (await getLastModTime(path.join(MEMOS_DIR, srcName))).getTime()
-            if (oldFile.lastModified === lastModified) {
-              return true
-            }
-          }
-          return false
-        })()
-  
-        // skip for unmodified md files
-        if (isIdentical) {
-          memosInfo.fileMap.push(oldFile)
-          memosInfo.pages = oldFile.endAt.page
-          console.debug('[memos.ts]', `skip re-parse for ${srcName} in ${MEMOS_DIR}`)
-          continue
-  
-        } else {
-          // set update start point 
-          page = oldFile.startAt.page
-          const oldmemos = await loadJson(path.join(MEMO_CSR_DATA_DIR, `${page}.json`))
-          if(oldmemos){
-            memos = oldmemos.slice(0, oldFile.startAt.index)
-          }
-          startUpdate = true
-        }
-      }
-    } else {
-      startUpdate = true
-    }
-
-    console.debug('[memos.ts]', `parse memo file ${srcName} in ${MEMOS_DIR}`)
-
-    // update memosInfo
-    const fInfo: FileInfo = {
-      srcName: srcName,
-      lastModified: (await getLastModTime(path.join(MEMOS_DIR, srcName))).getTime(),
-      startAt: {
-        page: page,
-        index: memos.length
-      },
-      endAt: {
-        page: page,
-        index: memos.length
-      }
-
-    }
-
-    // Read file
-    const fileStream = fs.createReadStream(path.join(MEMOS_DIR, srcName))
+    const fileStream = fs.createReadStream(path.join(MEMOS_DIR, src_file))
     const rl = readline.createInterface({
       input: fileStream,
       crlfDelay: Infinity
     })
-    let isFirstLine = true
 
     for await (const line of rl) {
-      // Skip yaml header at start
       if (line.startsWith("---") && isFirstLine) {
-        if (isFrontMatter) {
+        if (isFrontMatter) { // front matter end
           isFrontMatter = false
           isFirstLine = false
           continue
         } else {
-          isFrontMatter = true
+          isFrontMatter = true // front matter start
           continue
         }
-      }
-
-      // Parse memo
-      if (line.startsWith("## ")) {
-        // Pagination
-        if (memos.length === NUM_PER_PAGE) {
-          writeJson(path.join(MEMO_CSR_DATA_DIR, `${page}.json`), memos)
-          memos = []
-          page++
+      } else if (line.startsWith("## ")) {
+        // 更新條目
+        csrIndex += 1;
+        if (csrIndex === 10) {
+          csrPage += 1;
+          csrIndex = 0;
         }
+
+        // add new memo
         memos.push({
-          title: line.slice(3),
+          id: line.slice(3),
           content: "",
+          imgurls: [],
+          sourceFile: src_file,
+          csrIndex: [csrPage, csrIndex],
         })
       } else {
-        // Skip yaml header at start
-        if (isFrontMatter) continue
-        // Ignore the start of the first md file
-        if (memos.length === 0) continue
+        // TODO parse tag
 
-        // Push memo data
-        memos[memos.length - 1].content += line + "\n"
+        // TODO parse imgs
 
-        // update status
-        memosInfo.pages = page
-        fInfo.endAt.page = page
-        fInfo.endAt.index = memos.length - 1 
+        // update memo content
+        if (memos.length === 0) continue // 忽略 yaml 和 ## 之间的空行
+        const m = memos[memos.length - 1]
+        m.content += line + "\n"
       }
     }
-
-    // update status
-    memosInfo.fileMap.push(fInfo)
 
     rl.close()
     fileStream.close()
   }
 
-  if (memos.length !== 0) writeJson(path.join(MEMO_CSR_DATA_DIR, `${page}.json`), memos) // 最后的几个
-  writeJson(path.join(MEMO_CSR_DATA_DIR, INFOFILE), memosInfo)
 
-  console.log(`[memos.ts] ${memosInfo.pages + 1} pages are generated\n`)
+  return {
+    names,
+    tags,
+    memos,
+    atPage,
+  }
+
+})()
+
+export function writeMemoJson() {
+
+  const groupByPage = new Map<number, MemoPost[]>()
+  let maxpage = 0;
+
+  memo_db.memos.forEach(m => {
+    const p = m.csrIndex[0]
+    if (groupByPage.has(p)) {
+      groupByPage.get(p)?.push(m)
+    } else {
+      groupByPage.set(p, [m])
+    }
+    maxpage = p > maxpage ? p : maxpage;
+  })
+  
+  groupByPage.forEach((memos, page) => {
+    writeJson(path.join(MEMO_CSR_DATA_DIR, `${page}.json`), memos)
+  })
+
+  const info: MemoInfo = {
+    pages: maxpage,
+    fileMap: []
+  }
+
+  writeJson(path.join(MEMO_CSR_DATA_DIR, INFOFILE), info)
 }

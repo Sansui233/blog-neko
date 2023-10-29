@@ -12,7 +12,7 @@ import { MarkdownStyle } from "../components/Markdown";
 import Pagination from "../components/Pagination";
 import Waline from "../components/Waline";
 import { memo_db, writeMemoJson } from "../lib/data/memos";
-import { INFOFILE, MemoInfo } from "../lib/data/memos.common";
+import { INFOFILE, MemoInfo, MemoPost as MemoPostRemote } from "../lib/data/memos.common";
 import { siteInfo } from "../site.config";
 import { bottomFadeIn } from '../styles/animations';
 import { textShadow } from "../styles/styles";
@@ -20,18 +20,18 @@ import { textShadow } from "../styles/styles";
 const MemoCSRAPI = '/data/memos'
 
 type MemoPost = {
-  title: string,
+  id: string,
   content: MDXRemoteSerializeResult,
   length: number,
 }
 
 type Props = {
-  memoposts: MemoPost[]
+  memos: MemoPost[]
 }
 
-export default function Memos({ memoposts }: Props) {
+export default function Memos({ memos }: Props) {
   const router = useRouter()
-  const [postsData, setpostsData] = useState(memoposts)
+  const [postsData, setpostsData] = useState(memos)
   const [pagelimit, setpagelimit] = useState(1)
 
   useEffect(() => {
@@ -45,7 +45,9 @@ export default function Memos({ memoposts }: Props) {
 
 
   useEffect(() => {
+
     let page = 0
+
     if (typeof (router.query.p) === 'string') {
       page = parseInt(router.query.p)
       if (isNaN(page)) {
@@ -53,10 +55,11 @@ export default function Memos({ memoposts }: Props) {
         return
       }
     }
+
     fetch(`${MemoCSRAPI}/${page}.json`)
       .then(res => res.json())
       .then((data) => {
-        const posts = data as Array<{ title: string, content: string }>
+        const posts = data as Array<MemoPostRemote>
         const compiledPosts = Promise.all(posts.map(async p => {
           const content = await serialize(p.content, {
             mdxOptions: {
@@ -65,7 +68,7 @@ export default function Memos({ memoposts }: Props) {
             }
           })
           return {
-            title: p.title,
+            id: p.id,
             content: content,
             length: p.content.length,
           }
@@ -77,6 +80,7 @@ export default function Memos({ memoposts }: Props) {
       }).catch(console.error);
 
   }, [router.query])
+
 
   const currPage = (() => {
     if (typeof (router.query.p) === 'string') {
@@ -99,7 +103,7 @@ export default function Memos({ memoposts }: Props) {
           <div>
             <MemoDescription>| 记录碎碎念是坏习惯 |</MemoDescription>
             {postsData.map(m => (
-              <MemoCard key={m.title} memoPost={m} />
+              <MemoCard key={m.id} memoPost={m} />
             ))}
             <Pagination
 
@@ -155,7 +159,7 @@ function MemoCard({ memoPost }: { memoPost: MemoPost }) {
           <div>
             <div>{siteInfo.author}</div>
             <div className="date">
-              {memoPost.title}&nbsp;&nbsp;
+              {memoPost.id}&nbsp;&nbsp;
               <span className="word-count">{memoPost.length}&nbsp;字</span>
             </div>
           </div>
@@ -182,15 +186,15 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   writeMemoJson()
 
   // 首屏 SEO 数据
-  const posts = await memo_db.atPage(0)
-  const compiledPosts = await Promise.all(posts.map(async p => {
+  const memos = memo_db.atPage(0)
+  const compiledMemos = await Promise.all(memos.map(async p => {
     const content = await serialize(p.content, {
       mdxOptions: {
         remarkPlugins: [remarkGfm]
       }
     })
     return {
-      title: p.title,
+      id: p.id,
       content: content,
       length: p.content.length,
     }
@@ -199,7 +203,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 
   return {
     props: {
-      memoposts: compiledPosts
+      memos: compiledMemos
     }
   }
 }

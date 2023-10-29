@@ -22,39 +22,39 @@ export type FrontMatter = {
 
 /**
  * posts database
+ * 构造函数返回一个 posts_db 对象
  */
-export const posts_db = {
+export const posts_db = await (async function () {
+
+  console.log("[posts.ts] init posts_db")
 
   /*
   * source file names
   */
-  names: await ((async () => {
+  const names = await ((async () => {
     let fileNames = await fs.promises.readdir(POST_DIR);
     fileNames = fileNames.filter(f => {
       return f.endsWith(".md") || f.endsWith(".mdx")
     })
     return fileNames
-  })()),
+  })())
 
   /**
    * used in url
    */
-  ids: function () {
-    const self = this;
-    return self.names.map(f => {
+  const ids = function () {
+    return names.map(f => {
       return {
         params: {
           id: f.replace(/\.mdx?$/, '').replaceAll(" ", "-")
         }
       };
     });
-  },
+  }
 
-  categories: async function () {
-    const self = this;
-
+  const categories = async function () {
     const categories = new Map<string, number>()
-    const p = self.names
+    const p = names
     categories.set(CATEGORY_ALL, p.length)
 
     const promises = p.map(async fileName => {
@@ -72,15 +72,13 @@ export const posts_db = {
     await Promise.all(promises)
 
     return categories
-  },
+  }
 
   /**
    * metas sorted by date
    */
-  metas: async function () {
-    const self = this;
-
-    const promises = self.names.map(async fileName => {
+  const metas = async function () {
+    const promises = names.map(async fileName => {
       const id = fileName.replace(/\.mdx?$/, '')
       const frontMatter = ((await getFrontMatter(fileName)).data) as FrontMatter
       const date = dateToYMD(frontMatter.date!)
@@ -96,15 +94,13 @@ export const posts_db = {
     return allPosts.sort((a, b) => {
       return a.date < b.date ? 1 : -1
     })
-  },
+  }
 
-  tags: async function () {
-    const self = this;
-
+  const tags = async function () {
     const tags = new Map<string, number>()
     tags.set(TAG_UNTAGGED, 0)
 
-    const promises = self.names.map(async fileName => {
+    const promises = names.map(async fileName => {
       const matterResult = await getFrontMatter(fileName)
       if (matterResult.data['tags']) {
         let fileTags = matterResult.data['tags']
@@ -123,16 +119,15 @@ export const posts_db = {
 
     await Promise.all(promises)
     return tags
-  },
+  }
 
   /**
  * return posts in tag t, sorted by date
  */
-  inTag: async function (t: string) {
-    const self = this
+  const inTag = async function (t: string) {
 
     const p: { id: string, title: string, date: Date }[] = []
-    const promises = this.names.map(async fileName => {
+    const promises = names.map(async fileName => {
       const matterResult = await getFrontMatter(fileName)
       let fileTags = matterResult.data['tags']
       fileTags = typeof (fileTags) === 'string' ? [fileTags] : fileTags
@@ -148,16 +143,14 @@ export const posts_db = {
     await Promise.all(promises)
 
     return p.sort((a, b) => a.date < b.date ? 1 : -1)
-  },
+  }
 
   /**
  * return posts in category c, sorted by date
  */
-  inCategory: async function (c: string) {
-    const self = this
-
+  const inCategory = async function (c: string) {
     const p: { id: string, title: string, date: Date }[] = []
-    const promises = self.names.map(async fileName => {
+    const promises = names.map(async fileName => {
       const matterResult = await getFrontMatter(fileName)
       if (c === CATEGORY_ALL ||
         (matterResult.data['categories'] && matterResult.data['categories'] === c)
@@ -174,7 +167,17 @@ export const posts_db = {
 
     return p.sort((a, b) => a.date < b.date ? 1 : -1)
   }
-}
+
+  return {
+    names,
+    ids,
+    categories,
+    metas,
+    tags,
+    inTag,
+    inCategory
+  }
+})()
 
 
 

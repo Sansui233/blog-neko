@@ -60,7 +60,7 @@ export async function loadJson(filePath: string) {
 }
 
 /**
- * writeJson(dir, "a.json", object)
+ * writeJson("public/a.json", object)
  */
 export async function writeJson(filepath: string, data: object) {
   mkdirSync(path.dirname(filepath))

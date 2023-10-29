@@ -20,3 +20,20 @@ export type FileInfo = {
 }
 
 export const INFOFILE = "status.json"
+
+export type MemoPost = {
+  id: string;
+  content: string;
+  imgurls: string[];
+  sourceFile: string;
+  csrIndex: [number, number]; // page index
+};
+export type MemoTag = {
+  name: string;
+  list: {
+    memoId: string;
+    sourceFile: string;
+    csrPage: number;
+  }[];
+};
+
