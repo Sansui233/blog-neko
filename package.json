@@ -19,7 +19,7 @@
     "hast-util-heading-rank": "^3.0.0",
     "hast-util-to-string": "^2.0.0",
     "install": "^0.13.0",
-    "next": "latest",
+    "next": "^14.0.0",
     "next-mdx-remote": "^4.4.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

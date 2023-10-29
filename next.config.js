@@ -7,7 +7,9 @@ const nextConfig = {
   reactStrictMode: true,
   compiler: {
     // Enables the styled-components SWC transform
-    styledComponents: true
+    styledComponents: {
+      ssr: true,
+    }
   },
   webpack(config) {
     config.module.rules.push({
