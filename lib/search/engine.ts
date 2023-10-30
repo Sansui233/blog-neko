@@ -44,7 +44,7 @@ export class Naive<R extends Result> extends Engine {
 
     // Sort Object
     this.res = this.res.sort((a, b) => {
-      return a.matches.length > b.matches.length? -1 : 1
+      return a.matches.length > b.matches.length ? -1 : 1
     })
 
     this.notifyInstant([...this.res], true)
@@ -66,44 +66,79 @@ export class Naive<R extends Result> extends Engine {
   /**
    * Find if all strings in an array are in a search Object
    * 以 SearchObj为粒度的搜索
-   * 目前的实现非跨field搜索， 关键词之间为 And 逻辑，但不完全，会 Partial match 靠前的词，不会隔词匹配
+   * 
+   * 目前的实现非跨field搜索，也就是如果有多个关键词，需要同在一个 field 中出现  
+   * 
+   * 关键词之间为连续匹配的 And 逻辑，但不完全，会 Partial match 靠前的词
+   * 比如可以匹配到 [p1] [p1, p2] [p1, p2, p3]，越靠前的关键词越重要  
+   * 不能匹配到 [p2] [p2, p3], 至于 [p1, p3] 相当于 [p1]  
+   * 是由 _match 的 break 时机控制的。目的是在保证结果可用的情况下，尽量减少匹配次数
+   * 
+   * tag 除外，特殊机制，全匹配
+   * 
+   * 最后外面的结果排序是按关键词个数来的
+   * 
    * 结果存入 this.res
    */
   find(patterns: string[], o: Required<SearchObj>, i?: number) {
 
     return new Promise<void>(resolve => {
+
+      // Iterate Field
       for (let j = 0; j < this.field.length; j++) {
 
         const f = this.field[j]
+
+        // if field not in SearchObject properties, skip
         if (!(f in o)) {
           continue
         }
 
-        // search in lower case mode
-        const indexs = this._match(o[f].toLowerCase(), patterns.map(p => p.toLocaleLowerCase()))
+        if (f === "tags") {
+          const input_tags = patterns.filter(p => p[0] === "#" ? true : false).map(t => t.slice(0))
+          const matched_tags = o[f].filter(t => t in input_tags)
+          if(matched_tags.length>0){
+            this.res.push({
+              ref: o.id,
+              title: o.title,
+              matches: matched_tags.map(t => {
+                return {
+                  word: t,
+                }
+              })
+            })
+            break
+          }else{
+            continue
+          }
+        } else {
+          // search in lower case mode
+          const indexs = this._match(o[f].toLowerCase(), patterns.map(p => p.toLocaleLowerCase()))
 
-        // build result
-        if (indexs.length !== 0) {
+          // build result
+          if (indexs.length !== 0) {
 
-          const excerpts = indexs.map(i => {
-            const start = (i.index - 10) < 0 ? 0 : i.index - 10
-            const end = (i.index + 40) > o[f].length ? o[f].length : i.index + 40
-            // console.log(start, end, o[f].length)
-            return {
-              word: i.word,
-              excerpt: f !== "title" ? o[f].slice(start, end).replaceAll("\n", "") : undefined
-            }
-          })
+            const excerpts = indexs.map(i => {
+              const start = (i.index - 10) < 0 ? 0 : i.index - 10
+              const end = (i.index + 40) > o[f].length ? o[f].length : i.index + 40
+              // console.log(start, end, o[f].length)
+              return {
+                word: i.word,
+                excerpt: f !== "title" ? o[f].slice(start, end).replaceAll("\n", "") : undefined
+              }
+            })
 
-          this.res.push({
-            ref: o.id,
-            title: o.title,
-            matches: excerpts
-          })
+            this.res.push({
+              ref: o.id,
+              title: o.title,
+              matches: excerpts
+            })
 
 
-          break; // 在任何一个域中找全就停止field search
+            break; // 在任何一个域中找全就停止field search
+          }
         }
+
       }
 
       // Notify observer
@@ -116,8 +151,9 @@ export class Naive<R extends Result> extends Engine {
   }
 
   /**
-   * get index in
-   * matches is both
+   * find all pattern locations in string s
+   * 
+   * matches is AND
    */
   _match(s: string, patterns: string[]): {
     word: string,
@@ -136,8 +172,8 @@ export class Naive<R extends Result> extends Engine {
         const index = s.indexOf(p)
         if (index !== -1) {
           res.push({ word: p, index: index })
-        } else { // once pattern match fails then return false
-          break
+        } else {
+          break // once pattern match fails then return false
         }
       } else {
         // English with word split
@@ -146,7 +182,7 @@ export class Naive<R extends Result> extends Engine {
         if (match) {
           res.push({ word: p, index: match.index })
         } else {
-          break
+          break  // once pattern match fails then return false
         }
       }
     }

@@ -2,6 +2,7 @@ export type SearchObj = {
   id: string,
   title: string,
   content: string,
+  tags?: string[],
   description?: string,
   keywords?: string,
   date?: string

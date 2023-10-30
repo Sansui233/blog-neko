@@ -6,23 +6,30 @@ import { SearchObj } from '../lib/search/common';
 import { debounce } from '../lib/throttle';
 import PopOver from '../styles/components/PopOver';
 
-const SEARCHDOC = '/data/posts/index.json'
-
 type Props = {
   outSetSearch: (isShow: boolean) => void
   stateToInner: boolean
   iconEle: React.RefObject<HTMLDivElement> // 这个组件有从内部控制外部，但外部的搜索图标是随便放的，在判断点击外部区部时要排除
+  type?: "article" | "memo"
+}
+
+type SearchOption = {
+  tags: string[]
+  text: string[]
 }
 
 
-function SearchBox({ outSetSearch: outShow, stateToInner: outstate, iconEle }: Props) {
-  const [idx, setidx] = useState<Naive<Result>>()
+function SearchBox({ outSetSearch: outShow, stateToInner: outstate, iconEle, type = "article" }: Props) {
+  const [engine, setEngine] = useState<Naive<Result>>()
   const [res, setres] = useState<Result[]>([])
   const [isShow, setIsShow] = useState(outstate)
   const containerRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const [isReady, setisReady] = useState(false)
 
+  /**
+   * UI control
+   */
   const toggle = useCallback((b: boolean) => {
     outShow(b) // to outside
     setIsShow(b) // inside
@@ -31,24 +38,6 @@ function SearchBox({ outSetSearch: outShow, stateToInner: outstate, iconEle }: P
   useEffect(() => {
     setIsShow(outstate)
   }, [outstate])
-
-
-  // fetch
-  useEffect(() => {
-    fetch(SEARCHDOC)
-      .then(res => res.json())
-      .then((data) => {
-        const newIdx = new Naive({
-          data: data as Required<SearchObj>[],
-          ref: "id",
-          field: ["title", "description", "keywords", "content"],
-          notifier: setres
-        })
-
-        setidx(newIdx)
-        setisReady(true)
-      })
-  }, [])
 
   // Click Outside to close
   // Esc to close
@@ -84,9 +73,36 @@ function SearchBox({ outSetSearch: outShow, stateToInner: outstate, iconEle }: P
     }
   }, [isShow])
 
+
+
+  /**
+   * Get data
+   */
+  useEffect(() => {
+    if (type === "article") {
+      fetch('/data/posts/index.json')
+        .then(res => res.json())
+        .then((data) => {
+          const newEngine = new Naive({
+            data: data as Required<SearchObj>[],
+            ref: "id",
+            field: ["title", "description", "keywords", "content"],
+            notifier: setres
+          })
+
+          setEngine(newEngine)
+          setisReady(true)
+        })
+    } else {
+      // TODO 没想好memo的索引
+
+
+    }
+  }, [type])
+
   const handleInput = debounce(function (e: FormEvent<HTMLInputElement>) {
     const strs = (e.target as HTMLInputElement).value.split(" ")
-    inputRef.current && idx?.search(strs)
+    inputRef.current && engine?.search(strs)
   }, 300)
 
   const renderResult = function () {

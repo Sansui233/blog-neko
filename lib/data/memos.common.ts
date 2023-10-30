@@ -4,6 +4,11 @@
 
 export type MemoInfo = {
   pages: number,
+  count: {
+    memos: number,
+    tags: number,
+    imgs: number,
+  },
   fileMap: FileInfo[]
 }
 export type FileInfo = {
@@ -24,6 +29,7 @@ export const INFOFILE = "status.json"
 export type MemoPost = {
   id: string;
   content: string;
+  tags: string[];
   imgurls: string[];
   sourceFile: string;
   csrIndex: [number, number]; // page index
@@ -33,4 +39,9 @@ export type MemoPost = {
  * map<name,memoIds>
  */
 export type MemoTag = Map<string, string[]>
+export type MemoTagArr = Array<[string, string[]]>
 
+export type MemoImgs = {
+  memoId: string,
+  imgurls: string[]
+}

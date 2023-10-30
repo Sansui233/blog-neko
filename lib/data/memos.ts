@@ -2,11 +2,10 @@ import fs from "fs";
 import path from "path";
 import readline from "readline";
 import { writeJson } from "../fs/fs";
-import { INFOFILE, MemoInfo, MemoPost, MemoTag } from "./memos.common";
+import { INFOFILE, MemoImgs, MemoInfo, MemoPost, MemoTag } from "./memos.common";
 
 export const MEMOS_DIR = path.join(process.cwd(), 'source', 'memos')
 const MEMO_CSR_DATA_DIR = path.join(process.cwd(), 'public', 'data', 'memos')
-const NUM_PER_PAGE = 12
 
 /**
  * memos database
@@ -25,8 +24,10 @@ export const memo_db = await (async function () {
       return a < b ? 1 : -1 // Desc for latest first
     })
   })())
+
   const tags: MemoTag = new Map<string, string[]>();
   const memos: MemoPost[] = []
+  const imgs: MemoImgs[] = []
 
   /**
    * Get memos by page. SSR only
@@ -75,17 +76,27 @@ export const memo_db = await (async function () {
       } else if (line.startsWith("## ")) {
 
         // 分析完整的 markdown
-        // 更新tags
+        // 更新tags, imgs
         if (memos.length > 0) {
           const text = memos[memos.length - 1].content
 
+          // update tags
           const matches = extractTagsFromMarkdown(text)
           matches.map(t => {
+
             if (tags.has(t)) {
               tags.get(t)?.push(currId)
             } else {
               tags.set(t, [currId])
             }
+
+            memos[memos.length - 1].tags.push(t)
+          })
+
+          // update imgs
+          imgs.push({
+            memoId: memos[memos.length - 1].id,
+            imgurls: memos[memos.length - 1].imgurls,
           })
 
         }
@@ -103,6 +114,7 @@ export const memo_db = await (async function () {
         memos.push({
           id: currId,
           content: "",
+          tags: [],
           imgurls: [],
           sourceFile: src_file,
           csrIndex: [csrPage, csrIndex],
@@ -128,12 +140,23 @@ export const memo_db = await (async function () {
     fileStream.close()
   }
 
+  const info: MemoInfo = {
+    pages: csrPage,
+    count: {
+      memos: memos.length,
+      tags: tags.size,
+      imgs: imgs.length,
+    },
+    fileMap: []
+  }
+
   console.log(`[memos.ts] ${memos.length} memos in total`)
 
   return {
     names,
-    tags,
     memos,
+    tags,
+    info,
     atPage,
   }
 
@@ -184,6 +207,7 @@ function extractTagsFromMarkdown(markdown: string) {
 
 export function writeMemoJson() {
 
+   // CSR page
   const groupByPage = new Map<number, MemoPost[]>()
   let maxpage = 0;
 
@@ -201,10 +225,6 @@ export function writeMemoJson() {
     writeJson(path.join(MEMO_CSR_DATA_DIR, `${page}.json`), memos)
   })
 
-  const info: MemoInfo = {
-    pages: maxpage,
-    fileMap: []
-  }
-
-  writeJson(path.join(MEMO_CSR_DATA_DIR, INFOFILE), info)
+  writeJson(path.join(MEMO_CSR_DATA_DIR, INFOFILE), memo_db.info)
+  writeJson(path.join(MEMO_CSR_DATA_DIR, `tags.json`), Array.from(memo_db.tags))
 }

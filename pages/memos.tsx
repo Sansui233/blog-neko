@@ -13,7 +13,7 @@ import { MarkdownStyle } from "../components/Markdown";
 import Pagination from "../components/Pagination";
 import Waline from "../components/Waline";
 import { memo_db, writeMemoJson } from "../lib/data/memos";
-import { INFOFILE, MemoInfo, MemoPost as MemoPostRemote } from "../lib/data/memos.common";
+import { INFOFILE, MemoInfo, MemoPost as MemoPostRemote, MemoTagArr } from "../lib/data/memos.common";
 import { rehypeTag } from "../lib/rehype/rehype-tag";
 import { siteInfo } from "../site.config";
 import { bottomFadeIn } from '../styles/animations';
@@ -29,7 +29,7 @@ type MemoPost = Omit<MemoPostRemote, 'content'> & {
 type Props = {
   memos: MemoPost[]
   sider: {
-    memotags: [string, string[]][], // tagname, memo list
+    memotags: MemoTagArr, // tagname, memo list
 
   }
 }
@@ -137,11 +137,6 @@ export default function Memos({ memos, sider }: Props) {
               <Waline />
             </MemoCol>
             <SiderCol>
-              <SmallCard>
-                常用标签: {sider.memotags.map(t => {
-                  return <span key={t[0]}>{t[0]}</span>
-                })}
-              </SmallCard>
             </SiderCol>
           </TwoColLayout>
         </OneColLayout>
@@ -200,6 +195,23 @@ function MemoCard({ memoPost }: { memoPost: MemoPost }) {
 
     </StyledCard>
   )
+}
+
+function SearchCard({ memos, sider, searchOption }: Props & {
+  searchOption: {
+    fitlerCount: string,
+    tags: string[],
+    text: string,
+  }
+}) {
+  const [filterCount, setFilterCount] = useState(100)
+
+  return <SmallCard>
+    <div>
+      筛选范围：{filterCount}
+    </div>
+
+  </SmallCard>
 }
 
 
@@ -386,5 +398,5 @@ const CardMask = styled.div<{
 const SmallCard = styled.div<{
 }>`
   ${paperCard}
-  min-height: 22em;
+  min-height: 10em;
 `
