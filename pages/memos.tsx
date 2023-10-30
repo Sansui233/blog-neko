@@ -4,7 +4,6 @@ import { serialize } from "next-mdx-remote/serialize";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import rehypeHighlight from 'rehype-highlight';
 import remarkGfm from "remark-gfm";
 import styled, { ThemeContext } from "styled-components";
 import { CommonHead } from ".";
@@ -15,8 +14,9 @@ import Pagination from "../components/Pagination";
 import Topbar from "../components/Topbar";
 import Waline from "../components/Waline";
 import { memo_db, writeMemoJson } from "../lib/data/memos";
-import { INFOFILE, MemoInfo, MemoPost as MemoPostRemote, MemoTagArr } from "../lib/data/memos.common";
+import { MemoInfo, MemoPost as MemoPostRemote, MemoTagArr } from "../lib/data/memos.common";
 import { rehypeTag } from "../lib/rehype/rehype-tag";
+import { Naive, Result, SearchObj } from "../lib/search";
 import { siteInfo } from "../site.config";
 import { bottomFadeIn } from '../styles/animations';
 import { paperCard, textShadow } from "../styles/styles";
@@ -35,24 +35,20 @@ type Props = {
 
 }
 
+type SearchStatus = {
+  pagelimit: number,
+}
+
 export default function Memos({ memos, info, memotags }: Props) {
+  const [engine, setEngine] = useState<Naive>()
   const router = useRouter()
   const [postsData, setpostsData] = useState(memos)
-  const [pagelimit, setpagelimit] = useState(1)
   const theme = useContext(ThemeContext)
   const scrollRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
+  const [searchStatus, setsearchStatus] = useState<SearchStatus>({ pagelimit: 5 })
 
-
-  useEffect(() => {
-    fetch(`${MemoCSRAPI}/${INFOFILE}`)
-      .then(res => res.json())
-      .then((data) => {
-        const p = (data as MemoInfo).pages
-        setpagelimit(p + 1)
-      })
-  }, [])
-
-
+  // fetch csr content by page number
   useEffect(() => {
 
     let page = 0
@@ -70,21 +66,8 @@ export default function Memos({ memos, info, memotags }: Props) {
       .then(res => res.json())
       .then((data) => {
         const posts = data as Array<MemoPostRemote>
-        const compiledPosts = Promise.all(posts.map(async p => {
-          const content = await serialize(p.content, {
-            mdxOptions: {
-              remarkPlugins: [remarkGfm],
-              rehypePlugins: [rehypeTag],
-              development: process.env.NODE_ENV === 'development', // a bug in next-remote-mdx v4.4.1, see https://github.com/hashicorp/next-mdx-remote/issues/350.
-            }
-          })
-          return {
-            ...p,
-            content: content,
-            length: p.content.length,
-          }
-        }))
-        return compiledPosts
+        const compiledMemos = compile(posts)
+        return compiledMemos
       })
       .then(nextPosts => {
         setpostsData(nextPosts)
@@ -102,6 +85,24 @@ export default function Memos({ memos, info, memotags }: Props) {
     }
     return 0
   })()
+
+
+  function handleSearch() {
+    if (!inputRef.current) return
+
+    const str = inputRef.current.value.trim()
+
+    if (str.length === 0) return
+
+    if (!engine) {
+      // Init Search Engine && Get data
+      initSearch(setEngine, setpostsData, setsearchStatus, info.pages)
+      console.log("初始化搜索中，请稍后重试...")
+    } else {
+      engine.search(str.split(" "))
+    }
+  }
+
 
   return (
     <>
@@ -133,11 +134,11 @@ export default function Memos({ memos, info, memotags }: Props) {
                   title: "PREV",
                   link: `/memos?p=${currPage - 1}`
                 } : undefined}
-                nextPage={currPage + 1 < pagelimit ? {
+                nextPage={currPage + 1 < info.pages ? {
                   title: "NEXT",
                   link: `/memos?p=${currPage + 1}`
                 } : undefined}
-                maxPage={pagelimit.toString()}
+                maxPage={info.pages.toString()}
                 elemProps={{ style: { padding: "0 1rem" } }}
               />
               <Waline style={{ padding: "0 0.5rem" }} />
@@ -145,18 +146,23 @@ export default function Memos({ memos, info, memotags }: Props) {
             </MemoCol>
             <SiderCol>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                <SearchBox type="text" placeholder="Search" />
-                <CardTitleIcon className="hover-gold" style={{ fontSize: "1.275em", marginLeft: "0.125em" }}>
+                <SearchBox type="text" placeholder="Search" ref={inputRef}
+                  onFocus={
+                    () => { initSearch(setEngine, setpostsData, setsearchStatus, info.pages) }
+                  }
+                />
+                <CardTitleIcon className="hover-gold" style={{ fontSize: "1.275em", marginLeft: "0.125em" }}
+                  onClick={handleSearch}>
                   <i className='icon-search' />
                 </CardTitleIcon>
               </div>
               <NavCard>
                 <div className="item active">
-                  <span className="title">Memo</span>
+                  <span className="title">Memos</span>
                   <span className="count">{info.count.memos}</span>
                 </div>
                 <div className="item">
-                  <span className="title">Photo</span>
+                  <span className="title">Photos</span>
                   <span className="count">{info.count.imgs}</span>
                 </div>
               </NavCard>
@@ -164,7 +170,7 @@ export default function Memos({ memos, info, memotags }: Props) {
                 <CardTitle>TAGS</CardTitle>
                 <div style={{ paddingTop: "0.5rem" }}>
                   {memotags.map(t => {
-                    return <span className="tag hover-gold" key={t[0]}>
+                    return <span className="hover-gold" key={t[0]}>
                       {`#${t[0]}`}
                     </span>
                   })}
@@ -241,34 +247,88 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   // 生成 CSR 所需 JSON，SSR 需独立出逻辑
   writeMemoJson()
 
-  // 首屏 SEO 数据
-  const memos = memo_db.atPage(0)
-  const compiledMemos = await Promise.all(memos.map(async p => {
-    const content = await serialize(p.content, {
-      mdxOptions: {
-        remarkPlugins: [remarkGfm],
-        rehypePlugins: [
-          rehypeHighlight,
-          rehypeTag,
-        ]
-      }
-    })
-    return {
-      ...p,
-      content: content,
-      length: p.content.length
-    }
-  }))
-
-
   return {
     props: {
-      memos: compiledMemos,
+      memos: await compile(memo_db.atPage(0)), // 首屏 SEO 数据
       info: memo_db.info,
       memotags: Array.from(memo_db.tags),
     }
   }
 }
+
+async function compile(posts: MemoPostRemote[]): Promise<MemoPost[]> {
+  return Promise.all(posts.map(async m => {
+    const content = await serialize(m.content, {
+      mdxOptions: {
+        remarkPlugins: [remarkGfm],
+        rehypePlugins: [rehypeTag],
+        development: process.env.NODE_ENV === 'development', // a bug in next-remote-mdx v4.4.1, see https://github.com/hashicorp/next-mdx-remote/issues/350.
+      }
+    })
+    return {
+      ...m,
+      content: content,
+      length: m.content.length,
+    }
+  }))
+}
+
+function initSearch(
+  setEngine: React.Dispatch<React.SetStateAction<Naive | undefined>>,
+  setResultFn: React.Dispatch<React.SetStateAction<MemoPost[]>>,
+  setStatus: React.Dispatch<React.SetStateAction<SearchStatus>>,
+  maxPage: number, // max csrpage
+  pagelimit = 5, // new range limit
+) {
+
+  console.log("%% init search...")
+  pagelimit = maxPage < pagelimit ? maxPage : pagelimit;
+
+  // Fetch data and set search engine
+  const urls = Array.from({ length: pagelimit + 1 }, (_, i) => `${MemoCSRAPI}/${i}.json`)
+  const requests = urls.map(url => fetch(url).then(res => res.json()));
+  Promise.all(requests).then(reqres => {
+
+    const src = (reqres as MemoPostRemote[][]).flatMap(v => v)
+
+    const searchObj: SearchObj[] = src.map(memo => {
+      return {
+        id: memo.id,
+        title: "", // 无效化 title。engine 动态构建结果写起来太麻烦了，以后再说。
+        content: memo.content,
+        tags: memo.tags,
+      }
+    })
+
+
+    // 过滤结果
+    // 这个函数也会持久化下载数据
+    function notifier(searchres: Required<Result>[]) {
+      const ids = searchres.map(r => r.id)
+      const filtered = src.filter(memo => {
+        if (ids.includes(memo.id)) {
+          return true
+        }
+        return false
+      })
+      compile(filtered).then(compiled => {
+        setResultFn(compiled)
+      })
+    }
+
+    setEngine(new Naive({
+      data: searchObj,                    // search in these data
+      field: ["tags", "content"],         // properties to be searched in data
+      notifier                            // 通常是 useState 的 set 函数
+    }))
+
+    setStatus({ pagelimit })
+
+  }).catch(error => {
+    console.error("[memos.ts] An error occurred when fetching index:", error);
+  });
+}
+
 
 const OneColLayout = styled.div`
   max-width: 1080px;
@@ -483,6 +543,7 @@ const CardTitleIcon = styled(CardTitle)`
   font-size: 1.125rem;
   margin: unset;
 `
+
 const SearchBox = styled.input`
   border: 1px solid ${p => p.theme.colors.uiLineGray};
   border-radius: 1em;

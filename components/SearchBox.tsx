@@ -13,15 +13,10 @@ type Props = {
   type?: "article" | "memo"
 }
 
-type SearchOption = {
-  tags: string[]
-  text: string[]
-}
-
 
 function SearchBox({ outSetSearch: outShow, stateToInner: outstate, iconEle, type = "article" }: Props) {
-  const [engine, setEngine] = useState<Naive<Result>>()
-  const [res, setres] = useState<Result[]>([])
+  const [engine, setEngine] = useState<Naive>()
+  const [res, setres] = useState<Required<Result>[]>([])
   const [isShow, setIsShow] = useState(outstate)
   const containerRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -84,8 +79,7 @@ function SearchBox({ outSetSearch: outShow, stateToInner: outstate, iconEle, typ
         .then(res => res.json())
         .then((data) => {
           const newEngine = new Naive({
-            data: data as Required<SearchObj>[],
-            ref: "id",
+            data: data as SearchObj[],
             field: ["title", "description", "keywords", "content"],
             notifier: setres
           })
@@ -94,9 +88,7 @@ function SearchBox({ outSetSearch: outShow, stateToInner: outstate, iconEle, typ
           setisReady(true)
         })
     } else {
-      // TODO 没想好memo的索引
-
-
+      // 预留其他类型的搜索处理位置
     }
   }, [type])
 
@@ -119,7 +111,7 @@ function SearchBox({ outSetSearch: outShow, stateToInner: outstate, iconEle, typ
     }
 
     return res.map((r, i) => {
-      const id = r.ref.substring(0, r.ref.lastIndexOf(".")); // remove suffix
+      const id = r.id.substring(0, r.id.lastIndexOf(".")); // remove suffix
       return <Item href={`/posts/${id}`} key={i} onClick={() => { toggle(false) }}>
         <span>{highlightSlot(r.title, r.matches?.map(e => e.word))}</span>
         {r.matches?.map(
@@ -160,7 +152,9 @@ function SearchBox({ outSetSearch: outShow, stateToInner: outstate, iconEle, typ
   return (
     <Container ref={containerRef} className={isShow ? "" : "hidden"}>
       <StickyContainer style={{ padding: "1rem 1rem 0 1rem" }}>
-        <Input type="text" placeholder="搜索你感兴趣的内容，以空格分词" ref={inputRef} onInput={handleInput} />
+        <Input type="text" placeholder="搜索你感兴趣的内容，以空格分词"
+          ref={inputRef}
+          onInput={handleInput} />
       </StickyContainer>
       <ScrollContainer style={{ padding: "0.5rem 1rem " }}>
         {renderResult()}

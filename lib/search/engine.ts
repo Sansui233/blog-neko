@@ -1,28 +1,26 @@
+import { ArrElement } from "../../utils/typeinfer";
 import { throttle } from "../throttle";
-import { Engine, WithRequiredProperty as RequireProperty, Result, SearchObj } from "./common";
+import { Engine, Result, SearchObj } from "./common";
 import stopwords from "./stopwords/zh.json";
 
-type Config = {
-  data: Required<SearchObj>[]
-  ref: string,
-  field: Array<keyof SearchObj>
-  notifier: (res: RequireProperty<Result, "matches">[]) => void // 通常是 useState 的 set 函数
+interface Config {
+  data: SearchObj[] // search in these data
+  field: Array<keyof SearchObj> // properties to be searched in data
+  notifier: (res: Required<Result>[]) => void // 通常是 useState 的 set 函数
 }
 
-export class Naive<R extends Result> extends Engine {
-  declare data: Required<SearchObj>[]
-  declare ref: string
-  declare field: Array<keyof SearchObj>
+export class Naive extends Engine {
+  declare data: Config['data']
+  declare field: Config['field'] 
 
   declare tasks: Array<Promise<void>>
-  declare res: Array<RequireProperty<Result, "matches">>
-  declare notify: (res: RequireProperty<Result, "matches">[]) => void // throttled Notify
-  declare notifyInstant: (res: RequireProperty<Result, "matches">[], isDone: boolean) => void // 向外传递结果和状态
+  declare res: Array<Required<Result>>
+  declare notify: Config['notifier'] // throttled Notify
+  declare notifyInstant: Config['notifier'] // 向外传递结果和状态
 
   constructor(conf: Config) {
     super()
     this.data = conf.data
-    this.ref = conf.ref
     this.field = conf.field
 
     this.tasks = []
@@ -35,7 +33,7 @@ export class Naive<R extends Result> extends Engine {
     patterns = patterns.map(s => s.replace(/^\s+|\s+$/g, "")).filter(v => v !== "")// remove blank at start and end
 
     if (patterns.length === 0) {
-      this.notifyInstant([], true)
+      this.notifyInstant([])
       return
     }
 
@@ -43,11 +41,13 @@ export class Naive<R extends Result> extends Engine {
     await Promise.all(this.tasks)
 
     // Sort Object
-    this.res = this.res.sort((a, b) => {
-      return a.matches.length > b.matches.length ? -1 : 1
-    })
+    if(this.res.length > 1 && this.res[0].matches !== undefined){
+      this.res = this.res.sort((a, b) => {
+        return a.matches!.length > b.matches!.length ? -1 : 1
+      })
+    }
 
-    this.notifyInstant([...this.res], true)
+    this.notifyInstant([...this.res])
     this._clear()
     return
   }
@@ -80,7 +80,7 @@ export class Naive<R extends Result> extends Engine {
    * 
    * 结果存入 this.res
    */
-  find(patterns: string[], o: Required<SearchObj>, i?: number) {
+  find(patterns: string[], o: ArrElement<Config['data']>, i?: number) {
 
     return new Promise<void>(resolve => {
 
@@ -96,10 +96,10 @@ export class Naive<R extends Result> extends Engine {
 
         if (f === "tags") {
           const input_tags = patterns.filter(p => p[0] === "#" ? true : false).map(t => t.slice(0))
-          const matched_tags = o[f].filter(t => t in input_tags)
+          const matched_tags = o[f]!.filter(t => t in input_tags) // Typescript 的类型推断还是不行
           if(matched_tags.length>0){
             this.res.push({
-              ref: o.id,
+              id: o.id,
               title: o.title,
               matches: matched_tags.map(t => {
                 return {
@@ -113,23 +113,23 @@ export class Naive<R extends Result> extends Engine {
           }
         } else {
           // search in lower case mode
-          const indexs = this._match(o[f].toLowerCase(), patterns.map(p => p.toLocaleLowerCase()))
+          const indexs = this._match(o[f]!.toLowerCase(), patterns.map(p => p.toLocaleLowerCase()))
 
           // build result
           if (indexs.length !== 0) {
 
             const excerpts = indexs.map(i => {
               const start = (i.index - 10) < 0 ? 0 : i.index - 10
-              const end = (i.index + 40) > o[f].length ? o[f].length : i.index + 40
+              const end = (i.index + 40) > o[f]!.length ? o[f]!.length : i.index + 40
               // console.log(start, end, o[f].length)
               return {
                 word: i.word,
-                excerpt: f !== "title" ? o[f].slice(start, end).replaceAll("\n", "") : undefined
+                excerpt: f !== "title" ? o[f]!.slice(start, end).replaceAll("\n", "") : undefined
               }
             })
 
             this.res.push({
-              ref: o.id,
+              id: o.id,
               title: o.title,
               matches: excerpts
             })
