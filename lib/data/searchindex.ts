@@ -16,7 +16,7 @@ const OBSERVEINFO = 'status.json'
 export async function buildIndex(src_dir: string, index_dir = DATADIR, index_f = SEARCHJSON, status_f = OBSERVEINFO) {
 
   // The format of index is a list of SearchObj
-  let index: Array<Required<SearchObj>> = []
+  let index: Array<Omit<Required<SearchObj>,'tags'>> = []
 
   // Get updated file lists in source  dir
   const fl = await observe(
