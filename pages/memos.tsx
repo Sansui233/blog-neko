@@ -3,14 +3,16 @@ import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote";
 import { serialize } from "next-mdx-remote/serialize";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import rehypeHighlight from 'rehype-highlight';
 import remarkGfm from "remark-gfm";
 import styled, { ThemeContext } from "styled-components";
-import { CommonHead, PageDescription } from ".";
-import LayoutContainer, { TwoColLayout } from "../components/Layout";
+import { CommonHead } from ".";
+import Footer from "../components/Footer";
+import { TwoColLayout } from "../components/Layout";
 import { MarkdownStyle } from "../components/Markdown";
 import Pagination from "../components/Pagination";
+import Topbar from "../components/Topbar";
 import Waline from "../components/Waline";
 import { memo_db, writeMemoJson } from "../lib/data/memos";
 import { INFOFILE, MemoInfo, MemoPost as MemoPostRemote, MemoTagArr } from "../lib/data/memos.common";
@@ -27,18 +29,18 @@ type MemoPost = Omit<MemoPostRemote, 'content'> & {
 }
 
 type Props = {
-  memos: MemoPost[]
-  sider: {
-    memotags: MemoTagArr, // tagname, memo list
+  memos: MemoPost[] // 首屏 seo data
+  info: MemoInfo,
+  memotags: MemoTagArr, // tagname, memo list
 
-  }
 }
 
-export default function Memos({ memos, sider }: Props) {
+export default function Memos({ memos, info, memotags }: Props) {
   const router = useRouter()
   const [postsData, setpostsData] = useState(memos)
   const [pagelimit, setpagelimit] = useState(1)
   const theme = useContext(ThemeContext)
+  const scrollRef = useRef<HTMLDivElement>(null)
 
 
   useEffect(() => {
@@ -107,21 +109,25 @@ export default function Memos({ memos, sider }: Props) {
         <title>{`${siteInfo.author} - Memos`}</title>
         <CommonHead />
       </Head>
-      <LayoutContainer style={{ backgroundColor: theme?.colors.bg2 }}>
+      <Topbar
+        placeHolder={false}
+        scrollElem={scrollRef.current ? scrollRef.current : undefined}
+        hideSearch={true}
+        style={{ background: theme?.colors.bg2 }}
+      />
+      <main style={{ backgroundColor: theme?.colors.bg2, overflow: "hidden", height: "100vh" }}>
         <OneColLayout>
           <TwoColLayout
             sep={1}
             siderLocation="right"
           >
-            <MemoCol>
-              <MemoDescription>| 记录碎碎念是坏习惯 |</MemoDescription>
+            <MemoCol ref={scrollRef}>
               <div style={{ minHeight: "100vh" }}>
                 {postsData.map(m => (
-                  <MemoCard key={m.id} memoPost={m} />
+                  <MemoCard key={m.id} memoPost={m} scrollref={scrollRef} />
                 ))}
               </div>
               <Pagination
-
                 currTitle={`PAGE ${currPage + 1}`}
                 prevPage={currPage > 0 ? {
                   title: "PREV",
@@ -132,20 +138,49 @@ export default function Memos({ memos, sider }: Props) {
                   link: `/memos?p=${currPage + 1}`
                 } : undefined}
                 maxPage={pagelimit.toString()}
-
               />
               <Waline />
             </MemoCol>
             <SiderCol>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <SearchBox type="text" placeholder="Search" />
+                <CardTitleIcon className="hover-gold" style={{ fontSize: "1.275em", marginLeft: "0.125em" }}>
+                  <i className='icon-search' />
+                </CardTitleIcon>
+              </div>
+              <NavCard>
+                <div className="item active">
+                  <span className="title">Memo</span>
+                  <span className="count">{info.count.memos}</span>
+                </div>
+                <div className="item">
+                  <span className="title">Photo</span>
+                  <span className="count">{info.count.imgs}</span>
+                </div>
+              </NavCard>
+              <TagCard>
+                <CardTitle>TAGS</CardTitle>
+                <div style={{ paddingTop: "0.5rem" }}>
+                  {memotags.map(t => {
+                    return <span className="tag hover-gold" key={t[0]}>
+                      {`#${t[0]}`}
+                    </span>
+                  })}
+                </div>
+              </TagCard>
             </SiderCol>
           </TwoColLayout>
+          <Footer />
         </OneColLayout>
-      </LayoutContainer>
+      </main>
     </>
   )
 }
 
-function MemoCard({ memoPost }: { memoPost: MemoPost }) {
+function MemoCard({ memoPost, scrollref }: {
+  memoPost: MemoPost,
+  scrollref: React.RefObject<HTMLDivElement>
+}) {
   const [isCollapse, setfisCollapse] = useState(true)
   const theme = useContext(ThemeContext)
   const ref = React.useRef<HTMLDivElement>(null)
@@ -159,7 +194,7 @@ function MemoCard({ memoPost }: { memoPost: MemoPost }) {
       if (element) {
         const elementTop = element.getBoundingClientRect().top;
         if (elementTop < 0 || elementTop > window.innerHeight) {
-          window.scrollTo({
+          scrollref.current?.scrollTo({
             top: elementTop + window.scrollY,
             behavior: "smooth",
           });
@@ -170,9 +205,9 @@ function MemoCard({ memoPost }: { memoPost: MemoPost }) {
   }
 
   return (
-    <StyledCard $isCollapse={shouldCollapse === false ? false : isCollapse} ref={ref}>
+    <MemoCardStyle $isCollapse={shouldCollapse === false ? false : isCollapse} ref={ref}>
       <div className="content">
-        <CardMeta>
+        <MemoMeta>
           {/*eslint-disable-next-line @next/next/no-img-element*/}
           <img src={theme!.assets.favico} alt={siteInfo.author} />
           <div>
@@ -182,7 +217,7 @@ function MemoCard({ memoPost }: { memoPost: MemoPost }) {
               <span className="word-count">{memoPost.length}&nbsp;字</span>
             </div>
           </div>
-        </CardMeta>
+        </MemoMeta>
         <MemoMarkdown $bottomSpace={shouldCollapse}>
           <MDXRemote compiledSource={memoPost.content.compiledSource} scope={null} frontmatter={null} />
         </MemoMarkdown>
@@ -193,25 +228,8 @@ function MemoCard({ memoPost }: { memoPost: MemoPost }) {
         </CardMask>
       </div>
 
-    </StyledCard>
+    </MemoCardStyle>
   )
-}
-
-function SearchCard({ memos, sider, searchOption }: Props & {
-  searchOption: {
-    fitlerCount: string,
-    tags: string[],
-    text: string,
-  }
-}) {
-  const [filterCount, setFilterCount] = useState(100)
-
-  return <SmallCard>
-    <div>
-      筛选范围：{filterCount}
-    </div>
-
-  </SmallCard>
 }
 
 
@@ -229,6 +247,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
         remarkPlugins: [remarkGfm],
         rehypePlugins: [
           rehypeHighlight,
+          rehypeTag,
         ]
       }
     })
@@ -243,9 +262,8 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   return {
     props: {
       memos: compiledMemos,
-      sider: {
-        memotags: Array.from(memo_db.tags),
-      }
+      info: memo_db.info,
+      memotags: Array.from(memo_db.tags),
     }
   }
 }
@@ -264,11 +282,17 @@ const OneColLayout = styled.div`
 
 /** Styles **/
 const MemoCol = styled.div`
-  margin: 2rem 0;
+  margin-bottom: 2rem;
   max-width: 780px;
-  padding: 0px 16px 48px 16px;
+  padding: 86px 16px 48px 16px;
   align-self: flex-end;
-  
+  overflow-y: auto;
+  height: 100vh;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
 
   @media screen and (max-width: 780px) {
     max-width: 100%;
@@ -281,23 +305,39 @@ const MemoCol = styled.div`
 `
 
 const SiderCol = styled.div`
-  max-width: 20em;
-  padding-top: 69px;
+  max-width: 21em;
+  padding-top: 100px;
+  margin: 0 0.5rem;
+  
+  @media screen and (max-width: 1080px) {
+    margin: 0;
+  }
+
   @media screen and (max-width: 780px) {
     max-width: unset;
+    display: none;
+  }
+
+  /* util class */
+  .hover-gold {
+    padding: 3px 5px;
+    borde-radius: 50%;
+    cursor: pointer;
+  }
+
+  .hover-gold:hover {
+    color: ${p => p.theme.colors.gold};
   }
 `
 
-const MemoDescription = styled(PageDescription)`
-`
-
-const StyledCard = styled.section<{
+const MemoCardStyle = styled.section<{
   $isCollapse: boolean
 }>`
 
   ${paperCard}
   margin: 1rem 0;
   padding: 1.25rem 1.5rem;
+  border-radius: 1rem;
   animation: ${bottomFadeIn} 1s ease;
 
   @media screen and (max-width: 780px) {
@@ -306,6 +346,7 @@ const StyledCard = styled.section<{
 
   @media screen and (max-width: 580px) {
     padding: 1.25rem 1rem;
+    border-radius: unset;
   }
   
   & > .content {
@@ -316,7 +357,7 @@ const StyledCard = styled.section<{
   }
 `
 
-const CardMeta = styled.div`
+const MemoMeta = styled.div`
     display: flex;
 
     & > img {
@@ -395,8 +436,69 @@ const CardMask = styled.div<{
    
 `
 
-const SmallCard = styled.div<{
-}>`
-  ${paperCard}
-  min-height: 10em;
+const NavCard = styled.section`
+    margin-top: 1.5rem;
+    padding-left: 1rem;
+    display: flex;
+    flex-direction: column;
+    
+    
+
+    .item {
+      padding: 0.25rem 0;
+      margin-right: 0.75rem;
+      border-right: 2px solid ${p => p.theme.colors.uiLineGray};
+    }
+
+    .item.active {
+      border-right: 2px solid ${p => p.theme.colors.gold};
+    }
+
+    .title {
+      font-weight: bold;
+      margin-right: 0.25rem;
+    }
+
+    .count {
+      font-size: 0.875rem;
+      color: ${p => p.theme.colors.textGray};
+    }
+`
+
+const CardCommon = styled.section`
+  margin-top: 1rem;
+  padding: 1rem 1rem;
+`
+
+const CardTitle = styled.div`
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: ${p => p.theme.colors.textGray2};
+`
+
+const CardTitleIcon = styled(CardTitle)`
+  text-align: right;
+  font-size: 1.125rem;
+  margin: unset;
+`
+const SearchBox = styled.input`
+  border: 1px solid ${p => p.theme.colors.uiLineGray};
+  border-radius: 1em;
+  padding-left: 1em;
+  background: ${p => p.theme.colors.bg};
+  color: ${p => p.theme.colors.textPrimary};
+  width:  0;
+  flex: 2 1 0;
+  line-height: 1.7rem;
+  font-size: 0.9rem;
+
+
+  &:focus,
+  &:focus-visible{
+    outline: none;
+    border: 1px solid ${p => p.theme.colors.goldHover};
+  }
+`
+
+const TagCard = styled(CardCommon)`
 `

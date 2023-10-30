@@ -94,10 +94,12 @@ export const memo_db = await (async function () {
           })
 
           // update imgs
-          imgs.push({
-            memoId: memos[memos.length - 1].id,
-            imgurls: memos[memos.length - 1].imgurls,
-          })
+          if(memos[memos.length - 1].imgurls.length !== 0){
+            imgs.push({
+              memoId: memos[memos.length - 1].id,
+              imgurls: memos[memos.length - 1].imgurls,
+            })
+          }
 
         }
 
@@ -125,9 +127,9 @@ export const memo_db = await (async function () {
         const imgreg = /\!\[.*\]\(.+\)/g;
         const matches = line.match(imgreg);
         if (matches) {
-          memos[memos.length - 1].imgurls.concat(matches)
+          // console.debug("%%", memos[memos.length - 1].id, matches),
+          memos[memos.length - 1].imgurls.push(...matches)
         } else {
-
           // update memo content
           if (memos.length === 0) continue // 忽略 frontmatter 和 ## 之间的空行
           const m = memos[memos.length - 1]

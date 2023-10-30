@@ -8,7 +8,13 @@ import MenuIcon from "./MenuIcon"
 import SearchBox from "./SearchBox"
 import Sidebar from "./Sidebar"
 
-export default function Topbar() {
+type Props = React.HTMLProps<HTMLElement> & {
+  placeHolder?: boolean; // 有一些布局不需要 placeHolder
+  scrollElem?: HTMLElement; // 滚动时自动隐藏的监听元素，默认是GlobalThis
+  hideSearch?: boolean;
+}
+
+export default function Topbar({ placeHolder, scrollElem, hideSearch, ...otherProps }: Props) {
   const theme = useContext(ThemeContext)
   const [isHidden, setisHidden] = useState(false)
   const [isSidebar, setIsSidebar] = useState(false)
@@ -16,30 +22,53 @@ export default function Topbar() {
   const router = useRouter()
   const searchIcon = useRef<HTMLDivElement>(null)
 
-  useEffect(() => { // This will be rendered twice?
-    let previousTop = globalThis.scrollY
+  /**
+   * Hide on scroll
+   */
+  useEffect(() => {
+
+    let elem: HTMLElement | typeof globalThis = globalThis;
+
+    if (scrollElem) {
+      elem = scrollElem
+      elem.scrollTop
+    }
+
+    // 不要问我单独写这个，因为tsc抽风，需要if后推断具体类型经常报错。
+    const getScrollPos = () => {
+      if (scrollElem && scrollElem instanceof HTMLElement) {
+        return scrollElem.scrollTop
+      } else {
+        return globalThis.scrollY
+      }
+    }
+
+    let previousTop = getScrollPos()
+
     const onScroll: EventListener = () => { // <-- DOM-EventListener
-      if (globalThis.scrollY < 200) {
+      if (getScrollPos() < 200) { // ignore on page top
         setisHidden(false)
-        previousTop = globalThis.scrollY
+        previousTop = getScrollPos()
         return
       }
 
-      const distance = globalThis.scrollY - previousTop
+      const distance = getScrollPos() - previousTop
+
       if (distance > 10) {
         setisHidden(true)
-        previousTop = globalThis.scrollY
+        previousTop = getScrollPos()
       } else if (distance < -10) {
         setisHidden(false)
-        previousTop = globalThis.scrollY
+        previousTop = getScrollPos()
       }
     };
 
     const throttled = throttle(onScroll, 80)
-    globalThis.addEventListener("scroll", throttled, true);
+    elem.addEventListener("scroll", throttled, true);
 
-    return () => window.removeEventListener("scroll", throttled);
-  }, [])
+
+    return () => elem.removeEventListener("scroll", throttled);
+  }, [scrollElem])
 
   const toggleSidebar = () => {
     setIsSidebar(!isSidebar)
@@ -57,7 +86,7 @@ export default function Topbar() {
     <React.Fragment>
       <SearchBox outSetSearch={updateSearch} stateToInner={isSearch} iconEle={searchIcon} />
       <Sidebar isShow={isSidebar} toggle={toggleSidebar} />
-      <Layout $isHidden={isHidden}>
+      <Layout $isHidden={isHidden} {...otherProps}>
         <Avatar >
           <Link href="/" passHref={true}>
             {/*eslint-disable-next-line @next/next/no-img-element*/}
@@ -70,7 +99,7 @@ export default function Topbar() {
           <ol className={router.pathname === "/about" ? 'current' : ''}><Link href="/about">About</Link></ol>
         </Nav>
         <More >
-          <SearchIcon ref={searchIcon} onClick={(e) => { clickSearch(e) }} $isSearch={isSearch}>
+          <SearchIcon ref={searchIcon} onClick={(e) => { clickSearch(e) }} $isSearch={isSearch} style={{ display: hideSearch ? "none" : "unset" }}>
             <i className='icon-search' style={{ fontSize: "1.725rem" }} />
           </SearchIcon>
           <div onClick={toggleSidebar} style={{ marginRight: "20px", width: "22px" }}>
@@ -78,9 +107,9 @@ export default function Topbar() {
           </div>
         </More>
       </Layout>
-      <PlaceHolder>
+      {placeHolder === false ? null : <PlaceHolder>
         人活着就是为了卡卡西
-      </PlaceHolder>
+      </PlaceHolder>}
     </React.Fragment>
   );
 }
