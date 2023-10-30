@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import styled from 'styled-components';
 import { siteInfo } from "../site.config";
 
-const Waline = () => {
+const Waline = (props: React.HTMLProps<HTMLDivElement>) => {
   useEffect(() => {
     // 挂载 waline 评论系统
     init({
@@ -21,12 +21,14 @@ const Waline = () => {
   }
 
   return (
-    <StyledWL id="waline">Waline</StyledWL>
+    <StyledWL id="waline" {...props}>Waline</StyledWL>
   )
 }
 
 const StyledWL = styled.div`
-  position: relative;
+
+  margin: 0 auto;
+
   --waline-theme-color: ${p => p.theme.colors.bgInverse};
   --waline-bgcolor: ${p => p.theme.colors.bg};
   --waline-color: ${p => p.theme.colors.textGray};
@@ -35,26 +37,20 @@ const StyledWL = styled.div`
   --waline-border: 1px solid #99999966;
   --waline-border-color: #99999966;
   --waline-info-bgcolor: #99999915;
-  .wl-avatar {
-    margin: 0 .5rem;
-  }
-  .wl-card .wl-meta {
-    display: none;
-  }
 
   .wl-btn.primary {
     background: ${p => p.theme.colors.bgInverse};
     color:${p => p.theme.colors.bg};
   }
   .wl-gif-popup {
-    .wl-gallery-column {
-      display: grid !important;
-      grid-template-columns: 1fr 1fr;
-      max-height: 200px;
+    @media screen and (max-width: 580px) {
+      .wl-gallery-column {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr 1fr;
+        max-height: 200px;
+      }
     }
     img {
-      width: unset !important;
-      height: unset !important;
       border-color: ${p => p.theme.colors.bg};
     }
     input {

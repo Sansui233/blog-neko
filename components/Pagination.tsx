@@ -12,12 +12,13 @@ type Props = {
     link: string,
   },
   currTitle?: string,
-  maxPage?: string
+  maxPage?: string,
+  elemProps?: React.HTMLProps<HTMLDivElement>,
 }
 
 const Pagination: React.FC<Props> = (props) => {
   return (
-    <Layout>
+    <Layout {...props.elemProps}>
       {props.prevPage &&
         <div style={{ flex: "1 1 auto" }}>
           <PageBtn href={props.prevPage.link} passHref={true} style={{ justifyContent: "flex-start" }}>

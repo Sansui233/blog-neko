@@ -138,8 +138,10 @@ export default function Memos({ memos, info, memotags }: Props) {
                   link: `/memos?p=${currPage + 1}`
                 } : undefined}
                 maxPage={pagelimit.toString()}
+                elemProps={{ style: { padding: "0 1rem" } }}
               />
-              <Waline />
+              <Waline style={{ padding: "0 0.5rem" }} />
+              <Footer />
             </MemoCol>
             <SiderCol>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
@@ -299,7 +301,7 @@ const MemoCol = styled.div`
   }
 
   @media screen and (max-width: 580px) {
-    padding: 0 0 48px 0;
+    padding: 63px 0 48px 0;
   }
 
 `
