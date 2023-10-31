@@ -227,6 +227,10 @@ function MemoCard({ memoPost, scrollref }: {
     setfisCollapse(!isCollapse)
   }
 
+  // 渲染顺序控制，compile 完毕后再加载
+  const renderedMemoCard = useMemoProcessor(memoPost.content)
+  if (!renderedMemoCard) return
+
   return (
     <MemoCardStyle $isCollapse={shouldCollapse === false ? false : isCollapse} ref={ref}>
       <div className="content">
@@ -242,7 +246,7 @@ function MemoCard({ memoPost, scrollref }: {
           </div>
         </MemoMeta>
         <MemoMarkdown $bottomSpace={shouldCollapse}>
-          {useMemoProcessor(memoPost.content)}
+          {renderedMemoCard}
         </MemoMarkdown>
         <CardMask $isCollapse={isCollapse} $isShown={shouldCollapse}>
           <div onClick={handleExpand} className="rd-more">
@@ -362,7 +366,7 @@ const MemoCol = styled.div`
 
 
   @media screen and (max-width: 780px) {
-    max-width: 100%;
+    width: 100%;
   }
 
   @media screen and (max-width: 580px) {

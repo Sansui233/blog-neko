@@ -1,4 +1,4 @@
-import { Fragment, createElement, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import * as prod from 'react/jsx-runtime'
 import rehypeHighlight from 'rehype-highlight'
 import rehypeReact from 'rehype-react'
@@ -11,12 +11,12 @@ import { rehypeHeadingsAddId } from '../rehype/rehype-toc'
 
 // @ts-expect-error: the react types are missing.
 const production = {Fragment: prod.Fragment, jsx: prod.jsx, jsxs: prod.jsxs}
-
+          
 /**
  * post markdown to JSX
  */
 export function usePostProcessor(mdText: string) {
-  const [Content, setContent] = useState(createElement(Fragment))
+  const [Content, setContent] = useState<JSX.Element>()
 
   useEffect(
     function () {
@@ -31,6 +31,7 @@ export function usePostProcessor(mdText: string) {
           .use(rehypeReact, production) // rehype syntax tree ->  reactElemnt syntax tree?
 
         const file = await processor.process(mdText)
+        console.log(file)
         setContent(file.result)
         
       })()
@@ -42,7 +43,7 @@ export function usePostProcessor(mdText: string) {
 }
 
 export function useMemoProcessor(mdText: string) {
-  const [Content, setContent] = useState(createElement(Fragment))
+  const [Content, setContent] = useState<JSX.Element>()
 
   useEffect(
     function () {
