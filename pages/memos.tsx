@@ -219,8 +219,7 @@ function MemoCard({ memoPost, scrollref }: {
         const elementTop = element.getBoundingClientRect().top;
         if (elementTop < 0 || elementTop > window.innerHeight) {
           scrollref.current?.scrollTo({
-            top: elementTop + window.scrollY,
-            behavior: "smooth",
+            top: elementTop + scrollref.current.scrollTop,
           });
         }
       }
