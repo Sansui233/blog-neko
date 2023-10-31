@@ -1,20 +1,12 @@
 import { Feed, Item } from "feed";
 import fs from 'fs';
-import { MDXRemote } from 'next-mdx-remote';
-import { serialize } from 'next-mdx-remote/serialize';
 import path from 'path';
-import React from 'react';
-import { renderToStaticMarkup } from 'react-dom/server';
 import readline from 'readline';
-import remarkGfm from "remark-gfm";
 import { siteInfo } from "../../site.config";
 import { dateToYMD } from "../date";
+import { PostMeta } from "../markdown/common";
 import { MEMOS_DIR } from "./memos";
 import { POST_DIR, getFrontMatter } from './posts';
-
-interface ItemExt extends Item {
-  draft: boolean
-}
 
 /**
  * Get recent 10 post
@@ -24,50 +16,52 @@ async function getPosts(): Promise<Item[]> {
   fileNames = fileNames.filter(f => {
     return f.endsWith(".md") || f.endsWith(".mdx")
   })
-  let allPosts: (Item | ItemExt)[] = await Promise.all(
+  let allPosts: Item[] = (await Promise.all(
     fileNames.map(async fileName => {
+
+       // TODO parse
       const fileContents = await fs.promises.readFile(path.join(POST_DIR, fileName), 'utf-8')
-      const mdxSource = await serialize(
-        fileContents,
-        {
-          mdxOptions: {
-            remarkPlugins: [remarkGfm],
-            rehypePlugins: [],
-            format: 'mdx',
-          },
-          parseFrontmatter: true
-        })
-
-      const frontmatter = mdxSource.frontmatter! as any
-      const contentsource = mdxSource.compiledSource
-      const id = fileName.replace(/\.mdx?$/, '')
-
-      return {
-        title: frontmatter.title,
-        id: `${siteInfo.domain}/posts/${id}`,
-        guid: `${siteInfo.domain}/posts/${id}`,
-        link: `${siteInfo.domain}/posts/${id}`,
-        published: frontmatter.date,
-        date: frontmatter.date,
-        description: frontmatter.description ? frontmatter.description : '',
-        category: [
-          {
-            name: frontmatter.categories,
-            domain: `${siteInfo.domain}/categories/${frontmatter.categories}`
-          }],
-        content: renderToStaticMarkup(
-          React.createElement(
-            MDXRemote,
-            {
-              compiledSource: contentsource,
-              scope: null,
-              frontmatter: null
-            }
-          )
-        ),
-        draft: frontmatter.draft? frontmatter.draft: false,
+      const frontmatter:PostMeta = {
+        title: "Test",
+        description: "",
+        date: "string",
+        tags: [],
+        categories: "category",
       }
-    }))
+
+      const parsed: PostMeta & {content: string, id: string} = {
+        id: fileName.replace(/\.mdx?$/, ''),
+        title: "Test",
+        description: "",
+        date: "string",
+        tags: [],
+        categories: "category",
+        draft: false, 
+        content: "",
+      }
+
+      return parsed
+
+    })
+  )).filter( p => !p.draft).map( p=>{
+    
+    // TODO build result
+    return {
+      title: p.title,
+      id: `${siteInfo.domain}/posts/${p.id}`,
+      guid: `${siteInfo.domain}/posts/${p.id}`,
+      link: `${siteInfo.domain}/posts/${p.id}`,
+      published: new Date(p.date),
+      date: new Date(p.date),
+      description: p.description ? p.description : '',
+      category: [
+        {
+          name: p.categories,
+          domain: `${siteInfo.domain}/categories/${p.categories}`
+        }],
+      content: p.content, // TODO 转换为 html 后的 Content
+    }
+  })
 
   const memo = await getMemo()
   if (memo !== null) {
@@ -93,7 +87,6 @@ async function getPosts(): Promise<Item[]> {
 }
 
 // 最新（名称最大）的 memo 文件中，最近 6 条生成 rss
-// 名称最大是个人习惯，通常名称越大的越日期越新。一个文件里会写很多条，一个md写完都行。分文件只是为了好翻，毕竟没人想在整理文件时下拉一个巨大的txt
 async function getMemo(): Promise<Item | null>{
   const files = (await fs.promises.readdir(MEMOS_DIR)).filter(f => {
     return f.endsWith(".md")
@@ -132,12 +125,6 @@ async function getMemo(): Promise<Item | null>{
     if (count != 0) content += line + "\n" // push content
   }
 
-  const mdxSource = await serialize(content, {
-    mdxOptions: {
-      remarkPlugins: [remarkGfm],
-    }
-  })
-
   rl.close()
   fileStream.close()
 
@@ -156,13 +143,7 @@ async function getMemo(): Promise<Item | null>{
       {
         name: matterResult.data.categories
       }],
-    content: renderToStaticMarkup(
-      React.createElement(MDXRemote, {
-        compiledSource: mdxSource.compiledSource,
-        scope: null,
-        frontmatter: null
-      })
-    )
+    content: "" // TODO compiled to 
   }
 
   return res

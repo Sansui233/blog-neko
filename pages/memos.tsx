@@ -1,10 +1,7 @@
 import { GetStaticProps } from "next";
-import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote";
-import { serialize } from "next-mdx-remote/serialize";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
-import remarkGfm from "remark-gfm";
 import styled, { ThemeContext } from "styled-components";
 import { CommonHead } from ".";
 import Footer from "../components/Footer";
@@ -15,7 +12,6 @@ import Topbar from "../components/Topbar";
 import Waline from "../components/Waline";
 import { memo_db, writeMemoJson } from "../lib/data/memos";
 import { MemoInfo, MemoPost as MemoPostRemote, MemoTagArr } from "../lib/data/memos.common";
-import { rehypeTag } from "../lib/rehype/rehype-tag";
 import { Naive, Result, SearchObj } from "../lib/search";
 import { siteInfo } from "../site.config";
 import { bottomFadeIn } from '../styles/animations';
@@ -23,8 +19,7 @@ import { paperCard, textShadow } from "../styles/styles";
 
 const MemoCSRAPI = '/data/memos'
 
-type MemoPost = Omit<MemoPostRemote, 'content'> & {
-  content: MDXRemoteSerializeResult
+type MemoPost = MemoPostRemote & {
   length: number;
 }
 
@@ -252,7 +247,6 @@ function MemoCard({ memoPost, scrollref }: {
           </div>
         </MemoMeta>
         <MemoMarkdown $bottomSpace={shouldCollapse}>
-          <MDXRemote compiledSource={memoPost.content.compiledSource} scope={null} frontmatter={null} />
         </MemoMarkdown>
         <CardMask $isCollapse={isCollapse} $isShown={shouldCollapse}>
           <div onClick={handleExpand} className="rd-more">
@@ -279,20 +273,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 }
 
 async function compile(posts: MemoPostRemote[]): Promise<MemoPost[]> {
-  return Promise.all(posts.map(async m => {
-    const content = await serialize(m.content, {
-      mdxOptions: {
-        remarkPlugins: [remarkGfm],
-        rehypePlugins: [rehypeTag],
-        development: process.env.NODE_ENV === 'development', // a bug in next-remote-mdx v4.4.1, see https://github.com/hashicorp/next-mdx-remote/issues/350.
-      }
-    })
-    return {
-      ...m,
-      content: content,
-      length: m.content.length,
-    }
-  }))
+  return []
 }
 
 /**

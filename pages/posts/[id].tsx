@@ -1,15 +1,11 @@
 import { MDXProvider } from '@mdx-js/react'
 import { readFile } from "fs/promises"
 import { GetStaticPaths, GetStaticProps } from "next"
-import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote'
-import { serialize } from 'next-mdx-remote/serialize'
 import Head from "next/head"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import path from "path"
 import { useContext } from "react"
-import rehypeHighlight from 'rehype-highlight'
-import remarkGfm from "remark-gfm"
 import styled, { ThemeContext } from "styled-components"
 import { CommonHead } from ".."
 import LayoutContainer, { OneColLayout } from "../../components/Layout"
@@ -17,12 +13,11 @@ import { MDImg, MarkdownStyle } from "../../components/Markdown"
 import Pagination from "../../components/Pagination"
 import Waline from "../../components/Waline"
 import { POST_DIR, posts_db } from "../../lib/data/posts"
-import { dateToYMD } from "../../lib/date"
-import { rehypeAddAnchors, rehypeExtractHeadings } from "../../lib/rehype/rehype-toc"
+import { PostMeta } from '../../lib/markdown/common'
 import { bottomFadeIn, fadeInRight } from "../../styles/animations"
 
 type Props = {
-  mdxSource: MDXRemoteSerializeResult,
+  mdxcontent: string,
   excerpt: string,
   nextPost?: {
     title: string,
@@ -41,19 +36,24 @@ type PropHeading = {
   id: string
 }
 
-export default function Post({ mdxSource, nextPost, prevPost, excerpt, headings }: Props) {
+export default function Post({ mdxcontent, nextPost, prevPost, excerpt, headings }: Props) {
 
   const router = useRouter()
   const theme = useContext(ThemeContext)
-  const frontmatter = mdxSource.frontmatter! as any
-  const source = mdxSource.compiledSource
+  const frontmatter: PostMeta = {
+    title: "Test",
+    description: "",
+    date: "string",
+    tags: [],
+    categories: "category",
+  }
+  const source = mdxcontent
 
   const description = frontmatter.description ?
     (frontmatter.description as string).concat(excerpt)
     : excerpt
 
-  function genTags(tags: string | Array<string>) {
-    const tagList = typeof (tags) === "string" ? [tags] : tags
+  function genTags(tagList: Array<string>) {
     return <>
       {tagList.map((tag: string) => {
         return (
@@ -95,7 +95,6 @@ export default function Post({ mdxSource, nextPost, prevPost, excerpt, headings 
       img: MDImg
     }}>
       <MarkdownStyle>
-        <MDXRemote compiledSource={source} scope={null} frontmatter={null} />
       </MarkdownStyle>
     </MDXProvider>
   }
@@ -185,22 +184,8 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
   const mdBodyStart = mdContent.substring(sepIndex + yamlSeparator.length + 1); // Start at 5 to skip the first seperator
   const excerpt = mdBodyStart.replace(/\n/g, ' ').substring(0, 144);
 
-  // Process Content
+  // Process Content TODO
   let headings: any[] = []
-  const mdxSource = await serialize(
-    mdContent,
-    {
-      mdxOptions: {
-        remarkPlugins: [remarkGfm],
-        rehypePlugins: [
-          [rehypeAddAnchors, { rank: [1, 2, 3] }],
-          [rehypeExtractHeadings, { rank: [1, 2, 3], headings }],
-          rehypeHighlight,
-        ],
-        format: 'mdx',
-      },
-      parseFrontmatter: true
-    })
 
   // normalize heading rank
   if (headings.length > 0) {
@@ -210,12 +195,6 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
       ...heading,
       rank: heading.rank - offset
     }));
-  }
-
-  // Process Date
-  const fm = mdxSource.frontmatter! as any
-  if (fm["date"]) {
-    fm["date"] = dateToYMD(fm["date"])
   }
 
   // Get next and prev Post
@@ -232,7 +211,7 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
 
   return {
     props: {
-      mdxSource,
+      mdxcontent: mdContent,
       prevPost: prevPost,
       nextPost: nextPost,
       excerpt,
