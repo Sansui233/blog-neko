@@ -15,8 +15,8 @@ export async function mdxPostProcessosr(mdxsrc: string) {
         remarkGfm,
       ],
       rehypePlugins: [
-        [rehypeExtractHeadings, [headings]],
         rehypeHeadingsAddId,
+        [rehypeExtractHeadings, { rank: [1, 2, 3], headings }],
         // @ts-expect-error: the react types are missing.
         rehypeHighlight,
       ],
@@ -40,6 +40,7 @@ export async function mdxPostProcessosr(mdxsrc: string) {
 export async function mdxMemoProcessosr(mdxsrc: string) {
   const compiledSrc = await serialize(mdxsrc, {
     mdxOptions: {
+      development: process.env.NODE_ENV === 'development', // 需指定为 react server component
       remarkPlugins: [
         remarkGfm,
       ],
