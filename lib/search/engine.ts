@@ -7,15 +7,16 @@ interface Config {
   data: SearchObj[] // search in these data
   field: Array<keyof SearchObj> // properties to be searched in data
   notifier: (res: Required<Result>[]) => void // 通常是 useState 的 set 函数
+  disableStreamNotify?: boolean
 }
 
 export class Naive extends Engine {
   declare data: Config['data']
-  declare field: Config['field'] 
+  declare field: Config['field']
 
   declare tasks: Array<Promise<void>>
   declare res: Array<Required<Result>>
-  declare notify: Config['notifier'] // throttled Notify
+  declare notify: Config['notifier'] | undefined // throttled Notify
   declare notifyInstant: Config['notifier'] // 向外传递结果和状态
 
   constructor(conf: Config) {
@@ -25,7 +26,7 @@ export class Naive extends Engine {
 
     this.tasks = []
     this.res = []
-    this.notify = throttle(conf.notifier, 125) // Update 中间结果时用取值参考的，流畅度参考动画3拍1
+    this.notify = conf.disableStreamNotify ? undefined : throttle(conf.notifier, 125) // Update 中间结果时用取值参考的，流畅度参考动画3拍1
     this.notifyInstant = conf.notifier // Update 最后的结果
   }
 
@@ -41,7 +42,7 @@ export class Naive extends Engine {
     await Promise.all(this.tasks)
 
     // Sort Object
-    if(this.res.length > 1 && this.res[0].matches !== undefined){
+    if (this.res.length > 1 && this.res[0].matches !== undefined) {
       this.res = this.res.sort((a, b) => {
         return a.matches!.length > b.matches!.length ? -1 : 1
       })
@@ -97,7 +98,7 @@ export class Naive extends Engine {
         if (f === "tags") {
           const input_tags = patterns.filter(p => p[0] === "#" ? true : false).map(t => t.slice(0))
           const matched_tags = o[f]!.filter(t => t in input_tags) // Typescript 的类型推断还是不行
-          if(matched_tags.length>0){
+          if (matched_tags.length > 0) {
             this.res.push({
               id: o.id,
               title: o.title,
@@ -108,7 +109,7 @@ export class Naive extends Engine {
               })
             })
             break
-          }else{
+          } else {
             continue
           }
         } else {
@@ -142,7 +143,7 @@ export class Naive extends Engine {
       }
 
       // Notify observer
-      if (this.res.length !== 0) {
+      if (this.res.length !== 0 && this.notify) {
         this.notify([...this.res])
       }
       resolve();

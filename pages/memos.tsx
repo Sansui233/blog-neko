@@ -319,7 +319,8 @@ function initSearch(
     setEngine(new Naive({
       data: searchObj,                    // search in these data
       field: ["tags", "content"],         // properties to be searched in data
-      notifier                            // 通常是 useState 的 set 函数
+      notifier,                            // 通常是 useState 的 set 函数
+      disableStreamNotify: true,
     }))
 
     setStatus({ pagelimit })
