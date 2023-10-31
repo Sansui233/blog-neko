@@ -3,7 +3,7 @@ import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote";
 import { serialize } from "next-mdx-remote/serialize";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
 import remarkGfm from "remark-gfm";
 import styled, { ThemeContext } from "styled-components";
 import { CommonHead } from ".";
@@ -48,6 +48,7 @@ export default function Memos({ memos, info, memotags }: Props) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [searchStatus, setsearchStatus] = useState<SearchStatus>({ pagelimit: 5 })
 
+
   // fetch csr content by page number
   useEffect(() => {
 
@@ -76,18 +77,8 @@ export default function Memos({ memos, info, memotags }: Props) {
   }, [router.query])
 
 
-  const currPage = (() => {
-    if (typeof (router.query.p) === 'string') {
-      const page = parseInt(router.query.p)
-      if (!isNaN(page)) {
-        return page
-      }
-    }
-    return 0
-  })()
 
-
-  function handleSearch() {
+  const handleSearch = useCallback(() => {
     if (!inputRef.current) return
 
     const str = inputRef.current.value.trim()
@@ -102,7 +93,26 @@ export default function Memos({ memos, info, memotags }: Props) {
       engine.search(str.split(" "))
     }
   }
+    , [engine, info.pages])
 
+  // bind keyboard event
+  useEffect(() => {
+    document.addEventListener("keydown", (evt) => {
+      if (inputRef.current && inputRef.current === document.activeElement && evt.key === "Enter")
+        handleSearch()
+    })
+  }, [handleSearch])
+
+
+  const currPage = (() => {
+    if (typeof (router.query.p) === 'string') {
+      const page = parseInt(router.query.p)
+      if (!isNaN(page)) {
+        return page
+      }
+    }
+    return 0
+  })()
 
   return (
     <>
@@ -152,7 +162,8 @@ export default function Memos({ memos, info, memotags }: Props) {
                   }
                 />
                 <CardTitleIcon className="hover-gold" style={{ fontSize: "1.275em", marginLeft: "0.125em" }}
-                  onClick={handleSearch}>
+                  onClick={handleSearch}
+                >
                   <i className='icon-search' />
                 </CardTitleIcon>
               </div>
