@@ -78,7 +78,7 @@ export default function Memos({ memos, info, memotags }: Props) {
 
 
 
-  const handleSearch = useCallback(() => {
+  const handleSearch = useCallback(async () => {
     if (!inputRef.current) return
 
     const str = inputRef.current.value.trim()
@@ -87,13 +87,25 @@ export default function Memos({ memos, info, memotags }: Props) {
 
     if (!engine) {
       // Init Search Engine && Get data
-      initSearch(setEngine, setpostsData, setsearchStatus, info.pages)
-      console.log("初始化搜索中，请稍后重试...")
+      const newEngine = await initSearch(setEngine, setpostsData, setsearchStatus, info.pages)
+      newEngine.search(str.split(" "))
+
     } else {
       engine.search(str.split(" "))
     }
   }
     , [engine, info.pages])
+
+
+  function setSearchText(text: string, immediateSearch = true) {
+    if (!inputRef.current) return
+
+    inputRef.current.value = text
+    if (immediateSearch) {
+      handleSearch()
+    }
+  }
+
 
   // bind keyboard event
   useEffect(() => {
@@ -181,7 +193,9 @@ export default function Memos({ memos, info, memotags }: Props) {
                 <CardTitle>TAGS</CardTitle>
                 <div style={{ paddingTop: "0.5rem" }}>
                   {memotags.map(t => {
-                    return <span className="hover-gold" key={t[0]}>
+                    return <span className="hover-gold" key={t[0]}
+                      onClick={() => { setSearchText("#" + t[0]) }}
+                    >
                       {`#${t[0]}`}
                     </span>
                   })}
@@ -251,9 +265,6 @@ function MemoCard({ memoPost, scrollref }: {
   )
 }
 
-
-/** Rendering Control **/
-
 export const getStaticProps: GetStaticProps<Props> = async () => {
   // 生成 CSR 所需 JSON，SSR 需独立出逻辑
   writeMemoJson()
@@ -284,7 +295,16 @@ async function compile(posts: MemoPostRemote[]): Promise<MemoPost[]> {
   }))
 }
 
-function initSearch(
+/**
+ * init engine and interact with react state
+ * @param setEngine 
+ * @param setResultFn 
+ * @param setStatus 
+ * @param maxPage 
+ * @param pagelimit 
+ * @returns  new engine for immediate usage
+ */
+async function initSearch(
   setEngine: React.Dispatch<React.SetStateAction<Naive | undefined>>,
   setResultFn: React.Dispatch<React.SetStateAction<MemoPost[]>>,
   setStatus: React.Dispatch<React.SetStateAction<SearchStatus>>,
@@ -294,51 +314,51 @@ function initSearch(
 
   console.log("%% init search...")
   pagelimit = maxPage < pagelimit ? maxPage : pagelimit;
+  let newEngine: Naive | undefined = undefined;
 
   // Fetch data and set search engine
   const urls = Array.from({ length: pagelimit + 1 }, (_, i) => `${MemoCSRAPI}/${i}.json`)
   const requests = urls.map(url => fetch(url).then(res => res.json()));
-  Promise.all(requests).then(reqres => {
-
-    const src = (reqres as MemoPostRemote[][]).flatMap(v => v)
-
-    const searchObj: SearchObj[] = src.map(memo => {
-      return {
-        id: memo.id,
-        title: "", // 无效化 title。engine 动态构建结果写起来太麻烦了，以后再说。
-        content: memo.content,
-        tags: memo.tags,
-      }
-    })
+  const reqres = await Promise.all(requests)
 
 
-    // 过滤结果
-    // 这个函数也会持久化下载数据
-    function notifier(searchres: Required<Result>[]) {
-      const ids = searchres.map(r => r.id)
-      const filtered = src.filter(memo => {
-        if (ids.includes(memo.id)) {
-          return true
-        }
-        return false
-      })
-      compile(filtered).then(compiled => {
-        setResultFn(compiled)
-      })
+  const src = (reqres as MemoPostRemote[][]).flatMap(v => v)
+
+  const searchObj: SearchObj[] = src.map(memo => {
+    return {
+      id: memo.id,
+      title: "", // 无效化 title。engine 动态构建结果写起来太麻烦了，以后再说。
+      content: memo.content,
+      tags: memo.tags,
     }
+  })
 
-    setEngine(new Naive({
-      data: searchObj,                    // search in these data
-      field: ["tags", "content"],         // properties to be searched in data
-      notifier,                            // 通常是 useState 的 set 函数
-      disableStreamNotify: true,
-    }))
+  // 过滤结果
+  // 这个函数也会持久化下载数据
+  function notifier(searchres: Required<Result>[]) {
+    const ids = searchres.map(r => r.id)
+    const filtered = src.filter(memo => {
+      if (ids.includes(memo.id)) {
+        return true
+      }
+      return false
+    })
+    compile(filtered).then(compiled => {
+      setResultFn(compiled)
+    })
+  }
 
-    setStatus({ pagelimit })
+  newEngine = new Naive({
+    data: searchObj,                    // search in these data
+    field: ["tags", "content"],         // properties to be searched in data
+    notifier,                            // 通常是 useState 的 set 函数
+    disableStreamNotify: true,
+  })
 
-  }).catch(error => {
-    console.error("[memos.ts] An error occurred when fetching index:", error);
-  });
+  setEngine(newEngine)
+  setStatus({ pagelimit })
+
+  return newEngine
 }
 
 
