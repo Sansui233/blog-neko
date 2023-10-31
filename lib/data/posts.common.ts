@@ -4,5 +4,6 @@ export type PostMeta = {
   tags: string[],
   categories: string,
   description?: string,
+  keywords?: string,
   draft?: boolean,
 }

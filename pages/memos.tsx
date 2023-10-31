@@ -11,17 +11,14 @@ import Pagination from "../components/Pagination";
 import Topbar from "../components/Topbar";
 import Waline from "../components/Waline";
 import { memo_db, writeMemoJson } from "../lib/data/memos";
-import { MemoInfo, MemoPost as MemoPostRemote, MemoTagArr } from "../lib/data/memos.common";
+import { MemoInfo, MemoPost, MemoTagArr } from "../lib/data/memos.common";
+import { useProcessor } from "../lib/markdown/processor";
 import { Naive, Result, SearchObj } from "../lib/search";
 import { siteInfo } from "../site.config";
 import { bottomFadeIn } from '../styles/animations';
 import { paperCard, textShadow } from "../styles/styles";
 
 const MemoCSRAPI = '/data/memos'
-
-type MemoPost = MemoPostRemote & {
-  length: number;
-}
 
 type Props = {
   memos: MemoPost[] // 首屏 seo data
@@ -61,9 +58,8 @@ export default function Memos({ memos, info, memotags }: Props) {
     fetch(`${MemoCSRAPI}/${page}.json`)
       .then(res => res.json())
       .then((data) => {
-        const posts = data as Array<MemoPostRemote>
-        const compiledMemos = compile(posts)
-        return compiledMemos
+        const posts = data as Array<MemoPost>
+        return posts
       })
       .then(nextPosts => {
         setpostsData(nextPosts)
@@ -213,7 +209,7 @@ function MemoCard({ memoPost, scrollref }: {
   const theme = useContext(ThemeContext)
   const ref = React.useRef<HTMLDivElement>(null)
 
-  const shouldCollapse = memoPost.length > 200 ? true : false
+  const shouldCollapse = memoPost.content.length > 200 ? true : false
 
   function handleExpand(e: React.MouseEvent<HTMLDivElement>) {
     // Scroll back
@@ -242,11 +238,12 @@ function MemoCard({ memoPost, scrollref }: {
             <div>{siteInfo.author}</div>
             <div className="date">
               {memoPost.id}&nbsp;&nbsp;
-              <span className="word-count">{memoPost.length}&nbsp;字</span>
+              <span className="word-count">{memoPost.content.length}&nbsp;字</span>
             </div>
           </div>
         </MemoMeta>
         <MemoMarkdown $bottomSpace={shouldCollapse}>
+          {useProcessor(memoPost.content)}
         </MemoMarkdown>
         <CardMask $isCollapse={isCollapse} $isShown={shouldCollapse}>
           <div onClick={handleExpand} className="rd-more">
@@ -265,16 +262,13 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 
   return {
     props: {
-      memos: await compile(memo_db.atPage(0)), // 首屏 SEO 数据
+      memos: memo_db.atPage(0), // 首屏 SEO 数据
       info: memo_db.info,
       memotags: Array.from(memo_db.tags),
     }
   }
 }
 
-async function compile(posts: MemoPostRemote[]): Promise<MemoPost[]> {
-  return []
-}
 
 /**
  * init engine and interact with react state
@@ -293,7 +287,7 @@ async function initSearch(
   pagelimit = 5, // new range limit
 ) {
 
-  console.log("%% init search...")
+  console.debug("%% init search...")
   pagelimit = maxPage < pagelimit ? maxPage : pagelimit;
   let newEngine: Naive | undefined = undefined;
 
@@ -303,7 +297,7 @@ async function initSearch(
   const reqres = await Promise.all(requests)
 
 
-  const src = (reqres as MemoPostRemote[][]).flatMap(v => v)
+  const src = (reqres as MemoPost[][]).flatMap(v => v)
 
   const searchObj: SearchObj[] = src.map(memo => {
     return {
@@ -324,9 +318,8 @@ async function initSearch(
       }
       return false
     })
-    compile(filtered).then(compiled => {
-      setResultFn(compiled)
-    })
+
+    setResultFn(filtered)
   }
 
   newEngine = new Naive({

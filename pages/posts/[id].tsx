@@ -1,5 +1,5 @@
-import { MDXProvider } from '@mdx-js/react'
 import { readFile } from "fs/promises"
+import matter from "gray-matter"
 import { GetStaticPaths, GetStaticProps } from "next"
 import Head from "next/head"
 import Link from "next/link"
@@ -9,16 +9,19 @@ import { useContext } from "react"
 import styled, { ThemeContext } from "styled-components"
 import { CommonHead } from ".."
 import LayoutContainer, { OneColLayout } from "../../components/Layout"
-import { MDImg, MarkdownStyle } from "../../components/Markdown"
+import { MarkdownStyle } from "../../components/Markdown"
 import Pagination from "../../components/Pagination"
 import Waline from "../../components/Waline"
 import { POST_DIR, posts_db } from "../../lib/data/posts"
-import { PostMeta } from '../../lib/markdown/common'
+import { PostMeta } from '../../lib/data/posts.common'
+import { grayMatter2PostMeta } from "../../lib/markdown/frontmatter"
+import { useProcessor } from '../../lib/markdown/processor'
 import { bottomFadeIn, fadeInRight } from "../../styles/animations"
 
 type Props = {
-  mdxcontent: string,
+  meta: PostMeta,
   excerpt: string,
+  content: string, // TODO SSR?
   nextPost?: {
     title: string,
     link: string,
@@ -36,21 +39,13 @@ type PropHeading = {
   id: string
 }
 
-export default function Post({ mdxcontent, nextPost, prevPost, excerpt, headings }: Props) {
+export default function Post({ meta, content, nextPost, prevPost, excerpt, headings }: Props) {
 
   const router = useRouter()
   const theme = useContext(ThemeContext)
-  const frontmatter: PostMeta = {
-    title: "Test",
-    description: "",
-    date: "string",
-    tags: [],
-    categories: "category",
-  }
-  const source = mdxcontent
 
-  const description = frontmatter.description ?
-    (frontmatter.description as string).concat(excerpt)
+  const description = meta.description ?
+    (meta.description as string).concat(excerpt)
     : excerpt
 
   function genTags(tagList: Array<string>) {
@@ -90,20 +85,11 @@ export default function Post({ mdxcontent, nextPost, prevPost, excerpt, headings
     }
   };
 
-  const renderMDX = () => {
-    return <MDXProvider components={{
-      img: MDImg
-    }}>
-      <MarkdownStyle>
-      </MarkdownStyle>
-    </MDXProvider>
-  }
-
   return <>
     <Head>
-      <title>{frontmatter.title}</title>
+      <title>{meta.title}</title>
       <meta name="description" content={description}></meta>
-      <meta name="keywords" content={getKeywords(frontmatter)}></meta>
+      <meta name="keywords" content={getKeywords(meta)}></meta>
       <CommonHead />
     </Head>
     <LayoutContainer>
@@ -111,17 +97,17 @@ export default function Post({ mdxcontent, nextPost, prevPost, excerpt, headings
         <ColumnLeft>
           <PostLayout >
             <PostTitle>
-              <h1>{frontmatter.title}</h1>
+              <h1>{meta.title}</h1>
               <div style={{ display: "flex" }}>
                 <div style={{ flex: "1 1 0" }}>
                   <MetaStyle style={{ flex: "1 1 0" }}>
-                    {frontmatter.date}
+                    {meta.date}
                     {" | "}
-                    {genTags(frontmatter.tags)}
+                    {genTags(meta.tags)}
                     {" in "}
-                    <StyledLink href={`/categories/${frontmatter.categories}`} passHref={true}>
+                    <StyledLink href={`/categories/${meta.categories}`} passHref={true}>
                       <i style={{ paddingRight: "0.15em" }} className='icon-material-folder_open' />
-                      {frontmatter.categories}
+                      {meta.categories}
                     </StyledLink>
                   </MetaStyle>
                 </div>
@@ -131,9 +117,11 @@ export default function Post({ mdxcontent, nextPost, prevPost, excerpt, headings
                 </div>
               </div>
             </PostTitle>
-            {renderMDX()}
+            <MarkdownStyle>
+              {useProcessor(content)}
+            </MarkdownStyle>
             <div style={{ textAlign: 'right', opacity: .5, fontSize: '0.875rem', margin: "4rem 0 2rem 0" }}>
-              更新于 {frontmatter.date}
+              更新于 {meta.date}
             </div>
             <Pagination
               nextPage={nextPost ? nextPost : undefined}
@@ -173,19 +161,16 @@ export const getStaticPaths: GetStaticPaths = async () => {
 // get POST Data
 export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
   const id = params!.id as string
-  const mdContent = await readFile(path.join(POST_DIR, `${id}.md`), 'utf-8') // TODO 没有处理mdx的后缀
+  const fullContent = await readFile(path.join(POST_DIR, `${id}.md`), 'utf-8')
 
-  // 获取摘要，分割YAML头和Markdown正文
-  const yamlSeparator = '---\r\n';
-  let sepIndex = mdContent.indexOf('---\n', 5)
-  if (sepIndex === -1) {
-    sepIndex = mdContent.indexOf('---\r\n', 5)
-  }
-  const mdBodyStart = mdContent.substring(sepIndex + yamlSeparator.length + 1); // Start at 5 to skip the first seperator
-  const excerpt = mdBodyStart.replace(/\n/g, ' ').substring(0, 144);
 
-  // Process Content TODO
-  let headings: any[] = []
+  const mattered = matter(fullContent)
+
+  let excerpt = mattered.content.replace(/(\r\n|\n|\r)/g, ' ').substring(0, 144);
+  const meta = grayMatter2PostMeta(mattered)
+
+  // Process Content 
+  let headings: any[] = [] // TODO heaing extract on ssr
 
   // normalize heading rank
   if (headings.length > 0) {
@@ -198,7 +183,7 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
   }
 
   // Get next and prev Post
-  const allPosts = await posts_db.metas()
+  const allPosts = posts_db.metas
   const i = allPosts.findIndex(p => p.id === id)
   const prevPost = i - 1 < 0 ? null : {
     title: allPosts[i - 1].title!,
@@ -211,10 +196,11 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
 
   return {
     props: {
-      mdxcontent: mdContent,
+      meta,
+      content: mattered.content,
+      excerpt,
       prevPost: prevPost,
       nextPost: nextPost,
-      excerpt,
       headings
     }
   }

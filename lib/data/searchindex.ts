@@ -1,8 +1,8 @@
 import fs from "fs";
 import path from "path";
-import { dateToString } from "../date";
 import { loadJson, writeJson } from "../fs/fs";
 import { observe } from "../fs/observer";
+import { grayMatter2PostMeta } from "../markdown/frontmatter";
 import { SearchObj } from "../search";
 import { getFrontMatter } from "./posts";
 
@@ -47,27 +47,27 @@ export async function buildIndex(src_dir: string, index_dir = DATADIR, index_f =
 
   const modPromise = fl.mod.map(async n => {
     const i = find(index, n)
-    const fm = await getFrontMatter(n)
+    const fm = grayMatter2PostMeta(await getFrontMatter(n))
     index[i] = ({
       id: n,
-      title: fm.data['title'],
+      title: fm.title,
       content: (await getContent(path.join(src_dir, n))).replaceAll("\n", ""),
-      description: fm.data['description'] ? fm.data['description'] : "",
-      keywords: fm.data['keywords'] ? fm.data['keywords'] : "",
-      date: dateToString(fm.data['date'])
+      description: fm.description ? fm.description : "",
+      keywords: fm.keywords ? fm.keywords : "",
+      date: fm.date
     })
   })
 
   const createPromise = fl.create.map(async n => {
     const i = find(index, n)
-    const fm = await getFrontMatter(n)
+    const fm = grayMatter2PostMeta(await getFrontMatter(n))
     index.push({
       id: n,
-      title: fm.data['title'],
+      title: fm.title,
       content: await getContent(path.join(src_dir, n)),
-      description: fm.data['description'] ? fm.data['description'] : "",
-      keywords: fm.data['keywords'] ? fm.data['keywords'] : "",
-      date: dateToString(fm.data['date'])
+      description: fm.description ? fm.description : "",
+      keywords: fm.keywords ? fm.keywords : "",
+      date: fm.date
     })
   })
 
@@ -76,7 +76,7 @@ export async function buildIndex(src_dir: string, index_dir = DATADIR, index_f =
   index = index.sort((a, b) => a.date < b.date ? 1 : -1)
   writeJson(path.join(index_dir, index_f), index)
 
-  console.log("\n[buildindex.ts]", fl.create.length + fl.del.length + fl.mod.length, "pages updated")
+  console.log("[buildindex.ts]", fl.create.length + fl.del.length + fl.mod.length, "pages updated")
   console.log("[buildindex.ts]", index.length, "pages are indexed")
 }
 

@@ -1,24 +1,12 @@
 import fs from 'fs';
 import matter from 'gray-matter';
 import path from 'path';
-import { dateToYMD } from '../date';
+import { dateToYMDMM } from '../date';
+import { grayMatter2PostMeta } from '../markdown/frontmatter';
 
 export const POST_DIR = path.join(process.cwd(), 'source', 'posts')
 const CATEGORY_ALL = 'All Posts'
 const TAG_UNTAGGED = 'Untagged'
-
-
-/**
- * parsed by gray-matter, not mdxResource
- */
-export type FrontMatter = {
-  title: string,
-  date: Date,
-  category: string,
-  tags: string | string[],
-  description?: string | string[],
-  keywords?: string
-}
 
 /**
  * posts database
@@ -39,6 +27,26 @@ export const posts_db = await (async function () {
     return fileNames
   })())
 
+    /**
+   * metas sorted by date
+   */
+    const metas = await (async function () {
+      const promises = names.map(async fileName => {
+        const id = fileName.replace(/\.mdx?$/, '')
+        
+        const frontMatter = grayMatter2PostMeta((await getFrontMatter(fileName)))
+        return {
+          id,
+          ...frontMatter,
+        }
+      })
+  
+      const allPosts = await Promise.all(promises)
+      return allPosts.sort((a, b) => {
+        return a.date < b.date ? 1 : -1
+      })
+    })()
+
   /**
    * used in url
    */
@@ -52,15 +60,14 @@ export const posts_db = await (async function () {
     });
   }
 
-  const categories = async function () {
+  const categories = function () {
     const categories = new Map<string, number>()
     const p = names
     categories.set(CATEGORY_ALL, p.length)
 
-    const promises = p.map(async fileName => {
-      const matterResult = await getFrontMatter(fileName)
-      if (matterResult.data['categories']) {
-        const c = matterResult.data['categories']
+    metas.forEach(p => {
+      if (p.categories) {
+        const c = p.categories
         if (categories.has(c)) {
           categories.set(c, categories.get(c)! + 1)
         } else {
@@ -69,41 +76,18 @@ export const posts_db = await (async function () {
       }
     })
 
-    await Promise.all(promises)
-
     return categories
   }
 
-  /**
-   * metas sorted by date
-   */
-  const metas = async function () {
-    const promises = names.map(async fileName => {
-      const id = fileName.replace(/\.mdx?$/, '')
-      const frontMatter = ((await getFrontMatter(fileName)).data) as FrontMatter
-      const date = dateToYMD(frontMatter.date!)
 
-      return {
-        id,
-        ...frontMatter,
-        date
-      }
-    })
 
-    const allPosts = await Promise.all(promises)
-    return allPosts.sort((a, b) => {
-      return a.date < b.date ? 1 : -1
-    })
-  }
-
-  const tags = async function () {
+  const tags = function () {
     const tags = new Map<string, number>()
     tags.set(TAG_UNTAGGED, 0)
 
-    const promises = names.map(async fileName => {
-      const matterResult = await getFrontMatter(fileName)
-      if (matterResult.data['tags']) {
-        let fileTags = matterResult.data['tags']
+    metas.forEach(p => {
+      if (p.tags) {
+        let fileTags = p.tags
         fileTags = typeof (fileTags) === 'string' ? [fileTags] : fileTags
         fileTags.forEach((t: string) => {
           if (tags.has(t)) {
@@ -117,7 +101,6 @@ export const posts_db = await (async function () {
       }
     })
 
-    await Promise.all(promises)
     return tags
   }
 
@@ -126,46 +109,45 @@ export const posts_db = await (async function () {
  */
   const inTag = async function (t: string) {
 
-    const p: { id: string, title: string, date: Date }[] = []
-    const promises = names.map(async fileName => {
-      const matterResult = await getFrontMatter(fileName)
-      let fileTags = matterResult.data['tags']
-      fileTags = typeof (fileTags) === 'string' ? [fileTags] : fileTags
-      if (fileTags.some((ft: string) => ft === t)) {
-        p.push({
-          id: fileName.replace(/\.mdx?$/, ''),
-          title: matterResult.data['title'],
-          date: matterResult.data['date']
+    const posts: { id: string, title: string, date: Date }[] = []
+
+    metas.forEach(p => {
+      if (p.tags.some((ft: string) => ft === t)) {
+        posts.push({
+          id: p.id,
+          title: p.title,
+          date: new Date(p.date)
         })
       }
     })
 
-    await Promise.all(promises)
-
-    return p.sort((a, b) => a.date < b.date ? 1 : -1)
+    return posts.sort((a, b) => a.date < b.date ? 1 : -1)
   }
 
-  /**
+/**
  * return posts in category c, sorted by date
  */
   const inCategory = async function (c: string) {
-    const p: { id: string, title: string, date: Date }[] = []
-    const promises = names.map(async fileName => {
-      const matterResult = await getFrontMatter(fileName)
-      if (c === CATEGORY_ALL ||
-        (matterResult.data['categories'] && matterResult.data['categories'] === c)
-      ) {
-        p.push({
-          id: fileName.replace(/\.mdx?$/, ''),
-          title: matterResult.data['title'],
-          date: matterResult.data['date']
+    const posts: { id: string, title: string, date: Date }[] = []
+
+    metas.forEach(p => {
+      if (c === CATEGORY_ALL || (p.categories && p.categories === c)) {
+        posts.push({
+          id: p.id,
+          title: p.title,
+          date: new Date(p.date)
         })
       }
+
+    })
+    const promises = names.map(async fileName => {
+      const matterResult = await getFrontMatter(fileName)
+      
     })
 
     await Promise.all(promises)
 
-    return p.sort((a, b) => a.date < b.date ? 1 : -1)
+    return posts.sort((a, b) => a.date < b.date ? 1 : -1)
   }
 
   return {
@@ -212,13 +194,13 @@ export function groupByYear(posts: {
       postsTree.get(y)!.push({
         id: p.id,
         title: p.title,
-        date: dateToYMD(p.date)
+        date: dateToYMDMM(p.date)
       })
     } else {
       postsTree.set(y, [{
         id: p.id,
         title: p.title,
-        date: dateToYMD(p.date)
+        date: dateToYMDMM(p.date)
       }])
     }
   })

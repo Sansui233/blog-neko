@@ -1,51 +1,43 @@
 import { Feed, Item } from "feed";
 import fs from 'fs';
+import matter from "gray-matter";
 import path from 'path';
 import readline from 'readline';
 import { siteInfo } from "../../site.config";
-import { dateToYMD } from "../date";
-import { PostMeta } from "../markdown/common";
+import { grayMatter2PostMeta } from "../markdown/frontmatter";
 import { MEMOS_DIR } from "./memos";
 import { POST_DIR, getFrontMatter } from './posts';
+import { PostMeta } from "./posts.common";
 
 /**
  * Get recent 10 post
  */
 async function getPosts(): Promise<Item[]> {
+
+  console.log("[rss.ts] generate post rss")
+
   let fileNames = await fs.promises.readdir(POST_DIR);
   fileNames = fileNames.filter(f => {
-    return f.endsWith(".md") || f.endsWith(".mdx")
+    return f.endsWith(".md")
   })
+
   let allPosts: Item[] = (await Promise.all(
     fileNames.map(async fileName => {
 
-       // TODO parse
       const fileContents = await fs.promises.readFile(path.join(POST_DIR, fileName), 'utf-8')
-      const frontmatter:PostMeta = {
-        title: "Test",
-        description: "",
-        date: "string",
-        tags: [],
-        categories: "category",
-      }
+      const mattered = matter(fileContents)
+      const frontmatter :PostMeta = grayMatter2PostMeta(mattered)
 
       const parsed: PostMeta & {content: string, id: string} = {
         id: fileName.replace(/\.mdx?$/, ''),
-        title: "Test",
-        description: "",
-        date: "string",
-        tags: [],
-        categories: "category",
-        draft: false, 
-        content: "",
+        content: mattered.content,
+        ...frontmatter,
       }
 
       return parsed
 
     })
   )).filter( p => !p.draft).map( p=>{
-    
-    // TODO build result
     return {
       title: p.title,
       id: `${siteInfo.domain}/posts/${p.id}`,
@@ -67,6 +59,7 @@ async function getPosts(): Promise<Item[]> {
   if (memo !== null) {
     allPosts.push(memo)
   }
+
 
   allPosts = allPosts.sort((a, b) => {
     return a.date > b.date ? -1 : 1
@@ -97,8 +90,8 @@ async function getMemo(): Promise<Item | null>{
   // get recent non-draft memo file
   let f = ""
   for (let fileName of files){
-    const fm = getFrontMatter(fileName, MEMOS_DIR)
-    if ('draft' in fm && fm.draft == true){
+    const fm = grayMatter2PostMeta(await getFrontMatter(fileName, MEMOS_DIR))
+    if ('draft' in fm && fm.draft === true){
       continue
     }else{
       f = fileName;
@@ -110,11 +103,16 @@ async function getMemo(): Promise<Item | null>{
     return  null
   }
 
+  
+  console.log("[rss.ts] generate memo rss")
+
   const fileStream = fs.createReadStream(path.join(MEMOS_DIR, f))
   const rl = readline.createInterface({
     input: fileStream,
     crlfDelay: Infinity
   })
+
+  // Get Memo Content
   let count = 0
   let content = ""
   for await (const line of rl) {
@@ -128,22 +126,22 @@ async function getMemo(): Promise<Item | null>{
   rl.close()
   fileStream.close()
 
-  const matterResult = await getFrontMatter(f, MEMOS_DIR)
-  const updateDate = dateToYMD(matterResult.data.date)
-
+  // parse target file
+  const matterResult = grayMatter2PostMeta(await getFrontMatter(f, MEMOS_DIR))
+  
   const res = {
-    title: matterResult.data.title,
-    id: `${siteInfo.domain}/memos?id=${updateDate}`, // 修改时间戳将触发 rss 对于本内容的更新
-    guid: `${siteInfo.domain}/memos?id=${updateDate}`, // 修改时间戳将触发 rss 对于本内容的更新
+    title: matterResult.title,
+    id: `${siteInfo.domain}/memos?id=${matterResult.date}`, // 修改时间戳将触发 rss 对于本内容的更新
+    guid: `${siteInfo.domain}/memos?id=${matterResult.date}`, // 修改时间戳将触发 rss 对于本内容的更新
     link: `${siteInfo.domain}/memos`,
-    date: matterResult.data.date,
-    published: matterResult.data.date,
-    description: matterResult.data.description ? matterResult.data.description : '',
+    date: new Date(matterResult.date),
+    published: new Date(matterResult.date),
+    description: matterResult.description ? matterResult.description : '',
     category: [
       {
-        name: matterResult.data.categories
+        name: matterResult.categories
       }],
-    content: "" // TODO compiled to 
+    content: content // TODO compiled to 
   }
 
   return res

@@ -122,7 +122,7 @@ export class Naive extends Engine {
             const excerpts = indexs.map(i => {
               const start = (i.index - 10) < 0 ? 0 : i.index - 10
               const end = (i.index + 40) > o[f]!.length ? o[f]!.length : i.index + 40
-              // console.log(start, end, o[f].length)
+
               return {
                 word: i.word,
                 excerpt: f !== "title" ? o[f]!.slice(start, end).replaceAll("\n", "") : undefined

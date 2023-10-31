@@ -98,8 +98,8 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   buildIndex(POST_DIR, require("path").join(process.cwd(), 'public', 'data', 'posts'))
   return {
     props: {
-      posts: await posts_db.metas(),
-      categories: Array.from(await posts_db.categories())
+      posts: posts_db.metas,
+      categories: Array.from(posts_db.categories())
     }
   }
 }

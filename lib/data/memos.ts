@@ -76,9 +76,11 @@ export const memo_db = await (async function () {
       } else if (line.startsWith("## ")) {
 
         // 分析完整的 markdown
-        // 更新tags, imgs
+        // 更新tags, imgs, length
         if (memos.length > 0) {
-          const text = memos[memos.length - 1].content
+
+          const lastMemo = memos[memos.length - 1]
+          const text = lastMemo.content
 
           // update tags
           const matches = extractTagsFromMarkdown(text)
@@ -90,14 +92,14 @@ export const memo_db = await (async function () {
               tags.set(t, [currId])
             }
 
-            memos[memos.length - 1].tags.push(t)
+            lastMemo.tags.push(t)
           })
 
           // update imgs
-          if(memos[memos.length - 1].imgurls.length !== 0){
+          if(lastMemo.imgurls.length !== 0){
             imgs.push({
-              memoId: memos[memos.length - 1].id,
-              imgurls: memos[memos.length - 1].imgurls,
+              memoId: lastMemo.id,
+              imgurls: lastMemo.imgurls,
             })
           }
 
