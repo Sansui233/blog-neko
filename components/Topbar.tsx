@@ -34,6 +34,7 @@ export default function Topbar({ placeHolder, scrollElem, hideSearch, ...otherPr
       elem.scrollTop
     }
 
+
     // 不要问我单独写这个，因为tsc抽风，需要if后推断具体类型经常报错。
     const getScrollPos = () => {
       if (scrollElem && scrollElem instanceof HTMLElement) {
@@ -63,11 +64,13 @@ export default function Topbar({ placeHolder, scrollElem, hideSearch, ...otherPr
       }
     };
 
-    const throttled = throttle(onScroll, 80)
-    elem.addEventListener("scroll", throttled, true);
+    const throttled = throttle(onScroll, 100)
+    elem.addEventListener("scroll", throttled);
 
 
-    return () => elem.removeEventListener("scroll", throttled);
+    return () => {
+      elem.removeEventListener("scroll", throttled)
+    };
   }, [scrollElem])
 
   const toggleSidebar = () => {
