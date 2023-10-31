@@ -1,4 +1,5 @@
 import { GetStaticProps } from "next";
+import { MDXRemoteSerializeResult } from "next-mdx-remote";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
@@ -12,7 +13,8 @@ import Topbar from "../components/Topbar";
 import Waline from "../components/Waline";
 import { memo_db, writeMemoJson } from "../lib/data/memos";
 import { MemoInfo, MemoPost, MemoTagArr } from "../lib/data/memos.common";
-import { useMemoProcessor } from "../lib/markdown/processor";
+import { mdxMemoProcessosr } from "../lib/markdown/mdx";
+import { memoRsc } from "../lib/markdown/mdx-rsc";
 import { Naive, Result, SearchObj } from "../lib/search";
 import { siteInfo } from "../site.config";
 import { bottomFadeIn } from '../styles/animations';
@@ -20,11 +22,25 @@ import { paperCard, textShadow } from "../styles/styles";
 
 const MemoCSRAPI = '/data/memos'
 
+/** tsc 日常抽风中，编译不通过 */
+type TMemo = Omit<MemoPost, "content"> & {
+  content: MDXRemoteSerializeResult<Record<string, unknown>, Record<string, unknown>>
+  length: number
+}
+
+// type TMemo = {
+//   id: string;
+//   content: MDXRemoteSerializeResult;
+//   tags: string[];
+//   imgurls: string[];
+//   sourceFile: string;
+//   csrIndex: [number, number]; // page index
+// };
+
 type Props = {
-  memos: MemoPost[] // 首屏 seo data
+  memos: TMemo[]// 首屏 seo data
   info: MemoInfo,
   memotags: MemoTagArr, // tagname, memo list
-
 }
 
 type SearchStatus = {
@@ -58,8 +74,14 @@ export default function Memos({ memos, info, memotags }: Props) {
     fetch(`${MemoCSRAPI}/${page}.json`)
       .then(res => res.json())
       .then((data) => {
-        const posts = data as Array<MemoPost>
-        return posts
+        const posts = (data as Array<MemoPost>).map(async p => {
+          return {
+            ...p,
+            content: await mdxMemoProcessosr(p.content),
+            length: p.content.length,
+          }
+        })
+        return Promise.all(posts)
       })
       .then(nextPosts => {
         setpostsData(nextPosts)
@@ -202,14 +224,14 @@ export default function Memos({ memos, info, memotags }: Props) {
 }
 
 function MemoCard({ memoPost, scrollref }: {
-  memoPost: MemoPost,
+  memoPost: TMemo,
   scrollref: React.RefObject<HTMLDivElement>
 }) {
   const [isCollapse, setfisCollapse] = useState(true)
   const theme = useContext(ThemeContext)
   const ref = React.useRef<HTMLDivElement>(null)
 
-  const shouldCollapse = memoPost.content.length > 200 ? true : false
+  const shouldCollapse = memoPost.length > 200 ? true : false
 
   function handleExpand(e: React.MouseEvent<HTMLDivElement>) {
     // Scroll back
@@ -227,10 +249,6 @@ function MemoCard({ memoPost, scrollref }: {
     setfisCollapse(!isCollapse)
   }
 
-  // 渲染顺序控制，compile 完毕后再加载
-  const renderedMemoCard = useMemoProcessor(memoPost.content)
-  if (!renderedMemoCard) return
-
   return (
     <MemoCardStyle $isCollapse={shouldCollapse === false ? false : isCollapse} ref={ref}>
       <div className="content">
@@ -241,12 +259,12 @@ function MemoCard({ memoPost, scrollref }: {
             <div>{siteInfo.author}</div>
             <div className="date">
               {memoPost.id}&nbsp;&nbsp;
-              <span className="word-count">{memoPost.content.length}&nbsp;字</span>
+              <span className="word-count">{memoPost.length}&nbsp;字</span>
             </div>
           </div>
         </MemoMeta>
         <MemoMarkdown $bottomSpace={shouldCollapse}>
-          {renderedMemoCard}
+          {memoRsc(memoPost.content)}
         </MemoMarkdown>
         <CardMask $isCollapse={isCollapse} $isShown={shouldCollapse}>
           <div onClick={handleExpand} className="rd-more">
@@ -263,9 +281,18 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   // 生成 CSR 所需 JSON，SSR 需独立出逻辑
   writeMemoJson()
 
+  const memos: TMemo[] = await Promise.all(memo_db.atPage(0).map(async m => {
+    const content = await mdxMemoProcessosr(m.content)
+    return {
+      ...m,
+      content,
+      length: m.content.length,
+    }
+  }))
+
   return {
     props: {
-      memos: memo_db.atPage(0), // 首屏 SEO 数据
+      memos, // 首屏 SEO 数据
       info: memo_db.info,
       memotags: Array.from(memo_db.tags),
     }
@@ -284,7 +311,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
  */
 async function initSearch(
   setEngine: React.Dispatch<React.SetStateAction<Naive | undefined>>,
-  setResultFn: React.Dispatch<React.SetStateAction<MemoPost[]>>,
+  setResultFn: React.Dispatch<React.SetStateAction<TMemo[]>>,
   setStatus: React.Dispatch<React.SetStateAction<SearchStatus>>,
   maxPage: number, // max csrpage
   pagelimit = 5, // new range limit
@@ -320,9 +347,18 @@ async function initSearch(
         return true
       }
       return false
+    }).map(async memo => {
+      return {
+        ...memo,
+        content: await mdxMemoProcessosr(memo.content),
+        length: memo.content.length
+      }
     })
 
-    setResultFn(filtered)
+    Promise.all(filtered).then(
+      res => setResultFn(res)
+    )
+
   }
 
   newEngine = new Naive({

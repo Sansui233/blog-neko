@@ -1,6 +1,7 @@
 import { readFile } from "fs/promises"
 import matter from "gray-matter"
 import { GetStaticPaths, GetStaticProps } from "next"
+import { MDXRemoteSerializeResult } from "next-mdx-remote"
 import Head from "next/head"
 import Link from "next/link"
 import { useRouter } from "next/router"
@@ -15,13 +16,14 @@ import Waline from "../../components/Waline"
 import { POST_DIR, posts_db } from "../../lib/data/posts"
 import { PostMeta } from '../../lib/data/posts.common'
 import { grayMatter2PostMeta } from "../../lib/markdown/frontmatter"
-import { usePostProcessor } from '../../lib/markdown/processor'
+import { mdxPostProcessosr } from "../../lib/markdown/mdx"
+import { postRsc } from "../../lib/markdown/mdx-rsc"
 import { bottomFadeIn, fadeInRight } from "../../styles/animations"
 
 type Props = {
   meta: PostMeta,
   excerpt: string,
-  content: string, // TODO SSR?
+  mdxCompiled: MDXRemoteSerializeResult,
   nextPost?: {
     title: string,
     link: string,
@@ -39,7 +41,7 @@ type PropHeading = {
   id: string
 }
 
-export default function Post({ meta, content, nextPost, prevPost, excerpt, headings }: Props) {
+export default function Post({ meta, mdxCompiled, nextPost, prevPost, excerpt, headings }: Props) {
 
   const router = useRouter()
   const theme = useContext(ThemeContext)
@@ -118,7 +120,7 @@ export default function Post({ meta, content, nextPost, prevPost, excerpt, headi
               </div>
             </PostTitle>
             <MarkdownStyle>
-              {usePostProcessor(content)}
+              {postRsc(mdxCompiled)}
             </MarkdownStyle>
             <div style={{ textAlign: 'right', opacity: .5, fontSize: '0.875rem', margin: "4rem 0 2rem 0" }}>
               更新于 {meta.date}
@@ -169,18 +171,7 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
   let excerpt = mattered.content.replace(/(\r\n|\n|\r)/g, ' ').substring(0, 144);
   const meta = grayMatter2PostMeta(mattered)
 
-  // Process Content 
-  let headings: any[] = [] // TODO heaing extract on ssr
 
-  // normalize heading rank
-  if (headings.length > 0) {
-    const minRank = Math.min(...headings.map(heading => heading.rank));
-    const offset = minRank - 1;
-    headings = headings.map(heading => ({
-      ...heading,
-      rank: heading.rank - offset
-    }));
-  }
 
   // Get next and prev Post
   const allPosts = posts_db.metas
@@ -194,10 +185,12 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
     link: `/posts/${allPosts[i + 1].id!}`
   }
 
+  const { compiledSrc, headings } = await mdxPostProcessosr(mattered.content)
+
   return {
     props: {
       meta,
-      content: mattered.content,
+      mdxCompiled: compiledSrc,
       excerpt,
       prevPost: prevPost,
       nextPost: nextPost,
