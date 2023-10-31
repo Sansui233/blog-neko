@@ -1,16 +1,17 @@
+import { Element, ElementContent, Root } from "hast"
 import { visit } from "unist-util-visit"
 
 export const rehypeTag = () => {
-  return (tree) => {
+  return (tree: Root) => {
     visit(tree, "element", function (node) {
-      // see HTML Element in https://github.com/DefinitelyTyped/DefinitelyTyped/blob/9b98e4d8d2b09b305e2eb3885b4e46a1ace7ae33/types/hast/index.d.ts
+      // see HTML Element in https://github.com/syntax-tree/hast#nodes
       // console.log(node)
       if (node.tagName === "h1") {
         node.tagName = "p" // 替换 h1 为 p 标签，等于禁用 h1
       }
 
       if (node.tagName === "p") {
-        const newChildren = []
+        const newChildren:ElementContent[] = []
 
         node.children.forEach(child => {
           if (child.type === "text") {
@@ -22,7 +23,7 @@ export const rehypeTag = () => {
                 if (i % 2 === 0) { // 偶数为非标签内容
                   newChildren.push({ type: 'text', value: parts[i] });
                 } else {
-                  const spanNode = {
+                  const spanNode: Element = {
                     type: 'element',
                     tagName: 'span',
                     properties: { className: 'tag' },

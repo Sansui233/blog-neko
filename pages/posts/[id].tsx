@@ -15,7 +15,7 @@ import Waline from "../../components/Waline"
 import { POST_DIR, posts_db } from "../../lib/data/posts"
 import { PostMeta } from '../../lib/data/posts.common'
 import { grayMatter2PostMeta } from "../../lib/markdown/frontmatter"
-import { useProcessor } from '../../lib/markdown/processor'
+import { usePostProcessor } from '../../lib/markdown/processor'
 import { bottomFadeIn, fadeInRight } from "../../styles/animations"
 
 type Props = {
@@ -118,7 +118,7 @@ export default function Post({ meta, content, nextPost, prevPost, excerpt, headi
               </div>
             </PostTitle>
             <MarkdownStyle>
-              {useProcessor(content)}
+              {usePostProcessor(content)}
             </MarkdownStyle>
             <div style={{ textAlign: 'right', opacity: .5, fontSize: '0.875rem', margin: "4rem 0 2rem 0" }}>
               更新于 {meta.date}

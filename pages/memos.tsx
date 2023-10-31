@@ -12,7 +12,7 @@ import Topbar from "../components/Topbar";
 import Waline from "../components/Waline";
 import { memo_db, writeMemoJson } from "../lib/data/memos";
 import { MemoInfo, MemoPost, MemoTagArr } from "../lib/data/memos.common";
-import { useProcessor } from "../lib/markdown/processor";
+import { useMemoProcessor } from "../lib/markdown/processor";
 import { Naive, Result, SearchObj } from "../lib/search";
 import { siteInfo } from "../site.config";
 import { bottomFadeIn } from '../styles/animations';
@@ -243,7 +243,7 @@ function MemoCard({ memoPost, scrollref }: {
           </div>
         </MemoMeta>
         <MemoMarkdown $bottomSpace={shouldCollapse}>
-          {useProcessor(memoPost.content)}
+          {useMemoProcessor(memoPost.content)}
         </MemoMarkdown>
         <CardMask $isCollapse={isCollapse} $isShown={shouldCollapse}>
           <div onClick={handleExpand} className="rd-more">
