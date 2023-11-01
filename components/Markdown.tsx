@@ -121,7 +121,7 @@ export const MarkdownStyle = styled.div`
   
   .hljs-punctuation,
   .hljs-attr {
-    color: #2a2c2d;
+    color: rgb(89 161 197);
   }
   
   .hljs-selector-tag,

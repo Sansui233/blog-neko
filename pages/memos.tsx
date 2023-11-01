@@ -22,20 +22,10 @@ import { paperCard, textShadow } from "../styles/styles";
 
 const MemoCSRAPI = '/data/memos'
 
-/** tsc 日常抽风中，编译不通过 */
 type TMemo = Omit<MemoPost, "content"> & {
   content: MDXRemoteSerializeResult<Record<string, unknown>, Record<string, unknown>>
   length: number
 }
-
-// type TMemo = {
-//   id: string;
-//   content: MDXRemoteSerializeResult;
-//   tags: string[];
-//   imgurls: string[];
-//   sourceFile: string;
-//   csrIndex: [number, number]; // page index
-// };
 
 type Props = {
   memos: TMemo[]// 首屏 seo data
@@ -175,6 +165,8 @@ export default function Memos({ memos, info, memotags }: Props) {
                 } : undefined}
                 maxPage={info.pages.toString()}
                 elemProps={{ style: { padding: "0 1rem" } }}
+                isScrollToTop={true}
+                scrollRef={scrollRef}
               />
               <Waline style={{ padding: "0 0.5rem" }} />
               <Footer />

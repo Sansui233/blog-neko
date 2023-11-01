@@ -11,7 +11,7 @@ import { POST_DIR, getFrontMatter } from './posts';
 import { PostMeta } from "./posts.common";
 
 /**
- * Get recent 10 post
+ * get recent 10 posts
  */
 async function getPosts(): Promise<Item[]> {
 
@@ -96,7 +96,7 @@ async function getMemo(): Promise<Item | null> {
     return a < b ? 1 : -1 // Desc for latest first
   })
 
-  // get recent non-draft memo file
+  // get recent non-draft memo files
   let f = ""
   for (let fileName of files) {
     const fm = grayMatter2PostMeta(await getFrontMatter(fileName, MEMOS_DIR))
@@ -121,7 +121,7 @@ async function getMemo(): Promise<Item | null> {
     crlfDelay: Infinity
   })
 
-  // Get Memo Content
+  // get memo content
   let count = 0
   let content = ""
   for await (const line of rl) {
@@ -135,7 +135,7 @@ async function getMemo(): Promise<Item | null> {
   rl.close()
   fileStream.close()
 
-  // parse target file frontMatter
+  // parse target file front matter
   const matterResult = grayMatter2PostMeta(await getFrontMatter(f, MEMOS_DIR))
 
   // convert markdown to html

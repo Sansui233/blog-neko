@@ -88,6 +88,6 @@ export async function mdxRssProcessor(mdxsrc: string, type: "md" | "mdx") {
     )
 
   }else {
-    return "This articlei is written in mdx format, which is not compatible with rss. please visit the original site."
+    return "This article is written in mdx format, which is not compatible with rss.Please visit the original site."
   }
 }

@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import React from 'react'
+import React, { useCallback } from 'react'
 import styled from 'styled-components'
 
 type Props = {
@@ -14,14 +14,24 @@ type Props = {
   currTitle?: string,
   maxPage?: string,
   elemProps?: React.HTMLProps<HTMLDivElement>,
+  isScrollToTop?: boolean // scroll to top when click next page
+  scrollRef?: React.RefObject<HTMLDivElement>
 }
 
 const Pagination: React.FC<Props> = (props) => {
+  const scroll = useCallback(() => {
+    if (!props.isScrollToTop) return
+    if (props.scrollRef?.current) {
+      props.scrollRef.current.scrollTo({ top: 0 })
+    } else {
+      globalThis.scrollTo({ top: 0 })
+    }
+  }, [props.isScrollToTop, props.scrollRef])
   return (
     <Layout {...props.elemProps}>
       {props.prevPage &&
         <div style={{ flex: "1 1 auto" }}>
-          <PageBtn href={props.prevPage.link} passHref={true} style={{ justifyContent: "flex-start" }}>
+          <PageBtn href={props.prevPage.link} passHref={true} style={{ justifyContent: "flex-start" }} onClick={scroll}>
             <span><i className="icon-arrow-left2" />&nbsp;{props.prevPage.title}</span>
           </PageBtn>
         </div>
@@ -31,7 +41,7 @@ const Pagination: React.FC<Props> = (props) => {
 
       {props.nextPage &&
         <div style={{ flex: "1 1 auto" }}>
-          <PageBtn href={props.nextPage.link} passHref={true} style={{ justifyContent: "flex-end" }}>
+          <PageBtn href={props.nextPage.link} passHref={true} style={{ justifyContent: "flex-end" }} onClick={scroll}>
             <span>{props.nextPage.title}&nbsp;<i className="icon-arrow-right2" /></span>
           </PageBtn>
         </div>
