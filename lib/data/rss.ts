@@ -5,6 +5,7 @@ import path from 'path';
 import readline from 'readline';
 import { siteInfo } from "../../site.config";
 import { grayMatter2PostMeta } from "../markdown/frontmatter";
+import { mdxRssProcessor } from "../markdown/mdx";
 import { MEMOS_DIR } from "./memos";
 import { POST_DIR, getFrontMatter } from './posts';
 import { PostMeta } from "./posts.common";
@@ -18,42 +19,50 @@ async function getPosts(): Promise<Item[]> {
 
   let fileNames = await fs.promises.readdir(POST_DIR);
   fileNames = fileNames.filter(f => {
-    return f.endsWith(".md")
+    return f.endsWith(".md") // TODO MDX support
   })
 
-  let allPosts: Item[] = (await Promise.all(
-    fileNames.map(async fileName => {
+  const readPromises = fileNames.map(async fileName => {
 
-      const fileContents = await fs.promises.readFile(path.join(POST_DIR, fileName), 'utf-8')
-      const mattered = matter(fileContents)
-      const frontmatter :PostMeta = grayMatter2PostMeta(mattered)
+    const fileContents = await fs.promises.readFile(path.join(POST_DIR, fileName), 'utf-8')
+    const mattered = matter(fileContents)
+    const frontmatter: PostMeta = grayMatter2PostMeta(mattered)
 
-      const parsed: PostMeta & {content: string, id: string} = {
-        id: fileName.replace(/\.mdx?$/, ''),
-        content: mattered.content,
-        ...frontmatter,
-      }
-
-      return parsed
-
-    })
-  )).filter( p => !p.draft).map( p=>{
-    return {
-      title: p.title,
-      id: `${siteInfo.domain}/posts/${p.id}`,
-      guid: `${siteInfo.domain}/posts/${p.id}`,
-      link: `${siteInfo.domain}/posts/${p.id}`,
-      published: new Date(p.date),
-      date: new Date(p.date),
-      description: p.description ? p.description : '',
-      category: [
-        {
-          name: p.categories,
-          domain: `${siteInfo.domain}/categories/${p.categories}`
-        }],
-      content: p.content, // TODO 转换为 html 后的 Content
+    const parsed: PostMeta & { content: string, id: string, type: "md" | "mdx" } = {
+      id: fileName.replace(/\.mdx?$/, ''),
+      content: mattered.content,
+      type: "md", // TODO MDX support
+      ...frontmatter,
     }
+
+    return parsed
+
   })
+
+  const compilePromises = (await Promise.all(readPromises))
+    .filter(p => !p.draft)
+    .map(async p => {
+
+      const htmlcontent = await (mdxRssProcessor(p.content, p.type))
+
+      return {
+        title: p.title,
+        id: `${siteInfo.domain}/posts/${p.id}`,
+        guid: `${siteInfo.domain}/posts/${p.id}`,
+        link: `${siteInfo.domain}/posts/${p.id}`,
+        published: new Date(p.date),
+        date: new Date(p.date),
+        description: p.description ? p.description : '',
+        category: [
+          {
+            name: p.categories,
+            domain: `${siteInfo.domain}/categories/${p.categories}`
+          }],
+        content: htmlcontent,
+      }
+    })
+
+  let allPosts: Item[] = await Promise.all(compilePromises)
 
   const memo = await getMemo()
   if (memo !== null) {
@@ -67,10 +76,10 @@ async function getPosts(): Promise<Item[]> {
 
   // Filter drafts
   let res = []
-  for(let p of allPosts){
-    if('draft' in p && p.draft === true){
+  for (let p of allPosts) {
+    if ('draft' in p && p.draft === true) {
       continue
-    }else {
+    } else {
       res.push(p)
     }
   }
@@ -80,7 +89,7 @@ async function getPosts(): Promise<Item[]> {
 }
 
 // 最新（名称最大）的 memo 文件中，最近 6 条生成 rss
-async function getMemo(): Promise<Item | null>{
+async function getMemo(): Promise<Item | null> {
   const files = (await fs.promises.readdir(MEMOS_DIR)).filter(f => {
     return f.endsWith(".md")
   }).sort((a, b) => {
@@ -89,21 +98,21 @@ async function getMemo(): Promise<Item | null>{
 
   // get recent non-draft memo file
   let f = ""
-  for (let fileName of files){
+  for (let fileName of files) {
     const fm = grayMatter2PostMeta(await getFrontMatter(fileName, MEMOS_DIR))
-    if ('draft' in fm && fm.draft === true){
+    if ('draft' in fm && fm.draft === true) {
       continue
-    }else{
+    } else {
       f = fileName;
       break;
     }
   }
 
-  if(f === "") {
-    return  null
+  if (f === "") {
+    return null
   }
 
-  
+
   console.log("[rss.ts] generate memo rss")
 
   const fileStream = fs.createReadStream(path.join(MEMOS_DIR, f))
@@ -126,9 +135,12 @@ async function getMemo(): Promise<Item | null>{
   rl.close()
   fileStream.close()
 
-  // parse target file
+  // parse target file frontMatter
   const matterResult = grayMatter2PostMeta(await getFrontMatter(f, MEMOS_DIR))
-  
+
+  // convert markdown to html
+  const htmlcontent = await (mdxRssProcessor(content, "md"))
+
   const res = {
     title: matterResult.title,
     id: `${siteInfo.domain}/memos?id=${matterResult.date}`, // 修改时间戳将触发 rss 对于本内容的更新
@@ -141,7 +153,7 @@ async function getMemo(): Promise<Item | null>{
       {
         name: matterResult.categories
       }],
-    content: content // TODO compiled to 
+    content: htmlcontent
   }
 
   return res

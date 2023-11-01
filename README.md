@@ -7,7 +7,7 @@
 ## 特点
 
 - 传统静态博客版块，与 hexo 兼容
-- 微博客版块，告别长文负担
+- 静态的微博客版块，告别长文负担
 - 支持自动亮暗模式
 - 支持站内搜索
 - 支持rss订阅
@@ -97,14 +97,15 @@ keywords: Markdown, 测试
 - `draft` 是否为草稿，目前不出现在网页，用于控制是否通过 rss 发布。
 - `keywords` 关键词，目前不出现在网页，用于 seo。
 
-### 4. 微博客文章(说说)
+### 4. 微博客文章(memo)
 
 特性:
 
+- 无后端，全静态的本地 markdown
 - 支持正文内的标签解析（类似推特）
 - 收集图片信息单独展示
 
-放在 `source/memos/` 目录的所有 markdown 文件为博客文章。具体见 [source/memos](https://github.com/Sansui233/blog/tree/master/source/posts) 中的示例。
+放在 `source/memos/` 目录的所有 markdown 文件为 memo 文章。具体见 [source/memos](https://github.com/Sansui233/blog/tree/master/source/memos) 中的示例。
 
 
 - 文章中的每个二级标题生成一个memo。二级标题名需需要保证唯一性。请尽量使用时间戳，如`2023-08-30 02:54:34`。
@@ -115,7 +116,7 @@ keywords: Markdown, 测试
 
 在 `pages/about.tsx` 手动写的内容。这是唯一的作者页面，请尝试大胆改造吧。
 
-（由于页面此格式不可复用，因此没有用 markdown 生成）
+（由于此页面格式不可复用，因此没有用 markdown 生成）
 
 ## 构建博客
 
@@ -127,7 +128,7 @@ $ npm start # 启动服务
 
 ## 部署
 
-参考 deploy.sh，上传 out 文件夹的内容到 gitpages。需要修改脚本中的目标文件夹和 git push 的分支名。
+参考 [deploy.sh](https://github.com/Sansui233/next-blog-paper/blob/master/deploy.sh)，上传 out 文件夹的内容到 gitpages。需要修改脚本中的目标文件夹和 git push 的分支名。
 
 我个人使用的是 github pages，同时 vercel 拉取 github 的分支。
 

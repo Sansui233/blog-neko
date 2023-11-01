@@ -1,13 +1,16 @@
+import { MDXRemote } from 'next-mdx-remote'
 import { serialize } from 'next-mdx-remote/serialize'
+import React from 'react'
+import { renderToStaticMarkup } from 'react-dom/server'
 import rehypeHighlight from 'rehype-highlight'
 import remarkGfm from 'remark-gfm'
 import { rehypeTag } from '../rehype/rehype-tag'
 import { rehypeExtractHeadings, rehypeHeadingsAddId } from '../rehype/rehype-toc'
 
 export async function mdxPostProcessosr(mdxsrc: string) {
-  // Process Content 
-  let headings: any[] = [] // TODO heaing extract on ssr
 
+  // process content 
+  let headings: any[] = []
 
   const compiledSrc = await serialize(mdxsrc, {
     mdxOptions: {
@@ -22,7 +25,6 @@ export async function mdxPostProcessosr(mdxsrc: string) {
       ],
     }
   })
-
 
   // normalize heading rank
   if (headings.length > 0) {
@@ -40,7 +42,9 @@ export async function mdxPostProcessosr(mdxsrc: string) {
 export async function mdxMemoProcessosr(mdxsrc: string) {
   const compiledSrc = await serialize(mdxsrc, {
     mdxOptions: {
-      development: process.env.NODE_ENV === 'development', // 需指定为 react server component
+      // this function fails when it's called in useEffect in memo.tsx
+      // see https://github.com/hashicorp/next-mdx-remote/issues/350
+      development: process.env.NODE_ENV === 'development',
       remarkPlugins: [
         remarkGfm,
       ],
@@ -53,4 +57,37 @@ export async function mdxMemoProcessosr(mdxsrc: string) {
   })
 
   return compiledSrc
+}
+
+/**
+ * returns html string
+ */
+export async function mdxRssProcessor(mdxsrc: string, type: "md" | "mdx") {
+
+  if (type === "md") {
+    const compiledSrc = await serialize(mdxsrc, {
+      mdxOptions: {
+        development: process.env.NODE_ENV === 'development',
+        format: "md",
+        remarkPlugins: [
+          remarkGfm,
+        ],
+        rehypePlugins: [
+          // @ts-expect-error: the react types are missing.
+          rehypeHighlight
+        ],
+      }
+    })
+
+    return renderToStaticMarkup(
+      React.createElement(MDXRemote, {
+        compiledSource: compiledSrc.compiledSource,
+        scope: null,
+        frontmatter: null
+      })
+    )
+
+  }else {
+    return "This articlei is written in mdx format, which is not compatible with rss. please visit the original site."
+  }
 }
