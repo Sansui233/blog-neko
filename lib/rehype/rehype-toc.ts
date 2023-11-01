@@ -1,5 +1,3 @@
-// Code from https://github.com/hashicorp/next-mdx-remote/issues/231
-
 import { Root } from "hast";
 import { visit } from "unist-util-visit";
 import { headingRank, toString } from "./hast-util";
