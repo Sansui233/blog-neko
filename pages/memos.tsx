@@ -208,7 +208,6 @@ export default function Memos({ memos, info, memotags }: Props) {
               </TagCard>
             </SiderCol>
           </TwoColLayout>
-          <Footer />
         </OneColLayout>
       </main>
     </>
@@ -381,7 +380,6 @@ const OneColLayout = styled.div`
 
 /** Styles **/
 const MemoCol = styled.div`
-  margin-bottom: 2rem;
   max-width: 780px;
   padding: 86px 16px 48px 16px;
   align-self: flex-end;
