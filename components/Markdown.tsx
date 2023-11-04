@@ -6,15 +6,14 @@ import ImgModel from "./ImgModel";
 
 export function MDImg(props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>) {
   const [isModel, setisModel] = useState(false)
+  console.log("%% img")
 
   return <>
-    {isModel
-      ? <ImgModel imgProps={props} isModel={isModel} setModel={setisModel} />
-      : undefined}
+    <ImgModel imgProps={props} isModel={isModel} setModel={setisModel} />
     {/*eslint-disable-next-line @next/next/no-img-element*/}{/* eslint-disable-next-line jsx-a11y/alt-text */}
-    <img loading="lazy" {...props} onClick={() => setisModel(true)} style={{
+    <img loading="lazy" onClick={() => setisModel(true)} style={{
       cursor: "zoom-in"
-    }}></img>
+    }} {...props} />
   </>
 }
 

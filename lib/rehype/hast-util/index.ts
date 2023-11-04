@@ -6,10 +6,10 @@ import { Element, Node, Root, Text } from "hast";
 export function toString(node: Node): string{
   if(node.type === "text") return (node as Text).value
   if(node.type === "element"){
-    return (node as Element).children.map(child => toString(child)).join()
+    return (node as Element).children.map(child => toString(child)).join("")
   }
   if(node.type === "root"){
-    return (node as Root).children.map(child => toString(child)).join()
+    return (node as Root).children.map(child => toString(child)).join("")
   }
   return ""
 }

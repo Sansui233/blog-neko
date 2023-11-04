@@ -54,12 +54,16 @@ export const TwoColLayout: React.FC<Props & {
   let sider = list.slice(safeSep)
 
   return <TwoContainer {...otherProps}>
-    <TwoLeft>
-      {mainCol}
-    </TwoLeft>
-    <TwoRight>
-      {sider}
-    </TwoRight>
+
+    {siderLocation === "left"
+      ? <Sider>{sider}</Sider>
+      : <Main>{mainCol}</Main>}
+
+
+    {siderLocation === "right"
+      ? <Sider>{sider}</Sider>
+      : <Main>{mainCol}</Main>}
+
   </TwoContainer>
 }
 
@@ -77,7 +81,7 @@ const TwoContainer = styled.div`
 
 `
 
-const TwoLeft = styled.div`
+const Main = styled.div`
   flex: 3 1 0;
   display: flex;
   flex-direction: column;
@@ -87,7 +91,7 @@ const TwoLeft = styled.div`
 
 `
 
-const TwoRight = styled.div`
+const Sider = styled.div`
   flex: 1 1 0;
   display: flex;
   flex-direction: column;

@@ -10,7 +10,11 @@ import { rehypeExtractHeadings, rehypeHeadingsAddId } from '../rehype/rehype-toc
 
 // returns mdx function string
 export async function compileMdxPost(src: string) {
-  let headings: any[] = []
+  let headings: {
+    title: string;
+    rank: number;
+    id: string;
+}[] = []
 
   const code = String(await compile(src, {
     outputFormat: 'function-body',
@@ -24,17 +28,32 @@ export async function compileMdxPost(src: string) {
     ]
   }))
   // normalize heading rank
-  if (headings.length > 0) {
-    const minRank = Math.min(...headings.map(heading => heading.rank));
-    const offset = minRank - 1;
-    headings = headings.map(heading => ({
-      ...heading,
-      rank: heading.rank - offset
-    }));
+
+  function normalizeHeading(headings: {
+    title: string;
+    rank: number;
+    id: string;
+  }[]){
+    if (headings.length > 0) {
+      const minRank = Math.min(...headings.map(heading => heading.rank));
+      const offset = minRank - 1;
+      return headings.map(heading => ({
+        ...heading,
+        rank: heading.rank - offset
+      }));
+    }else {
+      return headings
+    }
   }
 
-  return { code, headings }
+  
+  return {
+    code,
+    headings: normalizeHeading(headings)
+  }
 }
+
+
 
 export async function compileMdxMemo(src: string) {
 
@@ -81,6 +100,6 @@ export async function compileMdxRss(src: string, type: "md" | "mdx") {
     )
 
   }else {
-    return "This article is written in mdx format, which is not compatible with rss.Please visit the original site."
+    return "This article is written in mdx format, which is not compatible with rss. Please visit the original site."
   }
 }

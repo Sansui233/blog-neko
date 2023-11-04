@@ -14,7 +14,7 @@ type Props = React.HTMLProps<HTMLElement> & {
   hideSearch?: boolean;
 }
 
-export default function Topbar({ placeHolder, scrollElem, hideSearch, ...otherProps }: Props) {
+export default function Topbar({ placeHolder = true, scrollElem, hideSearch, ...otherProps }: Props) {
   const theme = useContext(ThemeContext)
   const [isHidden, setisHidden] = useState(false)
   const [isSidebar, setIsSidebar] = useState(false)
@@ -102,7 +102,7 @@ export default function Topbar({ placeHolder, scrollElem, hideSearch, ...otherPr
           <ol className={router.pathname === "/about" ? 'current' : ''}><Link href="/about">About</Link></ol>
         </Nav>
         <More >
-          <SearchIcon ref={searchIcon} onClick={(e) => { clickSearch(e) }} $isSearch={isSearch} style={{ display: hideSearch ? "none" : "unset" }}>
+          <SearchIcon ref={searchIcon} onClick={(e) => { hideSearch ? null : clickSearch(e) }} $isSearch={isSearch} $hideSearch={hideSearch}>
             <i className='icon-search' style={{ fontSize: "1.725rem" }} />
           </SearchIcon>
           <div onClick={toggleSidebar} style={{ marginRight: "20px", width: "22px" }}>
@@ -117,7 +117,8 @@ export default function Topbar({ placeHolder, scrollElem, hideSearch, ...otherPr
   );
 }
 
-const SearchIcon = styled.div<{ $isSearch: boolean }>`
+const SearchIcon = styled.div<{ $isSearch: boolean, $hideSearch: boolean | undefined }>`
+  ${p => p.$hideSearch ? "opacity:0;" : null}
   ${p => p.$isSearch ? "color:" + p.theme.colors.gold + ";" : ""}
   transform: translateY(0.145rem);
   transition: color 0.3s ease;
@@ -188,7 +189,6 @@ const Avatar = styled(LeftRight)`
 const More = styled(LeftRight)`
   text-align: right;
   font-size: 0.875em;
-  cursor: pointer;
   
   & > div {
     display: inline-block;

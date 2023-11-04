@@ -1,4 +1,4 @@
-import { DetailedHTMLProps, ImgHTMLAttributes } from "react"
+import { DetailedHTMLProps, ImgHTMLAttributes, useEffect } from "react"
 import { styled } from "styled-components"
 
 type Props = {
@@ -8,11 +8,22 @@ type Props = {
 }
 
 const ImgModel = ({ imgProps, isModel, setModel }: Props) => {
-  return (
-    <MaskedContainer $isOpen={isModel} onClick={e => setModel(false)}>
+
+  // Local Scroll
+  useEffect(() => {
+    if (isModel) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'auto'
+    }
+  }, [isModel])
+
+  return (isModel
+    ? <MaskedContainer $isOpen={isModel} onClick={e => setModel(false)}>
       {/*eslint-disable-next-line @next/next/no-img-element*/} {/* eslint-disable-next-line jsx-a11y/alt-text */}
       <img loading="lazy" className="model" {...imgProps} /> {/* add class model for StyledComponents render order */}
     </MaskedContainer>
+    : undefined
   )
 }
 
@@ -30,6 +41,8 @@ const MaskedContainer = styled.div< { $isOpen: boolean }>`
   cursor: zoom-out;
 
   & img.model {
+    max-width: 100%;
+    max-height: 100%;
     display:block;
   }
 

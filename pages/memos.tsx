@@ -243,10 +243,11 @@ function MemoCard({ memoPost, scrollref }: {
   return (
     <MemoCardStyle $isCollapse={shouldCollapse === false ? false : isCollapse} ref={ref}>
       <div className="content">
+
         <MemoMeta>
           {/*eslint-disable-next-line @next/next/no-img-element*/}
-          <img src={theme!.assets.favico} alt={siteInfo.author} />
-          <div>
+          <img className="avatar" src={theme!.assets.favico} alt={siteInfo.author} />
+          <div className="meta">
             <div>{siteInfo.author}</div>
             <div className="date">
               {memoPost.id}&nbsp;&nbsp;
@@ -254,9 +255,11 @@ function MemoCard({ memoPost, scrollref }: {
             </div>
           </div>
         </MemoMeta>
+
         <MemoMarkdown $bottomSpace={shouldCollapse}>
           {useMdxMemo(memoPost.content)}
         </MemoMarkdown>
+
         <CardMask $isCollapse={isCollapse} $isShown={shouldCollapse}>
           <div onClick={handleExpand} className="rd-more">
             <span>{isCollapse ? "SHOW MORE" : "Hide"}</span>
@@ -380,7 +383,7 @@ const OneColLayout = styled.div`
 
 /** Styles **/
 const MemoCol = styled.div`
-  max-width: 780px;
+  max-width: 700px;
   padding: 86px 16px 48px 16px;
   align-self: flex-end;
   overflow-y: auto;
@@ -457,14 +460,14 @@ const MemoCardStyle = styled.section<{
 const MemoMeta = styled.div`
     display: flex;
 
-    & > img {
+    & > .avatar {
       width: 3rem;
       height: 3rem;
       border-radius: 50%;
       border: 1px solid ${p => p.theme.colors.uiLineGray};
     }
 
-    & > div{
+    & .meta{
       margin-left: 0.5rem;
       display: flex;
       flex-direction: column;

@@ -1,9 +1,7 @@
 import { runSync } from '@mdx-js/mdx'
-import { MDXProvider } from '@mdx-js/react'
 import { Fragment } from 'react'
-// import * as dev from 'react/jsx-dev-runtime'
 import * as prod from 'react/jsx-runtime'
-import { MDImg } from './Markdown'
+import { MDImg } from './markdown'
 
 /**
  * @param code function string
@@ -23,25 +21,14 @@ function convertBack(code: string) {
 
 export function useMdxPost(code: string) {
   const mdxModule = convertBack(code)
-  return <MDXProvider components={{ img: MDImg }}>
-    <mdxModule.default />
-  </MDXProvider>
+  const components = {
+    img: MDImg
+  }
+
+  return <mdxModule.default components={components} />
 }
 
 export function useMdxMemo(code: string) {
   const mdxModule = convertBack(code)
   return <mdxModule.default />
 }
-
-// white on first load. not friendly to seo
-// function useCsr(mdxModule: Promise<MDXModule>) {
-//   const [module, setmodule] = useState<MDXModule | undefined>()
-//   useEffect(() => {
-//     ; (async function () {
-//       setmodule(await mdxModule)
-//     })()
-//   }, [mdxModule])
-
-//   return module ? <module.default /> : Fragment
-
-// }

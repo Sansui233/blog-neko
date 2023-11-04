@@ -96,7 +96,8 @@ export default function Post({ meta, mdxcode, nextPost, prevPost, excerpt, headi
     <LayoutContainer>
       <div style={{ display: "flex", margin: "auto" }}>
         <ColumnLeft>
-          <PostLayout >
+          <div className="blank-spacer-left" />
+          <PostLayout>
             <PostTitle>
               <h1>{meta.title}</h1>
               <div style={{ display: "flex" }}>
@@ -130,6 +131,7 @@ export default function Post({ meta, mdxcode, nextPost, prevPost, excerpt, headi
             />
             <Waline />
           </PostLayout>
+          <div className="blank-spacer-right" />
         </ColumnLeft>
         <ColumnRight>
           <nav>
@@ -199,7 +201,7 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
 }
 
 const PostLayout = styled(OneColLayout)`
-  max-width: 800px;
+  max-width: 700px;
   margin-top: 72px;
   animation: ${bottomFadeIn} 1s ease;
 
@@ -210,6 +212,19 @@ const PostLayout = styled(OneColLayout)`
 const ColumnLeft = styled.div`
   width: 0;
   flex: 2 1 0;
+  display: flex;
+
+  & .blank-spacer-left {
+    @media screen and (min-width: 1080px) {
+      flex: 2 1 0;
+    }
+  }
+
+  & .blank-spacer-right {
+    @media screen and (min-width: 780px) {
+      flex: 1 1 0;
+    }
+  }
 `
 
 const ColumnRight = styled.div`
