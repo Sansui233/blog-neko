@@ -62,16 +62,15 @@ export default function Memos({ memos, info, memotags }: Props) {
     if (!engine) {
       // Init Search Engine && Get data
       const newEngine = await initSearch(setEngine, setpostsData, setsearchStatus, info.pages)
+      setsearchStatus(status => {
+        return {
+          ...status,
+          isSearch: "searching",
+          searchText: str // possibly the search text is stale
+        }
+      })
       newEngine.search(str.split(" "))
-      setsearchStatus(status => {
-        return {
-          ...status,
-          isSearch: "searching",
-          searchText: str // possibly the search text is stale
-        }
-      })
     } else {
-      engine.search(str.split(" "))
       setsearchStatus(status => {
         return {
           ...status,
@@ -79,6 +78,7 @@ export default function Memos({ memos, info, memotags }: Props) {
           searchText: str // possibly the search text is stale
         }
       })
+      engine.search(str.split(" "))
     }
   }
     , [engine, info.pages])
