@@ -138,11 +138,13 @@ export default function Post({ meta, mdxcode, nextPost, prevPost, excerpt, headi
             <div style={{ fontSize: "1.25rem", fontWeight: "bold", paddingBottom: "0.5rem", marginBottom: "0.5rem", borderBottom: `solid 1px ${theme?.colors.gold}` }}>
               目录
             </div>
-            {headings.map((h) => {
-              return <TocAnchor $rank={h.rank} href={`#${h.id}`} onClick={(e) => { scrollToTarget(e, h.id) }} key={h.id}>
-                <span>{h.title}</span>
-              </TocAnchor>
-            })}
+            <HeadingContainer>
+              {headings.map((h) => {
+                return <TocAnchor $rank={h.rank} href={`#${h.id}`} onClick={(e) => { scrollToTarget(e, h.id) }} key={h.id}>
+                  <span>{h.title}</span>
+                </TocAnchor>
+              })}
+            </HeadingContainer>
           </nav>
         </ColumnRight>
       </div>
@@ -230,7 +232,7 @@ const ColumnLeft = styled.div`
 const ColumnRight = styled.div`
   max-width: min(18em,20vw);
   flex: 1 1 0;
-  margin-top: calc(1.375*1em + 72px);
+  margin-top: 94px;
   position: sticky;
   align-self: flex-start;
   top: 63px;
@@ -295,4 +297,10 @@ const TocAnchor = styled(Link) <{ $rank: number }>`
   &:hover span {
     box-shadow: inset 0 -0.5em 0 ${props => props.theme.colors.goldHover};
   }
+`
+
+const HeadingContainer = styled.div`
+  position: relative;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
 `

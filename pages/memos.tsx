@@ -3,7 +3,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
 import styled, { ThemeContext } from "styled-components";
-import { CommonHead } from ".";
+import { CommonHead, PageDescription } from ".";
 import Footer from "../components/Footer";
 import Pagination from "../components/Pagination";
 import Topbar from "../components/Topbar";
@@ -21,8 +21,6 @@ import { paperCard, textShadow } from "../styles/styles";
 
 const MemoCSRAPI = '/data/memos'
 
-
-/** tsc 日常抽风中，编译不通过 */
 type TMemo = MemoPost & {
   length: number
 }
@@ -35,51 +33,24 @@ type Props = {
 
 type SearchStatus = {
   pagelimit: number,
+  isSearch: "ready" | "searching" | "done",
+  searchText: string,
 }
 
 export default function Memos({ memos, info, memotags }: Props) {
   const [engine, setEngine] = useState<Naive>()
   const router = useRouter()
   const [postsData, setpostsData] = useState(memos)
+  const [isFetching, setisFetching] = useState(false)
+  const [postsDataBackup, setpostsDataBackup] = useState(memos)
   const theme = useContext(ThemeContext)
   const scrollRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
-  const [searchStatus, setsearchStatus] = useState<SearchStatus>({ pagelimit: 5 })
-
-
-  // fetch csr content by page number
-  useEffect(() => {
-
-    let page = 0
-
-    if (typeof (router.query.p) === 'string') {
-      page = parseInt(router.query.p)
-      if (isNaN(page)) {
-        console.error('Wrong query p=', router.query.p)
-        return
-      }
-    }
-
-
-    fetch(`${MemoCSRAPI}/${page}.json`)
-      .then(res => res.json())
-      .then((data) => {
-        const posts = (data as Array<MemoPost>).map(async p => {
-          return {
-            ...p,
-            content: (await compileMdxMemo(p.content)).code,
-            length: p.content.length,
-          }
-        })
-        return Promise.all(posts)
-      })
-      .then(nextPosts => {
-        setpostsData(nextPosts)
-      }).catch(console.error);
-
-  }, [router.query])
-
-
+  const [searchStatus, setsearchStatus] = useState<SearchStatus>({
+    pagelimit: 5,
+    isSearch: "ready",
+    searchText: "",
+  })
 
   const handleSearch = useCallback(async () => {
     if (!inputRef.current) return
@@ -92,22 +63,71 @@ export default function Memos({ memos, info, memotags }: Props) {
       // Init Search Engine && Get data
       const newEngine = await initSearch(setEngine, setpostsData, setsearchStatus, info.pages)
       newEngine.search(str.split(" "))
-
+      setsearchStatus(status => {
+        return {
+          ...status,
+          isSearch: "searching",
+          searchText: str // possibly the search text is stale
+        }
+      })
     } else {
       engine.search(str.split(" "))
+      setsearchStatus(status => {
+        return {
+          ...status,
+          isSearch: "searching",
+          searchText: str // possibly the search text is stale
+        }
+      })
     }
   }
     , [engine, info.pages])
 
-
-  function setSearchText(text: string, immediateSearch = true) {
+  const setSearchText = useCallback((text: string, immediateSearch = true) => {
     if (!inputRef.current) return
 
     inputRef.current.value = text
     if (immediateSearch) {
       handleSearch()
     }
-  }
+  }, [handleSearch])
+
+  // fetch csr content by page number
+  // set search
+  useEffect(() => {
+
+    let page = 0
+
+    // page
+    if (typeof (router.query.p) === 'string') {
+      page = parseInt(router.query.p)
+      if (isNaN(page)) {
+        console.error('Wrong query p=', router.query.p)
+        return
+      }
+      setisFetching(true)
+      fetch(`${MemoCSRAPI}/${page}.json`)
+        .then(res => res.json())
+        .then((data) => {
+          const posts = (data as Array<MemoPost>).map(async p => {
+            return {
+              ...p,
+              content: (await compileMdxMemo(p.content)).code,
+              length: p.content.length,
+            }
+          })
+          return Promise.all(posts)
+        })
+        .then(nextPosts => {
+          setpostsData(nextPosts)
+          setpostsDataBackup(nextPosts)
+        }).catch((err) => {
+        }).finally(() => {
+          setisFetching(false)
+        });
+    }
+
+  }, [router.query])
 
 
   // bind keyboard event
@@ -118,7 +138,6 @@ export default function Memos({ memos, info, memotags }: Props) {
     })
   }, [handleSearch])
 
-
   const currPage = (() => {
     if (typeof (router.query.p) === 'string') {
       const page = parseInt(router.query.p)
@@ -128,6 +147,38 @@ export default function Memos({ memos, info, memotags }: Props) {
     }
     return 0
   })()
+
+  function statusRender() {
+    if (isFetching) return "Fetching..."
+    switch (searchStatus.isSearch) {
+      case "ready":
+        return ""
+      case "searching":
+        return "Searching..."
+      case "done":
+        return <>
+          Results: {postsData.length} memos
+          <span
+            style={{
+              fontStyle: "normal",
+              fontWeight: "bold",
+              cursor: "pointer",
+              marginLeft: "0.875em"
+            }}
+            onClick={() => {
+              setsearchStatus(status => {
+                return {
+                  ...status,
+                  isSearch: "ready",
+                  searchText: ""
+                }
+              })
+              setpostsData(postsDataBackup)
+            }}
+          >X</span>
+        </>
+    }
+  }
 
   return (
     <>
@@ -148,10 +199,14 @@ export default function Memos({ memos, info, memotags }: Props) {
             siderLocation="right"
           >
             <MemoCol ref={scrollRef}>
+              <PageDescription style={{ marginRight: "1rem" }}>
+                {statusRender()}
+              </PageDescription>
               <div style={{ minHeight: "100vh" }}>
-                {postsData.map(m => (
-                  <MemoCard key={m.id} memoPost={m} scrollref={scrollRef} />
-                ))}
+                {isFetching ? null
+                  : postsData.map(m => (
+                    <MemoCard key={m.id} memoPost={m} scrollref={scrollRef} setSearchText={setSearchText} />
+                  ))}
               </div>
               <Pagination
                 currTitle={`PAGE ${currPage + 1}`}
@@ -214,13 +269,39 @@ export default function Memos({ memos, info, memotags }: Props) {
   )
 }
 
-function MemoCard({ memoPost, scrollref }: {
+function MemoCard({ memoPost, scrollref, setSearchText }: {
   memoPost: TMemo,
   scrollref: React.RefObject<HTMLDivElement>
+  setSearchText: (text: string, immediateSearch?: boolean) => void
 }) {
   const [isCollapse, setfisCollapse] = useState(true)
   const theme = useContext(ThemeContext)
   const ref = React.useRef<HTMLDivElement>(null)
+
+
+  // bind tag click event in DOM way
+  // TODO how to do it in react way?
+  useEffect(() => {
+    if (!ref.current) return
+
+    const tagelems = ref.current.getElementsByClassName("tag")
+    const elems = Array.from(tagelems).filter(e => {
+      if (e instanceof HTMLSpanElement) return true
+      return false
+    })
+
+    console.debug("[memos.tsx] tag count", elems.length)
+
+    const handlers = elems.map(e => () => { e.textContent ? setSearchText(e.textContent, true) : undefined })
+
+    elems.forEach((e, i) => e.addEventListener('click', handlers[i]))
+
+    return () => {
+      elems.forEach((e, i) => e.removeEventListener('click', handlers[i]))
+    }
+  }, [ref, setSearchText])
+
+
 
   const shouldCollapse = memoPost.length > 200 ? true : false
 
@@ -270,6 +351,7 @@ function MemoCard({ memoPost, scrollref }: {
     </MemoCardStyle>
   )
 }
+
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
   // 生成 CSR 所需 JSON，SSR 需独立出逻辑
@@ -353,6 +435,13 @@ async function initSearch(
       res => setResultFn(res)
     )
 
+    setStatus(status => {
+      return {
+        ...status,
+        isSearch: "done",
+      }
+    })
+
   }
 
   newEngine = new Naive({
@@ -363,7 +452,9 @@ async function initSearch(
   })
 
   setEngine(newEngine)
-  setStatus({ pagelimit })
+  setStatus(status => {
+    return { ...status, pagelimit }
+  })
 
   return newEngine
 }
@@ -383,7 +474,7 @@ const OneColLayout = styled.div`
 
 /** Styles **/
 const MemoCol = styled.div`
-  max-width: 700px;
+  max-width: 672px;
   padding: 86px 16px 48px 16px;
   align-self: flex-end;
   overflow-y: auto;
@@ -399,15 +490,21 @@ const MemoCol = styled.div`
   }
 
   @media screen and (max-width: 580px) {
-    padding: 63px 0 48px 0;
+    padding: 86px 0 48px 0;
   }
 
 `
 
 const SiderCol = styled.div`
-  max-width: 21em;
+  max-width: 15rem;
   padding-top: 100px;
   margin: 0 0.5rem;
+
+  height: 100vh;
+  overflow-y: auto;
+  &::-webkit-scrollbar {
+    display: none;
+  }
   
   @media screen and (max-width: 1080px) {
     margin: 0;

@@ -35,7 +35,7 @@ export const memo_db = await (async function () {
    */
   const atPage = function (page: number) {
     return memos.filter(m => {
-      m.csrIndex[0] === page
+      return m.csrIndex[0] === page
     })
   }
 
