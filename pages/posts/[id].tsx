@@ -1,7 +1,6 @@
 import { readFile } from "fs/promises"
 import matter from "gray-matter"
 import { GetStaticPaths, GetStaticProps } from "next"
-import { MDXRemoteSerializeResult } from "next-mdx-remote"
 import Head from "next/head"
 import Link from "next/link"
 import { useRouter } from "next/router"
@@ -9,21 +8,21 @@ import path from "path"
 import { useContext } from "react"
 import styled, { ThemeContext } from "styled-components"
 import { CommonHead } from ".."
-import LayoutContainer, { OneColLayout } from "../../components/Layout"
-import { MarkdownStyle } from "../../components/Markdown"
 import Pagination from "../../components/Pagination"
 import Waline from "../../components/Waline"
+import LayoutContainer, { OneColLayout } from "../../components/layout"
+import { MarkdownStyle } from "../../components/markdown"
+import { useMdxPost } from "../../components/mdx"
 import { POST_DIR, posts_db } from "../../lib/data/posts"
 import { PostMeta } from '../../lib/data/posts.common'
 import { grayMatter2PostMeta } from "../../lib/markdown/frontmatter"
-import { mdxPostProcessosr } from "../../lib/markdown/mdx"
-import { postRsc } from "../../lib/markdown/mdx-rsc"
+import { compileMdxPost } from "../../lib/markdown/mdx"
 import { bottomFadeIn, fadeInRight } from "../../styles/animations"
 
 type Props = {
   meta: PostMeta,
   excerpt: string,
-  mdxCompiled: MDXRemoteSerializeResult,
+  mdxcode: string,
   nextPost?: {
     title: string,
     link: string,
@@ -41,7 +40,7 @@ type PropHeading = {
   id: string
 }
 
-export default function Post({ meta, mdxCompiled, nextPost, prevPost, excerpt, headings }: Props) {
+export default function Post({ meta, mdxcode, nextPost, prevPost, excerpt, headings }: Props) {
 
   const router = useRouter()
   const theme = useContext(ThemeContext)
@@ -120,7 +119,7 @@ export default function Post({ meta, mdxCompiled, nextPost, prevPost, excerpt, h
               </div>
             </PostTitle>
             <MarkdownStyle>
-              {postRsc(mdxCompiled)}
+              {useMdxPost(mdxcode)}
             </MarkdownStyle>
             <div style={{ textAlign: 'right', opacity: .5, fontSize: '0.875rem', margin: "4rem 0 2rem 0" }}>
               更新于 {meta.date}
@@ -185,12 +184,12 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
     link: `/posts/${allPosts[i + 1].id!}`
   }
 
-  const { compiledSrc, headings } = await mdxPostProcessosr(mattered.content)
+  const { code, headings } = await compileMdxPost(mattered.content)
 
   return {
     props: {
       meta,
-      mdxCompiled: compiledSrc,
+      mdxcode: code,
       excerpt,
       prevPost: prevPost,
       nextPost: nextPost,

@@ -5,7 +5,7 @@ import path from 'path';
 import readline from 'readline';
 import { siteInfo } from "../../site.config";
 import { grayMatter2PostMeta } from "../markdown/frontmatter";
-import { mdxRssProcessor } from "../markdown/mdx";
+import { compileMdxRss } from "../markdown/mdx";
 import { MEMOS_DIR } from "./memos";
 import { POST_DIR, getFrontMatter } from './posts';
 import { PostMeta } from "./posts.common";
@@ -43,7 +43,7 @@ async function getPosts(): Promise<Item[]> {
     .filter(p => !p.draft)
     .map(async p => {
 
-      const htmlcontent = await (mdxRssProcessor(p.content, p.type))
+      const htmlcontent = await (compileMdxRss(p.content, p.type))
 
       return {
         title: p.title,
@@ -139,7 +139,7 @@ async function getMemo(): Promise<Item | null> {
   const matterResult = grayMatter2PostMeta(await getFrontMatter(f, MEMOS_DIR))
 
   // convert markdown to html
-  const htmlcontent = await (mdxRssProcessor(content, "md"))
+  const htmlcontent = await (compileMdxRss(content, "md"))
 
   const res = {
     title: matterResult.title,

@@ -2,8 +2,8 @@ import { GetStaticPaths, GetStaticProps } from 'next';
 import Head from "next/head";
 import styled from "styled-components";
 import { CommonHead } from "..";
-import LayoutContainer from "../../components/Layout";
 import TLContent from "../../components/TimelinePosts";
+import LayoutContainer from "../../components/layout";
 import { groupByYear, posts_db } from "../../lib/data/posts";
 import { textShadow } from "../../styles/styles";
 

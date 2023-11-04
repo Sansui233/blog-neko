@@ -1,20 +1,19 @@
 import { GetStaticProps } from "next";
-import { MDXRemoteSerializeResult } from "next-mdx-remote";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
 import styled, { ThemeContext } from "styled-components";
 import { CommonHead } from ".";
 import Footer from "../components/Footer";
-import { TwoColLayout } from "../components/Layout";
-import { MarkdownStyle } from "../components/Markdown";
 import Pagination from "../components/Pagination";
 import Topbar from "../components/Topbar";
 import Waline from "../components/Waline";
+import { TwoColLayout } from "../components/layout";
+import { MarkdownStyle } from "../components/markdown";
+import { useMdxMemo } from "../components/mdx";
 import { memo_db, writeMemoJson } from "../lib/data/memos";
 import { MemoInfo, MemoPost, MemoTagArr } from "../lib/data/memos.common";
-import { mdxMemoProcessosr } from "../lib/markdown/mdx";
-import { memoRsc } from "../lib/markdown/mdx-rsc";
+import { compileMdxMemo } from "../lib/markdown/mdx";
 import { Naive, Result, SearchObj } from "../lib/search";
 import { siteInfo } from "../site.config";
 import { bottomFadeIn } from '../styles/animations';
@@ -22,8 +21,9 @@ import { paperCard, textShadow } from "../styles/styles";
 
 const MemoCSRAPI = '/data/memos'
 
-type TMemo = Omit<MemoPost, "content"> & {
-  content: MDXRemoteSerializeResult<Record<string, unknown>, Record<string, unknown>>
+
+/** tsc 日常抽风中，编译不通过 */
+type TMemo = MemoPost & {
   length: number
 }
 
@@ -67,7 +67,7 @@ export default function Memos({ memos, info, memotags }: Props) {
         const posts = (data as Array<MemoPost>).map(async p => {
           return {
             ...p,
-            content: await mdxMemoProcessosr(p.content),
+            content: (await compileMdxMemo(p.content)).code,
             length: p.content.length,
           }
         })
@@ -255,7 +255,7 @@ function MemoCard({ memoPost, scrollref }: {
           </div>
         </MemoMeta>
         <MemoMarkdown $bottomSpace={shouldCollapse}>
-          {memoRsc(memoPost.content)}
+          {useMdxMemo(memoPost.content)}
         </MemoMarkdown>
         <CardMask $isCollapse={isCollapse} $isShown={shouldCollapse}>
           <div onClick={handleExpand} className="rd-more">
@@ -273,17 +273,17 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   writeMemoJson()
 
   const memos: TMemo[] = await Promise.all(memo_db.atPage(0).map(async m => {
-    const content = await mdxMemoProcessosr(m.content)
+    const { code } = await compileMdxMemo(m.content)
     return {
       ...m,
-      content,
+      content: code,
       length: m.content.length,
     }
   }))
 
   return {
     props: {
-      memos, // 首屏 SEO 数据
+      memos, // seo on fetch
       info: memo_db.info,
       memotags: Array.from(memo_db.tags),
     }
@@ -341,7 +341,7 @@ async function initSearch(
     }).map(async memo => {
       return {
         ...memo,
-        content: await mdxMemoProcessosr(memo.content),
+        content: (await compileMdxMemo(memo.content)).code,
         length: memo.content.length
       }
     })
