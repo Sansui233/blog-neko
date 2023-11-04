@@ -1,8 +1,8 @@
 import Head from "next/head";
 import styled from "styled-components";
 import { CommonHead, PageDescription } from ".";
-import LayoutContainer, { OneColLayout } from "../components/Layout";
-import { MarkdownStyle } from "../components/Markdown";
+import LayoutContainer, { OneColLayout } from "../components/layout";
+import { MarkdownStyle } from "../components/markdown";
 import { siteInfo } from "../site.config";
 import { bottomFadeIn } from "../styles/animations";
 import { textStroke } from "../styles/styles";
