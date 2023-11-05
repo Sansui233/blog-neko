@@ -139,11 +139,13 @@ export default function Post({ meta, mdxcode, nextPost, prevPost, excerpt, headi
               目录
             </div>
             <HeadingContainer>
-              {headings.map((h) => {
-                return <TocAnchor $rank={h.rank} href={`#${h.id}`} onClick={(e) => { scrollToTarget(e, h.id) }} key={h.id}>
-                  <span>{h.title}</span>
-                </TocAnchor>
-              })}
+              {headings.length > 0
+                ? headings.map((h) => {
+                  return <TocAnchor $rank={h.rank} href={`#${h.id}`} onClick={(e) => { scrollToTarget(e, h.id) }} key={h.id}>
+                    <span>{h.title}</span>
+                  </TocAnchor>
+                })
+                : <span style={{ opacity: "0.6", fontSize: "0.9rem", }}>这是一篇没有目录的文章。</span>}
             </HeadingContainer>
           </nav>
         </ColumnRight>
