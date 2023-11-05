@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import styled, { ThemeContext } from "styled-components";
 import { TMemo } from "../../pages/memos";
 import { siteInfo } from "../../site.config";
@@ -17,39 +17,6 @@ export function MemoCard({ memoPost, scrollref, setSearchText }: {
   const [isCollapse, setfisCollapse] = useState(true);
   const theme = useContext(ThemeContext);
   const ref = React.useRef<HTMLDivElement>(null);
-
-
-  // bind tag click event in DOM way
-  // 有 bug，首次加载不能点击
-  // TODO how to do it in react way?
-  useEffect(() => {
-    if (!ref.current) return;
-
-    const tagelems = ref.current.getElementsByClassName("tag");
-    const elems = Array.from(tagelems).filter(e => {
-      if (e instanceof HTMLSpanElement) return true;
-      return false;
-    });
-
-    const handlers = elems.map(e => () => {
-      console.debug("in handler", e)
-      e.textContent ? setSearchText(e.textContent, true) : undefined;
-    });
-
-    elems.forEach((e, i) => {
-      console.debug("add handler to", e.textContent)
-      e.addEventListener('click', handlers[i])
-    });
-
-    return () => {
-      elems.forEach((e, i) => {
-        console.debug("remove handler of", e.textContent)
-        e.removeEventListener('click', handlers[i])
-      });
-    };
-  }, [ref, setSearchText, memoPost.id]);
-
-
 
   const shouldCollapse = memoPost.length > 200 ? true : false;
 
@@ -85,7 +52,7 @@ export function MemoCard({ memoPost, scrollref, setSearchText }: {
         </MemoMeta>
 
         <MemoMarkdown $bottomSpace={shouldCollapse}>
-          {useMdxMemo(memoPost.content)}
+          {useMdxMemo(memoPost.content, setSearchText)}
         </MemoMarkdown>
 
         <CardMask $isCollapse={isCollapse} $isShown={shouldCollapse}>

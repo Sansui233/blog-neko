@@ -4,6 +4,11 @@ import styled from "styled-components";
 import { linkHoverBS } from "../styles/styles";
 import ImgModel from "./common/ImgModel";
 
+/**
+ * custom img component
+ * @param props 
+ * @returns 
+ */
 export function MDImg(props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>) {
   const [isModel, setisModel] = useState(false)
 
@@ -15,6 +20,29 @@ export function MDImg(props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElemen
     }} {...props} />
   </>
 }
+
+
+/**
+ * return Tag component with search handler
+ */
+export function memoTag(searchHandler?: (text: string, immediateSearch?: boolean) => void) {
+
+  function Tag({ text }: { text: string }) {
+    console.debug("[markdown.tsx] detect tag", text)
+    return <TagItem onClick={() => {
+      if (searchHandler) {
+        searchHandler(`#${text}`, true)
+      }
+    }}>#{text} </TagItem>
+  }
+
+  return Tag
+}
+
+const TagItem = styled.span`
+  cursor: pointer;
+  color: ${p => p.theme.colors.gold};
+`
 
 export const MarkdownStyle = styled.div`
   text-align: justify;

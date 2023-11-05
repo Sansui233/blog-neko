@@ -6,6 +6,7 @@ import rehypeHighlight from 'rehype-highlight'
 import remarkGfm from 'remark-gfm'
 import { rehypeTag } from '../rehype/rehype-tag'
 import { rehypeExtractHeadings, rehypeHeadingsAddId } from '../rehype/rehype-toc'
+import { remarkTag } from '../remark/remark-tag'
 
 
 // returns mdx function string
@@ -60,11 +61,11 @@ export async function compileMdxMemo(src: string) {
   const code = String(await compile(src, {
     outputFormat: 'function-body',
     remarkPlugins:[
-      remarkGfm
+      remarkGfm,
+      remarkTag,
     ],
     rehypePlugins: [
       rehypeHighlight,
-      rehypeTag,
     ]
   }))
 

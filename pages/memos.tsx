@@ -84,7 +84,6 @@ export default function Memos({ memos, info, memotags }: Props) {
     , [engine, info.pages])
 
   const setSearchText = useCallback((text: string, immediateSearch = true) => {
-    console.debug("set search", text)
     if (!inputRef.current) return
 
     inputRef.current.value = text
@@ -425,7 +424,6 @@ const SiderCol = styled.div`
   /* util class */
   .hover-gold {
     padding: 3px 5px;
-    border-radius: 50%;
     cursor: pointer;
   }
 

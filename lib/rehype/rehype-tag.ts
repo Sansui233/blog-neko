@@ -1,6 +1,7 @@
 import { Element, ElementContent, Root } from "hast"
 import { visit } from "unist-util-visit"
 
+// Deprecated. Use remarkTag and corresponding JSX components instead.
 export const rehypeTag = () => {
   return (tree: Root) => {
     visit(tree, "element", function (node) {
