@@ -205,7 +205,7 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
 }
 
 const PostLayout = styled(OneColLayout)`
-  max-width: 700px;
+  max-width: min(700px, 100vw);
   margin-top: 72px;
   animation: ${bottomFadeIn} 1s ease;
 
