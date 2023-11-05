@@ -211,7 +211,7 @@ export default function Memos({ memos, info, memotags }: Props) {
                   title: "PREV",
                   link: `/memos?p=${currPage - 1}`
                 } : undefined}
-                nextPage={currPage + 1 < info.pages ? {
+                nextPage={currPage + 1 < info.pages + 1 ? {
                   title: "NEXT",
                   link: `/memos?p=${currPage + 1}`
                 } : undefined}
