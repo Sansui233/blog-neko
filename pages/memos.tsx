@@ -218,7 +218,7 @@ export default function Memos({ memos, info, memotags }: Props) {
                   title: "NEXT",
                   link: `/memos?p=${currPage + 1}`
                 } : undefined}
-                maxPage={info.pages.toString()}
+                maxPage={(info.pages + 1).toString()}
                 elemProps={{ style: { padding: "0 1rem" } }}
                 isScrollToTop={true}
                 scrollRef={scrollRef}
