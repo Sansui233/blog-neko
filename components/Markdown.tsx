@@ -28,7 +28,7 @@ export function MDImg(props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElemen
 export function memoTag(searchHandler?: (text: string, immediateSearch?: boolean) => void) {
 
   function Tag({ text }: { text: string }) {
-    console.debug("[markdown.tsx] detect tag", text)
+    // console.debug("[markdown.tsx] detect tag", text)
     return <TagItem onClick={() => {
       if (searchHandler) {
         searchHandler(`#${text}`, true)
@@ -86,7 +86,7 @@ export const MarkdownStyle = styled.div`
 
   pre code {
     color: ${p => p.theme.colors.textPrimary};
-    border-radius: unset;
+    border-radius: 0.5rem;
     padding: 1rem 2rem;
     margin: unset;
     overflow: auto;

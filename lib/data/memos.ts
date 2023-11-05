@@ -96,10 +96,10 @@ export const memo_db = await (async function () {
           })
 
           // update imgs
-          if(lastMemo.imgurls.length !== 0){
+          if(lastMemo.imgsmd.length !== 0){
             imgs.push({
               memoId: lastMemo.id,
-              imgurls: lastMemo.imgurls,
+              imgsmd: lastMemo.imgsmd,
             })
           }
 
@@ -119,7 +119,7 @@ export const memo_db = await (async function () {
           id: currId,
           content: "",
           tags: [],
-          imgurls: [],
+          imgsmd: [],
           sourceFile: src_file,
           csrIndex: [csrPage, csrIndex],
         })
@@ -130,7 +130,7 @@ export const memo_db = await (async function () {
         const matches = line.match(imgreg);
         if (matches) {
           // console.debug("%%", memos[memos.length - 1].id, matches),
-          memos[memos.length - 1].imgurls.push(...matches)
+          memos[memos.length - 1].imgsmd.push(...matches)
         } else {
           // update memo content
           if (memos.length === 0) continue // 忽略 frontmatter 和 ## 之间的空行

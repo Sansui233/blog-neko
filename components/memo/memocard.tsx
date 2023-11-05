@@ -6,6 +6,7 @@ import { bottomFadeIn } from "../../styles/animations";
 import { paperCard, textShadow } from "../../styles/styles";
 import { MarkdownStyle } from "../markdown";
 import { useMdxMemo } from "../mdx";
+import { Images } from "./images";
 
 
 
@@ -49,7 +50,6 @@ export function MemoCard({ memoPost, setSearchText }: {
             </div>
           </div>
         </MemoMeta>
-
         <MemoMarkdown $bottomSpace={shouldCollapse}>
           {useMdxMemo(memoPost.content, setSearchText)}
         </MemoMarkdown>
@@ -60,11 +60,13 @@ export function MemoCard({ memoPost, setSearchText }: {
           </div>
         </CardMask>
       </div>
+      <div style={{ padding: "0 0.5rem" }}>
+        <Images imgsmd={memoPost.imgsmd} />
+      </div>
 
     </MemoCardStyle>
   );
 }
-
 
 
 const MemoCardStyle = styled.section<{

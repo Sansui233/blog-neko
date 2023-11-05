@@ -30,7 +30,7 @@ export type MemoPost = {
   id: string;
   content: string;
   tags: string[];
-  imgurls: string[];
+  imgsmd: string[];
   sourceFile: string;
   csrIndex: [number, number]; // page index
 };
@@ -43,5 +43,5 @@ export type MemoTagArr = Array<[string, string[]]>
 
 export type MemoImgs = {
   memoId: string,
-  imgurls: string[]
+  imgsmd: string[]
 }
