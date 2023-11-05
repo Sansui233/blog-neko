@@ -3,8 +3,8 @@ import Head from "next/head";
 import Link from "next/link";
 import styled from "styled-components";
 import { CommonHead } from "..";
-import { CategoryLayoutStyle, CategoryTitle } from "../../components/TimelinePosts";
 import LayoutContainer from "../../components/layout";
+import { CategoryLayoutStyle, CategoryTitle } from "../../components/post/TimelinePosts";
 import { posts_db } from "../../lib/data/posts";
 import { siteInfo } from "../../site.config";
 

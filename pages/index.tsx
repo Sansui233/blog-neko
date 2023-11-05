@@ -3,8 +3,8 @@ import Head from 'next/head'
 import Link from 'next/link'
 import React, { useMemo, useState } from 'react'
 import styled from 'styled-components'
-import { NavDropper } from '../components/NavDropper'
 import LayoutContainer, { OneColLayout } from '../components/layout'
+import { NavDropper } from '../components/post/NavDropper'
 import { POST_DIR, posts_db } from '../lib/data/posts'
 import { buildIndex } from '../lib/data/searchindex'
 import { siteInfo } from '../site.config'
@@ -45,12 +45,6 @@ const Home: NextPage<Props> = ({ posts, categories }: Props) => {
       })
     }
   }, [currCategory, posts, categories])
-
-  // const transition = useTransition(filteredPosts, {
-  //   trail: 100,
-  //   from: { opacity: 0, y:'10px' }, 
-  //   enter: { opacity: 1, y:'0px' }
-  // })
 
   return (
     <div>
@@ -105,13 +99,6 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 }
 
 export default Home
-
-export const PageDescription = styled.div`
-  font-style: italic;
-  font-size: 0.875rem;
-  color: ${props => props.theme.colors.textGray2};
-  text-align: right;
-`
 
 const PostGrids = styled.section`
   display: grid;

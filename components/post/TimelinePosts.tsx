@@ -1,7 +1,7 @@
 import Link from "next/link";
 import styled from "styled-components";
-import { textShadow } from "../styles/styles";
-import { OneColLayout } from './layout';
+import { textShadow } from "../../styles/styles";
+import { OneColLayout } from '../layout';
 
 /**
  * 生成具体的标签页和分类页内容，以时间线排序

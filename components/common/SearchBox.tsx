@@ -1,10 +1,10 @@
 import Link from 'next/link';
 import { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
 import styled from "styled-components";
-import { Naive, Result } from '../lib/search';
-import { SearchObj } from '../lib/search/common';
-import { debounce } from '../lib/throttle';
-import PopOver from '../styles/components/PopOver';
+import { Naive, Result } from '../../lib/search';
+import { SearchObj } from '../../lib/search/common';
+import { debounce } from '../../lib/throttle';
+import PopOver from '../../styles/components/PopOver';
 
 type Props = {
   outSetSearch: (isShow: boolean) => void

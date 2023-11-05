@@ -30,5 +30,6 @@ export function useMdxPost(code: string) {
 
 export function useMdxMemo(code: string) {
   const mdxModule = convertBack(code)
-  return <mdxModule.default />
+  return <mdxModule.default components={{
+  }} />
 }

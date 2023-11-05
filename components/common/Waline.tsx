@@ -2,7 +2,7 @@ import { init } from '@waline/client';
 import '@waline/client/dist/waline.css';
 import { useEffect } from 'react';
 import styled from 'styled-components';
-import { siteInfo } from "../site.config";
+import { siteInfo } from "../../site.config";
 
 const Waline = (props: React.HTMLProps<HTMLDivElement>) => {
   useEffect(() => {

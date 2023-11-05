@@ -1,6 +1,6 @@
 import { useState } from "react";
 import styled from "styled-components";
-import ChevronDown from '../public/icons/chevron-down.svg';
+import ChevronDown from '../../public/icons/chevron-down.svg';
 
 type Props = {
   // 如果有需要可以适配其他类型，还有高度字号什么的。自用组件就算了不写这么多

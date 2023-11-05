@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
-import Footer from "./Footer";
-import Topbar from "./Topbar";
+import Footer from "./common/Footer";
+import Topbar from "./topbar/Topbar";
 
 type Props = React.HTMLProps<HTMLDivElement>
 

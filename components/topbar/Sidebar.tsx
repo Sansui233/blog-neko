@@ -1,9 +1,9 @@
 import Link from "next/link"
 import { useContext, useMemo } from "react"
 import styled, { ThemeContext } from "styled-components"
-import { ThemeMsg, getAppTheme, setAppTheme } from "../lib/app-states"
-import { siteInfo } from "../site.config"
-import { linkHoverBS, textStroke } from "../styles/styles"
+import { ThemeMsg, getAppTheme, setAppTheme } from "../../lib/app-states"
+import { siteInfo } from "../../site.config"
+import { linkHoverBS, textStroke } from "../../styles/styles"
 import MenuIcon from "./MenuIcon"
 
 type Props = {

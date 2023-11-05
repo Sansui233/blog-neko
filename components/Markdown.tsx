@@ -2,11 +2,10 @@
 import { DetailedHTMLProps, ImgHTMLAttributes, useState } from "react";
 import styled from "styled-components";
 import { linkHoverBS } from "../styles/styles";
-import ImgModel from "./ImgModel";
+import ImgModel from "./common/ImgModel";
 
 export function MDImg(props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>) {
   const [isModel, setisModel] = useState(false)
-  console.log("%% img")
 
   return <>
     <ImgModel imgProps={props} isModel={isModel} setModel={setisModel} />
@@ -16,7 +15,6 @@ export function MDImg(props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElemen
     }} {...props} />
   </>
 }
-
 
 export const MarkdownStyle = styled.div`
   text-align: justify;

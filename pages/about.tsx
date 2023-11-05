@@ -1,6 +1,7 @@
 import Head from "next/head";
 import styled from "styled-components";
-import { CommonHead, PageDescription } from ".";
+import { CommonHead } from ".";
+import { PageDescription } from '../components/common/PageDescription';
 import LayoutContainer, { OneColLayout } from "../components/layout";
 import { MarkdownStyle } from "../components/markdown";
 import { siteInfo } from "../site.config";

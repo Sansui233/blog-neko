@@ -2,10 +2,10 @@ import Link from "next/link"
 import { useRouter } from "next/router"
 import React, { useContext, useEffect, useRef, useState } from "react"
 import styled, { ThemeContext } from "styled-components"
-import { throttle } from "../lib/throttle"
-import { siteInfo } from "../site.config"
+import { throttle } from "../../lib/throttle"
+import { siteInfo } from "../../site.config"
+import SearchBox from "../common/SearchBox"
 import MenuIcon from "./MenuIcon"
-import SearchBox from "./SearchBox"
 import Sidebar from "./Sidebar"
 
 type Props = React.HTMLProps<HTMLElement> & {

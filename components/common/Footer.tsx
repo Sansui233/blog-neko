@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { siteInfo } from '../site.config'
+import { siteInfo } from '../../site.config'
 
 const Footer = () => {
   return (

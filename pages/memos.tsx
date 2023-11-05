@@ -3,25 +3,25 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
 import styled, { ThemeContext } from "styled-components";
-import { CommonHead, PageDescription } from ".";
-import Footer from "../components/Footer";
-import Pagination from "../components/Pagination";
-import Topbar from "../components/Topbar";
-import Waline from "../components/Waline";
+import { CommonHead } from ".";
+import Footer from "../components/common/Footer";
+import { PageDescription } from '../components/common/PageDescription';
+import Pagination from "../components/common/Pagination";
+import Waline from "../components/common/Waline";
 import { TwoColLayout } from "../components/layout";
-import { MarkdownStyle } from "../components/markdown";
-import { useMdxMemo } from "../components/mdx";
+import CardCommon, { CardTitleIcon } from "../components/memo/cardcommon";
+import { MemoCard } from "../components/memo/memocard";
+import NavCard from "../components/memo/navcard";
+import Topbar from "../components/topbar/Topbar";
 import { memo_db, writeMemoJson } from "../lib/data/memos";
 import { MemoInfo, MemoPost, MemoTagArr } from "../lib/data/memos.common";
 import { compileMdxMemo } from "../lib/markdown/mdx";
 import { Naive, Result, SearchObj } from "../lib/search";
 import { siteInfo } from "../site.config";
-import { bottomFadeIn } from '../styles/animations';
-import { paperCard, textShadow } from "../styles/styles";
 
 const MemoCSRAPI = '/data/memos'
 
-type TMemo = MemoPost & {
+export type TMemo = MemoPost & {
   length: number
 }
 
@@ -38,14 +38,14 @@ type SearchStatus = {
 }
 
 export default function Memos({ memos, info, memotags }: Props) {
-  const [engine, setEngine] = useState<Naive>()
   const router = useRouter()
-  const [postsData, setpostsData] = useState(memos)
-  const [isFetching, setisFetching] = useState(false)
-  const [postsDataBackup, setpostsDataBackup] = useState(memos)
   const theme = useContext(ThemeContext)
+  const [postsData, setpostsData] = useState(memos)
+  const [postsDataBackup, setpostsDataBackup] = useState(memos)
+  const [isFetching, setisFetching] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+  const [engine, setEngine] = useState<Naive>()
   const [searchStatus, setsearchStatus] = useState<SearchStatus>({
     pagelimit: 5,
     isSearch: "ready",
@@ -84,6 +84,7 @@ export default function Memos({ memos, info, memotags }: Props) {
     , [engine, info.pages])
 
   const setSearchText = useCallback((text: string, immediateSearch = true) => {
+    console.debug("set search", text)
     if (!inputRef.current) return
 
     inputRef.current.value = text
@@ -239,18 +240,8 @@ export default function Memos({ memos, info, memotags }: Props) {
                   <i className='icon-search' />
                 </CardTitleIcon>
               </div>
-              <NavCard>
-                <div className="item active">
-                  <span className="title">Memos</span>
-                  <span className="count">{info.count.memos}</span>
-                </div>
-                <div className="item">
-                  <span className="title">Photos</span>
-                  <span className="count">{info.count.imgs}</span>
-                </div>
-              </NavCard>
-              <TagCard>
-                <CardTitle>TAGS</CardTitle>
+              <NavCard info={info} />
+              <CardCommon title={"TAGS"}>
                 <div style={{ paddingTop: "0.5rem" }}>
                   {memotags.map(t => {
                     return <span className="hover-gold" key={t[0]}
@@ -260,7 +251,7 @@ export default function Memos({ memos, info, memotags }: Props) {
                     </span>
                   })}
                 </div>
-              </TagCard>
+              </CardCommon>
             </SiderCol>
           </TwoColLayout>
         </OneColLayout>
@@ -268,90 +259,6 @@ export default function Memos({ memos, info, memotags }: Props) {
     </>
   )
 }
-
-function MemoCard({ memoPost, scrollref, setSearchText }: {
-  memoPost: TMemo,
-  scrollref: React.RefObject<HTMLDivElement>
-  setSearchText: (text: string, immediateSearch?: boolean) => void
-}) {
-  const [isCollapse, setfisCollapse] = useState(true)
-  const theme = useContext(ThemeContext)
-  const ref = React.useRef<HTMLDivElement>(null)
-
-
-  // bind tag click event in DOM way
-  // TODO how to do it in react way?
-  useEffect(() => {
-    if (!ref.current) return
-
-    const tagelems = ref.current.getElementsByClassName("tag")
-    const elems = Array.from(tagelems).filter(e => {
-      if (e instanceof HTMLSpanElement) return true
-      return false
-    })
-
-    console.debug("[memos.tsx] tag count", elems.length)
-
-    const handlers = elems.map(e => () => { e.textContent ? setSearchText(e.textContent, true) : undefined })
-
-    elems.forEach((e, i) => e.addEventListener('click', handlers[i]))
-
-    return () => {
-      elems.forEach((e, i) => e.removeEventListener('click', handlers[i]))
-    }
-  }, [ref, setSearchText])
-
-
-
-  const shouldCollapse = memoPost.length > 200 ? true : false
-
-  function handleExpand(e: React.MouseEvent<HTMLDivElement>) {
-    // Scroll back
-    if (!isCollapse) {
-      const element = ref.current;
-      if (element) {
-        const elementTop = element.getBoundingClientRect().top;
-        if (elementTop < 0 || elementTop > window.innerHeight) {
-          scrollref.current?.scrollTo({
-            top: elementTop + scrollref.current.scrollTop,
-          });
-        }
-      }
-    }
-    setfisCollapse(!isCollapse)
-  }
-
-  return (
-    <MemoCardStyle $isCollapse={shouldCollapse === false ? false : isCollapse} ref={ref}>
-      <div className="content">
-
-        <MemoMeta>
-          {/*eslint-disable-next-line @next/next/no-img-element*/}
-          <img className="avatar" src={theme!.assets.favico} alt={siteInfo.author} />
-          <div className="meta">
-            <div>{siteInfo.author}</div>
-            <div className="date">
-              {memoPost.id}&nbsp;&nbsp;
-              <span className="word-count">{memoPost.length}&nbsp;字</span>
-            </div>
-          </div>
-        </MemoMeta>
-
-        <MemoMarkdown $bottomSpace={shouldCollapse}>
-          {useMdxMemo(memoPost.content)}
-        </MemoMarkdown>
-
-        <CardMask $isCollapse={isCollapse} $isShown={shouldCollapse}>
-          <div onClick={handleExpand} className="rd-more">
-            <span>{isCollapse ? "SHOW MORE" : "Hide"}</span>
-          </div>
-        </CardMask>
-      </div>
-
-    </MemoCardStyle>
-  )
-}
-
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
   // 生成 CSR 所需 JSON，SSR 需独立出逻辑
@@ -518,7 +425,7 @@ const SiderCol = styled.div`
   /* util class */
   .hover-gold {
     padding: 3px 5px;
-    borde-radius: 50%;
+    border-radius: 50%;
     cursor: pointer;
   }
 
@@ -527,157 +434,7 @@ const SiderCol = styled.div`
   }
 `
 
-const MemoCardStyle = styled.section<{
-  $isCollapse: boolean
-}>`
 
-  ${paperCard}
-  margin: 1rem 0;
-  padding: 1.25rem 1.5rem;
-  border-radius: 1rem;
-  animation: ${bottomFadeIn} 1s ease;
-
-  @media screen and (max-width: 780px) {
-    padding: 1.25rem 1.5rem;
-  }
-
-  @media screen and (max-width: 580px) {
-    padding: 1.25rem 1rem;
-    border-radius: unset;
-  }
-  
-  & > .content {
-    position: relative;
-    height: ${props => props.$isCollapse === true ? "19rem" : "auto"};
-    overflow: hidden;
-    /* transition: height 0.5s ease; */
-  }
-`
-
-const MemoMeta = styled.div`
-    display: flex;
-
-    & > .avatar {
-      width: 3rem;
-      height: 3rem;
-      border-radius: 50%;
-      border: 1px solid ${p => p.theme.colors.uiLineGray};
-    }
-
-    & .meta{
-      margin-left: 0.5rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-    }
-
-    & .date {
-      font-size: 0.9rem;
-      font-family: Dosis;
-      color: ${p => p.theme.colors.textGray};
-    }
-
-    & .word-count {
-      position: absolute;
-      right: 0;
-    }
-`
-
-const MemoMarkdown = styled(MarkdownStyle) <{
-  $bottomSpace: boolean,
-}>`
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
-    padding-bottom: ${props => props.$bottomSpace === true ? "2rem" : "inherit"};
-    h1,h2,h3,h4,h5,h6 {
-      font-size: 1rem;
-    }
-
-    & .tag {
-      color: ${p => p.theme.colors.gold};
-    }
-
-    & .tag:hover {
-      cursor: pointer;
-      color: ${p => p.theme.colors.goldHover};
-    }
-`
-
-
-const CardMask = styled.div<{
-  $isCollapse: boolean,
-  $isShown: boolean
-}>`
-    display: ${props => props.$isShown === true ? "block" : "none"};
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    height: 7rem;
-    text-align: right;
-    color: ${p => p.theme.colors.gold};
-    ${props => props.$isCollapse === true ? props.theme.colors.maskGradient : ''}
-
-    .rd-more {
-      margin-top: 5.375rem;
-      font-size: 0.875rem;
-      padding: 0.2rem 0;
-      cursor: pointer;
-      span {
-        transition: box-shadow .3s;
-      }
-    }
-
-    & .rd-more:hover span {
-      ${() => textShadow.f}
-    }
-   
-`
-
-const NavCard = styled.section`
-    margin-top: 1.5rem;
-    padding-left: 1rem;
-    display: flex;
-    flex-direction: column;
-    
-    
-
-    .item {
-      padding: 0.25rem 0;
-      margin-right: 0.75rem;
-      border-right: 2px solid ${p => p.theme.colors.uiLineGray};
-    }
-
-    .item.active {
-      border-right: 2px solid ${p => p.theme.colors.gold};
-    }
-
-    .title {
-      font-weight: bold;
-      margin-right: 0.25rem;
-    }
-
-    .count {
-      font-size: 0.875rem;
-      color: ${p => p.theme.colors.textGray};
-    }
-`
-
-const CardCommon = styled.section`
-  margin-top: 1rem;
-  padding: 1rem 1rem;
-`
-
-const CardTitle = styled.div`
-  font-size: 0.9rem;
-  font-weight: bold;
-  color: ${p => p.theme.colors.textGray2};
-`
-
-const CardTitleIcon = styled(CardTitle)`
-  text-align: right;
-  font-size: 1.125rem;
-  margin: unset;
-`
 
 const SearchBox = styled.input`
   border: 1px solid ${p => p.theme.colors.uiLineGray};
@@ -696,7 +453,4 @@ const SearchBox = styled.input`
     outline: none;
     border: 1px solid ${p => p.theme.colors.goldHover};
   }
-`
-
-const TagCard = styled(CardCommon)`
 `
