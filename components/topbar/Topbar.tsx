@@ -126,6 +126,11 @@ const SearchIcon = styled.div<{ $isSearch: boolean, $hideSearch: boolean | undef
   &:hover {
     color: ${p => p.theme.colors.goldHover};
   }
+
+  @media screen and (max-width: 780px) {
+    ${p => p.$hideSearch ? "display:none;" : null}
+  }
+
 `
 const PlaceHolder = styled.div`
     height: 63px;
@@ -191,7 +196,6 @@ const More = styled(LeftRight)`
   font-size: 0.875em;
   
   & > div {
-    display: inline-block;
     margin-right: 15px;
   }
 

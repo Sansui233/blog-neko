@@ -95,4 +95,8 @@ const Sider = styled.div`
   flex: 1 1 0;
   display: flex;
   flex-direction: column;
+
+  position: sticky;
+  top: 0px;
+  max-height: 100vh;
 `

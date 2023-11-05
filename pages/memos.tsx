@@ -43,7 +43,6 @@ export default function Memos({ memos, info, memotags }: Props) {
   const [postsData, setpostsData] = useState(memos)
   const [postsDataBackup, setpostsDataBackup] = useState(memos)
   const [isFetching, setisFetching] = useState(false)
-  const scrollRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const [engine, setEngine] = useState<Naive>()
   const [searchStatus, setsearchStatus] = useState<SearchStatus>({
@@ -188,24 +187,22 @@ export default function Memos({ memos, info, memotags }: Props) {
       </Head>
       <Topbar
         placeHolder={false}
-        scrollElem={scrollRef.current ? scrollRef.current : undefined}
         hideSearch={true}
-        style={{ background: theme?.colors.bg2 }}
       />
-      <main style={{ backgroundColor: theme?.colors.bg2, overflow: "hidden", height: "100vh" }}>
+      <main style={{ backgroundColor: theme?.colors.bg2 }}>
         <OneColLayout>
           <TwoColLayout
             sep={1}
             siderLocation="right"
           >
-            <MemoCol ref={scrollRef}>
+            <MemoCol>
               <PageDescription style={{ marginRight: "1rem" }}>
                 {statusRender()}
               </PageDescription>
               <div style={{ minHeight: "100vh" }}>
                 {isFetching ? null
                   : postsData.map(m => (
-                    <MemoCard key={m.id} memoPost={m} scrollref={scrollRef} setSearchText={setSearchText} />
+                    <MemoCard key={m.id} memoPost={m} setSearchText={setSearchText} />
                   ))}
               </div>
               <Pagination
@@ -221,7 +218,6 @@ export default function Memos({ memos, info, memotags }: Props) {
                 maxPage={(info.pages + 1).toString()}
                 elemProps={{ style: { padding: "0 1rem" } }}
                 isScrollToTop={true}
-                scrollRef={scrollRef}
               />
               <Waline style={{ padding: "0 0.5rem" }} />
               <Footer />
@@ -383,8 +379,6 @@ const MemoCol = styled.div`
   max-width: 672px;
   padding: 86px 16px 48px 16px;
   align-self: flex-end;
-  overflow-y: auto;
-  height: 100vh;
 
   &::-webkit-scrollbar {
     display: none;
@@ -398,13 +392,13 @@ const MemoCol = styled.div`
   @media screen and (max-width: 580px) {
     padding: 86px 0 48px 0;
   }
-
 `
 
 const SiderCol = styled.div`
   max-width: 15rem;
   padding-top: 100px;
   margin: 0 0.5rem;
+  position: sticky;
 
   height: 100vh;
   overflow-y: auto;

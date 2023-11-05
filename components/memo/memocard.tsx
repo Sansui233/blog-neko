@@ -9,9 +9,8 @@ import { useMdxMemo } from "../mdx";
 
 
 
-export function MemoCard({ memoPost, scrollref, setSearchText }: {
+export function MemoCard({ memoPost, setSearchText }: {
   memoPost: TMemo;
-  scrollref: React.RefObject<HTMLDivElement>;
   setSearchText: (text: string, immediateSearch?: boolean) => void;
 }) {
   const [isCollapse, setfisCollapse] = useState(true);
@@ -27,8 +26,8 @@ export function MemoCard({ memoPost, scrollref, setSearchText }: {
       if (element) {
         const elementTop = element.getBoundingClientRect().top;
         if (elementTop < 0 || elementTop > window.innerHeight) {
-          scrollref.current?.scrollTo({
-            top: elementTop + scrollref.current.scrollTop,
+          globalThis.scrollTo({
+            top: elementTop + globalThis.scrollY,
           });
         }
       }
