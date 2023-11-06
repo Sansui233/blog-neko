@@ -3,8 +3,8 @@ import styled, { ThemeContext } from "styled-components";
 import { TMemo } from "../../pages/memos";
 import { siteInfo } from "../../site.config";
 import { bottomFadeIn } from "../../styles/animations";
+import { MarkdownStyle } from "../../styles/components/MarkdownStyle";
 import { paperCard, textShadow } from "../../styles/styles";
-import { MarkdownStyle } from "../markdown";
 import { useMdxMemo } from "../mdx";
 import { Images } from "./images";
 
@@ -107,6 +107,7 @@ const CardMask = styled.div<{
     width: 100%;
     height: 7rem;
     text-align: right;
+    
     color: ${p => p.theme.colors.gold};
     ${props => props.$isCollapse === true ? props.theme.colors.maskGradient : ''}
 

@@ -11,13 +11,13 @@ import { CommonHead } from ".."
 import Pagination from "../../components/common/Pagination"
 import Waline from "../../components/common/Waline"
 import LayoutContainer, { OneColLayout } from "../../components/layout"
-import { MarkdownStyle } from "../../components/markdown"
 import { useMdxPost } from "../../components/mdx"
 import { POST_DIR, posts_db } from "../../lib/data/posts"
 import { PostMeta } from '../../lib/data/posts.common'
 import { grayMatter2PostMeta } from "../../lib/markdown/frontmatter"
 import { compileMdxPost } from "../../lib/markdown/mdx"
 import { bottomFadeIn, fadeInRight } from "../../styles/animations"
+import { MarkdownStyle } from "../../styles/components/MarkdownStyle"
 
 type Props = {
   meta: PostMeta,
@@ -103,7 +103,7 @@ export default function Post({ meta, mdxcode, nextPost, prevPost, excerpt, headi
               <div style={{ display: "flex" }}>
                 <div style={{ flex: "1 1 0" }}>
                   <MetaStyle style={{ flex: "1 1 0" }}>
-                    {meta.date}
+                    <span className="date">{meta.date}</span>
                     {" | "}
                     {genTags(meta.tags)}
                     {" in "}
@@ -257,6 +257,11 @@ const PostTitle = styled.div`
 const MetaStyle = styled.span`
   font-size: 0.875rem;
   position: relative;
+
+  .date {
+    font-family: Dosis;
+    font-size: 0.95rem;
+  }
 
   &::before {
     content:'';

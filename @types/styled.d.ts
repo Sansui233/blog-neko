@@ -9,6 +9,7 @@ declare module 'styled-components' {
     },
     colors: {
       textPrimary: string,
+      textSecondary: string,
       textGray: string,
       textGray2: string,
       gold: string,

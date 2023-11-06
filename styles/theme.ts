@@ -7,6 +7,7 @@ export const lightTheme: DefaultTheme = {
   },
   colors: {
     textPrimary: 'black',
+    textSecondary: '#16191e',
     textGray: '#666666',
     textGray2: '#939393',
     gold: '#ae8d0b',
@@ -39,6 +40,7 @@ export const darkTheme: DefaultTheme = {
   },
   colors: {
     textPrimary: 'white',
+    textSecondary: '#d9d8d2',
     textGray: '#aaaaaa',
     textGray2: '#8e8e8e',
     gold: '#c4a747',

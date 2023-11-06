@@ -3,9 +3,9 @@ import styled from "styled-components";
 import { CommonHead } from ".";
 import { PageDescription } from '../components/common/PageDescription';
 import LayoutContainer, { OneColLayout } from "../components/layout";
-import { MarkdownStyle } from "../components/markdown";
 import { siteInfo } from "../site.config";
 import { bottomFadeIn } from "../styles/animations";
+import { MarkdownStyle } from "../styles/components/MarkdownStyle";
 import { textStroke } from "../styles/styles";
 
 export default function About() {

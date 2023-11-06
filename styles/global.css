@@ -49,10 +49,15 @@ h6 {
   overflow-wrap: break-word;
 }
 
+code {
+  font-family: SFMono-Regular,consolas,Liberation Mono,menlo,monaco,"Courier New",courier,monospace,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol",sans-serif;
+}
+
 pre code {
   display: block;
   max-width: 100%;
   overflow: scroll;
+  font-size: 0.875rem;
 }
 
 /* Create a root stacking context */
