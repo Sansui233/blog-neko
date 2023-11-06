@@ -1,5 +1,5 @@
-import { DetailedHTMLProps, ImgHTMLAttributes, useEffect } from "react"
-import { styled } from "styled-components"
+import { DetailedHTMLProps, ImgHTMLAttributes } from "react"
+import Model from "./Model"
 
 type Props = {
   imgProps: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>,
@@ -7,50 +7,12 @@ type Props = {
   setModel: (isOpen: boolean) => void
 }
 
-const ImgModel = ({ imgProps, isModel, setModel }: Props) => {
+export default function ImgModel({ imgProps, isModel, setModel }: Props) {
 
-  // Local Scroll
-  useEffect(() => {
-    if (isModel) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = 'auto'
-    }
-  }, [isModel])
-
-  return (isModel
-    ? <MaskedContainer $isOpen={isModel} onClick={e => setModel(false)}>
+  return (
+    <Model isModel={isModel} setModel={setModel}>
       {/*eslint-disable-next-line @next/next/no-img-element*/} {/* eslint-disable-next-line jsx-a11y/alt-text */}
-      <img loading="lazy" className="model" {...imgProps} /> {/* add class model for StyledComponents render order */}
-    </MaskedContainer>
-    : undefined
+      <img loading="lazy" {...imgProps} style={{ maxWidth: "100%", maxHeight: "100%", display: "block" }} /> {/* add class model for StyledComponents render order */}
+    </Model>
   )
 }
-
-const MaskedContainer = styled.div< { $isOpen: boolean }>`
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
-  background: #000000de;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: zoom-out;
-
-  & img.model {
-    max-width: 100%;
-    max-height: 100%;
-    display:block;
-  }
-
-  @media screen and (min-width: 780px) {
-    & img.model {
-    }
-  }
-
-`
-
-export default ImgModel

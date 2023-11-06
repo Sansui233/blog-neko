@@ -1,7 +1,7 @@
 import { runSync } from '@mdx-js/mdx'
 import { Fragment } from 'react'
 import * as prod from 'react/jsx-runtime'
-import { MDImg, memoTag } from '../components/markdown'
+import { MDImg, memoTag } from './markdown'
 
 /**
  * @param code function string

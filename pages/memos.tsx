@@ -37,6 +37,11 @@ type SearchStatus = {
   searchText: string,
 }
 
+export const MemoModelCtx = React.createContext({
+  isModel: false,
+  setIsModel: (x: boolean) => { console.error("[MemoModelCtx] model function is called without a valid context") }
+})
+
 export default function Memos({ memos, info, memotags }: Props) {
   const router = useRouter()
   const theme = useContext(ThemeContext)
