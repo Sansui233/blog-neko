@@ -33,6 +33,7 @@ const Line = styled.div`
   background: ${p => p.theme.colors.textPrimary};
   height: 2px;
   transition: all .3s;
+  border-radius: 2px;
 
   &.is-close {
     opacity: 0;
@@ -42,11 +43,14 @@ const Line = styled.div`
 const Middle = styled.div<{ $isClose: boolean }>`
   height: 2px;
   position: relative;
+  border-radius: 2px;
+
 
   &::before,
   &::after {
     content: '';
     position: absolute;
+    border-radius: 2px;
     top:0;
     left: 0;
     width: 100%;

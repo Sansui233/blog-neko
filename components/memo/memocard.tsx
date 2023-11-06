@@ -114,6 +114,7 @@ const CardMask = styled.div<{
     .rd-more {
       margin-top: 5.375rem;
       font-size: 0.875rem;
+      letter-spacing: 0.02rem;
       padding: 0.2rem 0;
       cursor: pointer;
       span {
@@ -161,12 +162,11 @@ const MemoMeta = styled.div`
       margin-left: 0.5rem;
       display: flex;
       flex-direction: column;
-      justify-content: flex-end;
+      justify-content: center;
     }
 
     & .date {
-      font-size: 0.9rem;
-      font-family: Dosis;
+      font-size: 0.85rem;
       color: ${p => p.theme.colors.textGray};
     }
 

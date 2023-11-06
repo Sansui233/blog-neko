@@ -91,7 +91,6 @@ const TLDateStyle = styled.span`
   padding: 0 .5rem;
   font-size: 0.875rem;
   color: ${props => props.theme.colors.textGray};
-  font-family: Dosis;
 `
 
 const TLPostsContainer = styled.ul`

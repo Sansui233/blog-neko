@@ -6,17 +6,7 @@ export const MarkdownStyle = styled.div`
   text-align: justify;
   letter-spacing: 0.01em;
   color: ${p => p.theme.colors.textSecondary};
-  font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
 
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    font-family: "Gotham Book",ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
-  }
-  
   @media screen and (max-width: 580px){
     text-align: unset;
     p,ul,ol {
@@ -39,7 +29,7 @@ export const MarkdownStyle = styled.div`
 
   a {
     position: relative;
-    font-weight: 500;
+    font-weight: bold;
     border-bottom: 1px solid ${props => props.theme.colors.gold};
     transition: box-shadow .5s;
   }
@@ -52,12 +42,13 @@ export const MarkdownStyle = styled.div`
     color: ${props => props.theme.colors.gold};
     background-color: ${props => props.theme.colors.codeBlockBg};
     border-radius: 3px;
-    padding: 0.375rem 0.375rem;
+    padding: 0.2rem 0.375rem;
     margin: 0rem 1px;
+    font-size: 0.875rem;
   }
 
   pre code {
-    color: ${p => p.theme.colors.textPrimary};
+    color: ${p => p.theme.colors.textSecondary};
     border-radius: 0.5rem;
     padding: 1rem 2rem;
     margin: unset;
@@ -79,14 +70,10 @@ export const MarkdownStyle = styled.div`
     position: relative;
   }
   ul li::before {
-    content:'';
+    content:"•";
     position: absolute;
-    top: .6em;
-    height: .4em;
-    width: .4em;
-    border-radius: 1em;
-    border: solid 1px ${p => p.theme.colors.gold};
-    left: -1.5rem;
+    color: ${p => p.theme.colors.gold};
+    left: -1rem;
   }
 
   .hljs {
@@ -107,13 +94,13 @@ export const MarkdownStyle = styled.div`
   
   .hljs-comment,
   .hljs-quote {
-    color: #878ea7ba;
+    color: #a79b87ba;
     font-style: italic;
   }
-  
+
   .hljs-params,
   .hljs-type {
-    color: #878ea7ba;
+    color: #a79b87c4;
   }
   
   .hljs-punctuation,
@@ -131,7 +118,7 @@ export const MarkdownStyle = styled.div`
   
   .hljs-keyword,
   .hljs-deletion {
-    color: ${p => p.theme.colors.gold};
+    color: #799f67;
   }
   
   .hljs-regexp,
@@ -147,7 +134,7 @@ export const MarkdownStyle = styled.div`
   .hljs-formula,
   .hljs-section,
   .hljs-title.function_ {
-    color: #d14f82;
+    color: #e36b6b;
   }
   
   .hljs-string,
@@ -174,7 +161,7 @@ export const MarkdownStyle = styled.div`
   .hljs-attribute,
   .hljs-template-tag,
   .hljs-meta .hljs-keyword {
-    color: #9080ff;
+    color: ${p => p.theme.colors.gold};
   }
 
 `;

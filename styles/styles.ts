@@ -18,3 +18,5 @@ export const floatBoxShadow = css`box-shadow: ${props => props.theme.colors.shad
 export const paperCard = css`background: ${p => p.theme.colors.bg};box-shadow: rgb(0 0 0 / 10%) 0px 2px 4px;`
 
 export const hideScrollBar = css`&::-webkit-scrollbar{display: none;}`
+
+export const codefont  = css`font-family: SFMono-Regular,consolas,Liberation Mono,menlo,monaco,"Courier New",courier,monospace,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol",sans-serif;`

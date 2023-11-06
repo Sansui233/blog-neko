@@ -210,7 +210,10 @@ const Nav = styled.nav`
   flex: 2 1 auto;
   display: flex;
   justify-content: space-evenly;
+  letter-spacing: 0.02em;
   align-items: center;
+
+
   @media screen and (min-width: 780px) {
     max-width: 50%;
   }
@@ -229,7 +232,7 @@ const Nav = styled.nav`
 
   a {
     position: relative;
-    font-weight: 500;
+    font-weight: bold;
   }
 
   a::before {

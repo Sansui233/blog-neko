@@ -54,7 +54,7 @@ export default function Post({ meta, mdxcode, nextPost, prevPost, excerpt, headi
       {tagList.map((tag: string) => {
         return (
           <StyledLink href={`/tags/${tag}`} passHref={true} key={tag}>
-            {`#${tag} `}
+            <span style={{ paddingRight: "0.1em" }}>#</span>{tag}
           </StyledLink>
         );
       })}
@@ -108,7 +108,7 @@ export default function Post({ meta, mdxcode, nextPost, prevPost, excerpt, headi
                     {genTags(meta.tags)}
                     {" in "}
                     <StyledLink href={`/categories/${meta.categories}`} passHref={true}>
-                      <i style={{ paddingRight: "0.15em" }} className='icon-material-folder_open' />
+                      <i style={{ paddingRight: "0.2em" }} className='icon-material-folder_open' />
                       {meta.categories}
                     </StyledLink>
                   </MetaStyle>
@@ -257,10 +257,10 @@ const PostTitle = styled.div`
 const MetaStyle = styled.span`
   font-size: 0.875rem;
   position: relative;
+  color: ${p => p.theme.colors.textGray};
 
   .date {
-    font-family: Dosis;
-    font-size: 0.95rem;
+    font-size: 0.875rem;
   }
 
   &::before {
@@ -276,6 +276,7 @@ const MetaStyle = styled.span`
 
 const StyledLink = styled(Link)`
   transition: opacity .3s, color .3s;
+  color: ${p => p.theme.colors.textPrimary};
 
   &:hover {
     color: ${p => p.theme.colors.gold};

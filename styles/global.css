@@ -1,4 +1,5 @@
 /** Static css file is used to avoid font/style shifting in SSG caused by styled-components injection**/
+@import url('https://cdn.jsdelivr.net/npm/@ibm/plex@4.0.2/css/ibm-plex.min.css?family=IBM+Plex+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap');
 /* Style Reset */
 *,
 *::before,
@@ -17,6 +18,7 @@ body {
 
 body {
   line-height: 1.5;
+  tab-size: 2em;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -47,10 +49,6 @@ h4,
 h5,
 h6 {
   overflow-wrap: break-word;
-}
-
-code {
-  font-family: SFMono-Regular,consolas,Liberation Mono,menlo,monaco,"Courier New",courier,monospace,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol",sans-serif;
 }
 
 pre code {
@@ -91,16 +89,7 @@ pre code {
   src: local('Gotham'), url('/fonts/Gotham-Medium.woff') format('woff');
   /* Safari, Android, iOS */
   font-style: normal;
-  font-weight: 500;
-}
-
-@font-face {
-  font-family: 'Dosis';
-  src: local('Dosis'), url('/fonts/Dosis.woff') format('woff');
-  /* Safari, Android, iOS */
-  font-style: normal;
-  font-weight: 400;
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  font-weight: bold;
 }
 
 @font-face {
@@ -187,14 +176,24 @@ html,
 body {
   padding: 0;
   margin: 0;
-  font-family: "Gotham Book", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
+  font-family: "IBM Plex Sans",ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
   /* background-color: black;
   color: whitesmoke; */
+  
 }
 
 a {
   color: inherit;
   text-decoration: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
 }
 
 h1 {
@@ -224,8 +223,6 @@ h6 {
   margin-top: 1rem;
   margin-bottom: 1rem;
 }
-
-
 
 h4 {
   font-size: 1.25rem;
@@ -282,4 +279,9 @@ html ::-webkit-scrollbar-thumb {
 html ::-webkit-scrollbar-thumb:hover {
   background: #8a8a8a61;
   border: 4px solid transparent;
+}
+
+
+code {
+  font-family: SFMono-Regular,consolas,Liberation Mono,menlo,monaco,"Courier New",courier,monospace,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol",sans-serif;
 }

@@ -376,7 +376,7 @@ const OneColLayout = styled.div`
 
 /** Styles **/
 const MemoCol = styled.div`
-  max-width: 672px;
+  max-width: 700px;
   padding: 86px 16px 48px 16px;
   align-self: flex-end;
 

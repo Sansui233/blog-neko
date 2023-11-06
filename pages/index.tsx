@@ -113,7 +113,7 @@ const PostGrids = styled.section`
 
 const Card = styled(Link)`
   display: block;
-  min-height: 7rem;
+  min-height: 6rem;
   border-radius: 5px;
   cursor: pointer;
   position: relative;
@@ -121,6 +121,7 @@ const Card = styled(Link)`
   opacity: 0;
   animation: ${bottomFadeIn} .5s ease;
   animation-fill-mode: forwards;
+
   @media (any-hover: hover) {
     &:hover{
       ${() => floatBoxShadow}
@@ -133,6 +134,10 @@ const Card = styled(Link)`
     }
   }
 
+  @media screen and (max-width: 780px){
+    min-height: 5.25rem;
+  }
+
   .card-content {
     padding: 1rem;
   }
@@ -140,16 +145,16 @@ const Card = styled(Link)`
   .meta {
     margin-top: 0.25rem;
     font-size: 0.875rem;
+    color: ${p => p.theme.colors.textSecondary};
   }
 
   .date {
     font-size: 0.9rem;
-    font-family: Dosis;
   }
 `
 
 const Title = styled.span`
   font-size: 1.125rem;
-  font-weight: 500;
+  font-weight: bold;
 `
 
