@@ -74,7 +74,7 @@ function ArticleItem({ p, i }: {
   i: number
 }) {
   return (
-    <Card href={'/posts/' + p.id} passHref={true} style={{ animationDelay: (i * 100).toString() + 'ms' }}>
+    <Card href={'/posts/' + p.id} passHref={true}>
       <div className='card-content'>
         <Title>{p.title}</Title>
         <div className='meta'>
