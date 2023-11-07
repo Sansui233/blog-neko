@@ -58,34 +58,23 @@ export default function Memos({ memos, info, memotags }: Props) {
 
   const handleSearch = useCallback(async () => {
     if (!inputRef.current) return
-
     const str = inputRef.current.value.trim()
-
     if (str.length === 0) return
 
-    if (!engine) {
-      // Init Search Engine && Get data
-      const newEngine = await initSearch(setEngine, setpostsData, setsearchStatus, info.pages)
-      setsearchStatus(status => {
-        return {
-          ...status,
-          isSearch: "searching",
-          searchText: str // possibly the search text is stale
-        }
-      })
-      newEngine.search(str.split(" "))
-    } else {
-      setsearchStatus(status => {
-        return {
-          ...status,
-          isSearch: "searching",
-          searchText: str // possibly the search text is stale
-        }
-      })
-      engine.search(str.split(" "))
+    setsearchStatus(status => ({
+      ...status,
+      isSearch: "searching",
+      searchText: str // possibly the search text is stale
+    }))
+    globalThis.scrollTo({ top: 0 })
+
+    let e = engine
+    if (!e) { // Init Search Engine && Get data
+      e = await initSearch(setEngine, setpostsData, setsearchStatus, info.pages)
     }
-  }
-    , [engine, info.pages])
+    e.search(str.split(" "))
+
+  }, [engine, info.pages])
 
   const setSearchText = useCallback((text: string, immediateSearch = true) => {
     if (!inputRef.current) return
