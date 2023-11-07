@@ -1,16 +1,16 @@
 import type { AppProps } from 'next/app'
 import { useRouter } from 'next/router'
 import Script from 'next/script'
-import { createContext, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ThemeProvider } from 'styled-components'
 import { THEME_CHANGED_EVT, ThemeCallBack, ThemeMsg, emitter, getAppTheme } from '../lib/app-states'
+import { SafariCtx } from '../lib/ctx'
 import * as gtag from '../lib/gtag'
 import { siteInfo } from '../site.config'
 import { GlobalStyle } from '../styles/global'
 import '../styles/global.css'
 import { darkTheme, genSystemTheme, lightTheme } from '../styles/theme'
 
-export const SafariCtx = createContext(false)
 function MyApp({ Component, pageProps }: AppProps) {
 
   const [theme, setTheme] = useState(lightTheme);

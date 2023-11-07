@@ -1,6 +1,6 @@
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useState } from "react";
 import styled from "styled-components";
-import { SafariCtx } from "../../pages/_app";
+import { useViewHeight } from "../../lib/useview";
 import { MemoModelCtx } from "../../pages/memos";
 import Model from "../common/Model";
 import { TImage } from "./imagesthumb";
@@ -12,38 +12,25 @@ type Props = {
 
 export default function ImageBrowser({ imagesData, currentIndex }: Props) {
   const ctx = useContext(MemoModelCtx)
-  const isSafari = useContext(SafariCtx)
-  const [viewHeight, setviewHeight] = useState(globalThis.innerHeight)
   const [i, setI] = useState(currentIndex)
   console.log('%%  curr', i)
-
-  // subscribe scroll to get view height
-  useEffect(() => {
-    const setvhOnResize = (ev: UIEvent) => {
-      setviewHeight(globalThis.innerHeight)
-    }
-    if (isSafari) {
-      globalThis.addEventListener("resize", setvhOnResize)
-    }
-    return () => {
-      globalThis.removeEventListener("resize", setvhOnResize)
-    }
-  }, [isSafari, setviewHeight])
 
 
   if (i > imagesData.length - 1) console.error("uncaught ivalid image index:", i, "in length", imagesData.length)
 
   const ratio = useCallback(() => i < imagesData.length ? imagesData[i].width / imagesData[i].height : 1, [imagesData, i])
 
+  const maxHeight = useViewHeight()
+
   return (ctx.isModel ?
     <Model isModel={true} setModel={ctx.setIsModel}>
-      <Container $viewHeight={viewHeight}>
+      <Container>
         {/*eslint-disable-next-line @next/next/no-img-element*/} {/* eslint-disable-next-line jsx-a11y/alt-text */}
         <img loading="lazy" src={imagesData[i].ok === "loaded" ? imagesData[i].src : ""} alt={imagesData[i].ok}
           style={ratio() >= 2
-            ? { maxWidth: "100%", maxHeight: "90vh" }
+            ? { maxWidth: "100%", maxHeight: maxHeight * 0.9 + "px" }
             : ratio() > 0.6
-              ? { maxWidth: "100%", maxHeight: "100vh" }
+              ? { maxWidth: "100%", maxHeight: maxHeight + "px" }
               : { maxWidth: "95%" }} />
       </Container>
 
@@ -105,9 +92,7 @@ const Button = styled.div`
   }
 `
 
-const Container = styled.div<{
-  $viewHeight: number
-}>`
+const Container = styled.div`
   width: 100%;
   max-height: 100%;
   overflow-y: auto;
@@ -115,6 +100,5 @@ const Container = styled.div<{
   img {
     display: block;
     margin: 0 auto;
-    padding-bottom: calc(100vh - ${p => p.$viewHeight}px);
   }
 `
