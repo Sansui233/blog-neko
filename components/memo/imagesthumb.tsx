@@ -34,9 +34,9 @@ export function Images({ imgsmd }: {
 }) {
   const [isModel, setIsModel] = useState(false)
   const [currentIndex, setCurrentIndex] = useState(0)
-  const [imagesData, setImagesData] = useState<TImage[]>(Array(imgsmd.length).map((_, index) => {
-    return { ok: "loading", index, src: "", width: 0, height: 0, alt: "" }
-  }))
+  const [imagesData, setImagesData] = useState<TImage[]>(new Array(imgsmd.length).fill(1).map((_, index) => (
+    { ok: "loading", index, src: "", width: 0, height: 0, alt: "" }
+  )))
 
   // fetch image
   useEffect(() => {
@@ -107,15 +107,16 @@ export function Images({ imgsmd }: {
 
       // two or more images
       : <ImageGrid>
-        {imagesData.map((_, i) => {
-          return <ImageContainer key={i} onClick={e => {
-            setCurrentIndex(i)
-            setIsModel(true)
-          }}>
-            {/*eslint-disable-next-line @next/next/no-img-element*/} {/* eslint-disable-next-line jsx-a11y/alt-text */}
-            <img loading="lazy" src={imagesData[i].ok === "loaded" ? imagesData[i].src : ""} alt={imagesData[i].ok} />
-            <ClickMask />
-          </ImageContainer>
+        {imagesData.map((img, i) => {
+          return (
+            <ImageContainer key={i} onClick={() => {
+              setCurrentIndex(i)
+              setIsModel(true)
+            }}>
+              {/*eslint-disable-next-line @next/next/no-img-element*/} {/* eslint-disable-next-line jsx-a11y/alt-text */}
+              <img loading="lazy" src={img.ok === "loaded" ? img.src : ""} alt={img.ok} />
+              <ClickMask />
+            </ImageContainer>)
         })}
       </ImageGrid>}
   </MemoModelCtx.Provider>
