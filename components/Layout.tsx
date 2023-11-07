@@ -7,13 +7,13 @@ type Props = React.HTMLProps<HTMLDivElement>
 
 const LayoutContainer: React.FC<Props> = ({ children, ...otherProps }) => {
   return (
-    <div {...otherProps}>
+    <>
       <Topbar />
-      <main>
+      <main {...otherProps}>
         {children}
       </main>
       <Footer />
-    </div>
+    </>
   )
 }
 

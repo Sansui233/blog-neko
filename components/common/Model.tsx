@@ -37,6 +37,8 @@ export default function Model({ isModel, setModel, scrollRef, ...otherprops }: P
     : undefined
 }
 
+
+// Notice that the bottom will be covered on ios
 const MaskedContainer = styled.div< { $isOpen: boolean }>`
   position: fixed;
   top: 0;

@@ -1,7 +1,7 @@
 import type { AppProps } from 'next/app'
 import { useRouter } from 'next/router'
 import Script from 'next/script'
-import { useEffect, useRef, useState } from 'react'
+import { createContext, useEffect, useRef, useState } from 'react'
 import { ThemeProvider } from 'styled-components'
 import { THEME_CHANGED_EVT, ThemeCallBack, ThemeMsg, emitter, getAppTheme } from '../lib/app-states'
 import * as gtag from '../lib/gtag'
@@ -10,11 +10,18 @@ import { GlobalStyle } from '../styles/global'
 import '../styles/global.css'
 import { darkTheme, genSystemTheme, lightTheme } from '../styles/theme'
 
+export const SafariCtx = createContext(false)
 function MyApp({ Component, pageProps }: AppProps) {
 
   const [theme, setTheme] = useState(lightTheme);
   const themeRef = useRef(theme) // 防止 theme 更新而反复 addListener
   const router = useRouter()
+  const [isSafari, setIsSafari] = useState(false)
+
+  // set device
+  useEffect(() => {
+    setIsSafari(/^((?!chrome|android).)*safari/i.test(navigator.userAgent))
+  }, [setIsSafari])
 
   // Google Analystics
   useEffect(() => {
@@ -31,7 +38,6 @@ function MyApp({ Component, pageProps }: AppProps) {
       router.events.off('hashChangeComplete', handleRouteChange)
     }
   }, [router.events])
-
 
   useEffect(() => { themeRef.current = theme }, [theme])
 
@@ -83,9 +89,10 @@ function MyApp({ Component, pageProps }: AppProps) {
       }}
     />
     <ThemeProvider theme={theme}>
-      {/* <div id='tooltip-portal'>全局</div> */}
-      <GlobalStyle />
-      <Component {...pageProps} />
+      <SafariCtx.Provider value={isSafari}>
+        <GlobalStyle />
+        <Component {...pageProps} />
+      </SafariCtx.Provider>
     </ThemeProvider>
   </>
 }

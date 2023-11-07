@@ -1,5 +1,6 @@
-import { useCallback, useContext, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import styled from "styled-components";
+import { SafariCtx } from "../../pages/_app";
 import { MemoModelCtx } from "../../pages/memos";
 import Model from "../common/Model";
 import { TImage } from "./imagesthumb";
@@ -11,8 +12,23 @@ type Props = {
 
 export default function ImageBrowser({ imagesData, currentIndex }: Props) {
   const ctx = useContext(MemoModelCtx)
+  const isSafari = useContext(SafariCtx)
+  const [viewHeight, setviewHeight] = useState(globalThis.innerHeight)
   const [i, setI] = useState(currentIndex)
   console.log('%%  curr', i)
+
+  // subscribe scroll to get view height
+  useEffect(() => {
+    const setvhOnResize = (ev: UIEvent) => {
+      setviewHeight(globalThis.innerHeight)
+    }
+    if (isSafari) {
+      globalThis.addEventListener("resize", setvhOnResize)
+    }
+    return () => {
+      globalThis.removeEventListener("resize", setvhOnResize)
+    }
+  }, [isSafari, setviewHeight])
 
 
   if (i > imagesData.length - 1) console.error("uncaught ivalid image index:", i, "in length", imagesData.length)
@@ -21,7 +37,7 @@ export default function ImageBrowser({ imagesData, currentIndex }: Props) {
 
   return (ctx.isModel ?
     <Model isModel={true} setModel={ctx.setIsModel}>
-      <Container>
+      <Container $viewHeight={viewHeight}>
         {/*eslint-disable-next-line @next/next/no-img-element*/} {/* eslint-disable-next-line jsx-a11y/alt-text */}
         <img loading="lazy" src={imagesData[i].ok === "loaded" ? imagesData[i].src : ""} alt={imagesData[i].ok}
           style={ratio() >= 2
@@ -47,7 +63,7 @@ export default function ImageBrowser({ imagesData, currentIndex }: Props) {
 }
 
 const Tools = styled.div`
-  position: absolute;
+  position: fixed;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -89,7 +105,9 @@ const Button = styled.div`
   }
 `
 
-const Container = styled.div`
+const Container = styled.div<{
+  $viewHeight: number
+}>`
   width: 100%;
   max-height: 100%;
   overflow-y: auto;
@@ -97,5 +115,6 @@ const Container = styled.div`
   img {
     display: block;
     margin: 0 auto;
+    padding-bottom: calc(100vh - ${p => p.$viewHeight}px);
   }
 `
