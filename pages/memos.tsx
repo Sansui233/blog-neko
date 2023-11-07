@@ -233,7 +233,7 @@ export default function Memos({ memos, info, memotags }: Props) {
               <CardCommon title={"TAGS"}>
                 <div style={{ paddingTop: "0.5rem" }}>
                   {memotags.map(t => {
-                    return <span className="hover-gold" key={t[0]}
+                    return <span className="hover-gold" style={{ display: "inline-block" }} key={t[0]}
                       onClick={() => { setSearchText("#" + t[0]) }}
                     >
                       {`#${t[0]}`}

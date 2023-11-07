@@ -4,7 +4,7 @@ import { TMemo } from "../../pages/memos";
 import { siteInfo } from "../../site.config";
 import { bottomFadeIn } from "../../styles/animations";
 import { MarkdownStyle } from "../../styles/components/MarkdownStyle";
-import { paperCard, textShadow } from "../../styles/styles";
+import { textShadow } from "../../styles/styles";
 import { useMdxMemo } from "../mdx";
 import { Images } from "./imagesthumb";
 
@@ -73,7 +73,7 @@ const MemoCardStyle = styled.section<{
   $isCollapse: boolean
 }>`
 
-  ${paperCard}
+  background:${p => p.theme.colors.bg};
   margin: 1rem 0;
   padding: 1.25rem 1.5rem;
   border-radius: 1rem;

@@ -14,8 +14,6 @@ export default function ImageBrowser({ imagesData, currentIndex }: Props) {
   const ctx = useContext(MemoModelCtx)
   const [i, setI] = useState(currentIndex)
   const scrollRef = useRef<HTMLDivElement>(null)
-  console.log('%%  curr', i)
-
 
   if (i > imagesData.length - 1) console.error("uncaught ivalid image index:", i, "in length", imagesData.length)
 
