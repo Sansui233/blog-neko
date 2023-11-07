@@ -96,12 +96,13 @@ export function Images({ imgsmd }: {
               ? 0.75
               : imagesData[0].width / imagesData[0].height
           : 2,
-      }} onClick={() => {
+      }} onClick={e => {
         setCurrentIndex(0)
         setIsModel(true)
       }}>
         {/*eslint-disable-next-line @next/next/no-img-element*/} {/* eslint-disable-next-line jsx-a11y/alt-text */}
         <img loading="lazy" src={imagesData[0]?.ok === "loaded" ? imagesData[0]?.src : ""} alt={imagesData[0]?.ok} />
+        <ClickMask />
       </ImageContainer>
 
       // two or more images
@@ -113,12 +114,21 @@ export function Images({ imgsmd }: {
           }}>
             {/*eslint-disable-next-line @next/next/no-img-element*/} {/* eslint-disable-next-line jsx-a11y/alt-text */}
             <img loading="lazy" src={imagesData[i].ok === "loaded" ? imagesData[i].src : ""} alt={imagesData[i].ok} />
+            <ClickMask />
           </ImageContainer>
         })}
       </ImageGrid>}
   </MemoModelCtx.Provider>
 }
 
+// ban press on safari for object-fit not work well
+const ClickMask = styled.div`
+  position: absolute;
+  top:0;
+  left:0;
+  width: 100%;
+  height: 100%;
+`
 
 const ImageContainer = styled.div`
   border-radius: 0.5rem;
@@ -127,6 +137,9 @@ const ImageContainer = styled.div`
   overflow: hidden;
   aspect-ratio: 1;
   cursor: zoom-in;
+  
+  user-select:none;
+  -webkit-user-select:none;
 
   & img {
     position: absolute;

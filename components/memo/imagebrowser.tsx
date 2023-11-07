@@ -2,7 +2,7 @@ import { useCallback, useContext, useState } from "react";
 import styled from "styled-components";
 import { MemoModelCtx } from "../../pages/memos";
 import Model from "../common/Model";
-import { TImage } from "./images";
+import { TImage } from "./imagesthumb";
 
 type Props = {
   imagesData: TImage[]

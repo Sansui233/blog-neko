@@ -6,7 +6,7 @@ import { bottomFadeIn } from "../../styles/animations";
 import { MarkdownStyle } from "../../styles/components/MarkdownStyle";
 import { paperCard, textShadow } from "../../styles/styles";
 import { useMdxMemo } from "../mdx";
-import { Images } from "./images";
+import { Images } from "./imagesthumb";
 
 
 
