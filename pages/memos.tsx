@@ -17,6 +17,7 @@ import { memo_db, writeMemoJson } from "../lib/data/memos";
 import { MemoInfo, MemoPost, MemoTagArr } from "../lib/data/memos.common";
 import { compileMdxMemo } from "../lib/markdown/mdx";
 import { Naive, Result, SearchObj } from "../lib/search";
+import { useDocumentEvent } from "../lib/useEvent";
 import { siteInfo } from "../site.config";
 
 const MemoCSRAPI = '/data/memos'
@@ -122,14 +123,11 @@ export default function Memos({ memos, info, memotags }: Props) {
 
   }, [router.query])
 
-
   // bind keyboard event
-  useEffect(() => {
-    document.addEventListener("keydown", (evt) => {
-      if (inputRef.current && inputRef.current === document.activeElement && evt.key === "Enter")
-        handleSearch()
-    })
-  }, [handleSearch])
+  useDocumentEvent("keydown", (evt) => {
+    if (inputRef.current && inputRef.current === document.activeElement && evt.key === "Enter")
+      handleSearch()
+  }, undefined, [handleSearch])
 
   const currPage = (() => {
     if (typeof (router.query.p) === 'string') {

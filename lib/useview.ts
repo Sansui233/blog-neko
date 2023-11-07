@@ -24,3 +24,27 @@ export function useViewHeight(){
 
   return viewHeight
 }
+
+/**
+ * Get real view width
+ */
+export function useViewWidth(){
+  const isSafari = useContext(SafariCtx)
+  const [viewWidth, setviewHeight] = useState(globalThis.innerWidth)
+
+  // subscribe scroll to get view height
+  // for safari compability
+  useEffect(() => {
+    const setvhOnResize = () => {
+      setviewHeight(globalThis.innerWidth)
+    }
+    if (isSafari) {
+      globalThis.addEventListener("resize", setvhOnResize)
+    }
+    return () => {
+      globalThis.removeEventListener("resize", setvhOnResize)
+    }
+  }, [isSafari, setviewHeight])
+
+  return viewWidth
+}
