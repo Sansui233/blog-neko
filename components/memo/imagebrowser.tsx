@@ -4,7 +4,7 @@ import { throttle } from "../../lib/throttle";
 import { useDocumentEvent } from "../../lib/useEvent";
 import { useViewHeight } from "../../lib/useview";
 import { MemoModelCtx } from "../../pages/memos";
-import { slideInLeft, slideInRight } from "../../styles/animations";
+import { fadeIn, slideInLeft, slideInRight } from "../../styles/animations";
 import Model from "../common/Model";
 import { TImage } from "./imagesthumb";
 
@@ -74,25 +74,26 @@ export default function ImageBrowser({ imagesData, currentIndex }: Props) {
     }
   }, [scrollRef, next, prev]) // todo throttle?
 
-  useDocumentEvent("keydown", keyevent, undefined)
+  useDocumentEvent("keydown", keyevent)
 
 
   // mobile Drag
   const [isPressed, setIsPressed] = useState(false)
   const [startpos, setStartpos] = useState([0, 0, 0]) // x, y, scrolly
-  const [starttime, setStartTime] = useState(Date.now()) // x, y, scrolly
+  const [starttime, setStartTime] = useState(Date.now())
   const [trans, setTrans] = useState([0, 0])
   const [direction, setDirection] = useState<"x" | "y" | "scrolly" | 0>(0)
+  const [isBeforeUnmount, setisBeforeUnmount] = useState(false)
 
-  const pointerDownEvent = useCallback((evt: React.TouchEvent<HTMLDivElement>) => {
+  const touchStartEvent = useCallback((evt: React.TouchEvent<HTMLDivElement>) => {
     evt.stopPropagation()
-    console.debug("%% key down")
     setIsPressed(true)
     setStartTime(Date.now())
     setStartpos([evt.touches[0].clientX, evt.touches[0].clientY, scrollRef.current ? scrollRef.current.scrollTop : 0])
+    setisBeforeUnmount(false)
   }, [])
 
-  const pointerMoveEvent = useCallback((evt: React.TouchEvent<HTMLDivElement>) => {
+  const touchMoveEvent = useCallback((evt: React.TouchEvent<HTMLDivElement>) => {
     evt.stopPropagation()
     if (isPressed) {
       const x = evt.touches[0].clientX - startpos[0]
@@ -101,7 +102,7 @@ export default function ImageBrowser({ imagesData, currentIndex }: Props) {
       if (direction !== 0) {
         setTrans(direction === "x" ? [x, 0] : direction === "y" ? [0, y] : [0, scrolly])
       } else {
-        if (Math.abs(x) > 30 || Math.abs(y) > 40 || Math.abs(scrolly) > 30) {
+        if (Math.abs(x) > 20 || Math.abs(y) > 20 || Math.abs(scrolly) > 20) {
           setDirection(Math.abs(x) > Math.abs(y) && Math.abs(x) > Math.abs(scrolly) ? "x" : Math.abs(y) > Math.abs(scrolly) ? "y" : "scrolly")
           setTrans(Math.abs(x) > Math.abs(y) && Math.abs(x) > Math.abs(scrolly) ? [x, 0] : y > Math.abs(scrolly) ? [0, y] : [0, scrolly])
         }
@@ -109,12 +110,13 @@ export default function ImageBrowser({ imagesData, currentIndex }: Props) {
     }
   }, [startpos, direction, isPressed])
 
-  const pointerUpEvent = useCallback((evt: React.TouchEvent<HTMLDivElement>) => {
+  const touchEndEvent = useCallback((evt: React.TouchEvent<HTMLDivElement>) => {
     evt.stopPropagation()
-    console.debug("%% pointer up")
+    console.debug("%% touch up")
 
     if (Date.now() - starttime < 200 && Math.abs(trans[0]) < 5 && Math.abs(trans[1]) < 5) {
-      ctx.setIsModel(false) // close for click
+      setisBeforeUnmount(true)
+      setTimeout(() => { ctx.setIsModel(false) }, 300) // 避免点击穿透的问题。touchstart ==>touchmove==>touched ==>click
     } else {
       if (direction === "x") {
         if (trans[0] < -60) {
@@ -129,12 +131,10 @@ export default function ImageBrowser({ imagesData, currentIndex }: Props) {
     setStartpos([0, 0, 0])
     setTrans([0, 0])
     setDirection(0)
-
   }, [trans, next, prev, direction, starttime, ctx])
 
   const buttonLTrans = useMemo(() => direction === "x" && trans[0] > 60, [trans, direction])
   const buttonRTrans = useMemo(() => direction === "x" && trans[0] < -60, [trans, direction])
-
 
   const containerTrans: CSSProperties = useMemo(() => Object.assign(
     direction === "x"
@@ -148,6 +148,7 @@ export default function ImageBrowser({ imagesData, currentIndex }: Props) {
   )
     , [trans, direction])
 
+  const endTrans: CSSProperties = useMemo(() => isBeforeUnmount ? { opacity: 0, transition: "opacity 0.3s ease" } : {}, [isBeforeUnmount])
 
 
   // img style
@@ -161,7 +162,7 @@ export default function ImageBrowser({ imagesData, currentIndex }: Props) {
 
 
   return (ctx.isModel ?
-    <Model isModel={true} setModel={ctx.setIsModel} style={{ background: "#1d1d1d" }}>
+    <Model isModel={true} setModel={ctx.setIsModel} style={{ ...endTrans, background: "#1d1d1d" }}>
       {/* Debug */}
       {/* <Tools style={{ bottom: "0rem", flexDirection: "column", height: "12em" }}>
         <div>startpos {startpos.toString()}</div>
@@ -170,16 +171,16 @@ export default function ImageBrowser({ imagesData, currentIndex }: Props) {
       </Tools> */}
 
       <Container ref={scrollRef}
-        onTouchStart={pointerDownEvent}
-        onTouchMove={throttle(pointerMoveEvent, 16)}
-        onTouchEnd={pointerUpEvent}
+        onTouchStart={touchStartEvent}
+        onTouchMove={throttle(touchMoveEvent, 16)}
+        onTouchEnd={touchEndEvent}
         onClick={e => e.stopPropagation()}
         style={containerTrans}
       >
 
-        <Img loading="lazy" src={imagesData[i.curr].ok === "loaded" ? imagesData[i.curr].src : ""} alt={imagesData[i.curr].ok}
+        <Img src={imagesData[i.curr].ok === "loaded" ? imagesData[i.curr].src : ""} alt={imagesData[i.curr].ok}
           style={ratioStyle}
-          $isFromRight={i.curr >= i.last} />
+          $entranceDirection={i.curr === i.last ? 0 : i.curr > i.last ? 1 : -1} />
 
       </Container>
 
@@ -192,16 +193,16 @@ export default function ImageBrowser({ imagesData, currentIndex }: Props) {
         : null}
 
       <Tools>{i.curr + 1}/{imagesData.length} &nbsp;|&nbsp;
-        <span onClick={() => { ctx.setIsModel(false) }}>{"关闭"}</span></Tools>
+        <span onClick={(e) => { e.stopPropagation(), ctx.setIsModel(false) }}>{"关闭"}</span></Tools>
 
     </Model> : undefined
   )
 }
 
 const Img = styled.img<{
-  $isFromRight: boolean
+  $entranceDirection: -1 | 0 | 1
 }>`
-  animation: ${p => p.$isFromRight ? slideInRight : slideInLeft} 0.7s ease;
+  animation: ${p => p.$entranceDirection === 0 ? fadeIn : p.$entranceDirection === 1 ? slideInRight : slideInLeft} 0.7s ease;
   transform: translate3d(0,0,0);
 `
 
@@ -272,7 +273,6 @@ const Container = styled.div`
   & img {
     display: block;
     margin: 0 auto;
-    pointer-events: none;
   }
 
   & img::after{

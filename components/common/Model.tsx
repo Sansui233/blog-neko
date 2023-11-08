@@ -44,7 +44,7 @@ export default function Model({ isModel, setModel, scrollRef, style, ...otherpro
   return isModel
     ? <MaskedContainer {...otherprops}
       $isOpen={isModel}
-      onClick={() => setModel(false)}
+      onClick={(e) => { e.stopPropagation(); setModel(false) }}
       style={styles}
     />
     : undefined

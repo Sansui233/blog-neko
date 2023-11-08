@@ -96,26 +96,30 @@ export function Images({ imgsmd }: {
               ? 0.75
               : imagesData[0].width / imagesData[0].height
           : 2,
-      }} onClick={e => {
-        setCurrentIndex(0)
-        setIsModel(true)
       }}>
         {/*eslint-disable-next-line @next/next/no-img-element*/} {/* eslint-disable-next-line jsx-a11y/alt-text */}
         <img loading="lazy" src={imagesData[0]?.ok === "loaded" ? imagesData[0]?.src : ""} alt={imagesData[0]?.ok} />
-        <ClickMask />
+        <ClickMask onClick={e => {
+          e.stopPropagation()
+          console.debug("%%% grid pressed")
+          setCurrentIndex(0)
+          setIsModel(!true)
+        }} />
       </ImageContainer>
 
       // two or more images
       : <ImageGrid>
         {imagesData.map((img, i) => {
           return (
-            <ImageContainer key={i} onClick={() => {
-              setCurrentIndex(i)
-              setIsModel(true)
-            }}>
+            <ImageContainer key={i} onTouchEnd={e => { e.stopPropagation() }} >
               {/*eslint-disable-next-line @next/next/no-img-element*/} {/* eslint-disable-next-line jsx-a11y/alt-text */}
               <img loading="lazy" src={img.ok === "loaded" ? img.src : ""} alt={img.ok} />
-              <ClickMask />
+              <ClickMask onClick={e => {
+                e.stopPropagation()
+                console.debug("%%% grid pressed")
+                setCurrentIndex(i)
+                setIsModel(true)
+              }} />
             </ImageContainer>)
         })}
       </ImageGrid>}
