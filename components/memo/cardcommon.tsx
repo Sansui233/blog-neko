@@ -18,6 +18,8 @@ export default function CardCommon({ title, children, ...otherprops }: Props) {
 const CardContainer = styled.section`
   margin-top: 1rem;
   padding: 1rem 1rem;
+  position: relative;
+  color:${p => p.theme.colors.textPrimary};
 `
 
 const CardTitle = styled.div`

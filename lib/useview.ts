@@ -15,13 +15,11 @@ export function useViewHeight() {
     const setvhOnResize = () => {
       setviewHeight(globalThis.innerHeight)
     }
-    if (isSafari) {
-      globalThis.addEventListener("resize", setvhOnResize)
-    }
+    globalThis.addEventListener("resize", setvhOnResize)
     return () => {
       globalThis.removeEventListener("resize", setvhOnResize)
     }
-  }, [isSafari, setviewHeight])
+  }, [])
 
   return viewHeight
 }
@@ -30,7 +28,6 @@ export function useViewHeight() {
  * Get real view width
  */
 export function useViewWidth() {
-  const isSafari = useContext(SafariCtx)
   const [viewWidth, setviewHeight] = useState(globalThis.innerWidth)
 
   // subscribe scroll to get view height
@@ -39,13 +36,11 @@ export function useViewWidth() {
     const setvhOnResize = () => {
       setviewHeight(globalThis.innerWidth)
     }
-    if (isSafari) {
-      globalThis.addEventListener("resize", setvhOnResize)
-    }
+    globalThis.addEventListener("resize", setvhOnResize)
     return () => {
       globalThis.removeEventListener("resize", setvhOnResize)
     }
-  }, [isSafari, setviewHeight])
+  }, [])
 
   return viewWidth
 }

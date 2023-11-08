@@ -8,9 +8,9 @@ import Footer from "../components/common/Footer";
 import { PageDescription } from '../components/common/PageDescription';
 import Pagination from "../components/common/Pagination";
 import Topbar from "../components/common/Topbar";
-import Waline from "../components/common/Waline";
 import { TwoColLayout } from "../components/layout";
 import CardCommon, { CardTitleIcon } from "../components/memo/cardcommon";
+import CommentCard from "../components/memo/commentcard";
 import { MemoCard } from "../components/memo/memocard";
 import NavCard from "../components/memo/navcard";
 import { memo_db, writeMemoJson } from "../lib/data/memos";
@@ -19,6 +19,7 @@ import { compileMdxMemo } from "../lib/markdown/mdx";
 import { Naive, Result, SearchObj } from "../lib/search";
 import { useDocumentEvent } from "../lib/useEvent";
 import { siteInfo } from "../site.config";
+import { LinkWithLine } from "../styles/components/LinkWithLine";
 
 const MemoCSRAPI = '/data/memos'
 
@@ -211,7 +212,7 @@ export default function Memos({ memos, info, memotags }: Props) {
                 elemProps={{ style: { padding: "0 1rem" } }}
                 isScrollToTop={true}
               />
-              <Waline style={{ padding: "0 0.5rem" }} />
+              {/* <Waline style={{ padding: "0 0.5rem" }} /> */}
               <Footer />
             </MemoCol>
             <SiderCol>
@@ -239,6 +240,14 @@ export default function Memos({ memos, info, memotags }: Props) {
                   })}
                 </div>
               </CardCommon>
+              {siteInfo.friends ?
+                <CardCommon title="FRIENDS">
+                  <div style={{ padding: "0.5rem 0.25rem" }}>
+                    {siteInfo.friends.map((f, i) => <div key={i}><LinkWithLine href={f.link}>{f.name}</LinkWithLine></div>)}
+                  </div>
+                </CardCommon>
+                : null}
+              {siteInfo.walineApi && siteInfo.walineApi !== "" ? <CommentCard /> : null}
             </SiderCol>
           </TwoColLayout>
         </OneColLayout>
@@ -368,12 +377,16 @@ const OneColLayout = styled.div`
 
 /** Styles **/
 const MemoCol = styled.div`
-  max-width: 700px;
+  max-width: 650px;
   padding: 86px 16px 48px 16px;
   align-self: flex-end;
 
   &::-webkit-scrollbar {
     display: none;
+  }
+
+  @media screen and (min-width: 1080px) {
+    max-width: 700px;
   }
 
 
@@ -389,6 +402,7 @@ const MemoCol = styled.div`
 const SiderCol = styled.div`
   max-width: 15rem;
   padding-top: 100px;
+  padding-bottom: 64px;
   margin: 0 0.5rem;
   position: sticky;
 

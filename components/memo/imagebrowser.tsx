@@ -264,6 +264,7 @@ const Container = styled.div`
   width: 100%;
   max-height: 100%;
   overflow-y: auto;
+  cursor: default;
 
   -webkit-user-select:none;
   -moz-user-select:none;

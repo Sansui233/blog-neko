@@ -17,6 +17,7 @@ declare module 'styled-components' {
       bg: string,
       bg2: string,
       bgInverse: string,
+      bgMask: string;
       hoverBg: string,
       codeBlockBg: string,
       shadowBg: string,

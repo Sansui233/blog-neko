@@ -4,6 +4,7 @@ import React, { useContext, useEffect, useRef, useState } from "react"
 import styled, { ThemeContext } from "styled-components"
 import { throttle } from "../../../lib/throttle"
 import { siteInfo } from "../../../site.config"
+import { LinkWithLine } from "../../../styles/components/LinkWithLine"
 import SearchBox from "../SearchBox"
 import MenuIcon from "./MenuIcon"
 import Sidebar from "./Sidebar"
@@ -97,9 +98,9 @@ export default function Topbar({ placeHolder = true, scrollElem, hideSearch, ...
           </Link>
         </Avatar>
         <Nav>
-          <ol className={router.pathname === "/" ? 'current' : ''}><Link href="/">Posts</Link></ol>
-          <ol className={router.pathname === "/memos" ? 'current' : ''}><Link href="/memos">Memos</Link></ol>
-          <ol className={router.pathname === "/about" ? 'current' : ''}><Link href="/about">About</Link></ol>
+          <ol className={router.pathname === "/" ? 'current' : ''}><LinkWithLine href="/">Posts</LinkWithLine></ol>
+          <ol className={router.pathname === "/memos" ? 'current' : ''}><LinkWithLine href="/memos">Memos</LinkWithLine></ol>
+          <ol className={router.pathname === "/about" ? 'current' : ''}><LinkWithLine href="/about">About</LinkWithLine></ol>
         </Nav>
         <More >
           <SearchIcon ref={searchIcon} onClick={(e) => { hideSearch ? null : clickSearch(e) }} $isSearch={isSearch} $hideSearch={hideSearch}>
@@ -228,26 +229,6 @@ const Nav = styled.nav`
   ol {
     padding: 0 .5em;
     padding-top: 2px;
-  }
-
-  a {
-    position: relative;
-    font-weight: bold;
-  }
-
-  a::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: -3px;
-    width: 0;
-    height: 2px;
-    background: ${props => props.theme.colors.gold};
-    transition: width 1s cubic-bezier(0.34, 0.04, 0.03, 1.4), background .3s;
-  }
-    
-  a:hover::before {
-    width: 100%;
   }
 
   ol.current a{
