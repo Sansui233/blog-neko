@@ -1,33 +1,48 @@
-import Document, { DocumentContext, DocumentInitialProps } from 'next/document'
-import React from 'react'
+import NextDocument, { DocumentContext, DocumentInitialProps, DocumentProps } from 'next/document'
 import { ServerStyleSheet } from 'styled-components'
 
-export default class MyDocument extends Document {
-  // SSR 和 Export 时使 styled-component 写死在页面上而非在客户端注入，防止 LCP 前的样式 shift
-  static async getInitialProps(ctx: DocumentContext): Promise<DocumentInitialProps> {
-    const sheet = new ServerStyleSheet()
-    const originalRenderpage = ctx.renderPage
+import { Head, Html, Main, NextScript } from 'next/document'
+import Script from 'next/script'
+import jsdelivrFallback from '../lib/script/jsdelivr'
 
-    try {
-      ctx.renderPage = () => originalRenderpage({
-        // ?这个 enhancer 函数哪里用啊……是渲染时传给server？没懂这个 API 设计
-        enhanceApp: (App) => (props) =>
-          sheet.collectStyles(<App {...props} />)
-      })
+function Document<P = {}>(props: DocumentProps & P) {
+  return (
+    <Html>
+      <Head>
+        <Script id='jsdelivr' strategy='beforeInteractive'>{jsdelivrFallback}</Script>
+      </Head>
+      <body>
+        <Main />
+        <NextScript />
+      </body>
+    </Html>
+  )
+}
 
-      const initialProps = await Document.getInitialProps(ctx)
+Document.getInitialProps = async (ctx: DocumentContext): Promise<DocumentInitialProps> => {
+  // styled componenets server side rendering
+  const sheet = new ServerStyleSheet()
+  const originalRenderpage = ctx.renderPage
+  try {
+    ctx.renderPage = () => originalRenderpage({
+      enhanceApp: (App) => (props) =>
+        sheet.collectStyles(<App {...props} />)
+    })
 
-      return {
-        ...initialProps,
-        styles: ([
-          <>
-            {initialProps.styles}{sheet.getStyleElement()}
-          </>
-        ]),
-      }
+    const initialProps = await NextDocument.getInitialProps(ctx)
 
-    } finally {
-      sheet.seal()
+    return {
+      ...initialProps,
+      styles: ([
+        <>
+          {initialProps.styles}{sheet.getStyleElement()}
+        </>
+      ]),
     }
+
+  } finally {
+    sheet.seal()
   }
 }
+
+export default Document

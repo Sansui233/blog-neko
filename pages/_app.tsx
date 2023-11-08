@@ -69,6 +69,12 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return <>
     {/* Global Site Tag (gtag.js) - Google Analytics */}
+    <ThemeProvider theme={theme}>
+      <SafariCtx.Provider value={isSafari}>
+        <GlobalStyle />
+        <Component {...pageProps} />
+      </SafariCtx.Provider>
+    </ThemeProvider>
     <Script
       strategy="afterInteractive"
       src={`https://www.googletagmanager.com/gtag/js?id=${gtag.GA_TRACKING_ID}`}
@@ -88,12 +94,6 @@ function MyApp({ Component, pageProps }: AppProps) {
           `,
       }}
     />
-    <ThemeProvider theme={theme}>
-      <SafariCtx.Provider value={isSafari}>
-        <GlobalStyle />
-        <Component {...pageProps} />
-      </SafariCtx.Provider>
-    </ThemeProvider>
   </>
 }
 

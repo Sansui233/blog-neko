@@ -97,31 +97,6 @@ function SearchBox({ outSetSearch: outShow, stateToInner: outstate, iconEle, typ
     inputRef.current && engine?.search(strs)
   }, 300)
 
-  const renderResult = function () {
-    // 列表太长了要做成infinte scroll，不然修改打分机制
-
-    if (!isReady) {
-      return <div style={{ fontSize: "0.875rem", opacity: 0.5 }}>
-        <Excerpt>搜索初始化中……</Excerpt>
-      </div>
-    }
-
-    if (res.length === 0) {
-      return <></>
-    }
-
-    return res.map((r, i) => {
-      const id = r.id.substring(0, r.id.lastIndexOf(".")); // remove suffix
-      return <Item href={`/posts/${id}`} key={i} onClick={() => { toggle(false) }}>
-        <span>{highlightSlot(r.title, r.matches?.map(e => e.word))}</span>
-        {r.matches?.map(
-          e => e.excerpt ? <Excerpt key={e.word}>{highlightSlot(e.excerpt, e.word)}</Excerpt> : undefined
-        )}
-      </Item>
-    })
-
-  }
-
   function highlightSlot(s: string, patterns: string | string[] | undefined) {
     if (!patterns) return s
 
@@ -135,7 +110,6 @@ function SearchBox({ outSetSearch: outShow, stateToInner: outstate, iconEle, typ
     return (
       <>
         {matches.map((match, index) => {
-
           if (regexPattern.test(match)) {
             return <mark key={index}>{match}</mark>;
           } else {
@@ -145,19 +119,29 @@ function SearchBox({ outSetSearch: outShow, stateToInner: outstate, iconEle, typ
         })}
       </>
     );
-
   }
 
-
   return (
-    <Container ref={containerRef} className={isShow ? "" : "hidden"}>
+    <Container ref={containerRef} style={isShow ? {} : { display: "none" }}>
       <StickyContainer style={{ padding: "1rem 1rem 0 1rem" }}>
         <Input type="text" placeholder="搜索你感兴趣的内容，以空格分词"
           ref={inputRef}
           onInput={handleInput} />
       </StickyContainer>
       <ScrollContainer style={{ padding: "0.5rem 1rem " }}>
-        {renderResult()}
+        {isReady
+          ? res.map((r, i) => {
+            const id = r.id.substring(0, r.id.lastIndexOf(".")); // remove suffix
+            return <Item href={`/posts/${id}`} key={i} onClick={() => { toggle(false) }}>
+              <span>{highlightSlot(r.title, r.matches?.map(e => e.word))}</span>
+              {r.matches?.map(
+                e => e.excerpt ? <Excerpt key={e.word}>{highlightSlot(e.excerpt, e.word)}</Excerpt> : undefined
+              )}
+            </Item>
+          })
+          : <div style={{ fontSize: "0.875rem", opacity: 0.5 }}>
+            <Excerpt>搜索初始化中……</Excerpt>
+          </div>}
       </ScrollContainer>
     </Container>
   )
@@ -230,11 +214,6 @@ const Container = styled(PopOver)`
   width: 24rem;
   overflow: hidden;
   margin: 0 10px;
-
-
-  &.hidden {
-    display: none;
-  }
   
   & mark {
     background: none;
@@ -245,7 +224,6 @@ const Container = styled(PopOver)`
     width: 96%;
     max-height:50%
   }
-  
 `
 
 
