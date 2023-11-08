@@ -1,10 +1,11 @@
 import { useContext, useEffect, useState } from "react"
 import { SafariCtx } from "./ctx"
+import { throttle } from "./throttle"
 
 /**
  * Get real view height
  */
-export function useViewHeight(){
+export function useViewHeight() {
   const isSafari = useContext(SafariCtx)
   const [viewHeight, setviewHeight] = useState(globalThis.innerHeight)
 
@@ -28,7 +29,7 @@ export function useViewHeight(){
 /**
  * Get real view width
  */
-export function useViewWidth(){
+export function useViewWidth() {
   const isSafari = useContext(SafariCtx)
   const [viewWidth, setviewHeight] = useState(globalThis.innerWidth)
 
@@ -47,4 +48,15 @@ export function useViewWidth(){
   }, [isSafari, setviewHeight])
 
   return viewWidth
+}
+
+export function useMouseCoor() {
+  const [mouseCoor, setMouseCoor] = useState([0, 0])
+  useEffect(() => {
+    const handler = throttle((e: PointerEvent) => setMouseCoor([e.clientX, e.clientY]), 16)//60fps
+    document.addEventListener('pointermove', handler)
+    return () => document.removeEventListener('pointermove', handler)
+  }, [])
+
+  return mouseCoor
 }

@@ -59,3 +59,25 @@ export const slideUp = keyframes`
 100% {
   transform: translateY(-100%);
 }`
+
+export const slideInLeft = keyframes`
+0% {
+  transform: translateX(-1000px);
+  opacity: 0;
+}
+100% {
+  transform: translateX(0);
+  opacity: 1;
+}
+`
+
+export const slideInRight = keyframes`
+0% {
+  transform: translateX(1000px);
+  opacity: 0;
+}
+100% {
+  transform: translateX(0);
+  opacity: 1;
+}
+`

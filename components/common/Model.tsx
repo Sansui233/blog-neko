@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useEffect, useMemo } from "react"
 import styled from "styled-components"
 import { useViewHeight } from "../../lib/useview"
 
@@ -8,8 +8,14 @@ type Props = React.HTMLProps<HTMLDivElement> & {
   scrollRef?: HTMLElement // 外部页面的滚动不在 body 上时需要传入相应的元素以禁滚动
 }
 
-export default function Model({ isModel, setModel, scrollRef, ...otherprops }: Props) {
+export default function Model({ isModel, setModel, scrollRef, style, ...otherprops }: Props) {
   const viewHeight = useViewHeight()
+
+  const styles = useMemo(() => style ? {
+    ...style,
+    height: viewHeight + "px"
+  }
+    : { height: viewHeight + "px" }, [style, viewHeight])
 
   // Local Scroll
   useEffect(() => {
@@ -39,7 +45,7 @@ export default function Model({ isModel, setModel, scrollRef, ...otherprops }: P
     ? <MaskedContainer {...otherprops}
       $isOpen={isModel}
       onClick={() => setModel(false)}
-      style={{ height: viewHeight + "px" }}
+      style={styles}
     />
     : undefined
 }
