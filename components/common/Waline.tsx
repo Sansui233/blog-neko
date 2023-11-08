@@ -9,14 +9,17 @@ const Waline = (props: React.HTMLProps<HTMLDivElement>) => {
     // 挂载 waline 评论系统
     init({
       el: '#waline',
-      serverURL: siteInfo.walineApi,
+      serverURL: siteInfo.walineApi ? siteInfo.walineApi : "",
       path: window.location.pathname,
       pageview: true,
       comment: true,
     });
+
   }, [])
 
-  if ((!("walineApi" in siteInfo)) || siteInfo.walineApi === "") {
+  if (siteInfo.walineApi && siteInfo.walineApi !== "") {
+
+  } else {
     return <></>
   }
 
