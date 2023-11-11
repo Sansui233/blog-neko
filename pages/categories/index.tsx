@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { CommonHead } from "..";
 import LayoutContainer from "../../components/layout";
 import { CategoryLayoutStyle, CategoryTitle } from "../../components/post/TimelinePosts";
-import { posts_db } from "../../lib/data/posts";
+import { posts_db } from "../../lib/data/server";
 import { siteInfo } from "../../site.config";
 
 export default function Categories({ categories, tags }: {

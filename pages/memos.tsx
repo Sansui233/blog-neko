@@ -1,25 +1,24 @@
 import { GetStaticProps } from "next";
 import Head from "next/head";
-import { useRouter } from "next/router";
-import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
+import React, { useCallback, useContext, useRef, useState } from "react";
 import styled, { ThemeContext } from "styled-components";
 import { CommonHead } from ".";
 import Footer from "../components/common/Footer";
 import { PageDescription } from '../components/common/PageDescription';
-import Pagination from "../components/common/Pagination";
 import Topbar from "../components/common/Topbar";
 import { TwoColLayout } from "../components/layout";
 import CardCommon, { CardTitleIcon } from "../components/memo/cardcommon";
 import CommentCard from "../components/memo/commentcard";
 import { MemoCard } from "../components/memo/memocard";
 import NavCard from "../components/memo/navcard";
-import { memo_db, writeMemoJson } from "../lib/data/memos";
-import { MemoInfo, MemoPost, MemoTagArr } from "../lib/data/memos.common";
+import { MemoInfo, MemoPost, MemoTag } from "../lib/data/memos.common";
+import { memo_db, writeMemoJson } from "../lib/data/server";
 import { compileMdxMemo } from "../lib/markdown/mdx";
 import { Naive, Result, SearchObj } from "../lib/search";
 import { useDocumentEvent } from "../lib/useEvent";
 import { siteInfo } from "../site.config";
 import { LinkWithLine } from "../styles/components/LinkWithLine";
+import { Extend } from "../utils/typeinfer";
 
 const MemoCSRAPI = '/data/memos'
 
@@ -29,8 +28,8 @@ export type TMemo = MemoPost & {
 
 type Props = {
   memos: TMemo[]// 首屏 seo data
-  info: MemoInfo,
-  memotags: MemoTagArr, // tagname, memo list
+  info: Extend<MemoInfo>,
+  memotags: MemoTag[], // tagname, memo list
 }
 
 type SearchStatus = {
@@ -45,7 +44,6 @@ export const MemoModelCtx = React.createContext({
 })
 
 export default function Memos({ memos, info, memotags }: Props) {
-  const router = useRouter()
   const theme = useContext(ThemeContext)
   const [postsData, setpostsData] = useState(memos)
   const [postsDataBackup, setpostsDataBackup] = useState(memos)
@@ -87,58 +85,11 @@ export default function Memos({ memos, info, memotags }: Props) {
     }
   }, [handleSearch])
 
-  // fetch csr content by page number
-  // set search
-  useEffect(() => {
-
-    let page = 0
-
-    // page
-    if (typeof (router.query.p) === 'string') {
-      page = parseInt(router.query.p)
-      if (isNaN(page)) {
-        console.error('Wrong query p=', router.query.p)
-        return
-      }
-      setisFetching(true)
-      fetch(`${MemoCSRAPI}/${page}.json`)
-        .then(res => res.json())
-        .then((data) => {
-          const posts = (data as Array<MemoPost>).map(async p => {
-            return {
-              ...p,
-              content: (await compileMdxMemo(p.content)).code,
-              length: p.content.length,
-            }
-          })
-          return Promise.all(posts)
-        })
-        .then(nextPosts => {
-          setpostsData(nextPosts)
-          setpostsDataBackup(nextPosts)
-        }).catch((err) => {
-        }).finally(() => {
-          setisFetching(false)
-        });
-    }
-
-  }, [router.query])
-
   // bind keyboard event
   useDocumentEvent("keydown", (evt) => {
     if (inputRef.current && inputRef.current === document.activeElement && evt.key === "Enter")
       handleSearch()
   }, undefined, [handleSearch])
-
-  const currPage = (() => {
-    if (typeof (router.query.p) === 'string') {
-      const page = parseInt(router.query.p)
-      if (!isNaN(page)) {
-        return page
-      }
-    }
-    return 0
-  })()
 
   function statusRender() {
     if (isFetching) return "Fetching..."
@@ -193,26 +144,10 @@ export default function Memos({ memos, info, memotags }: Props) {
                 {statusRender()}
               </PageDescription>
               <div style={{ minHeight: "100vh" }}>
-                {isFetching ? null
-                  : postsData.map(m => (
-                    <MemoCard key={m.id} memoPost={m} setSearchText={setSearchText} />
-                  ))}
+                {postsData.map(m => (
+                  <MemoCard key={m.id} memoPost={m} setSearchText={setSearchText} />
+                ))}
               </div>
-              <Pagination
-                currTitle={`PAGE ${currPage + 1}`}
-                prevPage={currPage > 0 ? {
-                  title: "PREV",
-                  link: `/memos?p=${currPage - 1}`
-                } : undefined}
-                nextPage={currPage + 1 < info.pages + 1 ? {
-                  title: "NEXT",
-                  link: `/memos?p=${currPage + 1}`
-                } : undefined}
-                maxPage={(info.pages + 1).toString()}
-                elemProps={{ style: { padding: "0 1rem" } }}
-                isScrollToTop={true}
-              />
-              {/* <Waline style={{ padding: "0 0.5rem" }} /> */}
               <Footer />
             </MemoCol>
             <SiderCol>
@@ -232,10 +167,10 @@ export default function Memos({ memos, info, memotags }: Props) {
               <CardCommon title={"TAGS"}>
                 <div style={{ paddingTop: "0.5rem" }}>
                   {memotags.map(t => {
-                    return <span className="hover-gold" style={{ display: "inline-block" }} key={t[0]}
-                      onClick={() => { setSearchText("#" + t[0]) }}
+                    return <span className="hover-gold" style={{ display: "inline-block" }} key={t.name}
+                      onClick={() => { setSearchText("#" + t.name) }}
                     >
-                      {`#${t[0]}`}
+                      {`#${t.name}`}
                     </span>
                   })}
                 </div>
@@ -273,7 +208,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     props: {
       memos, // seo on fetch
       info: memo_db.info,
-      memotags: Array.from(memo_db.tags),
+      memotags: memo_db.tags,
     }
   }
 }

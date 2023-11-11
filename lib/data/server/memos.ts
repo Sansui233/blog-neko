@@ -1,8 +1,10 @@
 import fs from "fs";
 import path from "path";
 import readline from "readline";
-import { writeJson } from "../fs/fs";
-import { INFOFILE, MemoImgs, MemoInfo, MemoPost, MemoTag } from "./memos.common";
+import { dateToYMDMM, parseDate } from "../../date";
+import { getLastModTime, writeJson } from "../../fs/fs";
+import { INFOFILE, MemoImgs, MemoPost, MemoTag } from "../memos.common";
+import { MemoFileMap, MemoInfoExt, MemoPageMap } from "./type";
 
 export const MEMOS_DIR = path.join(process.cwd(), 'source', 'memos')
 const MEMO_CSR_DATA_DIR = path.join(process.cwd(), 'public', 'data', 'memos')
@@ -11,7 +13,7 @@ const MEMO_CSR_DATA_DIR = path.join(process.cwd(), 'public', 'data', 'memos')
  * memos database
  * 构造函数返回一个 memo_db 对象
  */
-export const memo_db = await (async function () {
+const memo_db = await (async function () {
 
   /**
    * Exported properies
@@ -25,9 +27,11 @@ export const memo_db = await (async function () {
     })
   })())
 
-  const tags: MemoTag = new Map<string, string[]>();
+  const tags: MemoTag[] = [];
   const memos: MemoPost[] = []
   const imgs: MemoImgs[] = []
+  const fileMap: MemoFileMap[] = []
+  const pageMap: MemoPageMap[] = []
 
   /**
    * Get memos by page. SSR only
@@ -45,15 +49,15 @@ export const memo_db = await (async function () {
 
   console.log("[memos.ts] parsing memos...")
 
-  let csrPage = 0;
-  let csrIndex = -1; // 由於是新建条目前更新状态，因此從-1開始
+  let csrPage = -1;
+  let csrIndex = 9;
 
   for (const src_file of names) {
 
     // state
     let isFirstLine = true
     let isFrontMatter = false
-    let currId = ""
+    let isFirstMemo = true
 
     const fileStream = fs.createReadStream(path.join(MEMOS_DIR, src_file))
     const rl = readline.createInterface({
@@ -71,58 +75,60 @@ export const memo_db = await (async function () {
           isFrontMatter = true // front matter start
           continue
         }
-      } else if( isFrontMatter ){
+      } else if (isFrontMatter) {
         continue; //ignore in front matter
       } else if (line.startsWith("## ")) {
 
-        // 分析完整的 markdown
-        // 更新tags, imgs, length
-        if (memos.length > 0) {
-
-          const lastMemo = memos[memos.length - 1]
-          const text = lastMemo.content
-
-          // update tags
-          const matches = extractTagsFromMarkdown(text)
-          matches.map(t => {
-
-            if (tags.has(t)) {
-              tags.get(t)?.push(currId)
-            } else {
-              tags.set(t, [currId])
-            }
-
-            lastMemo.tags.push(t)
-          })
-
-          // update imgs
-          if(lastMemo.imgsmd.length !== 0){
-            imgs.push({
-              memoId: lastMemo.id,
-              imgsmd: lastMemo.imgsmd,
-            })
-          }
-
-        }
+        updateLastFile(memos, tags, imgs, fileMap)
 
         // 更新索引状态
         csrIndex += 1;
         if (csrIndex === 10) {
+          if(pageMap.length > 0){
+            pageMap[pageMap.length - 1].endDate = parseDate(memos[memos.length-1].id).getTime()
+          }
+
           csrPage += 1;
           csrIndex = 0;
+
+          pageMap.push({
+            page: csrPage,
+            startDate: parseDate(line.slice(3)).getTime(),
+            endDate: -1,
+          })
         }
 
-        currId = line.slice(3)
+        /**
+         * add new memo
+         */
 
-        // add new memo
         memos.push({
-          id: currId,
+          id: line.slice(3),
           content: "",
           tags: [],
           imgsmd: [],
           sourceFile: src_file,
           csrIndex: [csrPage, csrIndex],
         })
+
+        // add new info
+        if (isFirstMemo) {
+          fileMap.push({
+            srcName: src_file,
+            lastModified: (await getLastModTime(path.join(MEMOS_DIR, src_file))).getTime(),
+            dateRange: { start: dateToYMDMM(parseDate(memos[memos.length - 1].id)), end: "" },
+            startAt: {
+              page: csrPage,
+              index: csrIndex,
+            },
+            endAt: {
+              page: -1,
+              index: -1,
+            }
+          })
+          isFirstMemo = false
+        }
+
       } else {
 
         // detect imgs
@@ -144,14 +150,15 @@ export const memo_db = await (async function () {
     fileStream.close()
   }
 
-  const info: MemoInfo = {
+  // 文件遍历结束时更新最后一条信息
+  updateLastFile(memos, tags, imgs, fileMap)
+  const info: MemoInfoExt = {
     pages: csrPage,
-    count: {
-      memos: memos.length,
-      tags: tags.size,
-      imgs: imgs.length,
-    },
-    fileMap: []
+    memos: memos.length,
+    tags: tags.length,
+    imgs: imgs.length,
+    fileMap,
+    pageMap,
   }
 
   console.log(`[memos.ts] ${memos.length} memos in total`)
@@ -163,8 +170,51 @@ export const memo_db = await (async function () {
     info,
     atPage,
   }
-
 })()
+
+
+// 根据memo内容，补全tags, imgs, fileMap 的状态信息
+function updateLastFile(memos: MemoPost[], tags: MemoTag[], imgs: MemoImgs[], fileMap: MemoFileMap[]) {
+  if (memos.length > 0) {
+
+    const lastMemo = memos[memos.length - 1]
+    const text = lastMemo.content 
+
+    // update tags
+    const matches = extractTagsFromMarkdown(text)
+    matches.map(t => {
+
+      const target = tags.find((v) => v.name === t)
+
+      if (target) {
+        target.memoIds.push(lastMemo.id)
+      } else {
+        tags.push({
+          name: t,
+          memoIds: [lastMemo.id]
+        })
+      }
+
+      if (!lastMemo.tags.includes(t)) lastMemo.tags.push(t)
+    })
+
+    // update imgs
+    if (lastMemo.imgsmd.length !== 0) {
+      imgs.push({
+        memoId: lastMemo.id,
+        imgsmd: lastMemo.imgsmd,
+      })
+    }
+
+
+    // update last info
+    const lastInfo = fileMap[fileMap.length - 1]
+    lastInfo.dateRange.end = dateToYMDMM(parseDate(lastMemo.id))
+    lastInfo.endAt = { page: lastMemo.csrIndex[0], index: lastMemo.csrIndex[1] }
+
+  }
+}
+
 
 /**
  * generated by chatgpt
@@ -209,9 +259,10 @@ function extractTagsFromMarkdown(markdown: string) {
   return tags;
 }
 
-export function writeMemoJson() {
 
-   // CSR page
+function writeMemoJson() {
+
+  // CSR page
   const groupByPage = new Map<number, MemoPost[]>()
   let maxpage = 0;
 
@@ -230,5 +281,8 @@ export function writeMemoJson() {
   })
 
   writeJson(path.join(MEMO_CSR_DATA_DIR, INFOFILE), memo_db.info)
-  writeJson(path.join(MEMO_CSR_DATA_DIR, `tags.json`), Array.from(memo_db.tags))
+  writeJson(path.join(MEMO_CSR_DATA_DIR, `tags.json`), memo_db.tags)
 }
+
+export { memo_db, writeMemoJson };
+

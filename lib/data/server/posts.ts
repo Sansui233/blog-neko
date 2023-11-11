@@ -1,8 +1,8 @@
 import fs from 'fs';
 import matter from 'gray-matter';
 import path from 'path';
-import { dateToYMDMM } from '../date';
-import { grayMatter2PostMeta } from '../markdown/frontmatter';
+import { dateToYMDMM } from '../../date';
+import { grayMatter2PostMeta } from '../../markdown/frontmatter';
 
 export const POST_DIR = path.join(process.cwd(), 'source', 'posts')
 const CATEGORY_ALL = 'All Posts'
@@ -12,7 +12,7 @@ const TAG_UNTAGGED = 'Untagged'
  * posts database
  * 构造函数返回一个 posts_db 对象
  */
-export const posts_db = await (async function () {
+const posts_db = await (async function () {
 
   console.log("[posts.ts] collecting posts data...")
 
@@ -166,7 +166,7 @@ export const posts_db = await (async function () {
 /**
  * Get front matter info from a local markdown file
  */
-export async function getFrontMatter(fileName: string, dir = POST_DIR) {
+async function getFrontMatter(fileName: string, dir = POST_DIR) {
   const fullPath = path.join(dir, fileName)
   const fileContents = await fs.promises.readFile(fullPath, 'utf8')
   return matter(fileContents)
@@ -176,7 +176,7 @@ export async function getFrontMatter(fileName: string, dir = POST_DIR) {
 /**
  * Group posts data by year in an Object
  */
-export function groupByYear(posts: {
+function groupByYear(posts: {
   id: string,
   title: string,
   date: Date,
@@ -207,3 +207,6 @@ export function groupByYear(posts: {
 
   return Object.fromEntries(postsTree)
 }
+
+export { getFrontMatter, groupByYear, posts_db };
+

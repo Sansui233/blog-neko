@@ -10,11 +10,11 @@ export default function NavCard({ info }: Props) {
     <Layout>
       <div className="item active">
         <span className="title">Memos</span>
-        <span className="count">{info.count.memos}</span>
+        <span className="count">{info.memos}</span>
       </div>
       <div className="item">
         <span className="title">Photos</span>
-        <span className="count">{info.count.imgs}</span>
+        <span className="count">{info.imgs}</span>
       </div>
     </Layout>
   )

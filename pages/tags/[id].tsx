@@ -3,7 +3,7 @@ import Head from "next/head";
 import { CommonHead } from "..";
 import LayoutContainer from "../../components/layout";
 import TLContent from "../../components/post/TimelinePosts";
-import { groupByYear, posts_db } from "../../lib/data/posts";
+import { groupByYear, posts_db } from "../../lib/data/server";
 
 type Props = {
   tag: string,

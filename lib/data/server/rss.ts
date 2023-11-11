@@ -3,12 +3,12 @@ import fs from 'fs';
 import matter from "gray-matter";
 import path from 'path';
 import readline from 'readline';
-import { siteInfo } from "../../site.config";
-import { grayMatter2PostMeta } from "../markdown/frontmatter";
-import { compileMdxRss } from "../markdown/mdx";
+import { siteInfo } from "../../../site.config";
+import { grayMatter2PostMeta } from "../../markdown/frontmatter";
+import { compileMdxRss } from "../../markdown/mdx";
+import { PostMeta } from "../posts.common";
 import { MEMOS_DIR } from "./memos";
 import { POST_DIR, getFrontMatter } from './posts';
-import { PostMeta } from "./posts.common";
 
 /**
  * get recent 10 posts
@@ -194,9 +194,12 @@ async function createRss() {
   return feed
 }
 
-export async function writeRss() {
+async function writeRss() {
   const feed = await createRss()
   fs.promises.writeFile("./public/atom.xml", feed.atom1());
   fs.promises.writeFile("./public/rss", feed.rss2());
   fs.promises.writeFile("./public/feed.json", feed.json1());
 }
+
+export { writeRss };
+

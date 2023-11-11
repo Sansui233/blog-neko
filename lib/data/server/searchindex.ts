@@ -1,9 +1,9 @@
 import fs from "fs";
 import path from "path";
-import { loadJson, writeJson } from "../fs/fs";
-import { observe } from "../fs/observer";
-import { grayMatter2PostMeta } from "../markdown/frontmatter";
-import { SearchObj } from "../search";
+import { loadJson, writeJson } from "../../fs/fs";
+import { observe } from "../../fs/observer";
+import { grayMatter2PostMeta } from "../../markdown/frontmatter";
+import { SearchObj } from "../../search";
 import { getFrontMatter } from "./posts";
 
 const DATADIR = path.join(process.cwd(), 'public', 'data')
@@ -13,7 +13,7 @@ const OBSERVEINFO = 'status.json'
 /**
  * generate index file for all posts
  */
-export async function buildIndex(src_dir: string, index_dir = DATADIR, index_f = SEARCHJSON, status_f = OBSERVEINFO) {
+async function buildIndex(src_dir: string, index_dir = DATADIR, index_f = SEARCHJSON, status_f = OBSERVEINFO) {
 
   // The format of index is a list of SearchObj
   let index: Array<Omit<Required<SearchObj>,'tags'>> = []
@@ -92,3 +92,5 @@ async function getContent(filepath: string) {
   content = content.replace(/---([\s\S]*?)---/, '') // Remove YAML header
   return content.replace(/^\s+|\s+$/g, '')
 }
+
+export { buildIndex };
