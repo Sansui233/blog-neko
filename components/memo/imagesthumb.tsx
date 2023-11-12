@@ -33,7 +33,7 @@ export function Images({ imgsmd }: {
 }) {
   const ctx = useContext(MemoImgCtx)
   const [thumbData, setThumbData] = useState<TImage[]>(new Array(imgsmd.length).fill(1).map((_, index) => (
-    { ok: "loading", index, src: "", width: 0, height: 0, alt: "" }
+    { ok: "loading", index, src: "", width: 1, height: 1, alt: "" }
   )))
 
   // fetch image

@@ -14,6 +14,7 @@ import { TImage } from "../components/memo/imagesthumb";
 import { MemoCard, MemoCardProps } from "../components/memo/memocard";
 import NavCard from "../components/memo/navcard";
 import VirtualList from "../components/memo/virtuallist";
+import { clientList, createClient } from "../lib/data/client";
 import { MemoInfo, MemoPost, MemoTag } from "../lib/data/memos.common";
 import { memo_db, writeMemoJson } from "../lib/data/server";
 import { compileMdxMemo } from "../lib/markdown/mdx";
@@ -25,11 +26,14 @@ import { Extend } from "../utils/typeinfer";
 
 const MemoCSRAPI = '/data/memos'
 
-export type TMemo = MemoPost & {
+// TMemo 的 content 是 code……
+export type TMemo = Omit<MemoPost, "content"> & {
+  code: string,
   length: number
 }
 
 type Props = {
+  client: keyof typeof clientList,
   source: TMemo[]// 首屏 seo data
   info: Extend<MemoInfo>,
   memotags: MemoTag[], // tagname, memo list
@@ -50,16 +54,18 @@ export const MemoImgCtx = React.createContext({
   setCurrentIndex: (i: number) => { console.error("empty MemoImgCtx") }
 })
 
-export default function Memos({ source, info, memotags }: Props) {
+export default function Memos({ source, info, memotags, client }: Props) {
   const theme = useContext(ThemeContext)
   const [postsData, setpostsData] = useState(source)
   const [postsDataBackup, setpostsDataBackup] = useState(source)
   const [isFetching, setisFetching] = useState(false)
 
+  // imagebroswer
   const [isModel, setisModel] = useState(false)
-  const [imagesData, setImagesData] = useState<TImage[]>([{ ok: "loading", index: 0, src: "", width: 0, height: 0, alt: "" }])
+  const [imagesData, setImagesData] = useState<TImage[]>([{ ok: "loading", index: 0, src: "", width: 1, height: 1, alt: "" }])
   const [currentIndex, setCurrentIndex] = useState(0)
 
+  // search
   const inputRef = useRef<HTMLInputElement>(null)
   const [engine, setEngine] = useState<Naive>()
   const [searchStatus, setsearchStatus] = useState<SearchStatus>({
@@ -68,6 +74,26 @@ export default function Memos({ source, info, memotags }: Props) {
     searchText: "",
   })
 
+  // virtual list api
+  const [cli, setCli] = useState(createClient(client))
+  const fetchPage = useCallback(async (page: number) => {
+    return cli.queryMemoByCount(page, 10).then(data => {
+      if (data.length > 0) {
+        return Promise.all(data.map(async d => {
+          return {
+            ...d,
+            length: d.content.length,
+            code: (await compileMdxMemo(d.content)).code
+          }
+        }))
+      } else {
+        return undefined
+      }
+    })
+  }, [cli])
+
+
+  // search handler
   const handleSearch = useCallback(async () => {
     if (!inputRef.current) return
     const str = inputRef.current.value.trim()
@@ -165,7 +191,8 @@ export default function Memos({ source, info, memotags }: Props) {
                       setSearchText,
                     }))}
                     Elem={MemoCard}
-                    dataFetch={{}}
+                    fetchPage={fetchPage}
+                    pageSize={10}
                   />
                   {/* {postsData.map(m => (
                   <MemoCard key={m.id} source={m} setSearchText={setSearchText} />
@@ -224,13 +251,14 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     const { code } = await compileMdxMemo(m.content)
     return {
       ...m,
-      content: code,
+      code: code,
       length: m.content.length,
     }
   }))
 
   return {
     props: {
+      client: "static",
       source: memos, // seo on fetch
       info: memo_db.info,
       memotags: memo_db.tags,
@@ -289,7 +317,7 @@ async function initSearch(
     }).map(async memo => {
       return {
         ...memo,
-        content: (await compileMdxMemo(memo.content)).code,
+        code: (await compileMdxMemo(memo.content)).code,
         length: memo.content.length
       }
     })

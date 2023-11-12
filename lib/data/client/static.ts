@@ -16,12 +16,16 @@ const getMemoInfo: Client['getMemoInfo'] = async (): Promise<MemoInfoExt> => {
 
 const queryMemoByCount: Client['queryMemoByCount'] = async (start, len) => {
   // index [page, item_number]
-  const pageStart = [Math.floor(start/10),start % 0] // 10 memos per page on serverside
-  const pageEnd = [Math.floor((start+len-1)/10), (start+len-1)%0] // 右闭区间以便于处理边界情况
+  const pageStart = [Math.floor(start/10),start % 10] // 10 memos per page on serverside
+  const pageEnd = [Math.floor((start+len-1)/10), (start+len-1)%10] // 右闭区间以便于处理边界情况
+
+  const info = (await getMemoInfo()) as MemoInfoExt
   
   const urls : string[]  = [];
-  for(let i = pageStart[0]; i < pageEnd[0]; i++){
-    urls.push(`${MemoCSRAPI}/${i}.json`)
+  for(let i = pageStart[0]; i <= pageEnd[0]; i++){
+    if(i >= 0 && i <= info.pages ){ // 额,最大 pages 其实是最大 index
+      urls.push(`${MemoCSRAPI}/${i}.json`)
+    }
   }
   const promises:Promise<MemoPost[]>[] = urls.map(async (url, i) => {
     return fetch(url)
@@ -69,3 +73,13 @@ const queryMemoTags: Client['queryMemoTags'] = async () => {
 const queryMemoImgs: Client['queryMemoImgs'] = async () => {
   return [] // TODO
 }
+
+const StaticClient: Client =  {
+  getMemoInfo,
+  queryMemoByCount,
+  queryMemoByDate,
+  queryMemoTags,
+  queryMemoImgs,
+}
+
+export default StaticClient

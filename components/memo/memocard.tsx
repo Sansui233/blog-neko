@@ -58,7 +58,7 @@ export function MemoCard({ source, setSearchText, triggerHeightChange, ...otherp
           </div>
         </MemoMeta>
         <MemoMarkdown $bottomSpace={shouldCollapse}>
-          {useMdxMemo(source.content, setSearchText)}
+          {useMdxMemo(source.code, setSearchText)}
         </MemoMarkdown>
         <CardMask $isCollapse={isCollapse} $isShown={shouldCollapse}>
           <div onClick={handleExpand} className="rd-more">

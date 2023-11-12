@@ -1,5 +1,6 @@
 import { Extend } from "../../../utils/typeinfer";
 import { MemoImgs as MemoImg, MemoInfo, MemoPost, MemoTag } from "../memos.common";
+import StaticClient from "./static";
 
 export interface Client {
   getMemoInfo: () => Promise<Extend<MemoInfo>>
@@ -13,8 +14,8 @@ export interface Client {
 /**
  * name: Client
  */
-const clientList = {
-
+export const clientList = {
+  static: StaticClient
 }
 
 export function createClient(name: keyof typeof clientList){
