@@ -186,17 +186,12 @@ export default function Memos({ source, info, memotags, client }: Props) {
                   <VirtualList<TMemo, MemoCardProps>
                     sources={postsData}
                     setSources={setpostsData}
-                    props={postsData.map(source => ({
-                      source,
-                      setSearchText,
-                    }))}
-                    Elem={MemoCard}
+                    Elem={(props) => {
+                      return <MemoCard source={props.source} setSearchText={setSearchText} triggerHeightChange={props.triggerHeightChange} />
+                    }}
                     fetchFrom={fetchFrom}
                     batchsize={10}
                   />
-                  {/* {postsData.map(m => (
-                  <MemoCard key={m.id} source={m} setSearchText={setSearchText} />
-                ))} */}
                 </div>
                 <Footer />
               </MemoCol>

@@ -2,12 +2,12 @@ import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useRef, useS
 import { throttle } from "../../lib/throttle";
 
 // source data type and element prop type
-type Props<T, P> = {
+type Props<T> = {
   sources: T[]
   setSources: Dispatch<SetStateAction<T[]>>
-  props: P[]
-  Elem: (props: P & {
-    triggerHeightChange?: Dispatch<SetStateAction<boolean>>;
+  Elem: (props: {
+    source: T
+    triggerHeightChange: Dispatch<SetStateAction<boolean>>;
   }) => JSX.Element // the render
   fetchFrom: (i: number, batchsize: number) => Promise<T[] | undefined>
   batchsize: number
@@ -15,7 +15,7 @@ type Props<T, P> = {
 }
 
 
-export default function VirtualList<T, P>({ props, sources, setSources, Elem, scrollRef, fetchFrom: fetchFrom, batchsize }: Props<T, P>) {
+export default function VirtualList<T, P>({ sources, setSources, Elem, scrollRef, fetchFrom: fetchFrom, batchsize }: Props<T>) {
   const [placeHolder, setplaceHolder] = useState<number[]>(new Array(sources.length).fill(300))
   // 注意保持 activeIndex 和 sources 的状态一致性
   const [activeIndex, setActiveIndex] = useState<number[]>(new Array(sources.length).fill(0).map((_, i) => i))
@@ -148,15 +148,15 @@ export default function VirtualList<T, P>({ props, sources, setSources, Elem, sc
       width: "100%",
       minHeight: `${minHeight}px`
     }}>
-      {props.map((e, i) => <ListItem<T, P> key={activeIndex[i]} index={activeIndex[i]} Elem={Elem} elem={e} placeHolder={placeHolder} setplaceHolder={setplaceHolder} />)}
+      {sources.map((e, i) => <ListItem<T> key={activeIndex[i]} index={activeIndex[i]} Elem={Elem} elem={e} placeHolder={placeHolder} setplaceHolder={setplaceHolder} />)}
     </div>
   )
 }
 
 
-function ListItem<T, P>({ Elem, index, elem, placeHolder, setplaceHolder }: {
-  Elem: Props<T, P>["Elem"],
-  elem: P;
+function ListItem<T>({ Elem, index, elem: source, placeHolder, setplaceHolder }: {
+  Elem: Props<T>["Elem"],
+  elem: T;
   index: number
   placeHolder: number[]
   setplaceHolder: Dispatch<SetStateAction<number[]>>
@@ -218,7 +218,7 @@ function ListItem<T, P>({ Elem, index, elem, placeHolder, setplaceHolder }: {
       visibility: isvisible ? "visible" : "hidden",
     }}>
       {Elem({
-        ...elem,
+        source,
         triggerHeightChange
       })}
     </div>
