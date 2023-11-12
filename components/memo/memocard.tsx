@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { Dispatch, SetStateAction, useContext, useState } from "react";
 import styled, { ThemeContext } from "styled-components";
 import { TMemo } from "../../pages/memos";
 import { siteInfo } from "../../site.config";
@@ -9,19 +9,21 @@ import { useMdxMemo } from "../mdx";
 import { Images } from "./imagesthumb";
 
 
-
-export function MemoCard({ memoPost, setSearchText }: {
-  memoPost: TMemo;
+export type MemoCardProps = {
+  source: TMemo;
   setSearchText: (text: string, immediateSearch?: boolean) => void;
-}) {
+  triggerHeightChange?: Dispatch<SetStateAction<boolean>>;
+} & React.HTMLProps<HTMLElement>
+
+export function MemoCard({ source, setSearchText, triggerHeightChange, ...otherprops }: MemoCardProps) {
   const [isCollapse, setfisCollapse] = useState(true);
   const theme = useContext(ThemeContext);
   const ref = React.useRef<HTMLDivElement>(null);
 
-  const shouldCollapse = memoPost.length > 200 ? true : false;
+  const shouldCollapse = source.length > 200 ? true : false;
 
   function handleExpand(e: React.MouseEvent<HTMLDivElement>) {
-    // Scroll back
+    // Set Collapse
     if (!isCollapse) {
       const element = ref.current;
       if (element) {
@@ -34,10 +36,15 @@ export function MemoCard({ memoPost, setSearchText }: {
       }
     }
     setfisCollapse(!isCollapse);
+
+    // height change
+    if (ref.current && triggerHeightChange) {
+      triggerHeightChange(true)
+    }
   }
 
   return (
-    <MemoCardStyle $isCollapse={shouldCollapse === false ? false : isCollapse} ref={ref}>
+    <MemoCardStyle {...otherprops} $isCollapse={shouldCollapse === false ? false : isCollapse} ref={ref}>
       <div className="content">
         <MemoMeta>
           {/*eslint-disable-next-line @next/next/no-img-element*/}
@@ -45,15 +52,14 @@ export function MemoCard({ memoPost, setSearchText }: {
           <div className="meta">
             <div>{siteInfo.author}</div>
             <div className="date">
-              {memoPost.id}&nbsp;&nbsp;
-              <span className="word-count">{memoPost.length}&nbsp;字</span>
+              {source.id}&nbsp;&nbsp;
+              <span className="word-count">{source.length}&nbsp;字</span>
             </div>
           </div>
         </MemoMeta>
         <MemoMarkdown $bottomSpace={shouldCollapse}>
-          {useMdxMemo(memoPost.content, setSearchText)}
+          {useMdxMemo(source.content, setSearchText)}
         </MemoMarkdown>
-
         <CardMask $isCollapse={isCollapse} $isShown={shouldCollapse}>
           <div onClick={handleExpand} className="rd-more">
             <span>{isCollapse ? "SHOW MORE" : "Hide"}</span>
@@ -61,7 +67,7 @@ export function MemoCard({ memoPost, setSearchText }: {
         </CardMask>
       </div>
       <div style={{ padding: "0 0.5rem" }}>
-        <Images imgsmd={memoPost.imgsmd} />
+        <Images imgsmd={source.imgsmd} />
       </div>
 
     </MemoCardStyle>

@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
-import { MemoModelCtx } from "../../pages/memos";
-import ImageBrowser from "./imagebrowser";
+import { MemoImgCtx } from "../../pages/memos";
 
 
 export type TImage = {
@@ -32,9 +31,8 @@ function parseMarkdownImage(markdownText: string) {
 export function Images({ imgsmd }: {
   imgsmd: string[]
 }) {
-  const [isModel, setIsModel] = useState(false)
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [imagesData, setImagesData] = useState<TImage[]>(new Array(imgsmd.length).fill(1).map((_, index) => (
+  const ctx = useContext(MemoImgCtx)
+  const [thumbData, setThumbData] = useState<TImage[]>(new Array(imgsmd.length).fill(1).map((_, index) => (
     { ok: "loading", index, src: "", width: 0, height: 0, alt: "" }
   )))
 
@@ -68,7 +66,7 @@ export function Images({ imgsmd }: {
 
       try {
         const fetchData: TImage[] = await Promise.all(promises);
-        setImagesData(fetchData);
+        setThumbData(fetchData);
       } catch (error) {
         console.error('Error loading images:', error);
       }
@@ -76,54 +74,52 @@ export function Images({ imgsmd }: {
 
     loadImages();
 
-  }, [imgsmd])
+  }, [imgsmd, setThumbData])
 
   if (imgsmd.length === 0) return null
 
-  return <MemoModelCtx.Provider value={{ isModel: isModel, setIsModel: setIsModel }}>
-
-    {isModel ? <ImageBrowser imagesData={imagesData} currentIndex={currentIndex} /> : undefined}
-
+  return <>
     {imgsmd.length === 1
 
       // only one Image
       ? <ImageContainer style={{
         maxWidth: "100%",
         maxHeight: "326px",
-        aspectRatio: imagesData[0]
-          ? imagesData[0].width / imagesData[0].height > 2
-            ? 2 : imagesData[0].width / imagesData[0].height < 0.75
+        aspectRatio: thumbData[0]
+          ? thumbData[0].width / thumbData[0].height > 2
+            ? 2 : thumbData[0].width / thumbData[0].height < 0.75
               ? 0.75
-              : imagesData[0].width / imagesData[0].height
+              : thumbData[0].width / thumbData[0].height
           : 2,
       }}>
         {/*eslint-disable-next-line @next/next/no-img-element*/} {/* eslint-disable-next-line jsx-a11y/alt-text */}
-        <img loading="lazy" src={imagesData[0]?.ok === "loaded" ? imagesData[0]?.src : ""} alt={imagesData[0]?.ok} />
+        <img loading="lazy" src={thumbData[0]?.ok === "loaded" ? thumbData[0]?.src : ""} alt={thumbData[0]?.ok} />
         <ClickMask onClick={e => {
           e.stopPropagation()
-          console.debug("%%% grid pressed")
-          setCurrentIndex(0)
-          setIsModel(!true)
+          ctx.setCurrentIndex(0)
+          ctx.setImagesData(thumbData)
+          ctx.setisModel(true)
         }} />
       </ImageContainer>
 
       // two or more images
       : <ImageGrid>
-        {imagesData.map((img, i) => {
+        {thumbData.map((img, i) => {
           return (
             <ImageContainer key={i} onTouchEnd={e => { e.stopPropagation() }} >
               {/*eslint-disable-next-line @next/next/no-img-element*/} {/* eslint-disable-next-line jsx-a11y/alt-text */}
               <img loading="lazy" src={img.ok === "loaded" ? img.src : ""} alt={img.ok} />
               <ClickMask onClick={e => {
                 e.stopPropagation()
-                console.debug("%%% grid pressed")
-                setCurrentIndex(i)
-                setIsModel(true)
+                console.debug("% click on", i)
+                ctx.setCurrentIndex(i)
+                ctx.setImagesData(thumbData)
+                ctx.setisModel(true)
               }} />
             </ImageContainer>)
         })}
       </ImageGrid>}
-  </MemoModelCtx.Provider>
+  </>
 }
 
 // ban press on safari for object-fit not work well

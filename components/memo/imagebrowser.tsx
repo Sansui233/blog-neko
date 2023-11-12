@@ -1,54 +1,59 @@
-import { CSSProperties, useCallback, useContext, useMemo, useRef, useState } from "react";
+import { CSSProperties, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 import { throttle } from "../../lib/throttle";
 import { useDocumentEvent } from "../../lib/useEvent";
 import { useViewHeight } from "../../lib/useview";
-import { MemoModelCtx } from "../../pages/memos";
+import { MemoImgCtx } from "../../pages/memos";
 import { fadeIn, slideInLeft, slideInRight } from "../../styles/animations";
 import Model from "../common/Model";
-import { TImage } from "./imagesthumb";
 
-type Props = {
-  imagesData: TImage[]
-  currentIndex: number
-}
 
-export default function ImageBrowser({ imagesData, currentIndex }: Props) {
-  const ctx = useContext(MemoModelCtx)
-  const [i, setI] = useState({
-    curr: currentIndex,
-    last: currentIndex
+export default function ImageBrowser() {
+  const ctx = useContext(MemoImgCtx)
+  const [index, setIndex] = useState({
+    curr: ctx.currentIndex,
+    last: ctx.currentIndex
   })
   const scrollRef = useRef<HTMLDivElement>(null)
 
-  if (i.curr > imagesData.length - 1) console.error("uncaught ivalid image index:", i, "in length", imagesData.length)
+  if (index.curr > ctx.imagesData.length - 1) console.error("uncaught ivalid image index:", index, "in length", ctx.imagesData.length)
 
-  const ratio = useMemo(() => i.curr < imagesData.length ? imagesData[i.curr].width / imagesData[i.curr].height : 1, [imagesData, i])
+  useEffect(() => {
+    setIndex({
+      curr: ctx.currentIndex,
+      last: ctx.currentIndex
+    })
+    return () => {
+    }
+  }, [ctx.isModel, ctx.currentIndex])
+
+
+  const ratio = useMemo(() => index.curr < ctx.imagesData.length ? ctx.imagesData[index.curr].width / ctx.imagesData[index.curr].height : 1, [ctx.imagesData, index])
   const maxHeight = useViewHeight()
 
   const prev = useCallback(() => {
-    if (i.curr > 0) {
-      setI({
-        curr: i.curr - 1,
-        last: i.curr
+    if (index.curr > 0) {
+      setIndex({
+        curr: index.curr - 1,
+        last: index.curr
       })
       if (scrollRef.current) {
         scrollRef.current.scrollTo({ top: 0 })
       }
     }
-  }, [i, setI, scrollRef])
+  }, [index, setIndex, scrollRef])
 
   const next = useCallback(() => {
-    if (i.curr < imagesData.length - 1) {
-      setI({
-        curr: i.curr + 1,
-        last: i.curr
+    if (index.curr < ctx.imagesData.length - 1) {
+      setIndex({
+        curr: index.curr + 1,
+        last: index.curr
       })
       if (scrollRef.current) {
         scrollRef.current.scrollTo({ top: 0 })
       }
     }
-  }, [i, setI, scrollRef, imagesData.length])
+  }, [index, setIndex, scrollRef, ctx])
 
   const keyevent = useCallback((evt: KeyboardEvent) => {
     if (evt.key === "ArrowLeft") {
@@ -76,7 +81,6 @@ export default function ImageBrowser({ imagesData, currentIndex }: Props) {
 
   useDocumentEvent("keydown", keyevent)
 
-
   // mobile Drag
   const [isPressed, setIsPressed] = useState(false)
   const [startpos, setStartpos] = useState([0, 0, 0]) // x, y, scrolly
@@ -90,7 +94,6 @@ export default function ImageBrowser({ imagesData, currentIndex }: Props) {
     setIsPressed(true)
     setStartTime(Date.now())
     setStartpos([evt.touches[0].clientX, evt.touches[0].clientY, scrollRef.current ? scrollRef.current.scrollTop : 0])
-    setisBeforeUnmount(false)
   }, [])
 
   const touchMoveEvent = useCallback((evt: React.TouchEvent<HTMLDivElement>) => {
@@ -112,11 +115,11 @@ export default function ImageBrowser({ imagesData, currentIndex }: Props) {
 
   const touchEndEvent = useCallback((evt: React.TouchEvent<HTMLDivElement>) => {
     evt.stopPropagation()
-    console.debug("%% touch up")
+    console.debug("%% touch end")
 
     if (Date.now() - starttime < 200 && Math.abs(trans[0]) < 5 && Math.abs(trans[1]) < 5) {
       setisBeforeUnmount(true)
-      setTimeout(() => { ctx.setIsModel(false) }, 300) // 避免点击穿透的问题。touchstart ==>touchmove==>touched ==>click
+      setTimeout(() => { ctx.setisModel(false); setisBeforeUnmount(false) }, 300) // 避免点击穿透的问题。touchstart ==>touchmove==>touched ==>click
     } else {
       if (direction === "x") {
         if (trans[0] < -60) {
@@ -160,9 +163,8 @@ export default function ImageBrowser({ imagesData, currentIndex }: Props) {
         : { maxWidth: "95%" },
   )
 
-
   return (ctx.isModel ?
-    <Model isModel={true} setModel={ctx.setIsModel} style={{ ...endTrans, background: "#1d1d1d" }}>
+    <Model isModel={true} setModel={ctx.setisModel} style={{ ...endTrans, background: "#1d1d1d" }}>
       {/* Debug */}
       {/* <Tools style={{ bottom: "0rem", flexDirection: "column", height: "12em" }}>
         <div>startpos {startpos.toString()}</div>
@@ -178,24 +180,24 @@ export default function ImageBrowser({ imagesData, currentIndex }: Props) {
         style={containerTrans}
       >
 
-        <Img src={imagesData[i.curr].ok === "loaded" ? imagesData[i.curr].src : ""} alt={imagesData[i.curr].ok}
+        <Img src={ctx.imagesData[index.curr].ok === "loaded" ? ctx.imagesData[index.curr].src : ""} alt={ctx.imagesData[index.curr].ok}
           style={ratioStyle}
-          $entranceDirection={i.curr === i.last ? 0 : i.curr > i.last ? 1 : -1} />
+          $entranceDirection={index.curr === index.last ? 0 : index.curr > index.last ? 1 : -1} />
 
       </Container>
 
-      {i.curr > 0
+      {index.curr > 0
         ? <Button $isLeft={true} $isShown={buttonLTrans} onClick={(e) => { e.stopPropagation(); prev() }}><i className="icon-arrow-left2" /></Button>
         : null}
 
-      {i.curr < imagesData.length - 1
+      {index.curr < ctx.imagesData.length - 1
         ? <Button $isLeft={false} $isShown={buttonRTrans} onClick={(e) => { e.stopPropagation(); next() }}><i className="icon-arrow-right2" /></Button>
         : null}
 
-      <Tools>{i.curr + 1}/{imagesData.length} &nbsp;|&nbsp;
-        <span onClick={(e) => { e.stopPropagation(), ctx.setIsModel(false) }}>{"关闭"}</span></Tools>
+      <Tools>{index.curr + 1}/{ctx.imagesData.length} &nbsp;|&nbsp;
+        <span onClick={(e) => { e.stopPropagation(), ctx.setisModel(false) }}>{"关闭"}</span></Tools>
 
-    </Model> : undefined
+    </Model> : null
   )
 }
 

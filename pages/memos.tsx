@@ -9,8 +9,11 @@ import Topbar from "../components/common/Topbar";
 import { TwoColLayout } from "../components/layout";
 import CardCommon, { CardTitleIcon } from "../components/memo/cardcommon";
 import CommentCard from "../components/memo/commentcard";
-import { MemoCard } from "../components/memo/memocard";
+import ImageBrowser from "../components/memo/imagebrowser";
+import { TImage } from "../components/memo/imagesthumb";
+import { MemoCard, MemoCardProps } from "../components/memo/memocard";
 import NavCard from "../components/memo/navcard";
+import VirtualList from "../components/memo/virtuallist";
 import { MemoInfo, MemoPost, MemoTag } from "../lib/data/memos.common";
 import { memo_db, writeMemoJson } from "../lib/data/server";
 import { compileMdxMemo } from "../lib/markdown/mdx";
@@ -27,7 +30,7 @@ export type TMemo = MemoPost & {
 }
 
 type Props = {
-  memos: TMemo[]// 首屏 seo data
+  source: TMemo[]// 首屏 seo data
   info: Extend<MemoInfo>,
   memotags: MemoTag[], // tagname, memo list
 }
@@ -38,16 +41,25 @@ type SearchStatus = {
   searchText: string,
 }
 
-export const MemoModelCtx = React.createContext({
+export const MemoImgCtx = React.createContext({
   isModel: false,
-  setIsModel: (x: boolean) => { console.error("[MemoModelCtx] model function is called without a valid context") }
+  setisModel: (isModel: boolean) => { console.error("empty MemoImgCtx") },
+  imagesData: new Array<TImage>(),
+  setImagesData: (imagesData: TImage[]) => { console.error("empty MemoImgCtx") },
+  currentIndex: 0,
+  setCurrentIndex: (i: number) => { console.error("empty MemoImgCtx") }
 })
 
-export default function Memos({ memos, info, memotags }: Props) {
+export default function Memos({ source, info, memotags }: Props) {
   const theme = useContext(ThemeContext)
-  const [postsData, setpostsData] = useState(memos)
-  const [postsDataBackup, setpostsDataBackup] = useState(memos)
+  const [postsData, setpostsData] = useState(source)
+  const [postsDataBackup, setpostsDataBackup] = useState(source)
   const [isFetching, setisFetching] = useState(false)
+
+  const [isModel, setisModel] = useState(false)
+  const [imagesData, setImagesData] = useState<TImage[]>([{ ok: "loading", index: 0, src: "", width: 0, height: 0, alt: "" }])
+  const [currentIndex, setCurrentIndex] = useState(0)
+
   const inputRef = useRef<HTMLInputElement>(null)
   const [engine, setEngine] = useState<Naive>()
   const [searchStatus, setsearchStatus] = useState<SearchStatus>({
@@ -134,58 +146,71 @@ export default function Memos({ memos, info, memotags }: Props) {
         hideSearch={true}
       />
       <main style={{ backgroundColor: theme?.colors.bg2 }}>
-        <OneColLayout>
-          <TwoColLayout
-            sep={1}
-            siderLocation="right"
-          >
-            <MemoCol>
-              <PageDescription style={{ marginRight: "1rem" }}>
-                {statusRender()}
-              </PageDescription>
-              <div style={{ minHeight: "100vh" }}>
-                {postsData.map(m => (
-                  <MemoCard key={m.id} memoPost={m} setSearchText={setSearchText} />
-                ))}
-              </div>
-              <Footer />
-            </MemoCol>
-            <SiderCol>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                <SearchBox type="text" placeholder="Search" ref={inputRef}
-                  onFocus={
-                    () => { initSearch(setEngine, setpostsData, setsearchStatus, info.pages) }
-                  }
-                />
-                <CardTitleIcon className="hover-gold" style={{ fontSize: "1.275em", marginLeft: "0.125em" }}
-                  onClick={handleSearch}
-                >
-                  <i className='icon-search' />
-                </CardTitleIcon>
-              </div>
-              <NavCard info={info} />
-              <CardCommon title={"TAGS"}>
-                <div style={{ paddingTop: "0.5rem" }}>
-                  {memotags.map(t => {
-                    return <span className="hover-gold" style={{ display: "inline-block" }} key={t.name}
-                      onClick={() => { setSearchText("#" + t.name) }}
-                    >
-                      {`#${t.name}`}
-                    </span>
-                  })}
+        <MemoImgCtx.Provider value={{ isModel, setisModel, imagesData, setImagesData, currentIndex, setCurrentIndex }}>
+          <OneColLayout>
+            <TwoColLayout
+              sep={1}
+              siderLocation="right"
+            >
+              <MemoCol>
+                <PageDescription style={{ marginRight: "1rem" }}>
+                  {statusRender()}
+                </PageDescription>
+                <div style={{ minHeight: "100vh" }}>
+                  <VirtualList<TMemo, MemoCardProps>
+                    sources={postsData}
+                    setSources={setpostsData}
+                    props={postsData.map(source => ({
+                      source,
+                      setSearchText,
+                    }))}
+                    Elem={MemoCard}
+                    dataFetch={{}}
+                  />
+                  {/* {postsData.map(m => (
+                  <MemoCard key={m.id} source={m} setSearchText={setSearchText} />
+                ))} */}
                 </div>
-              </CardCommon>
-              {siteInfo.friends ?
-                <CardCommon title="FRIENDS">
-                  <div style={{ padding: "0.5rem 0.25rem" }}>
-                    {siteInfo.friends.map((f, i) => <div key={i}><LinkWithLine href={f.link}>{f.name}</LinkWithLine></div>)}
+                <Footer />
+              </MemoCol>
+              <SiderCol>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <SearchBox type="text" placeholder="Search" ref={inputRef}
+                    onFocus={
+                      () => { initSearch(setEngine, setpostsData, setsearchStatus, info.pages) }
+                    }
+                  />
+                  <CardTitleIcon className="hover-gold" style={{ fontSize: "1.275em", marginLeft: "0.125em" }}
+                    onClick={handleSearch}
+                  >
+                    <i className='icon-search' />
+                  </CardTitleIcon>
+                </div>
+                <NavCard info={info} />
+                <CardCommon title={"TAGS"}>
+                  <div style={{ paddingTop: "0.5rem" }}>
+                    {memotags.map(t => {
+                      return <span className="hover-gold" style={{ display: "inline-block" }} key={t.name}
+                        onClick={() => { setSearchText("#" + t.name) }}
+                      >
+                        {`#${t.name}`}
+                      </span>
+                    })}
                   </div>
                 </CardCommon>
-                : null}
-              {siteInfo.walineApi && siteInfo.walineApi !== "" ? <CommentCard /> : null}
-            </SiderCol>
-          </TwoColLayout>
-        </OneColLayout>
+                {siteInfo.friends ?
+                  <CardCommon title="FRIENDS">
+                    <div style={{ padding: "0.5rem 0.25rem" }}>
+                      {siteInfo.friends.map((f, i) => <div key={i}><LinkWithLine href={f.link}>{f.name}</LinkWithLine></div>)}
+                    </div>
+                  </CardCommon>
+                  : null}
+                {siteInfo.walineApi && siteInfo.walineApi !== "" ? <CommentCard /> : null}
+              </SiderCol>
+            </TwoColLayout>
+          </OneColLayout>
+          <ImageBrowser />
+        </MemoImgCtx.Provider>
       </main>
     </>
   )
@@ -206,7 +231,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 
   return {
     props: {
-      memos, // seo on fetch
+      source: memos, // seo on fetch
       info: memo_db.info,
       memotags: memo_db.tags,
     }
@@ -312,7 +337,7 @@ const OneColLayout = styled.div`
 
 /** Styles **/
 const MemoCol = styled.div`
-  max-width: 650px;
+  width: 100%;
   padding: 86px 16px 48px 16px;
   align-self: flex-end;
 

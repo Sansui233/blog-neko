@@ -4,6 +4,7 @@ import matter from "gray-matter";
 import path from 'path';
 import readline from 'readline';
 import { siteInfo } from "../../../site.config";
+import { parseDate } from "../../date";
 import { grayMatter2PostMeta } from "../../markdown/frontmatter";
 import { compileMdxRss } from "../../markdown/mdx";
 import { PostMeta } from "../posts.common";
@@ -50,8 +51,8 @@ async function getPosts(): Promise<Item[]> {
         id: `${siteInfo.domain}/posts/${p.id}`,
         guid: `${siteInfo.domain}/posts/${p.id}`,
         link: `${siteInfo.domain}/posts/${p.id}`,
-        published: new Date(p.date),
-        date: new Date(p.date),
+        published: parseDate(p.date),
+        date: parseDate(p.date), // TODO Bug may not be a real string?
         description: p.description ? p.description : '',
         category: [
           {
@@ -146,8 +147,8 @@ async function getMemo(): Promise<Item | null> {
     id: `${siteInfo.domain}/memos?id=${matterResult.date}`, // 修改时间戳将触发 rss 对于本内容的更新
     guid: `${siteInfo.domain}/memos?id=${matterResult.date}`, // 修改时间戳将触发 rss 对于本内容的更新
     link: `${siteInfo.domain}/memos`,
-    date: new Date(matterResult.date),
-    published: new Date(matterResult.date),
+    date: parseDate(matterResult.date),
+    published: parseDate(matterResult.date),
     description: matterResult.description ? matterResult.description : '',
     category: [
       {
