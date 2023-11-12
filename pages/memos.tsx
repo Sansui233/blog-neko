@@ -76,8 +76,8 @@ export default function Memos({ source, info, memotags, client }: Props) {
 
   // virtual list api
   const [cli, setCli] = useState(createClient(client))
-  const fetchPage = useCallback(async (page: number) => {
-    return cli.queryMemoByCount(page, 10).then(data => {
+  const fetchFrom = useCallback(async (start: number, batchsize: number) => {
+    return cli.queryMemoByCount(start, batchsize).then(data => {
       if (data.length > 0) {
         return Promise.all(data.map(async d => {
           return {
@@ -191,8 +191,8 @@ export default function Memos({ source, info, memotags, client }: Props) {
                       setSearchText,
                     }))}
                     Elem={MemoCard}
-                    fetchPage={fetchPage}
-                    pageSize={10}
+                    fetchFrom={fetchFrom}
+                    batchsize={10}
                   />
                   {/* {postsData.map(m => (
                   <MemoCard key={m.id} source={m} setSearchText={setSearchText} />

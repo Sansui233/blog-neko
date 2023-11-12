@@ -48,7 +48,7 @@ const queryMemoByCount: Client['queryMemoByCount'] = async (start, len) => {
   return (await Promise.all(promises)).flat()
 }
 
-
+// TODO 还没有做精确分割，用起来可能会有 bug
 const queryMemoByDate: Client['queryMemoByDate'] = async (latest, oldest)=>{
   const info = (await getMemoInfo()) as MemoInfoExt
   const pages = info.pageMap.filter( page => {
