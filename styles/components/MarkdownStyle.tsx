@@ -3,28 +3,21 @@ import { linkHoverBS } from "../styles";
 
 
 export const MarkdownStyle = styled.div`
-  text-align: justify;
-  letter-spacing: 0.01em;
   color: ${p => p.theme.colors.textSecondary};
-
-  @media screen and (max-width: 580px){
-    text-align: unset;
-    p,ul,ol {
-      line-height: 1.625rem;
-    }
-  }
-
+  
   img, picture, video, canvas, svg, pre{
-    margin: 1.625rem auto;
+    margin: 1.5rem auto;
     display: block;
   }
 
-  p,ul,ol {
-    line-height: 1.8rem;
+  p,
+  ul,
+  ol {
+    line-height: 1.7rem;
   }
 
   blockquote {
-    margin: 1.625rem 0;
+    margin: 1.5rem 0;
   }
 
   a {
@@ -74,6 +67,21 @@ export const MarkdownStyle = styled.div`
     position: absolute;
     color: ${p => p.theme.colors.gold};
     left: -1rem;
+  }
+
+  @media screen and (min-width: 580px){
+
+    letter-spacing: 0.01em;
+    text-align: justify;
+
+    img, picture, video, canvas, svg, pre{
+      margin: 1.6rem auto;
+      display: block;
+    }
+
+    blockquote {
+      margin: 1.6rem 0;
+    }
   }
 
   .hljs {

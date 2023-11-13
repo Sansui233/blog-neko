@@ -245,7 +245,7 @@ p,
 ul,
 ol {
   font-size: 1rem;
-  line-height: 1.625rem;
+  line-height: 1.7rem;
   margin: 1rem 0;
 }
 
@@ -284,4 +284,23 @@ html ::-webkit-scrollbar-thumb:hover {
 
 code {
   font-family: SFMono-Regular,consolas,Liberation Mono,menlo,monaco,"Courier New",courier,monospace,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol",sans-serif;
+}
+
+@media screen and (max-width: 580px){
+  h1 {
+    font-size: 1.8rem;
+    line-height: 2.5rem;
+    margin-top: 1.8rem;
+  }
+  h2 {
+    font-size: 1.5rem;
+    margin-top: 1.8rem;
+  }
+  h3 {
+    font-size: 1.25rem;
+    margin-top: 1.25rem;
+  }
+  h4 {
+    font-size: 1.1rem;
+  }
 }

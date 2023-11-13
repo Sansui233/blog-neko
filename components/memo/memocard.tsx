@@ -137,9 +137,15 @@ const CardMask = styled.div<{
 const MemoMarkdown = styled(MarkdownStyle) <{
   $bottomSpace: boolean,
 }>`
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
+    padding-left: 5px;
+
+    @media screen and (min-width: 580px){
+      padding-left: 0.5rem;
+      padding-right: 0.5rem;
+    }
+
     padding-bottom: ${props => props.$bottomSpace === true ? "2rem" : "inherit"};
+    
     h1,h2,h3,h4,h5,h6 {
       font-size: 1rem;
     }
@@ -162,6 +168,12 @@ const MemoMeta = styled.div`
       height: 3rem;
       border-radius: 50%;
       border: 1px solid ${p => p.theme.colors.uiLineGray};
+
+      @media screen and (max-width: 580px){
+        width: 2.75rem;
+        height: 2.75rem;
+      }
+
     }
 
     & .meta{

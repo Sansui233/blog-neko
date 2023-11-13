@@ -241,7 +241,7 @@ const ColumnRight = styled.div`
 
   animation: ${fadeInRight} 1s ease;
 
-  @media screen and (max-width: 580px) {
+  @media screen and (max-width: 780px) {
     display: none
   }
 `
@@ -251,6 +251,10 @@ const PostTitle = styled.div`
   h1 {
     margin-top: .3rem;
     margin-bottom: 0.5rem;
+  }
+
+  @media screen and (max-width: 580px){
+    margin-bottom: 2rem;
   }
 `
 
@@ -266,7 +270,7 @@ const MetaStyle = styled.span`
   &::before {
     content:'';
     position: absolute;
-    top: -.8em;
+    top: -0.75em;
     left: 0;
     height: 1px;
     width: 100%;
