@@ -197,7 +197,7 @@ export default function Memos({ source, info, memotags, client }: Props) {
                       batchsize={10}
                     /> : searchStatus.isSearch === "done"
                       ? <VirtualList<TMemo>
-                        key={"vl2"}
+                        key={searchStatus.searchText}
                         sources={postsData}
                         setSources={setpostsData}
                         Elem={(props) => {
@@ -331,16 +331,16 @@ async function initSearch(
     })
 
     Promise.all(filtered).then(
-      res => setResultFn(res)
-    )
-
-    setStatus(status => {
-      return {
-        ...status,
-        isSearch: "done",
+      res => {
+        setResultFn(res)
+        setStatus(status => {
+          return {
+            ...status,
+            isSearch: "done",
+          }
+        })
       }
-    })
-
+    )
   }
 
   newEngine = new Naive({
