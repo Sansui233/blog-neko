@@ -14,7 +14,7 @@ const Button = styled.button`
   cursor:pointer;
 
   &:hover {
-    background: ${p => p.theme.colors.goldHover};
+    background: ${p => p.theme.colors.accentHover};
   }
 `
 

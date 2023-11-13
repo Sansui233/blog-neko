@@ -13,7 +13,7 @@ const LinkWithLine = styled(Link)`
     bottom: -3px;
     width: 0;
     height: 2px;
-    background: ${props => props.theme.colors.gold};
+    background: ${props => props.theme.colors.accent};
     transition: width 1s cubic-bezier(0.34, 0.04, 0.03, 1.4), background .3s;
   }
   
@@ -33,7 +33,7 @@ const HoverWithLine = styled.span`
     bottom: -3px;
     width: 0;
     height: 2px;
-    background: ${props => props.theme.colors.gold};
+    background: ${props => props.theme.colors.accent};
     transition: width 1s cubic-bezier(0.34, 0.04, 0.03, 1.4), background .3s;
   }
 
@@ -45,7 +45,7 @@ const HoverWithLine = styled.span`
 const HoverWithBoxShadow = styled.span`
 
   position: relative;
-  border-bottom: 1px solid ${props => props.theme.colors.gold};
+  border-bottom: 1px solid ${props => props.theme.colors.accent};
   transition: box-shadow .5s;
   cursor: pointer;
 

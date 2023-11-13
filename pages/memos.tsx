@@ -411,7 +411,7 @@ const SiderCol = styled.div`
   }
 
   .hover-gold:hover {
-    color: ${p => p.theme.colors.gold};
+    color: ${p => p.theme.colors.accent};
   }
 `
 
@@ -432,6 +432,6 @@ const SearchBox = styled.input`
   &:focus,
   &:focus-visible{
     outline: none;
-    border: 1px solid ${p => p.theme.colors.goldHover};
+    border: 1px solid ${p => p.theme.colors.accentHover};
   }
 `

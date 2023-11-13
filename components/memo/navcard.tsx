@@ -34,7 +34,7 @@ const Layout = styled.section`
   }
 
   .item.active {
-    border-right: 2px solid ${p => p.theme.colors.gold};
+    border-right: 2px solid ${p => p.theme.colors.accent};
   }
 
   .title {

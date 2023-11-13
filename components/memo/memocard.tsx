@@ -114,7 +114,7 @@ const CardMask = styled.div<{
     height: 7rem;
     text-align: right;
     
-    color: ${p => p.theme.colors.gold};
+    color: ${p => p.theme.colors.accent};
     ${props => props.$isCollapse === true ? props.theme.colors.maskGradient : ''}
 
     .rd-more {
@@ -151,12 +151,12 @@ const MemoMarkdown = styled(MarkdownStyle) <{
     }
 
     & .tag {
-      color: ${p => p.theme.colors.gold};
+      color: ${p => p.theme.colors.accent};
     }
 
     & .tag:hover {
       cursor: pointer;
-      color: ${p => p.theme.colors.goldHover};
+      color: ${p => p.theme.colors.accentHover};
     }
 `
 

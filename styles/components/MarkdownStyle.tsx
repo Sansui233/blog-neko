@@ -23,7 +23,7 @@ export const MarkdownStyle = styled.div`
   a {
     position: relative;
     font-weight: bold;
-    border-bottom: 1px solid ${props => props.theme.colors.gold};
+    border-bottom: 1px solid ${props => props.theme.colors.accent};
     transition: box-shadow .5s;
   }
 
@@ -32,7 +32,7 @@ export const MarkdownStyle = styled.div`
   }
   
   code {
-    color: ${props => props.theme.colors.gold};
+    color: ${props => props.theme.colors.accent};
     background-color: ${props => props.theme.colors.codeBlockBg};
     border-radius: 3px;
     padding: 0.2rem 0.375rem;
@@ -65,7 +65,7 @@ export const MarkdownStyle = styled.div`
   ul li::before {
     content:"•";
     position: absolute;
-    color: ${p => p.theme.colors.gold};
+    color: ${p => p.theme.colors.accent};
     left: -1rem;
   }
 
@@ -169,7 +169,7 @@ export const MarkdownStyle = styled.div`
   .hljs-attribute,
   .hljs-template-tag,
   .hljs-meta .hljs-keyword {
-    color: ${p => p.theme.colors.gold};
+    color: ${p => p.theme.colors.accent};
   }
 
 `;

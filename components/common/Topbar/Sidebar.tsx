@@ -81,7 +81,7 @@ const Icons = styled.div`
   }
 
   a:hover {
-    color: ${p => p.theme.colors.gold};
+    color: ${p => p.theme.colors.accent};
   }
 
   i {
@@ -116,7 +116,7 @@ const Container = styled.div`
       bottom: -1rem;
       width: 100%;
       height: 1px;
-      background: ${p => p.theme.colors.gold};
+      background: ${p => p.theme.colors.accent};
     }
   }
 `

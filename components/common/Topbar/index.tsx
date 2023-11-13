@@ -120,12 +120,12 @@ export default function Topbar({ placeHolder = true, scrollElem, hideSearch, ...
 
 const SearchIcon = styled.div<{ $isSearch: boolean, $hideSearch: boolean | undefined }>`
   ${p => p.$hideSearch ? "opacity:0;" : null}
-  ${p => p.$isSearch ? "color:" + p.theme.colors.gold + ";" : ""}
+  ${p => p.$isSearch ? "color:" + p.theme.colors.accent + ";" : ""}
   transform: translateY(0.145rem);
   transition: color 0.3s ease;
 
   &:hover {
-    color: ${p => p.theme.colors.goldHover};
+    color: ${p => p.theme.colors.accentHover};
   }
 
   @media screen and (max-width: 780px) {
@@ -140,7 +140,7 @@ const PlaceHolder = styled.div`
     padding-top: 0.625rem;
     font-size: 0.625rem;
     font-style: italic;
-    color: ${p => p.theme.colors.gold};
+    color: ${p => p.theme.colors.accent};
     font-family: 'Times New Roman', STSong, '宋体', serif;
     opacity: .6;
 `
@@ -232,7 +232,7 @@ const Nav = styled.nav`
   }
 
   ol.current a{
-    color: ${props => props.theme.colors.gold};
+    color: ${props => props.theme.colors.accent};
   }
 
 `

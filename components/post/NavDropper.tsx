@@ -42,7 +42,7 @@ const SubItemContainer = styled.div`
   opacity: 0;
   pointer-events: none;
   margin-top: .625rem;
-  border-right: 1px solid ${props => props.theme.colors.gold};
+  border-right: 1px solid ${props => props.theme.colors.accent};
   padding-left: 2.5rem;
   transform: none;
   ${props => props.theme.colors.navBgGradient};
@@ -62,7 +62,7 @@ const NavItem = styled.div`
   cursor: pointer;
   position: relative;
   &:hover span{
-    border-bottom: solid 1px ${props => props.theme.colors.gold};
+    border-bottom: solid 1px ${props => props.theme.colors.accent};
   }
 `
 
@@ -70,7 +70,7 @@ const MainItem = styled.div`
   cursor: pointer;
   span {
     transition: box-shadow .5s;
-    box-shadow: inset 0 -1px 0 ${p => p.theme.colors.goldHover};
+    box-shadow: inset 0 -1px 0 ${p => p.theme.colors.accentHover};
   }
 
   svg {
@@ -81,7 +81,7 @@ const MainItem = styled.div`
   }
 
   span.is-open {
-    box-shadow: inset 0 -0.5em 0 ${p => p.theme.colors.goldHover};
+    box-shadow: inset 0 -0.5em 0 ${p => p.theme.colors.accentHover};
   }
 
   svg.is-open {

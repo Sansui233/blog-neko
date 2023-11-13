@@ -135,7 +135,7 @@ export default function Post({ meta, mdxcode, nextPost, prevPost, excerpt, headi
         </ColumnLeft>
         <ColumnRight>
           <nav>
-            <div style={{ fontSize: "1.25rem", fontWeight: "bold", paddingBottom: "0.5rem", marginBottom: "0.5rem", borderBottom: `solid 1px ${theme?.colors.gold}` }}>
+            <div style={{ fontSize: "1.25rem", fontWeight: "bold", paddingBottom: "0.5rem", marginBottom: "0.5rem", borderBottom: `solid 1px ${theme?.colors.accent}` }}>
               目录
             </div>
             <HeadingContainer>
@@ -274,7 +274,7 @@ const MetaStyle = styled.span`
     left: 0;
     height: 1px;
     width: 100%;
-    background: ${p => p.theme.colors.gold};
+    background: ${p => p.theme.colors.accent};
   }
 `
 
@@ -283,7 +283,7 @@ const StyledLink = styled(Link)`
   color: ${p => p.theme.colors.textPrimary};
 
   &:hover {
-    color: ${p => p.theme.colors.gold};
+    color: ${p => p.theme.colors.accent};
   }
 
 `
@@ -297,7 +297,7 @@ const TocAnchor = styled(Link) <{ $rank: number }>`
 
   &::before {
     content: "•";
-    color: ${p => p.theme.colors.gold};
+    color: ${p => p.theme.colors.accent};
     left: ${p => p.$rank - 1}em;
     position: absolute;
   }
@@ -307,7 +307,7 @@ const TocAnchor = styled(Link) <{ $rank: number }>`
   }
 
   &:hover span {
-    box-shadow: inset 0 -0.5em 0 ${props => props.theme.colors.goldHover};
+    box-shadow: inset 0 -0.5em 0 ${props => props.theme.colors.accentHover};
   }
 `
 

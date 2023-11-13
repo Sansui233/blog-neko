@@ -170,7 +170,7 @@ const Input = styled.input`
   &:focus,
   &:focus-visible{
     outline: none;
-    /*border-bottom: 1px solid ${p => p.theme.colors.goldHover};*/
+    /*border-bottom: 1px solid ${p => p.theme.colors.accentHover};*/
   }
 `
 
@@ -181,7 +181,7 @@ const Item = styled(Link)`
 
   
   &:hover>span{
-    box-shadow: inset 0 -0.5em 0 ${props => props.theme.colors.goldHover};
+    box-shadow: inset 0 -0.5em 0 ${props => props.theme.colors.accentHover};
   }
 
   &>span {
@@ -191,7 +191,7 @@ const Item = styled(Link)`
 
   &>span::before {
     content: "•";
-    color: ${p => p.theme.colors.gold};
+    color: ${p => p.theme.colors.accent};
     left: -0.875rem;
     position: absolute;
   }
@@ -217,7 +217,7 @@ const Container = styled(PopOver)`
   
   & mark {
     background: none;
-    color: ${p => p.theme.colors.gold}
+    color: ${p => p.theme.colors.accent}
   }
 
   @media screen and (max-width: 580px){

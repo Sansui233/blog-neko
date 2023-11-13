@@ -35,7 +35,7 @@ const StyledWL = styled.div`
   --waline-theme-color: ${p => p.theme.colors.bgInverse};
   --waline-bgcolor: ${p => p.theme.colors.bg};
   --waline-color: ${p => p.theme.colors.textGray};
-  --waline-active-color: ${p => p.theme.colors.gold};
+  --waline-active-color: ${p => p.theme.colors.accent};
   --waline-bgcolor-light: #99999915;
   --waline-border: 1px solid #99999966;
   --waline-border-color: #99999966;
