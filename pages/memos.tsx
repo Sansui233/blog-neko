@@ -11,7 +11,7 @@ import CardCommon, { CardTitleIcon } from "../components/memo/cardcommon";
 import CommentCard from "../components/memo/commentcard";
 import ImageBrowser from "../components/memo/imagebrowser";
 import { TImage } from "../components/memo/imagesthumb";
-import { MemoCard, MemoCardProps } from "../components/memo/memocard";
+import { MemoCard } from "../components/memo/memocard";
 import NavCard from "../components/memo/navcard";
 import VirtualList from "../components/memo/virtuallist";
 import { clientList, createClient } from "../lib/data/client";
@@ -147,6 +147,7 @@ export default function Memos({ source, info, memotags, client }: Props) {
               marginLeft: "0.875em"
             }}
             onClick={() => {
+              setisFetching(true)
               setsearchStatus(status => {
                 return {
                   ...status,
@@ -155,6 +156,7 @@ export default function Memos({ source, info, memotags, client }: Props) {
                 }
               })
               setpostsData(postsDataBackup)
+              setisFetching(false)
             }}
           >X</span>
         </>
@@ -183,15 +185,26 @@ export default function Memos({ source, info, memotags, client }: Props) {
                   {statusRender()}
                 </PageDescription>
                 <div style={{ minHeight: "100vh" }}>
-                  <VirtualList<TMemo, MemoCardProps>
-                    sources={postsData}
-                    setSources={setpostsData}
-                    Elem={(props) => {
-                      return <MemoCard source={props.source} setSearchText={setSearchText} triggerHeightChange={props.triggerHeightChange} />
-                    }}
-                    fetchFrom={fetchFrom}
-                    batchsize={10}
-                  />
+                  {searchStatus.isSearch === "ready" // 首屏的问题……
+                    ? <VirtualList<TMemo>
+                      key={"vl1"}
+                      sources={postsData}
+                      setSources={setpostsData}
+                      Elem={(props) => {
+                        return <MemoCard source={props.source} setSearchText={setSearchText} triggerHeightChange={props.triggerHeightChange} />
+                      }}
+                      fetchFrom={fetchFrom}
+                      batchsize={10}
+                    /> : searchStatus.isSearch === "done"
+                      ? <VirtualList<TMemo>
+                        key={"vl2"}
+                        sources={postsData}
+                        setSources={setpostsData}
+                        Elem={(props) => {
+                          return <MemoCard source={props.source} setSearchText={setSearchText} triggerHeightChange={props.triggerHeightChange} />
+                        }}
+                        batchsize={10}
+                      /> : null}
                 </div>
                 <Footer />
               </MemoCol>

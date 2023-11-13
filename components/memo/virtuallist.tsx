@@ -2,20 +2,20 @@ import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useRef, useS
 import { throttle } from "../../lib/throttle";
 
 // source data type and element prop type
-type Props<T> = {
+type Props<T extends { id: string | number }> = {
   sources: T[]
   setSources: Dispatch<SetStateAction<T[]>>
   Elem: (props: {
     source: T
     triggerHeightChange: Dispatch<SetStateAction<boolean>>;
   }) => JSX.Element // the render
-  fetchFrom: (i: number, batchsize: number) => Promise<T[] | undefined>
+  fetchFrom?: (i: number, batchsize: number) => Promise<T[] | undefined>
   batchsize: number
   scrollRef?: React.RefObject<HTMLElement>
 }
 
 
-export default function VirtualList<T, P>({ sources, setSources, Elem, scrollRef, fetchFrom: fetchFrom, batchsize }: Props<T>) {
+export default function VirtualList<T extends { id: string | number }>({ sources, setSources, Elem, scrollRef, fetchFrom: fetchFrom, batchsize }: Props<T>) {
   const [placeHolder, setplaceHolder] = useState<number[]>(new Array(sources.length).fill(300))
   // 注意保持 activeIndex 和 sources 的状态一致性
   const [activeIndex, setActiveIndex] = useState<number[]>(new Array(sources.length).fill(0).map((_, i) => i))
@@ -148,13 +148,13 @@ export default function VirtualList<T, P>({ sources, setSources, Elem, scrollRef
       width: "100%",
       minHeight: `${minHeight}px`
     }}>
-      {sources.map((e, i) => <ListItem<T> key={activeIndex[i]} index={activeIndex[i]} Elem={Elem} elem={e} placeHolder={placeHolder} setplaceHolder={setplaceHolder} />)}
+      {sources.map((e, i) => <ListItem<T> key={e.id} index={activeIndex[i]} Elem={Elem} elem={e} placeHolder={placeHolder} setplaceHolder={setplaceHolder} />)}
     </div>
   )
 }
 
 
-function ListItem<T>({ Elem, index, elem: source, placeHolder, setplaceHolder }: {
+function ListItem<T extends { id: string | number }>({ Elem, index, elem: source, placeHolder, setplaceHolder }: {
   Elem: Props<T>["Elem"],
   elem: T;
   index: number
@@ -168,7 +168,6 @@ function ListItem<T>({ Elem, index, elem: source, placeHolder, setplaceHolder }:
       const height = ref.current.offsetHeight;
       setplaceHolder(placeHolder => {
         if (placeHolder[index] === height || height === 0) return placeHolder
-
         const newplaceHolder = [...placeHolder]
         newplaceHolder[index] = height
         return newplaceHolder
