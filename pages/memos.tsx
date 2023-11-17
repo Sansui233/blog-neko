@@ -46,7 +46,7 @@ type SearchStatus = {
 }
 
 export const MemoImgCtx = React.createContext({
-  isModel: false,
+  isModel: false, // 由父组件控制挂载
   setisModel: (isModel: boolean) => { console.error("empty MemoImgCtx") },
   imagesData: new Array<TImage>(),
   setImagesData: (imagesData: TImage[]) => { console.error("empty MemoImgCtx") },
@@ -244,7 +244,7 @@ export default function Memos({ source, info, memotags, client }: Props) {
               </SiderCol>
             </TwoColLayout>
           </OneColLayout>
-          <ImageBrowser />
+          {isModel ? <ImageBrowser /> : null}
         </MemoImgCtx.Provider>
       </main>
     </>

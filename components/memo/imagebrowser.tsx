@@ -1,4 +1,4 @@
-import { CSSProperties, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { CSSProperties, useCallback, useContext, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 import { throttle } from "../../lib/throttle";
 import { useDocumentEvent } from "../../lib/useEvent";
@@ -17,16 +17,6 @@ export default function ImageBrowser() {
   const scrollRef = useRef<HTMLDivElement>(null)
 
   if (index.curr > ctx.imagesData.length - 1) console.error("uncaught ivalid image index:", index, "in length", ctx.imagesData.length)
-
-  useEffect(() => {
-    setIndex({
-      curr: ctx.currentIndex,
-      last: ctx.currentIndex
-    })
-    return () => {
-    }
-  }, [ctx.isModel, ctx.currentIndex])
-
 
   const ratio = useMemo(() => index.curr < ctx.imagesData.length ? ctx.imagesData[index.curr].width / ctx.imagesData[index.curr].height : 1, [ctx.imagesData, index])
   const maxHeight = useViewHeight()
@@ -163,7 +153,7 @@ export default function ImageBrowser() {
         : { maxWidth: "95%" },
   )
 
-  return (ctx.isModel ?
+  return (
     <Model isModel={true} setModel={ctx.setisModel} style={{ ...endTrans, background: "#1d1d1d" }}>
       {/* Debug */}
       {/* <Tools style={{ bottom: "0rem", flexDirection: "column", height: "12em" }}>
@@ -197,7 +187,7 @@ export default function ImageBrowser() {
       <Tools>{index.curr + 1}/{ctx.imagesData.length} &nbsp;|&nbsp;
         <span onClick={(e) => { e.stopPropagation(), ctx.setisModel(false) }}>{"关闭"}</span></Tools>
 
-    </Model> : null
+    </Model>
   )
 }
 
