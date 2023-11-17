@@ -82,25 +82,26 @@ export function Images({ imgsmd }: {
     {imgsmd.length === 1
 
       // only one Image
-      ? <ImageContainer style={{
-        maxWidth: "100%",
-        maxHeight: "326px",
-        aspectRatio: thumbData[0]
-          ? thumbData[0].width / thumbData[0].height > 2
-            ? 2 : thumbData[0].width / thumbData[0].height < 0.75
-              ? 0.75
-              : thumbData[0].width / thumbData[0].height
-          : 2,
-      }}>
-        {/*eslint-disable-next-line @next/next/no-img-element*/} {/* eslint-disable-next-line jsx-a11y/alt-text */}
-        <img loading="lazy" src={thumbData[0]?.ok === "loaded" ? thumbData[0]?.src : ""} alt={thumbData[0]?.ok} />
-        <ClickMask onClick={e => {
-          e.stopPropagation()
-          ctx.setCurrentIndex(0)
-          ctx.setImagesData(thumbData)
-          ctx.setisModel(true)
-        }} />
-      </ImageContainer>
+      ? <div style={{ height: "300px" }}>
+        <ImageContainer style={{
+          maxWidth: "100%",
+          maxHeight: "100%",
+          aspectRatio: thumbData[0]
+            ? thumbData[0].width / thumbData[0].height > 2
+              ? 2 : thumbData[0].width / thumbData[0].height < 0.75
+                ? 0.75
+                : thumbData[0].width / thumbData[0].height
+            : 2,
+        }}>
+          {/*eslint-disable-next-line @next/next/no-img-element*/} {/* eslint-disable-next-line jsx-a11y/alt-text */}
+          <img loading="lazy" src={thumbData[0]?.ok === "loaded" ? thumbData[0]?.src : ""} alt={thumbData[0]?.ok} />
+          <ClickMask onClick={e => {
+            e.stopPropagation()
+            ctx.setCurrentIndex(0)
+            ctx.setImagesData(thumbData)
+            ctx.setisModel(true)
+          }} />
+        </ImageContainer></div>
 
       // two or more images
       : <ImageGrid>
