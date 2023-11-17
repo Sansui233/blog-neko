@@ -85,7 +85,7 @@ export function Images({ imgsmd }: {
       ? <div style={{ height: "300px" }}>
         <ImageContainer style={{
           maxWidth: "100%",
-          maxHeight: "100%",
+          height: "100%",
           aspectRatio: thumbData[0]
             ? thumbData[0].width / thumbData[0].height > 2
               ? 2 : thumbData[0].width / thumbData[0].height < 0.75
