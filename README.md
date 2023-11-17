@@ -67,8 +67,6 @@ export const siteInfo = {
 title: 我是标题
 date: 2016-03-24 19:23:17
 categories: 其他
-tags: 
-  - blog
 ---
 
 正文内容
@@ -84,6 +82,7 @@ date: 2023-08-30 02:54:34
 categories: 其他
 tags: 
   - blog
+  - othetag
 description: 测试 draft 属性
 draft: true
 keywords: Markdown, 测试
