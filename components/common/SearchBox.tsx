@@ -74,23 +74,25 @@ function SearchBox({ outSetSearch: outShow, stateToInner: outstate, iconEle, typ
    * Get data
    */
   useEffect(() => {
-    if (type === "article") {
-      fetch('/data/posts/index.json')
-        .then(res => res.json())
-        .then((data) => {
-          const newEngine = new Naive({
-            data: data as SearchObj[],
-            field: ["title", "description", "keywords", "content"],
-            notifier: setres
-          })
+    if (!isReady && isShow) {
+      if (type === "article") {
+        fetch('/data/posts/index.json')
+          .then(res => res.json())
+          .then((data) => {
+            const newEngine = new Naive({
+              data: data as SearchObj[],
+              field: ["title", "description", "keywords", "content"],
+              notifier: setres
+            })
 
-          setEngine(newEngine)
-          setisReady(true)
-        })
-    } else {
-      // 预留其他类型的搜索处理位置
+            setEngine(newEngine)
+            setisReady(true)
+          })
+      } else {
+        // 预留其他类型的搜索处理位置
+      }
     }
-  }, [type])
+  }, [type, isReady, isShow])
 
   const handleInput = debounce(function (e: FormEvent<HTMLInputElement>) {
     const strs = (e.target as HTMLInputElement).value.split(" ")
