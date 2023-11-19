@@ -1,5 +1,5 @@
 import { DetailedHTMLProps, ImgHTMLAttributes } from "react"
-import Model from "./Model"
+import Model from "./model"
 
 type Props = {
   imgProps: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>,

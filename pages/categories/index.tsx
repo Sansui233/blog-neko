@@ -4,7 +4,7 @@ import Link from "next/link";
 import styled from "styled-components";
 import { CommonHead } from "..";
 import LayoutContainer from "../../components/layout";
-import { CategoryLayoutStyle, CategoryTitle } from "../../components/post/TimelinePosts";
+import { CategoryLayoutStyle, CategoryTitle } from "../../components/post/timeline";
 import { posts_db } from "../../lib/data/server";
 import { siteInfo } from "../../site.config";
 

@@ -4,7 +4,7 @@ import styled, { ThemeContext } from "styled-components"
 import { ThemeMsg, getAppTheme, setAppTheme } from "../../../lib/app-states"
 import { siteInfo } from "../../../site.config"
 import { linkHoverBS, textStroke } from "../../../styles/styles"
-import MenuIcon from "./MenuIcon"
+import MenuIcon from "./menuicon"
 
 type Props = {
   isShow: boolean,

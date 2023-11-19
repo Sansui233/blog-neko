@@ -3,9 +3,9 @@ import Head from "next/head";
 import React, { useCallback, useContext, useRef, useState } from "react";
 import styled, { ThemeContext } from "styled-components";
 import { CommonHead } from ".";
-import Footer from "../components/common/Footer";
-import { PageDescription } from '../components/common/PageDescription';
-import Topbar from "../components/common/Topbar";
+import Footer from "../components/common/footer";
+import { PageDescription } from '../components/common/page-description';
+import Topbar from "../components/common/topbar";
 import { TwoColLayout } from "../components/layout";
 import CardCommon, { CardTitleIcon } from "../components/memo/cardcommon";
 import CommentCard from "../components/memo/commentcard";
@@ -18,9 +18,9 @@ import { MemoInfo, MemoPost, MemoTag } from "../lib/data/memos.common";
 import { memo_db, writeMemoJson } from "../lib/data/server";
 import { compileMdxMemo } from "../lib/markdown/mdx";
 import { Naive, Result, SearchObj } from "../lib/search";
-import { useDocumentEvent } from "../lib/useEvent";
+import { useDocumentEvent } from "../lib/use-event";
 import { siteInfo } from "../site.config";
-import { LinkWithLine } from "../styles/components/LinkWithLine";
+import { LinkWithLine } from "../styles/components/link-with-line";
 import { Extend } from "../utils/typeinfer";
 
 const MemoCSRAPI = '/data/memos'

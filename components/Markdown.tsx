@@ -1,6 +1,6 @@
 
 import { DetailedHTMLProps, ImgHTMLAttributes, useState } from "react";
-import ImgModel from "./common/ImgModel";
+import ImgModel from "./common/img-model";
 
 /**
  * custom img component

@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { Naive, Result } from '../../lib/search';
 import { SearchObj } from '../../lib/search/common';
 import { debounce } from '../../lib/throttle';
-import PopOver from '../../styles/components/PopOver';
+import PopOver from '../../styles/components/pop-over';
 
 type Props = {
   outSetSearch: (isShow: boolean) => void

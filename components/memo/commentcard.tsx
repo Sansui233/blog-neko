@@ -2,9 +2,9 @@ import { WalineComment } from '@waline/client'
 import { useContext, useEffect, useState } from 'react'
 import styled, { ThemeContext } from 'styled-components'
 import { siteInfo } from '../../site.config'
-import { HoverWithBoxShadow } from '../../styles/components/LinkWithLine'
-import Model from '../common/Model'
-import Waline from '../common/Waline'
+import { HoverWithBoxShadow } from '../../styles/components/link-with-line'
+import Model from '../common/model'
+import Waline from '../common/waline'
 import CardCommon from './cardcommon'
 
 // api doc: https://waline.js.org/reference/server/api.html

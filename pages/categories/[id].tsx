@@ -3,7 +3,7 @@ import Head from "next/head";
 import styled from "styled-components";
 import { CommonHead } from "..";
 import LayoutContainer from "../../components/layout";
-import TLContent from "../../components/post/TimelinePosts";
+import TLContent from "../../components/post/timeline";
 import { groupByYear, posts_db } from "../../lib/data/server";
 import { textShadow } from "../../styles/styles";
 

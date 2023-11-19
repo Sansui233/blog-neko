@@ -8,8 +8,8 @@ import path from "path"
 import { useContext } from "react"
 import styled, { ThemeContext } from "styled-components"
 import { CommonHead } from ".."
-import Pagination from "../../components/common/Pagination"
-import Waline from "../../components/common/Waline"
+import Pagination from "../../components/common/pagination"
+import Waline from "../../components/common/waline"
 import LayoutContainer, { OneColLayout } from "../../components/layout"
 import { useMdxPost } from "../../components/mdx"
 import { PostMeta } from '../../lib/data/posts.common'
@@ -17,7 +17,7 @@ import { POST_DIR, posts_db } from "../../lib/data/server"
 import { grayMatter2PostMeta } from "../../lib/markdown/frontmatter"
 import { compileMdxPost } from "../../lib/markdown/mdx"
 import { bottomFadeIn, fadeInRight } from "../../styles/animations"
-import { MarkdownStyle } from "../../styles/components/MarkdownStyle"
+import { MarkdownStyle } from "../../styles/components/markdown-style"
 
 type Props = {
   meta: PostMeta,

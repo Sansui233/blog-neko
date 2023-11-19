@@ -1,11 +1,11 @@
 import Head from "next/head";
 import styled from "styled-components";
 import { CommonHead } from ".";
-import { PageDescription } from '../components/common/PageDescription';
+import { PageDescription } from '../components/common/page-description';
 import LayoutContainer, { OneColLayout } from "../components/layout";
 import { siteInfo } from "../site.config";
 import { bottomFadeIn } from "../styles/animations";
-import { MarkdownStyle } from "../styles/components/MarkdownStyle";
+import { MarkdownStyle } from "../styles/components/markdown-style";
 import { textStroke } from "../styles/styles";
 
 export default function About() {

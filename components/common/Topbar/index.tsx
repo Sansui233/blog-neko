@@ -4,10 +4,10 @@ import React, { useContext, useEffect, useRef, useState } from "react"
 import styled, { ThemeContext } from "styled-components"
 import { throttle } from "../../../lib/throttle"
 import { siteInfo } from "../../../site.config"
-import { LinkWithLine } from "../../../styles/components/LinkWithLine"
-import SearchBox from "../SearchBox"
-import MenuIcon from "./MenuIcon"
-import Sidebar from "./Sidebar"
+import { LinkWithLine } from "../../../styles/components/link-with-line"
+import SearchBox from "../searchbox"
+import MenuIcon from "./menuicon"
+import Sidebar from "./sidebar"
 
 type Props = React.HTMLProps<HTMLElement> & {
   placeHolder?: boolean; // 有一些布局不需要 placeHolder

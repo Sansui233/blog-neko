@@ -8,7 +8,7 @@ type Props = {
   current: number
   setCurrent: (num: number) => void
 }
-export function NavDropper({ items, current, setCurrent }: Props) {
+export default function NavDropper({ items, current, setCurrent }: Props) {
   const [isOpen, setisOpen] = useState(false)
 
   return (

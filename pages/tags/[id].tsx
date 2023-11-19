@@ -2,7 +2,7 @@ import { GetStaticPaths, GetStaticProps } from "next";
 import Head from "next/head";
 import { CommonHead } from "..";
 import LayoutContainer from "../../components/layout";
-import TLContent from "../../components/post/TimelinePosts";
+import TLContent from "../../components/post/timeline";
 import { groupByYear, posts_db } from "../../lib/data/server";
 
 type Props = {

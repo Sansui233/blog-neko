@@ -2,10 +2,10 @@ import { CSSProperties, useCallback, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 import { create } from 'zustand';
 import { throttle } from "../../../lib/throttle";
-import { useDocumentEvent } from "../../../lib/useEvent";
-import { useViewHeight } from "../../../lib/useview";
+import { useDocumentEvent } from "../../../lib/use-event";
+import { useViewHeight } from "../../../lib/use-view";
 import { fadeIn, slideInLeft, slideInRight } from "../../../styles/animations";
-import Model from "../../common/Model";
+import Model from "../../common/model";
 import { TImage } from "../imagesthumb";
 
 interface ImgBroswerState {

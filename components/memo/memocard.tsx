@@ -3,7 +3,7 @@ import styled, { ThemeContext } from "styled-components";
 import { TMemo } from "../../pages/memos";
 import { siteInfo } from "../../site.config";
 import { bottomFadeIn } from "../../styles/animations";
-import { MarkdownStyle } from "../../styles/components/MarkdownStyle";
+import { MarkdownStyle } from "../../styles/components/markdown-style";
 import { textShadow } from "../../styles/styles";
 import { useMdxMemo } from "../mdx";
 import { Images } from "./imagesthumb";
