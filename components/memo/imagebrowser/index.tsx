@@ -1,24 +1,48 @@
-import { CSSProperties, useCallback, useContext, useMemo, useRef, useState } from "react";
+import { CSSProperties, useCallback, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
-import { throttle } from "../../lib/throttle";
-import { useDocumentEvent } from "../../lib/useEvent";
-import { useViewHeight } from "../../lib/useview";
-import { MemoImgCtx } from "../../pages/memos";
-import { fadeIn, slideInLeft, slideInRight } from "../../styles/animations";
-import Model from "../common/Model";
+import { create } from 'zustand';
+import { throttle } from "../../../lib/throttle";
+import { useDocumentEvent } from "../../../lib/useEvent";
+import { useViewHeight } from "../../../lib/useview";
+import { fadeIn, slideInLeft, slideInRight } from "../../../styles/animations";
+import Model from "../../common/Model";
+import { TImage } from "../imagesthumb";
+
+interface ImgBroswerState {
+  isModel: boolean;
+  setisModel: (b: boolean) => void
+  imagesData: Array<TImage>
+  setImagesData: (imagesData: TImage[]) => void
+  currentIndex: number
+  setCurrentIndex: (i: number) => void
+}
+
+export const useImgBroswerStore = create<ImgBroswerState>((set) => {
+  console.debug("%%%% new img browser state")
+  return {
+    isModel: false,
+    setisModel: (isModel: boolean) => set(() => ({ isModel })), // wow amazing, partial updating
+    imagesData: new Array<TImage>(),
+    setImagesData: (imagesData: TImage[]) => set(() => ({ imagesData })),
+    currentIndex: 0,
+    setCurrentIndex: (currentIndex: number) => set(() => ({ currentIndex })),
+  }
+})
 
 
 export default function ImageBrowser() {
-  const ctx = useContext(MemoImgCtx)
+  const ctx = useImgBroswerStore(state => state) // wont update except re-render
+  const imagesData = useImgBroswerStore(state => state.imagesData)
+
   const [index, setIndex] = useState({
-    curr: ctx.currentIndex,
-    last: ctx.currentIndex
+    curr: useImgBroswerStore(state => state.currentIndex),
+    last: useImgBroswerStore(state => state.currentIndex),
   })
   const scrollRef = useRef<HTMLDivElement>(null)
 
-  if (index.curr > ctx.imagesData.length - 1) console.error("uncaught ivalid image index:", index, "in length", ctx.imagesData.length)
+  if (index.curr > imagesData.length - 1) console.error("uncaught ivalid image index:", index, "in length", imagesData.length)
 
-  const ratio = useMemo(() => index.curr < ctx.imagesData.length ? ctx.imagesData[index.curr].width / ctx.imagesData[index.curr].height : 1, [ctx.imagesData, index])
+  const ratio = useMemo(() => index.curr < imagesData.length ? imagesData[index.curr].width / imagesData[index.curr].height : 1, [imagesData, index])
   const maxHeight = useViewHeight()
 
   const prev = useCallback(() => {
@@ -34,7 +58,7 @@ export default function ImageBrowser() {
   }, [index, setIndex, scrollRef])
 
   const next = useCallback(() => {
-    if (index.curr < ctx.imagesData.length - 1) {
+    if (index.curr < imagesData.length - 1) {
       setIndex({
         curr: index.curr + 1,
         last: index.curr
@@ -43,7 +67,7 @@ export default function ImageBrowser() {
         scrollRef.current.scrollTo({ top: 0 })
       }
     }
-  }, [index, setIndex, scrollRef, ctx])
+  }, [index, setIndex, scrollRef, imagesData])
 
   const keyevent = useCallback((evt: KeyboardEvent) => {
     if (evt.key === "ArrowLeft") {
@@ -170,7 +194,7 @@ export default function ImageBrowser() {
         style={containerTrans}
       >
 
-        <Img src={ctx.imagesData[index.curr].ok === "loaded" ? ctx.imagesData[index.curr].src : ""} alt={ctx.imagesData[index.curr].ok}
+        <Img src={imagesData[index.curr].ok === "loaded" ? imagesData[index.curr].src : ""} alt={imagesData[index.curr].ok}
           style={ratioStyle}
           $entranceDirection={index.curr === index.last ? 0 : index.curr > index.last ? 1 : -1} />
 
@@ -180,11 +204,11 @@ export default function ImageBrowser() {
         ? <Button $isLeft={true} $isShown={buttonLTrans} onClick={(e) => { e.stopPropagation(); prev() }}><i className="icon-arrow-left2" /></Button>
         : null}
 
-      {index.curr < ctx.imagesData.length - 1
+      {index.curr < imagesData.length - 1
         ? <Button $isLeft={false} $isShown={buttonRTrans} onClick={(e) => { e.stopPropagation(); next() }}><i className="icon-arrow-right2" /></Button>
         : null}
 
-      <Tools>{index.curr + 1}/{ctx.imagesData.length} &nbsp;|&nbsp;
+      <Tools>{index.curr + 1}/{imagesData.length} &nbsp;|&nbsp;
         <span onClick={(e) => { e.stopPropagation(), ctx.setisModel(false) }}>{"关闭"}</span></Tools>
 
     </Model>

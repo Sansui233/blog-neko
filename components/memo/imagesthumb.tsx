@@ -1,6 +1,6 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { MemoImgCtx } from "../../pages/memos";
+import { useImgBroswerStore } from "./imagebrowser";
 
 
 export type TImage = {
@@ -31,7 +31,7 @@ function parseMarkdownImage(markdownText: string) {
 export function Images({ imgsmd }: {
   imgsmd: string[]
 }) {
-  const ctx = useContext(MemoImgCtx)
+  const ctx = useImgBroswerStore(state => state)
   const [thumbData, setThumbData] = useState<TImage[]>(new Array(imgsmd.length).fill(1).map((_, index) => (
     { ok: "loading", index, src: "", width: 1, height: 1, alt: "" }
   )))

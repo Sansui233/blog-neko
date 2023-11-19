@@ -9,8 +9,7 @@ import Topbar from "../components/common/Topbar";
 import { TwoColLayout } from "../components/layout";
 import CardCommon, { CardTitleIcon } from "../components/memo/cardcommon";
 import CommentCard from "../components/memo/commentcard";
-import ImageBrowser from "../components/memo/imagebrowser";
-import { TImage } from "../components/memo/imagesthumb";
+import ImageBrowser, { useImgBroswerStore } from "../components/memo/imagebrowser";
 import { MemoCard } from "../components/memo/memocard";
 import NavCard from "../components/memo/navcard";
 import VirtualList from "../components/memo/virtuallist";
@@ -45,25 +44,13 @@ type SearchStatus = {
   searchText: string,
 }
 
-export const MemoImgCtx = React.createContext({
-  isModel: false, // 由父组件控制挂载
-  setisModel: (isModel: boolean) => { console.error("empty MemoImgCtx") },
-  imagesData: new Array<TImage>(),
-  setImagesData: (imagesData: TImage[]) => { console.error("empty MemoImgCtx") },
-  currentIndex: 0,
-  setCurrentIndex: (i: number) => { console.error("empty MemoImgCtx") }
-})
-
 export default function Memos({ source, info, memotags, client }: Props) {
   const theme = useContext(ThemeContext)
   const [postsData, setpostsData] = useState(source)
   const [postsDataBackup, setpostsDataBackup] = useState(source)
   const [isFetching, setisFetching] = useState(false)
 
-  // imagebroswer
-  const [isModel, setisModel] = useState(false)
-  const [imagesData, setImagesData] = useState<TImage[]>([{ ok: "loading", index: 0, src: "", width: 1, height: 1, alt: "" }])
-  const [currentIndex, setCurrentIndex] = useState(0)
+  const isModel = useImgBroswerStore(state => state.isModel)
 
   // search
   const inputRef = useRef<HTMLInputElement>(null)
@@ -174,78 +161,76 @@ export default function Memos({ source, info, memotags, client }: Props) {
         hideSearch={true}
       />
       <main style={{ backgroundColor: theme?.colors.bg2 }}>
-        <MemoImgCtx.Provider value={{ isModel, setisModel, imagesData, setImagesData, currentIndex, setCurrentIndex }}>
-          <OneColLayout>
-            <TwoColLayout
-              sep={1}
-              siderLocation="right"
-            >
-              <MemoCol>
-                <PageDescription style={{ marginRight: "1rem" }}>
-                  {statusRender()}
-                </PageDescription>
-                <div style={{ minHeight: "100vh" }}>
-                  {searchStatus.isSearch === "ready" // 首屏的问题……
+        <OneColLayout>
+          <TwoColLayout
+            sep={1}
+            siderLocation="right"
+          >
+            <MemoCol>
+              <PageDescription style={{ marginRight: "1rem" }}>
+                {statusRender()}
+              </PageDescription>
+              <div style={{ minHeight: "100vh" }}>
+                {searchStatus.isSearch === "ready" // 首屏的问题……
+                  ? <VirtualList<TMemo>
+                    key={"vl1"}
+                    sources={postsData}
+                    setSources={setpostsData}
+                    Elem={(props) => {
+                      return <MemoCard source={props.source} setSearchText={setSearchText} triggerHeightChange={props.triggerHeightChange} />
+                    }}
+                    fetchFrom={fetchFrom}
+                    batchsize={10}
+                  /> : searchStatus.isSearch === "done"
                     ? <VirtualList<TMemo>
-                      key={"vl1"}
+                      key={searchStatus.searchText}
                       sources={postsData}
                       setSources={setpostsData}
                       Elem={(props) => {
                         return <MemoCard source={props.source} setSearchText={setSearchText} triggerHeightChange={props.triggerHeightChange} />
                       }}
-                      fetchFrom={fetchFrom}
                       batchsize={10}
-                    /> : searchStatus.isSearch === "done"
-                      ? <VirtualList<TMemo>
-                        key={searchStatus.searchText}
-                        sources={postsData}
-                        setSources={setpostsData}
-                        Elem={(props) => {
-                          return <MemoCard source={props.source} setSearchText={setSearchText} triggerHeightChange={props.triggerHeightChange} />
-                        }}
-                        batchsize={10}
-                      /> : null}
+                    /> : null}
+              </div>
+              <Footer />
+            </MemoCol>
+            <SiderCol>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <SearchBox type="text" placeholder="Search" ref={inputRef}
+                  onFocus={
+                    () => { initSearch(setEngine, setpostsData, setsearchStatus, info.pages) }
+                  }
+                />
+                <CardTitleIcon className="hover-gold" style={{ fontSize: "1.275em", marginLeft: "0.125em" }}
+                  onClick={handleSearch}
+                >
+                  <i className='icon-search' />
+                </CardTitleIcon>
+              </div>
+              <NavCard info={info} />
+              <CardCommon title={"TAGS"}>
+                <div style={{ paddingTop: "0.5rem" }}>
+                  {memotags.map(t => {
+                    return <span className="hover-gold" style={{ display: "inline-block" }} key={t.name}
+                      onClick={() => { setSearchText("#" + t.name) }}
+                    >
+                      {`#${t.name}`}
+                    </span>
+                  })}
                 </div>
-                <Footer />
-              </MemoCol>
-              <SiderCol>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                  <SearchBox type="text" placeholder="Search" ref={inputRef}
-                    onFocus={
-                      () => { initSearch(setEngine, setpostsData, setsearchStatus, info.pages) }
-                    }
-                  />
-                  <CardTitleIcon className="hover-gold" style={{ fontSize: "1.275em", marginLeft: "0.125em" }}
-                    onClick={handleSearch}
-                  >
-                    <i className='icon-search' />
-                  </CardTitleIcon>
-                </div>
-                <NavCard info={info} />
-                <CardCommon title={"TAGS"}>
-                  <div style={{ paddingTop: "0.5rem" }}>
-                    {memotags.map(t => {
-                      return <span className="hover-gold" style={{ display: "inline-block" }} key={t.name}
-                        onClick={() => { setSearchText("#" + t.name) }}
-                      >
-                        {`#${t.name}`}
-                      </span>
-                    })}
+              </CardCommon>
+              {siteInfo.friends ?
+                <CardCommon title="FRIENDS">
+                  <div style={{ padding: "0.5rem 0.25rem" }}>
+                    {siteInfo.friends.map((f, i) => <div key={i}><LinkWithLine href={f.link}>{f.name}</LinkWithLine></div>)}
                   </div>
                 </CardCommon>
-                {siteInfo.friends ?
-                  <CardCommon title="FRIENDS">
-                    <div style={{ padding: "0.5rem 0.25rem" }}>
-                      {siteInfo.friends.map((f, i) => <div key={i}><LinkWithLine href={f.link}>{f.name}</LinkWithLine></div>)}
-                    </div>
-                  </CardCommon>
-                  : null}
-                {siteInfo.walineApi && siteInfo.walineApi !== "" ? <CommentCard /> : null}
-              </SiderCol>
-            </TwoColLayout>
-          </OneColLayout>
-          {isModel ? <ImageBrowser /> : null}
-        </MemoImgCtx.Provider>
+                : null}
+              {siteInfo.walineApi && siteInfo.walineApi !== "" ? <CommentCard /> : null}
+            </SiderCol>
+          </TwoColLayout>
+        </OneColLayout>
+        {isModel ? <ImageBrowser /> : null}
       </main>
     </>
   )
