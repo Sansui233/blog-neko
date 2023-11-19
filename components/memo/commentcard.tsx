@@ -26,11 +26,11 @@ export default function CommentCard() {
 
   return (
     <>
-      {isModel ? <Model isModel={isModel} setModel={setIsModel} style={{ background: theme?.colors.bgMask }}>
+      {isModel && <Model isModel={isModel} setModel={setIsModel} style={{ background: theme?.colors.bgMask }}>
         <ModelContainer>
           <Waline />
         </ModelContainer>
-      </Model> : null}
+      </Model>}
 
       <CardCommon title='COMMENTS'>
         <Container>

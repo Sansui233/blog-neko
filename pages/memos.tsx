@@ -219,18 +219,18 @@ export default function Memos({ source, info, memotags, client }: Props) {
                   })}
                 </div>
               </CardCommon>
-              {siteInfo.friends ?
-                <CardCommon title="FRIENDS">
+              {siteInfo.friends
+                && <CardCommon title="FRIENDS">
                   <div style={{ padding: "0.5rem 0.25rem" }}>
                     {siteInfo.friends.map((f, i) => <div key={i}><LinkWithLine href={f.link}>{f.name}</LinkWithLine></div>)}
                   </div>
                 </CardCommon>
-                : null}
-              {siteInfo.walineApi && siteInfo.walineApi !== "" ? <CommentCard /> : null}
+              }
+              {siteInfo.walineApi && siteInfo.walineApi !== "" && <CommentCard />}
             </SiderCol>
           </TwoColLayout>
         </OneColLayout>
-        {isModel ? <ImageBrowser /> : null}
+        {isModel && <ImageBrowser />}
       </main>
     </>
   )

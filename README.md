@@ -12,7 +12,7 @@
 - 支持站内搜索
 - 支持rss订阅
 
-## 你需要准备
+## 需要准备
 
 - NodeJS 环境
 - 评论系统：依赖于 [Waline](https://waline.js.org)。不是必须的

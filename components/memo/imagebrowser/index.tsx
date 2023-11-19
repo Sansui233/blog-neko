@@ -201,12 +201,12 @@ export default function ImageBrowser() {
       </Container>
 
       {index.curr > 0
-        ? <Button $isLeft={true} $isShown={buttonLTrans} onClick={(e) => { e.stopPropagation(); prev() }}><i className="icon-arrow-left2" /></Button>
-        : null}
+        && <Button $isLeft={true} $isShown={buttonLTrans} onClick={(e) => { e.stopPropagation(); prev() }}><i className="icon-arrow-left2" /></Button>
+      }
 
       {index.curr < imagesData.length - 1
-        ? <Button $isLeft={false} $isShown={buttonRTrans} onClick={(e) => { e.stopPropagation(); next() }}><i className="icon-arrow-right2" /></Button>
-        : null}
+        && <Button $isLeft={false} $isShown={buttonRTrans} onClick={(e) => { e.stopPropagation(); next() }}><i className="icon-arrow-right2" /></Button>
+      }
 
       <Tools>{index.curr + 1}/{imagesData.length} &nbsp;|&nbsp;
         <span onClick={(e) => { e.stopPropagation(), ctx.setisModel(false) }}>{"关闭"}</span></Tools>

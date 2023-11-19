@@ -148,15 +148,15 @@ export default function VirtualList<T extends { id: string | number }>({ sources
       width: "100%",
       minHeight: `${minHeight}px`
     }}>
-      {sources.map((e, i) => <ListItem<T> key={e.id} index={activeIndex[i]} Elem={Elem} elem={e} placeHolder={placeHolder} setplaceHolder={setplaceHolder} />)}
+      {sources.map((e, i) => <ListItem<T> key={e.id} index={activeIndex[i]} Elem={Elem} source={e} placeHolder={placeHolder} setplaceHolder={setplaceHolder} />)}
     </div>
   )
 }
 
 
-function ListItem<T extends { id: string | number }>({ Elem, index, elem: source, placeHolder, setplaceHolder }: {
+function ListItem<T extends { id: string | number }>({ Elem, index, source, placeHolder, setplaceHolder }: {
   Elem: Props<T>["Elem"],
-  elem: T;
+  source: T;
   index: number
   placeHolder: number[]
   setplaceHolder: Dispatch<SetStateAction<number[]>>

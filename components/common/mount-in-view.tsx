@@ -46,7 +46,7 @@ const DivInViewPort = ({ placeHolderHeight, threshold = 1, children }: Props) =>
 
   return (
     <div ref={target} style={{ minHeight: isMounted ? 'unset' : placeHolderHeight ? placeHolderHeight : "50vh" }}>
-      {isMounted ? children : null}
+      {isMounted && children}
     </div>
   )
 }

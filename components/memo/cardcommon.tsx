@@ -8,9 +8,7 @@ type Props = React.HTMLProps<HTMLDivElement> & {
 
 export default function CardCommon({ title, children, ...otherprops }: Props) {
   return <CardContainer {...otherprops}>
-    {title
-      ? <CardTitle>{title}</CardTitle>
-      : null}
+    {title && <CardTitle>{title}</CardTitle>}
     {children}
   </CardContainer>
 }

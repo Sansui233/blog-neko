@@ -137,7 +137,7 @@ function SearchBox({ outSetSearch: outShow, stateToInner: outstate, iconEle, typ
             return <Item href={`/posts/${id}`} key={i} onClick={() => { toggle(false) }}>
               <span>{highlightSlot(r.title, r.matches?.map(e => e.word))}</span>
               {r.matches?.map(
-                e => e.excerpt ? <Excerpt key={e.word}>{highlightSlot(e.excerpt, e.word)}</Excerpt> : undefined
+                e => e.excerpt && <Excerpt key={e.word}>{highlightSlot(e.excerpt, e.word)}</Excerpt>
               )}
             </Item>
           })

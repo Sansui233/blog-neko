@@ -1,12 +1,10 @@
-import { useContext, useEffect, useState } from "react"
-import { SafariCtx } from "./ctx"
+import { useEffect, useState } from "react"
 import { throttle } from "./throttle"
 
 /**
  * Get real view height
  */
 export function useViewHeight() {
-  const isSafari = useContext(SafariCtx)
   const [viewHeight, setviewHeight] = useState(globalThis.innerHeight)
 
   // subscribe scroll to get view height

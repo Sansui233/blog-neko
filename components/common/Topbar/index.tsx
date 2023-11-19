@@ -119,7 +119,7 @@ export default function Topbar({ placeHolder = true, scrollElem, hideSearch, ...
 }
 
 const SearchIcon = styled.div<{ $isSearch: boolean, $hideSearch: boolean | undefined }>`
-  ${p => p.$hideSearch ? "opacity:0;" : null}
+  ${p => p.$hideSearch && "opacity:0;"}
   ${p => p.$isSearch ? "color:" + p.theme.colors.accent + ";" : ""}
   transform: translateY(0.145rem);
   transition: color 0.3s ease;
@@ -129,7 +129,7 @@ const SearchIcon = styled.div<{ $isSearch: boolean, $hideSearch: boolean | undef
   }
 
   @media screen and (max-width: 780px) {
-    ${p => p.$hideSearch ? "display:none;" : null}
+    ${p => p.$hideSearch && "display:none;"}
   }
 
 `
