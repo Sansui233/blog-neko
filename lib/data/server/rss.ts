@@ -9,7 +9,7 @@ import { grayMatter2PostMeta } from "../../markdown/frontmatter";
 import { compileMdxRss } from "../../markdown/mdx";
 import { PostMeta } from "../posts.common";
 import { MEMOS_DIR } from "./memos";
-import { POST_DIR, getFrontMatter } from './posts';
+import { POST_DIR, getFrontMatter, posts_db } from './posts';
 
 /**
  * get recent 10 posts
@@ -202,5 +202,51 @@ async function writeRss() {
   fs.promises.writeFile("./public/feed.json", feed.json1());
 }
 
-export { writeRss };
+async function writeSiteMap() {
+  const content = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>${siteInfo.domain}</loc>
+  </url>
+  <url>
+    <loc>${siteInfo.domain}/about</loc>
+  </url>
+  <url>
+    <loc>${siteInfo.domain}/memos</loc>
+    <changefreq>always</changefreq>
+  </url>
+    ${posts_db.metas
+      .map(({ id }) => {
+        return `
+  <url>
+    <loc>${`${siteInfo.domain}/posts/${encodeURIComponent(id)}`}</loc>
+  </url>
+    `;
+      })
+      .join('')}
+    ${Object.keys(posts_db.categories())
+      .map((c) => {
+        return `
+  <url>
+    <loc>${`${siteInfo.domain}/categories/${encodeURIComponent(c)}`}</loc>
+  </url>
+    `;
+      })
+      .join('')}
+    ${Object.keys(posts_db.tags())
+      .map((t) => {
+        return `
+  <url>
+    <loc>${`${siteInfo.domain}/tags/${encodeURIComponent(t)}`}</loc>
+  </url>
+    `;
+      })
+      .join('')}
+</urlset>
+`;
+
+  fs.promises.writeFile("./public/site-map.xml", content);
+}
+
+export { writeRss, writeSiteMap };
 

@@ -11,6 +11,7 @@ public/atom.xml
 public/feed.json
 public/rss
 public/data
+public/site-map.xml
 
 # dependencies
 /node_modules

@@ -55,11 +55,11 @@ export default function Categories({ categories, tags }: {
   </>;
 }
 
-export const getStaticProps: GetStaticProps = async () => {
+export const getStaticProps: GetStaticProps = () => {
   return {
     props: {
-      categories: Object.fromEntries(await posts_db.categories()),
-      tags: Object.fromEntries(await posts_db.tags())
+      categories: Object.fromEntries(posts_db.categories()),
+      tags: Object.fromEntries(posts_db.tags())
     }
   }
 }
