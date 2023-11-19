@@ -245,7 +245,7 @@ async function writeSiteMap() {
 </urlset>
 `;
 
-  fs.promises.writeFile("./public/site-map.xml", content);
+  fs.promises.writeFile("./public/sitemap.xml", content);
 }
 
 export { writeRss, writeSiteMap };
