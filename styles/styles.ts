@@ -1,8 +1,12 @@
 import { css } from "styled-components";
 
+/***************************************
+ * text
+ ****************************************/
+
 export const textStroke = css`
-  -webkit-text-stroke: 1px;
-  -webkit-text-fill-color: transparent;
+-webkit-text-stroke: 1px;
+-webkit-text-fill-color: transparent;
 `
 
 export const textShadow = {
@@ -12,11 +16,28 @@ export const textShadow = {
   f: css`box-shadow: inset 0 -1em 0 ${props => props.theme.colors.hoverBg};`
 }
 
-export const linkHoverBS = css`box-shadow: inset 0 -0.5em 0 ${props => props.theme.colors.accentHover};`
+export const hoverRound = css`
+content:'';
+position: absolute;
+left:0;
+bottom: 0;
+width: 100%;
+border-radius: 0.4em;
+height: 0.4em;
+background: ${p => p.theme.colors.accentHover};
+mix-blend-mode: multiply;
+`
 
+export const hoverBoxShadow = css`box-shadow: inset 0 -0.5em 0 ${props => props.theme.colors.accentHover};`
+
+
+/***************************************
+ * card
+ ****************************************/
 export const floatBoxShadow = css`box-shadow: ${props => props.theme.colors.shadowBg} 0px 0.5rem 2rem;`
 export const paperCard = css`background: ${p => p.theme.colors.bg};box-shadow: rgb(0 0 0 / 10%) 0px 2px 4px;`
 
+/***************************************
+ * function
+ ****************************************/
 export const hideScrollBar = css`&::-webkit-scrollbar{display: none;}`
-
-export const codefont  = css`font-family: SFMono-Regular,consolas,Liberation Mono,menlo,monaco,"Courier New",courier,monospace,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol",sans-serif;`

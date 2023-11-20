@@ -27,6 +27,7 @@ const Container = styled.div<{
   flex-direction: column;
   justify-content: space-between;
   cursor: pointer;
+
 `
 
 const Line = styled.div`

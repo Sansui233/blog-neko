@@ -1,6 +1,6 @@
 import { readFile } from "fs/promises"
 import matter from "gray-matter"
-import { Eye, Folder, Hash } from "lucide-react"
+import { Eye, Folder } from "lucide-react"
 import { GetStaticPaths, GetStaticProps } from "next"
 import Head from "next/head"
 import Link from "next/link"
@@ -55,7 +55,7 @@ export default function Post({ meta, mdxcode, nextPost, prevPost, excerpt, headi
       {tagList.map((tag: string) => {
         return (
           <StyledLink href={`/tags/${tag}`} passHref={true} key={tag}>
-            <Hash size={"1em"} />{tag}
+            #{tag}&nbsp;
           </StyledLink>
         );
       })}

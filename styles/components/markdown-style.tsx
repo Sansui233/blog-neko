@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { linkHoverBS } from "../styles";
+import { hoverRound } from "../styles";
 
 
 export const MarkdownStyle = styled.div`
@@ -23,12 +23,15 @@ export const MarkdownStyle = styled.div`
   a {
     position: relative;
     font-weight: bold;
-    border-bottom: 1px solid ${props => props.theme.colors.accent};
-    transition: box-shadow .5s;
   }
 
-  a:hover {
-    ${linkHoverBS}
+  a::before {
+    ${hoverRound}
+    height: 2px;
+  }
+
+  a:hover::before {
+    height: 0.4em;
   }
   
   code {

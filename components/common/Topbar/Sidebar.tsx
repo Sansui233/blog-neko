@@ -4,7 +4,7 @@ import { useContext, useMemo } from "react"
 import styled, { ThemeContext } from "styled-components"
 import { ThemeMsg, getAppTheme, setAppTheme } from "../../../lib/app-states"
 import { siteInfo } from "../../../site.config"
-import { linkHoverBS, textStroke } from "../../../styles/styles"
+import { hoverRound } from "../../../styles/styles"
 import MenuIcon from "./menuicon"
 
 type Props = {
@@ -52,7 +52,7 @@ export default function Sidebar({ isShow, toggle }: Props) {
             <a href={`mailto:${siteInfo.social.email}`}><Mail /></a>
             <a href="/rss"><Rss /></a>
           </Icons>
-          <div style={{ margin: "1rem auto" }}>Sansui 2022 All rights reserved</div>
+          <div style={{ margin: "1rem auto" }}>Sansui 2023<br />All rights reserved</div>
         </LastSection>
       </Content>
       <PositionedClose>
@@ -106,18 +106,19 @@ const Container = styled.div`
   }
 
   h1 {
-    ${() => textStroke}
     span{
       position: relative;
     }
-    span::after {
+    span::before {
       content:'';
       position: absolute;
       left:0;
-      bottom: -1rem;
+      bottom: 0;
       width: 100%;
-      height: 1px;
-      background: ${p => p.theme.colors.accent};
+      border-radius: 0.5em;
+      height: 0.5em;
+      background: ${p => p.theme.colors.accentHover};
+      mix-blend-mode: multiply;
     }
   }
 `
@@ -138,7 +139,7 @@ const OptionText = styled.span`
   cursor: pointer;
 
   &:hover {
-    ${linkHoverBS}
+    ${hoverRound}
     transform: scale(1.2);
   }
 `

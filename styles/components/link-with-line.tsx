@@ -1,24 +1,13 @@
 import Link from 'next/link'
 import styled from 'styled-components'
-import { linkHoverBS } from '../styles'
+import { hoverRound } from '../styles'
 
 const LinkWithLine = styled(Link)`
   position: relative;
   font-weight: bold;
-
-  &::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: -3px;
-    width: 0;
-    height: 2px;
-    background: ${props => props.theme.colors.accent};
-    transition: width 1s cubic-bezier(0.34, 0.04, 0.03, 1.4), background .3s;
-  }
   
   &:hover::before {
-    width: 100%;
+    ${hoverRound}
   }
 `
 
@@ -49,9 +38,8 @@ const HoverWithBoxShadow = styled.span`
   transition: box-shadow .5s;
   cursor: pointer;
 
-
-  &:hover {
-    ${linkHoverBS}
+  &:hover::before {
+    ${hoverRound}
   }
 
 `

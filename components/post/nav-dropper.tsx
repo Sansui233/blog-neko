@@ -1,6 +1,7 @@
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import styled from "styled-components";
+import { hoverRound } from "../../styles/styles";
 
 type Props = {
   // 如果有需要可以适配其他类型，还有高度字号什么的。自用组件就算了不写这么多
@@ -42,7 +43,8 @@ const SubItemContainer = styled.div`
   opacity: 0;
   pointer-events: none;
   margin-top: .625rem;
-  border-right: 1px solid ${props => props.theme.colors.accent};
+  border-right: 2px solid ${props => props.theme.colors.accentHover};
+  border-radius: 2px;
   padding-left: 2.5rem;
   transform: none;
   ${props => props.theme.colors.navBgGradient};
@@ -62,15 +64,25 @@ const NavItem = styled.div`
   cursor: pointer;
   position: relative;
   &:hover span{
-    border-bottom: solid 1px ${props => props.theme.colors.accent};
+    color: ${props => props.theme.colors.accent};
   }
 `
 
 const MainItem = styled.div`
   cursor: pointer;
+
   span {
-    transition: box-shadow .5s;
-    box-shadow: inset 0 -1px 0 ${p => p.theme.colors.accentHover};
+    position: relative;
+  }
+  
+  span::before {
+    ${hoverRound}
+    height: 2px;
+    transition: height .3s;
+  }
+
+  span.is-open::before {
+    height: 0.4em;
   }
 
   svg {
@@ -78,10 +90,6 @@ const MainItem = styled.div`
     margin-right: -0.4em;
     margin-top: -2px;
     margin-left: 2px;
-  }
-
-  span.is-open {
-    box-shadow: inset 0 -0.5em 0 ${p => p.theme.colors.accentHover};
   }
 
   svg.is-open {

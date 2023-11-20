@@ -6,6 +6,7 @@ import styled, { ThemeContext } from "styled-components"
 import { throttle } from "../../../lib/throttle"
 import { siteInfo } from "../../../site.config"
 import { LinkWithLine } from "../../../styles/components/link-with-line"
+import { hoverRound } from "../../../styles/styles"
 import SearchBox from "../searchbox"
 import MenuIcon from "./menuicon"
 import Sidebar from "./sidebar"
@@ -233,7 +234,10 @@ const Nav = styled.nav`
   }
 
   ol.current a{
-    color: ${props => props.theme.colors.accent};
+    position: relative;
+  }
+  ol.current a:before {
+    ${hoverRound}
   }
 
 `
