@@ -25,7 +25,7 @@ width: 100%;
 border-radius: 0.4em;
 height: 0.4em;
 background: ${p => p.theme.colors.accentHover};
-mix-blend-mode: multiply;
+mix-blend-mode: ${p => p.theme.colors.bgFilter};
 `
 
 export const hoverBoxShadow = css`box-shadow: inset 0 -0.5em 0 ${props => props.theme.colors.accentHover};`
