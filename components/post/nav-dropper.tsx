@@ -43,13 +43,13 @@ const SubItemContainer = styled.div`
   opacity: 0;
   pointer-events: none;
   margin-top: .625rem;
+  margin-right: 4px;
   border-right: 2px solid ${props => props.theme.colors.accentHover};
-  border-radius: 2px;
   padding-left: 2.5rem;
   transform: none;
   ${props => props.theme.colors.navBgGradient};
   transform: translateY(-0.5rem);
-  transition: opacity .5s ease, transform .5s ease;
+  transition: opacity .3s ease, transform .3s ease;
 
   &.is-open {
     z-index: 1;
@@ -74,7 +74,7 @@ const MainItem = styled.div`
   span {
     position: relative;
   }
-  
+
   span::before {
     ${hoverRound}
     height: 2px;

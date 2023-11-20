@@ -33,7 +33,7 @@ const Pagination: React.FC<Props> = (props) => {
       {props.prevPage &&
         <div style={{ flex: "1 1 auto" }}>
           <PageBtn href={props.prevPage.link} passHref={true} style={{ justifyContent: "flex-start" }} onClick={scroll}>
-            <span><ArrowLeft size={"1em"} />&nbsp;{props.prevPage.title}</span>
+            <ArrowLeft size={"1em"} /><span style={{ marginLeft: "0.5em" }}>{props.prevPage.title}</span>
           </PageBtn>
         </div>
       }
@@ -43,7 +43,7 @@ const Pagination: React.FC<Props> = (props) => {
       {props.nextPage &&
         <div style={{ flex: "1 1 auto" }}>
           <PageBtn href={props.nextPage.link} passHref={true} style={{ justifyContent: "flex-end" }} onClick={scroll}>
-            <span>{props.nextPage.title}&nbsp;<ArrowRight size={"1em"} /></span>
+            <span style={{ marginRight: "0.5em" }}>{props.nextPage.title}</span><ArrowRight size={"1em"} />
           </PageBtn>
         </div>
       }
@@ -76,6 +76,7 @@ const PageBtn = styled(Link)`
 
   span {
     position: relative;
+    max-width: 66.6%;
   }
 
   span::before {

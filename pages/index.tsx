@@ -8,7 +8,6 @@ import LayoutContainer, { OneColLayout } from '../components/layout'
 import NavDropper from '../components/post/nav-dropper'
 import { POST_DIR, buildIndex, posts_db } from '../lib/data/server'
 import { siteInfo } from '../site.config'
-import { bottomFadeIn } from '../styles/animations'
 import { floatBoxShadow } from '../styles/styles'
 
 type PostType = {
@@ -116,10 +115,6 @@ const Card = styled(Link)`
   min-height: 6rem;
   border-radius: 5px;
   cursor: pointer;
-  position: relative;
-  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.1s;
-  opacity: 0;
-  animation: ${bottomFadeIn} .5s ease;
   animation-fill-mode: forwards;
 
   @media (any-hover: hover) {

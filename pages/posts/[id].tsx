@@ -17,7 +17,7 @@ import { PostMeta } from '../../lib/data/posts.common'
 import { POST_DIR, posts_db } from "../../lib/data/server"
 import { grayMatter2PostMeta } from "../../lib/markdown/frontmatter"
 import { compileMdxPost } from "../../lib/markdown/mdx"
-import { bottomFadeIn, fadeInRight } from "../../styles/animations"
+import { fadeInRight } from "../../styles/animations"
 import { MarkdownStyle } from "../../styles/components/markdown-style"
 
 type Props = {
@@ -208,7 +208,6 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
 const PostLayout = styled(OneColLayout)`
   max-width: min(700px, 100vw);
   margin-top: 72px;
-  animation: ${bottomFadeIn} 1s ease;
 
   @media screen and (max-width: 580px) {
     margin-top: 36px;
@@ -240,7 +239,7 @@ const ColumnRight = styled.div`
   align-self: flex-start;
   top: 63px;
 
-  animation: ${fadeInRight} 1s ease;
+  animation: ${fadeInRight} 0.3s ease;
 
   @media screen and (max-width: 780px) {
     display: none

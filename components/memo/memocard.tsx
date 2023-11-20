@@ -83,7 +83,7 @@ const MemoCardStyle = styled.section<{
   margin: 0.5rem 0;
   padding: 1.25rem 1.5rem;
   border-radius: 1rem;
-  animation: ${bottomFadeIn} 1s ease;
+  animation: ${bottomFadeIn} .3s ease;
 
   @media screen and (max-width: 780px) {
     padding: 1.25rem 1.5rem;

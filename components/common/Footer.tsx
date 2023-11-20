@@ -23,10 +23,6 @@ const Container = styled.div`
     letter-spacing: 0.2px;
   }
 
-  a{
-    transition: color .5s;
-  }
-
   a:hover {
     color: ${p => p.theme.colors.accentHover};
   }

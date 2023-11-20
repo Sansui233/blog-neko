@@ -4,7 +4,6 @@ import { useContext, useMemo } from "react"
 import styled, { ThemeContext } from "styled-components"
 import { ThemeMsg, getAppTheme, setAppTheme } from "../../../lib/app-states"
 import { siteInfo } from "../../../site.config"
-import { hoverRound } from "../../../styles/styles"
 import MenuIcon from "./menuicon"
 
 type Props = {
@@ -77,12 +76,9 @@ const LastSection = styled.div`
 
 const Icons = styled.div`
   margin: 1rem 0;
-  a{
-    transition: color .5s;
-  }
 
   a:hover {
-    color: ${p => p.theme.colors.accent};
+    color: ${p => p.theme.colors.accentHover};
   }
 
   svg {
@@ -139,7 +135,7 @@ const OptionText = styled.span`
   cursor: pointer;
 
   &:hover {
-    ${hoverRound}
+    color: ${p => p.theme.colors.accentHover};
     transform: scale(1.2);
   }
 `

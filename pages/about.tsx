@@ -80,7 +80,7 @@ const Hero = styled.h1`
 `
 
 const AnimatedMarkdown = styled(MarkdownStyle)`
-  animation: ${bottomFadeIn} .5s ease;
+  animation: ${bottomFadeIn} .3s ease;
 `
 
 const AboutDescription = styled(PageDescription)`
