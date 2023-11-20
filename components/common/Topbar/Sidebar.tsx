@@ -114,7 +114,7 @@ const Container = styled.div`
       border-radius: 0.5em;
       height: 0.5em;
       background: ${p => p.theme.colors.accentHover};
-      mix-blend-mode: multiply;
+      mix-blend-mode: ${p => p.theme.colors.bgFilter};
     }
   }
 `
