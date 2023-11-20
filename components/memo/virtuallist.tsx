@@ -14,8 +14,12 @@ type Props<T extends { id: string | number }> = {
   scrollRef?: React.RefObject<HTMLElement>
 }
 
+export type VirtualListType = <T extends {
+  id: string | number;
+}>(props: Props<T>) => JSX.Element
 
-export default function VirtualList<T extends { id: string | number }>({ sources, setSources, Elem, scrollRef, fetchFrom: fetchFrom, batchsize }: Props<T>) {
+
+const VirtualList: VirtualListType = ({ sources, setSources, Elem, scrollRef, fetchFrom: fetchFrom, batchsize }) => {
   const [placeHolder, setplaceHolder] = useState<number[]>(new Array(sources.length).fill(300))
   // 注意保持 activeIndex 和 sources 的状态一致性
   const [activeIndex, setActiveIndex] = useState<number[]>(new Array(sources.length).fill(0).map((_, i) => i))
@@ -148,7 +152,7 @@ export default function VirtualList<T extends { id: string | number }>({ sources
       width: "100%",
       minHeight: `${minHeight}px`
     }}>
-      {sources.map((e, i) => <ListItem<T> key={e.id} index={activeIndex[i]} Elem={Elem} source={e} placeHolder={placeHolder} setplaceHolder={setplaceHolder} />)}
+      {sources.map((e, i) => <ListItem key={e.id} index={activeIndex[i]} Elem={Elem} source={e} placeHolder={placeHolder} setplaceHolder={setplaceHolder} />)}
     </div>
   )
 }
@@ -224,3 +228,5 @@ function ListItem<T extends { id: string | number }>({ Elem, index, source, plac
   )
 
 }
+
+export default VirtualList

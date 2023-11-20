@@ -1,3 +1,4 @@
+import { Github, Mail, Rss } from "lucide-react"
 import Link from "next/link"
 import { useContext, useMemo } from "react"
 import styled, { ThemeContext } from "styled-components"
@@ -47,11 +48,11 @@ export default function Sidebar({ isShow, toggle }: Props) {
         <div><OptionText><Link href="/atom.xml">RSS</Link></OptionText></div>
         <LastSection>
           <Icons>
-            <a href={siteInfo.social.github}><i className='icon-github-rounded'></i></a>
-            <a href={`mailto:${siteInfo.social.email}`}><i className='icon-email-rounded'></i></a>
-            <a href="/rss"><i className='icon-rss-rounded'></i></a>
+            <a href={siteInfo.social.github}><Github /></a>
+            <a href={`mailto:${siteInfo.social.email}`}><Mail /></a>
+            <a href="/rss"><Rss /></a>
           </Icons>
-          <div>Sansui 2022 All rights reserved</div>
+          <div style={{ margin: "1rem auto" }}>Sansui 2022 All rights reserved</div>
         </LastSection>
       </Content>
       <PositionedClose>
@@ -70,12 +71,12 @@ const PositionedClose = styled.div`
 
 const LastSection = styled.div`
   font-weight: 400;
-  padding-top: 4rem;
+  padding-top: 3rem;
   font-size: 0.625rem;
 `
 
 const Icons = styled.div`
-  margin: 0.5rem 0;
+  margin: 1rem 0;
   a{
     transition: color .5s;
   }
@@ -84,9 +85,9 @@ const Icons = styled.div`
     color: ${p => p.theme.colors.accent};
   }
 
-  i {
+  svg {
     font-size: 1.5rem;
-    margin: 0 0.5rem;
+    margin: 0 0.25rem;
   }
 `
 

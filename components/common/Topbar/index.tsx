@@ -1,3 +1,4 @@
+import { Search } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import React, { useContext, useEffect, useRef, useState } from "react"
@@ -104,10 +105,10 @@ export default function Topbar({ placeHolder = true, scrollElem, hideSearch, ...
         </Nav>
         <More >
           <SearchIcon ref={searchIcon} onClick={(e) => { hideSearch ? null : clickSearch(e) }} $isSearch={isSearch} $hideSearch={hideSearch}>
-            <i className='icon-search' style={{ fontSize: "1.725rem" }} />
+            <Search />
           </SearchIcon>
           <div onClick={toggleSidebar} style={{ marginRight: "20px", width: "22px" }}>
-            <MenuIcon width={"100%"} height={"21px"} isClose={isSidebar} />
+            <MenuIcon width={"100%"} height={"1.15rem"} isClose={isSidebar} />
           </div>
         </More>
       </Layout>
@@ -121,8 +122,8 @@ export default function Topbar({ placeHolder = true, scrollElem, hideSearch, ...
 const SearchIcon = styled.div<{ $isSearch: boolean, $hideSearch: boolean | undefined }>`
   ${p => p.$hideSearch && "opacity:0;"}
   ${p => p.$isSearch ? "color:" + p.theme.colors.accent + ";" : ""}
-  transform: translateY(0.145rem);
   transition: color 0.3s ease;
+  cursor: pointer;
 
   &:hover {
     color: ${p => p.theme.colors.accentHover};

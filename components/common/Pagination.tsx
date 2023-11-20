@@ -1,3 +1,4 @@
+import { ArrowLeft, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import React, { useCallback } from 'react'
 import styled from 'styled-components'
@@ -32,7 +33,7 @@ const Pagination: React.FC<Props> = (props) => {
       {props.prevPage &&
         <div style={{ flex: "1 1 auto" }}>
           <PageBtn href={props.prevPage.link} passHref={true} style={{ justifyContent: "flex-start" }} onClick={scroll}>
-            <span><i className="icon-arrow-left2" />&nbsp;{props.prevPage.title}</span>
+            <span><ArrowLeft size={"1em"} />&nbsp;{props.prevPage.title}</span>
           </PageBtn>
         </div>
       }
@@ -42,7 +43,7 @@ const Pagination: React.FC<Props> = (props) => {
       {props.nextPage &&
         <div style={{ flex: "1 1 auto" }}>
           <PageBtn href={props.nextPage.link} passHref={true} style={{ justifyContent: "flex-end" }} onClick={scroll}>
-            <span>{props.nextPage.title}&nbsp;<i className="icon-arrow-right2" /></span>
+            <span>{props.nextPage.title}&nbsp;<ArrowRight size={"1em"} /></span>
           </PageBtn>
         </div>
       }
@@ -68,8 +69,9 @@ const PageBtn = styled(Link)`
   display: flex;
   align-items: center;
   position: relative;
-  i {
-    transform: translateY(-0.1em);
+  
+  svg {
+    transform: translateY(-0.05em);
   }
 
   span {
@@ -83,6 +85,7 @@ const PageBtn = styled(Link)`
     bottom: 0;
     width: 0;
     height: 2px;
+    border-radius: 2px;
     background: ${props => props.theme.colors.accent};
     transition: width 1s cubic-bezier(0.34, 0.04, 0.03, 1.4), background .3s;
   }

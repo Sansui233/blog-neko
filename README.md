@@ -153,6 +153,6 @@ $ npm start # 启动服务
 - CSS 方案: styled-components
 - 评论系统: [Waline](https://waline.js.org)
 - 统计数据: Google Analytics
-- 图标: iconmonstr，IcoMoon 字体生成工具
+- 图标: lucide
 - 部署: github, vercel
 

@@ -1,3 +1,4 @@
+import { Search } from "lucide-react";
 import { GetStaticProps } from "next";
 import Head from "next/head";
 import React, { useCallback, useContext, useRef, useState } from "react";
@@ -204,7 +205,7 @@ export default function Memos({ source, info, memotags, client }: Props) {
                 <CardTitleIcon className="hover-gold" style={{ fontSize: "1.275em", marginLeft: "0.125em" }}
                   onClick={handleSearch}
                 >
-                  <i className='icon-search' />
+                  <Search />
                 </CardTitleIcon>
               </div>
               <NavCard info={info} />

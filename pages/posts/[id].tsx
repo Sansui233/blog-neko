@@ -1,5 +1,6 @@
 import { readFile } from "fs/promises"
 import matter from "gray-matter"
+import { Eye, Folder, Hash } from "lucide-react"
 import { GetStaticPaths, GetStaticProps } from "next"
 import Head from "next/head"
 import Link from "next/link"
@@ -54,7 +55,7 @@ export default function Post({ meta, mdxcode, nextPost, prevPost, excerpt, headi
       {tagList.map((tag: string) => {
         return (
           <StyledLink href={`/tags/${tag}`} passHref={true} key={tag}>
-            <span style={{ paddingRight: "0.1em" }}>#</span>{tag}
+            <Hash size={"1em"} />{tag}
           </StyledLink>
         );
       })}
@@ -108,13 +109,13 @@ export default function Post({ meta, mdxcode, nextPost, prevPost, excerpt, headi
                     {genTags(meta.tags)}
                     {" in "}
                     <StyledLink href={`/categories/${meta.categories}`} passHref={true}>
-                      <i style={{ paddingRight: "0.2em" }} className='icon-material-folder_open' />
+                      <Folder size={"1.1em"} style={{ margin: "0 0.2rem", paddingBottom: "0.1em" }} />
                       {meta.categories}
                     </StyledLink>
                   </MetaStyle>
                 </div>
-                <div style={{ flex: "0 0 0", fontSize: "0.875rem" }}>
-                  <i style={{ paddingLeft: "0.5em", paddingRight: "0.3em" }} className='icon-material-eye' />
+                <div style={{ fontSize: "0.875rem" }}>
+                  <Eye size={"1.1em"} style={{ margin: "0 0.2rem", paddingBottom: "0.1em" }} />
                   <span className="waline-pageview-count" data-path={router.basePath} />
                 </div>
               </div>

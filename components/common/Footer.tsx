@@ -1,12 +1,13 @@
+import { Github, Mail, Rss } from 'lucide-react'
 import styled from 'styled-components'
 import { siteInfo } from '../../site.config'
 
 const Footer = () => {
   return (
     <Container>
-      <a href={siteInfo.social.github}><i className='icon-github-rounded'></i></a>
-      <a href={`mailto:${siteInfo.social.email}`}><i className='icon-email-rounded'></i></a>
-      <a href="/rss"><i className='icon-rss-rounded'></i></a>
+      <a href={siteInfo.social.github}><Github /></a>
+      <a href={`mailto:${siteInfo.social.email}`}><Mail /></a>
+      <a href="/rss"><Rss /></a>
       <div>{"Code & Design by Sansui 2023"} <br /> {"All rights reserved"}</div>
     </Container>
   )
@@ -18,7 +19,8 @@ const Container = styled.div`
   font-size: 0.625rem;
 
   div {
-    margin: 1rem auto;
+    margin: 1.5rem auto;
+    letter-spacing: 0.2px;
   }
 
   a{
@@ -29,7 +31,7 @@ const Container = styled.div`
     color: ${p => p.theme.colors.accentHover};
   }
 
-  i {
+  svg {
     font-size: 1.5rem;
     margin: 0 0.5rem;
   }

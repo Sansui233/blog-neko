@@ -1,3 +1,4 @@
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { CSSProperties, useCallback, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 import { create } from 'zustand';
@@ -201,11 +202,11 @@ export default function ImageBrowser() {
       </Container>
 
       {index.curr > 0
-        && <Button $isLeft={true} $isShown={buttonLTrans} onClick={(e) => { e.stopPropagation(); prev() }}><i className="icon-arrow-left2" /></Button>
+        && <Button $isLeft={true} $isShown={buttonLTrans} onClick={(e) => { e.stopPropagation(); prev() }}><ArrowLeft /></Button>
       }
 
       {index.curr < imagesData.length - 1
-        && <Button $isLeft={false} $isShown={buttonRTrans} onClick={(e) => { e.stopPropagation(); next() }}><i className="icon-arrow-right2" /></Button>
+        && <Button $isLeft={false} $isShown={buttonRTrans} onClick={(e) => { e.stopPropagation(); next() }}><ArrowRight /></Button>
       }
 
       <Tools>{index.curr + 1}/{imagesData.length} &nbsp;|&nbsp;

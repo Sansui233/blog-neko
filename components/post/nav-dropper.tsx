@@ -1,6 +1,6 @@
+import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import styled from "styled-components";
-import ChevronDown from '../../public/icons/chevron-down.svg';
 
 type Props = {
   // 如果有需要可以适配其他类型，还有高度字号什么的。自用组件就算了不写这么多
@@ -18,7 +18,7 @@ export default function NavDropper({ items, current, setCurrent }: Props) {
         <span className={isOpen ? "is-open" : ''}>
           {items[current][0]}{' '}{items[current][1]}
         </span>
-        <ChevronDown className={isOpen ? "is-open" : ''} />
+        <ChevronDown className={isOpen ? "is-open" : ''} strokeWidth="1px" />
       </MainItem>
       <SubItemContainer className={isOpen ? "is-open" : ''}>
         {items.map((item, i) => (

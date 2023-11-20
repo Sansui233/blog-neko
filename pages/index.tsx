@@ -1,3 +1,4 @@
+import { Folder } from 'lucide-react'
 import type { GetStaticProps, NextPage } from 'next'
 import Head from 'next/head'
 import Link from 'next/link'
@@ -79,7 +80,7 @@ function ArticleItem({ p, i }: {
         <div className='meta'>
           <span className='date'>{p.date}</span>
           <span>{` | `}</span>
-          <i className='icon-material-folder_open' style={{ padding: "0.2em" }} />
+          <Folder size={"1.1em"} style={{ margin: "0 0.2rem", paddingBottom: "0.1em" }} />
           {p.categories}
         </div>
       </div>
