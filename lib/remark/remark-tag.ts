@@ -70,18 +70,25 @@ export function remarkTag() {
 }
 
 // todo: test cases
-function flatsplit(input: string, delimiters: string[]) {
+function flatsplit(input: string, delimiters: string[]):Array<{text: string, isDelimiter: boolean}> {
+  // boundary
+  if(delimiters.includes(input)){
+    return [{text: input, isDelimiter: true}]
+  }
+
   let res:{
     text: string,
     isDelimiter: boolean
   }[] = [{ text : input, isDelimiter: false}]
 
+  // split by delimiters
   for (const d of delimiters) {
 
     let temp: {
       text: string,
       isDelimiter: boolean
     }[]  = []
+
 
     for (const part of res) {
 
