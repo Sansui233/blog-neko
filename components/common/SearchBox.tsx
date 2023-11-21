@@ -8,13 +8,13 @@ import PopOver from '../../styles/components/pop-over';
 
 type Props = {
   outSetSearch: (isShow: boolean) => void
-  stateToInner: boolean
+  outIsShow: boolean
   iconEle: React.RefObject<HTMLDivElement> // 这个组件有从内部控制外部，但外部的搜索图标是随便放的，在判断点击外部区部时要排除
   type?: "article" | "memo"
 }
 
 
-function SearchBox({ outSetSearch: outShow, stateToInner: outstate, iconEle, type = "article" }: Props) {
+function SearchBox({ outSetSearch: outShow, outIsShow: outstate, iconEle, type = "article" }: Props) {
   const [engine, setEngine] = useState<Naive>()
   const [res, setres] = useState<Required<Result>[]>([])
   const [isShow, setIsShow] = useState(outstate)
@@ -67,8 +67,6 @@ function SearchBox({ outSetSearch: outShow, stateToInner: outstate, iconEle, typ
       inputRef.current?.focus()
     }
   }, [isShow])
-
-
 
   /**
    * Get data
@@ -227,6 +225,5 @@ const Container = styled(PopOver)`
     max-height:50%
   }
 `
-
 
 export default SearchBox

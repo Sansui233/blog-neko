@@ -1,13 +1,14 @@
 import { Search } from "lucide-react"
+import dynamic from "next/dynamic"
 import Link from "next/link"
 import { useRouter } from "next/router"
-import React, { useContext, useEffect, useRef, useState } from "react"
-import styled, { ThemeContext } from "styled-components"
+import React, { useEffect, useRef, useState } from "react"
+import styled from "styled-components"
+import Neko from "../../../assets/neko.svg"
 import { throttle } from "../../../lib/throttle"
 import { siteInfo } from "../../../site.config"
 import { LinkWithLine } from "../../../styles/components/link-with-line"
 import { hoverRound } from "../../../styles/styles"
-import SearchBox from "../searchbox"
 import MenuIcon from "./menuicon"
 import Sidebar from "./sidebar"
 
@@ -17,8 +18,9 @@ type Props = React.HTMLProps<HTMLElement> & {
   hideSearch?: boolean;
 }
 
+const LazySearchBox = dynamic(() => import('../searchbox'), {})
+
 export default function Topbar({ placeHolder = true, scrollElem, hideSearch, ...otherProps }: Props) {
-  const theme = useContext(ThemeContext)
   const [isHidden, setisHidden] = useState(false)
   const [isSidebar, setIsSidebar] = useState(false)
   const [isSearch, setisSearch] = useState(false)
@@ -90,13 +92,14 @@ export default function Topbar({ placeHolder = true, scrollElem, hideSearch, ...
 
   return (
     <React.Fragment>
-      <SearchBox outSetSearch={updateSearch} stateToInner={isSearch} iconEle={searchIcon} />
+      <LazySearchBox outSetSearch={updateSearch} outIsShow={isSearch} iconEle={searchIcon} />
       <Sidebar isShow={isSidebar} toggle={toggleSidebar} />
       <Layout $isHidden={isHidden} {...otherProps}>
         <Avatar >
-          <Link href="/" passHref={true}>
+          <Link href="/" passHref={true} style={{ padding: "0 1rem" }}>
             {/*eslint-disable-next-line @next/next/no-img-element*/}
-            <img src={theme!.assets.favico} alt={siteInfo.author} />
+            <Neko width="36" />
+            <span>{`${siteInfo.author}'s 's blog`}</span>
           </Link>
         </Avatar>
         <Nav>
@@ -121,7 +124,7 @@ export default function Topbar({ placeHolder = true, scrollElem, hideSearch, ...
 }
 
 const SearchIcon = styled.div<{ $isSearch: boolean, $hideSearch: boolean | undefined }>`
-  ${p => p.$hideSearch && "opacity:0;"}
+  ${p => p.$hideSearch && "display: none;"}
   ${p => p.$isSearch ? "color:" + p.theme.colors.accent + ";" : ""}
   transition: color 0.3s ease;
   cursor: pointer;
@@ -173,20 +176,18 @@ const LeftRight = styled.div`
 const Avatar = styled(LeftRight)`
   flex: 1 1 auto;
   display: flex;
-  img {
-    margin-left: 10px;
-    z-index: 11;
-    width: 63px;
-    height: 63px;
-    float: left;
-    cursor: pointer;
-  }
   justify-content: flex-start;
+  font-weight: bold;
+  width: 210px;
 
-  @media screen and (max-width: 580px){
-    img {
-      width: 48px;
-      height: 48px;
+  span {
+    padding: 0 0.5rem;
+  }
+
+  @media screen and (max-width: 780px){
+    width: 100px;
+    span {
+      display: none;
     }
   }
   @media screen and (max-width: 350px){
@@ -197,9 +198,14 @@ const Avatar = styled(LeftRight)`
 const More = styled(LeftRight)`
   text-align: right;
   font-size: 0.875em;
+  width: 210px;
   
   & > div {
     margin-right: 15px;
+  }
+
+  @media screen and (max-width: 780px){
+    width: 100px;
   }
 
   @media screen and (max-width: 580px) {

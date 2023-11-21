@@ -31,7 +31,7 @@ export default function Sidebar({ isShow, toggle }: Props) {
   }, [themeContext])
 
   return (
-    <Container className={isShow ? '' : 'hidden'}>
+    <Container style={isShow ? undefined : { transform: "translateY(-100%)" }}>
       <Content style={{ paddingTop: '8rem' }}>
         <h1>
           <span>
@@ -96,10 +96,6 @@ const Container = styled.div`
   z-index: 10;
   transform: translateY(0);
   transition: transform 1s cubic-bezier(0.46, 0, 0.08, 1.11);
-
-  &.hidden {
-    transform: translateY(-100%);
-  }
 
   h1 {
     span{

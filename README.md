@@ -1,8 +1,8 @@
-# next-blog-paper
+# blog-neko
 
 一个黑白简约风格的个人博客，兼具微博客功能。保留了原来 hexo 博客用法的简便性。
 
-- 预览：https://sansui233.com
+- 效果：https://sansui233.com
 
 ## 特点
 
