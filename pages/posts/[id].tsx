@@ -2,6 +2,7 @@ import { readFile } from "fs/promises"
 import matter from "gray-matter"
 import { Eye, Folder } from "lucide-react"
 import { GetStaticPaths, GetStaticProps } from "next"
+import dynamic from "next/dynamic"
 import Head from "next/head"
 import Link from "next/link"
 import { useRouter } from "next/router"
@@ -10,7 +11,6 @@ import { useContext } from "react"
 import styled, { ThemeContext } from "styled-components"
 import { CommonHead } from ".."
 import Pagination from "../../components/common/pagination"
-import Waline from "../../components/common/waline"
 import LayoutContainer, { OneColLayout } from "../../components/layout"
 import { useMdxPost } from "../../components/mdx"
 import { PostMeta } from '../../lib/data/posts.common'
@@ -19,6 +19,8 @@ import { grayMatter2PostMeta } from "../../lib/markdown/frontmatter"
 import { compileMdxPost } from "../../lib/markdown/mdx"
 import { fadeInRight } from "../../styles/animations"
 import { MarkdownStyle } from "../../styles/components/markdown-style"
+
+const Waline = dynamic(() => import("../../components/common/waline"))
 
 type Props = {
   meta: PostMeta,

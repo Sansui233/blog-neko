@@ -1,14 +1,16 @@
 import { WalineComment } from '@waline/client'
+import dynamic from 'next/dynamic'
 import { useContext, useEffect, useState } from 'react'
 import styled, { ThemeContext } from 'styled-components'
 import { siteInfo } from '../../site.config'
 import { HoverWithBoxShadow } from '../../styles/components/link-with-line'
 import Model from '../common/model'
-import Waline from '../common/waline'
 import CardCommon from './cardcommon'
 
 // api doc: https://waline.js.org/reference/server/api.html
 // xxx.com/comment?path=%2Fmemos&pageSize=10&page=1&lang=en-US&sortBy=insertedAt_desc
+
+const Waline = dynamic(() => import("../../components/common/waline"))
 
 export default function CommentCard() {
   const theme = useContext(ThemeContext)
@@ -30,7 +32,8 @@ export default function CommentCard() {
         <ModelContainer>
           <Waline />
         </ModelContainer>
-      </Model>}
+      </Model>
+      }
 
       <CardCommon title='COMMENTS'>
         <Container>
