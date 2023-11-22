@@ -2,15 +2,11 @@ import NextDocument, { DocumentContext, DocumentInitialProps, DocumentProps } fr
 import { ServerStyleSheet } from 'styled-components'
 
 import { Head, Html, Main, NextScript } from 'next/document'
-import Script from 'next/script'
-import jsdelivrFallback from '../lib/script/jsdelivr'
 
 function Document<P = {}>(props: DocumentProps & P) {
   return (
-    <Html>
-      <Head>
-        <Script id='jsdelivr' strategy='beforeInteractive'>{jsdelivrFallback}</Script>
-      </Head>
+    <Html lang="zh-Hans">
+      <Head />
       <body>
         <Main />
         <NextScript />
