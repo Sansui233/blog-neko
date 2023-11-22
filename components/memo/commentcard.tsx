@@ -14,7 +14,7 @@ const Waline = dynamic(() => import("../../components/common/waline"))
 
 export default function CommentCard() {
   const theme = useContext(ThemeContext)
-  const [comments, setComments] = useState<Array<WalineComment>>([])
+  const [comments, setComments] = useState<Array<Pick<WalineComment, "objectId" | "comment">>>([{ objectId: "0x00", comment: "等等，好像没有评论哦~" }])
   const [isModel, setIsModel] = useState(false)
 
   useEffect(() => {

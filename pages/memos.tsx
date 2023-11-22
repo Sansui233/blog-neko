@@ -24,6 +24,8 @@ import { siteInfo } from "../site.config";
 import { LinkWithLine } from "../styles/components/link-with-line";
 import { Extend } from "../utils/typeinfer";
 
+const createNaive = await (import("../lib/search").then(mod => mod.createNaive))
+
 const MemoCSRAPI = '/data/memos'
 
 // TMemo 的 content 是 code……
@@ -260,7 +262,6 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   }
 }
 
-
 /**
  * init engine and interact with react state
  * @param setEngine 
@@ -286,8 +287,6 @@ async function initSearch(
   const urls = Array.from({ length: pagelimit + 1 }, (_, i) => `${MemoCSRAPI}/${i}.json`)
   const requests = urls.map(url => fetch(url).then(res => res.json()));
   const reqres = await Promise.all(requests)
-
-
   const src = (reqres as MemoPost[][]).flatMap(v => v)
 
   const searchObj: SearchObj[] = src.map(memo => {
@@ -329,10 +328,10 @@ async function initSearch(
     )
   }
 
-  newEngine = new Naive({
+  newEngine = createNaive({
     data: searchObj,                    // search in these data
     field: ["tags", "content"],         // properties to be searched in data
-    notifier,                            // 通常是 useState 的 set 函数
+    notifier,                           // 通常是 useState 的 set 函数
     disableStreamNotify: true,
   })
 

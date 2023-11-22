@@ -17,8 +17,8 @@ export interface Result {
   }[]
 }
 
-export abstract class Engine {
-  abstract search(s: string | string[]): unknown
+export interface Engine {
+  search: (s: string[])=>unknown
 }
 
 

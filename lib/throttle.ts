@@ -1,16 +1,23 @@
-export function throttle(fn: Function, delay: number) {
-  let timer: NodeJS.Timeout | null = null;
-  return function (this: any) {
-    if (!timer) {
-      fn.apply(this, arguments)
-      timer = setTimeout(
-        () => {
-          clearTimeout(timer!)
-          timer = null
-        },
-        delay)
+type ThrottledFunction<T extends (...args: any) => any> = (...args: Parameters<T>) => ReturnType<T>;
+
+export function throttle<T extends (...args: any) => any>(func: T, limit: number): ThrottledFunction<T> {
+  let inThrottle: boolean;
+  let lastResult: ReturnType<T>;
+
+  return function(this: any): ReturnType<T> {
+    const args = arguments;
+    const context = this;
+
+    if (!inThrottle) {
+      inThrottle = true;
+
+      setTimeout(() => (inThrottle = false), limit);
+
+      lastResult = func.apply(context, args);
     }
-  }
+
+    return lastResult;
+  };
 }
 
 // https://stackoverflow.com/questions/72205837/safe-type-debounce-function-in-typescript

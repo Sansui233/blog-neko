@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
 import styled from "styled-components";
-import { Naive, Result } from '../../lib/search';
+import { Naive, Result, createNaive } from '../../lib/search';
 import { SearchObj } from '../../lib/search/common';
 import { debounce } from '../../lib/throttle';
 import PopOver from '../../styles/components/pop-over';
@@ -77,7 +77,7 @@ function SearchBox({ outSetSearch: outShow, outIsShow: outstate, iconEle, type =
         fetch('/data/posts/index.json')
           .then(res => res.json())
           .then((data) => {
-            const newEngine = new Naive({
+            const newEngine = createNaive({
               data: data as SearchObj[],
               field: ["title", "description", "keywords", "content"],
               notifier: setres

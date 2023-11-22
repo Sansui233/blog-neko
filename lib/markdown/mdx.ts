@@ -9,13 +9,11 @@ import { remarkTag } from '../remark/remark-tag'
 
 // code splitting
 async function compileImport (){
-  const compile = (await import("@mdx-js/mdx")).compile
-  return compile
+  return (await import("@mdx-js/mdx")).compile
 }
 
 async function runSyncImport (){
-  const runSync = (await import("@mdx-js/mdx")).runSync
-  return runSync
+  return (await import("@mdx-js/mdx")).runSync
 }
 
 // returns mdx function string

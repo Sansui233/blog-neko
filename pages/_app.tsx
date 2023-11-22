@@ -4,7 +4,6 @@ import Script from 'next/script'
 import { useEffect, useRef, useState } from 'react'
 import { ThemeProvider } from 'styled-components'
 import { THEME_CHANGED_EVT, ThemeCallBack, ThemeMsg, emitter, getAppTheme } from '../lib/app-states'
-import { SafariCtx } from '../lib/ctx'
 import * as gtag from '../lib/gtag'
 import { siteInfo } from '../site.config'
 import { GlobalStyle } from '../styles/global'
@@ -16,12 +15,6 @@ function MyApp({ Component, pageProps }: AppProps) {
   const [theme, setTheme] = useState(lightTheme);
   const themeRef = useRef(theme) // 防止 theme 更新而反复 addListener
   const router = useRouter()
-  const [isSafari, setIsSafari] = useState(false)
-
-  // set device
-  useEffect(() => {
-    setIsSafari(/^((?!chrome|android).)*safari/i.test(navigator.userAgent))
-  }, [setIsSafari])
 
   // Google Analystics
   useEffect(() => {
@@ -70,10 +63,8 @@ function MyApp({ Component, pageProps }: AppProps) {
   return <>
     {/* Global Site Tag (gtag.js) - Google Analytics */}
     <ThemeProvider theme={theme}>
-      <SafariCtx.Provider value={isSafari}>
-        <GlobalStyle />
-        <Component {...pageProps} />
-      </SafariCtx.Provider>
+      <GlobalStyle />
+      <Component {...pageProps} />
     </ThemeProvider>
     <Script
       strategy="afterInteractive"

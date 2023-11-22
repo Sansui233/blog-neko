@@ -20,6 +20,7 @@ public/sitemap.xml
 
 # testing
 /coverage
+pages/test.tsx
 
 # next.js
 /.next/
