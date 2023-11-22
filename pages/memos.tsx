@@ -1,5 +1,6 @@
 import { Search } from "lucide-react";
 import { GetStaticProps } from "next";
+import dynamic from "next/dynamic";
 import Head from "next/head";
 import React, { useCallback, useContext, useRef, useState } from "react";
 import styled, { ThemeContext } from "styled-components";
@@ -10,7 +11,7 @@ import Topbar from "../components/common/topbar";
 import { TwoColLayout } from "../components/layout";
 import CardCommon, { CardTitleIcon } from "../components/memo/cardcommon";
 import CommentCard from "../components/memo/commentcard";
-import ImageBrowser, { useImgBroswerStore } from "../components/memo/imagebrowser";
+import { useImgBroswerStore } from "../components/memo/imagebrowser";
 import { MemoCard } from "../components/memo/memocard";
 import NavCard from "../components/memo/navcard";
 import VirtualList from "../components/memo/virtuallist";
@@ -25,6 +26,7 @@ import { LinkWithLine } from "../styles/components/link-with-line";
 import { Extend } from "../utils/typeinfer";
 
 const createNaive = await (import("../lib/search").then(mod => mod.createNaive))
+const ImageBrowser = dynamic(() => import("../components/memo/imagebrowser"))
 
 const MemoCSRAPI = '/data/memos'
 

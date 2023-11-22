@@ -164,19 +164,11 @@ const Layout = styled.header<{
   transition: transform .5s ease;
 `
 
-// Common Property to make nav middle aligned
-const LeftRight = styled.div`
-  flex: 1 1 auto;
-  display: flex;
-  align-items: center;
-  height: 100%;
-  justify-content: flex-end;
-
-`
-const Avatar = styled(LeftRight)`
+const Avatar = styled.div`
   flex: 1 1 auto;
   display: flex;
   justify-content: flex-start;
+  align-items: center;
   font-weight: bold;
   width: 210px;
 
@@ -195,8 +187,11 @@ const Avatar = styled(LeftRight)`
   }
 `
 
-const More = styled(LeftRight)`
-  text-align: right;
+const More = styled.div`
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
   font-size: 0.875em;
   width: 210px;
   
@@ -206,13 +201,6 @@ const More = styled(LeftRight)`
 
   @media screen and (max-width: 780px){
     width: 100px;
-  }
-
-  @media screen and (max-width: 580px) {
-    & > div {
-      margin-right: 16px;
-      padding: 1px 0;
-    }
   }
 `
 const Nav = styled.nav`
