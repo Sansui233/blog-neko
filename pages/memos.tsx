@@ -2,7 +2,7 @@ import { Search } from "lucide-react";
 import { GetStaticProps } from "next";
 import dynamic from "next/dynamic";
 import Head from "next/head";
-import React, { useCallback, useContext, useRef, useState } from "react";
+import { useCallback, useContext, useRef, useState } from "react";
 import styled, { ThemeContext } from "styled-components";
 import { CommonHead } from ".";
 import Footer from "../components/common/footer";
@@ -19,13 +19,12 @@ import { clientList, createClient } from "../lib/data/client";
 import { MemoInfo, MemoPost, MemoTag } from "../lib/data/memos.common";
 import { memo_db, writeMemoJson } from "../lib/data/server";
 import { compileMdxMemo } from "../lib/markdown/mdx";
-import { Naive, Result, SearchObj } from "../lib/search";
-import { useDocumentEvent } from "../lib/use-event";
+import { SearchObj } from "../lib/search";
+import useSearch from "../lib/use-search";
 import { siteInfo } from "../site.config";
 import { LinkWithLine } from "../styles/components/link-with-line";
 import { Extend } from "../utils/typeinfer";
 
-const createNaive = await (import("../lib/search").then(mod => mod.createNaive))
 const ImageBrowser = dynamic(() => import("../components/memo/imagebrowser"))
 
 const MemoCSRAPI = '/data/memos'
@@ -43,30 +42,14 @@ type Props = {
   memotags: MemoTag[], // tagname, memo list
 }
 
-type SearchStatus = {
-  pagelimit: number,
-  isSearch: "ready" | "searching" | "done",
-  searchText: string,
-}
-
 export default function Memos({ source, info, memotags, client }: Props) {
   const theme = useContext(ThemeContext)
   const [postsData, setpostsData] = useState(source)
   const [postsDataBackup, setpostsDataBackup] = useState(source)
-  const [isFetching, setisFetching] = useState(false)
 
   const isModel = useImgBroswerStore(state => state.isModel)
 
-  // search
-  const inputRef = useRef<HTMLInputElement>(null)
-  const [engine, setEngine] = useState<Naive>()
-  const [searchStatus, setsearchStatus] = useState<SearchStatus>({
-    pagelimit: 5,
-    isSearch: "ready",
-    searchText: "",
-  })
-
-  // virtual list api
+  // virtual list
   const [cli, setCli] = useState(createClient(client))
   const fetchFrom = useCallback(async (start: number, batchsize: number) => {
     return cli.queryMemoByCount(start, batchsize).then(data => {
@@ -84,45 +67,47 @@ export default function Memos({ source, info, memotags, client }: Props) {
     })
   }, [cli])
 
+  // search
+  // TODO set page limitation
+  const inputRef = useRef<HTMLInputElement>(null)
+  const { searchStatus, setsearchStatus, setSearchText, handleSearch, initSearch } = useSearch<TMemo>({
+    inputRef,
+    setRes: setpostsData,
+    initData: async () => {   // Fetch data and set search engine
+      const urls = Array.from({ length: info.pages + 1 }, (_, i) => `${MemoCSRAPI}/${i}.json`)
+      const requests = urls.map(url => fetch(url).then(res => res.json()));
+      const resp = await Promise.all(requests)
+      const src = (resp as MemoPost[][]).flatMap(v => v)
+      const searchObj: SearchObj[] = src.map(memo => ({
+        id: memo.id,
+        title: "", // 无效化 title。engine 动态构建结果写起来太麻烦了，以后再说。
+        content: memo.content,
+        tags: memo.tags,
+      }))
 
-  // search handler
-  const handleSearch = useCallback(async () => {
-    if (!inputRef.current) return
-    const str = inputRef.current.value.trim()
-    if (str.length === 0) return
-
-    setsearchStatus(status => ({
-      ...status,
-      isSearch: "searching",
-      searchText: str // possibly the search text is stale
-    }))
-    globalThis.scrollTo({ top: 0 })
-
-    let e = engine
-    if (!e) { // Init Search Engine && Get data
-      e = await initSearch(setEngine, setpostsData, setsearchStatus, info.pages)
+      return {
+        searchObj,
+        filterRes: (searchres) => {
+          const ids = searchres.map(r => r.id)
+          const tmemos: Promise<TMemo>[] = src.filter(memo => {
+            if (ids.includes(memo.id)) {
+              return true
+            }
+            return false
+          }).map(async memo => {
+            return {
+              ...memo,
+              code: (await compileMdxMemo(memo.content)).code,
+              length: memo.content.length
+            }
+          })
+          return tmemos
+        }
+      }
     }
-    e.search(str.split(" "))
-
-  }, [engine, info.pages])
-
-  const setSearchText = useCallback((text: string, immediateSearch = true) => {
-    if (!inputRef.current) return
-
-    inputRef.current.value = text
-    if (immediateSearch) {
-      handleSearch()
-    }
-  }, [handleSearch])
-
-  // bind keyboard event
-  useDocumentEvent("keydown", (evt) => {
-    if (inputRef.current && inputRef.current === document.activeElement && evt.key === "Enter")
-      handleSearch()
-  }, undefined, [handleSearch])
+  })
 
   function statusRender() {
-    if (isFetching) return "Fetching..."
     switch (searchStatus.isSearch) {
       case "ready":
         return ""
@@ -139,7 +124,6 @@ export default function Memos({ source, info, memotags, client }: Props) {
               marginLeft: "0.875em"
             }}
             onClick={() => {
-              setisFetching(true)
               setsearchStatus(status => {
                 return {
                   ...status,
@@ -148,7 +132,6 @@ export default function Memos({ source, info, memotags, client }: Props) {
                 }
               })
               setpostsData(postsDataBackup)
-              setisFetching(false)
             }}
           >X</span>
         </>
@@ -203,7 +186,7 @@ export default function Memos({ source, info, memotags, client }: Props) {
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                 <SearchBox type="text" placeholder="Search" ref={inputRef}
                   onFocus={
-                    () => { initSearch(setEngine, setpostsData, setsearchStatus, info.pages) }
+                    () => { initSearch() }
                   }
                 />
                 <CardTitleIcon className="hover-gold" style={{ fontSize: "1.275em", marginLeft: "0.125em" }}
@@ -242,7 +225,6 @@ export default function Memos({ source, info, memotags, client }: Props) {
 }
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
-  // 生成 CSR 所需 JSON，SSR 需独立出逻辑
   writeMemoJson()
 
   const memos: TMemo[] = await Promise.all(memo_db.atPage(0).map(async m => {
@@ -262,87 +244,6 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       memotags: memo_db.tags,
     }
   }
-}
-
-/**
- * init engine and interact with react state
- * @param setEngine 
- * @param setResultFn 
- * @param setStatus 
- * @param maxPage 
- * @param pagelimit 
- * @returns  new engine for immediate usage
- */
-async function initSearch(
-  setEngine: React.Dispatch<React.SetStateAction<Naive | undefined>>,
-  setResultFn: React.Dispatch<React.SetStateAction<TMemo[]>>,
-  setStatus: React.Dispatch<React.SetStateAction<SearchStatus>>,
-  maxPage: number, // max csrpage
-  pagelimit = 5, // new range limit
-) {
-
-  console.debug("%% init search...")
-  pagelimit = maxPage < pagelimit ? maxPage : pagelimit;
-  let newEngine: Naive | undefined = undefined;
-
-  // Fetch data and set search engine
-  const urls = Array.from({ length: pagelimit + 1 }, (_, i) => `${MemoCSRAPI}/${i}.json`)
-  const requests = urls.map(url => fetch(url).then(res => res.json()));
-  const reqres = await Promise.all(requests)
-  const src = (reqres as MemoPost[][]).flatMap(v => v)
-
-  const searchObj: SearchObj[] = src.map(memo => {
-    return {
-      id: memo.id,
-      title: "", // 无效化 title。engine 动态构建结果写起来太麻烦了，以后再说。
-      content: memo.content,
-      tags: memo.tags,
-    }
-  })
-
-  // 过滤结果
-  // 这个函数也会持久化下载数据
-  function notifier(searchres: Required<Result>[]) {
-    const ids = searchres.map(r => r.id)
-    const filtered = src.filter(memo => {
-      if (ids.includes(memo.id)) {
-        return true
-      }
-      return false
-    }).map(async memo => {
-      return {
-        ...memo,
-        code: (await compileMdxMemo(memo.content)).code,
-        length: memo.content.length
-      }
-    })
-
-    Promise.all(filtered).then(
-      res => {
-        setResultFn(res)
-        setStatus(status => {
-          return {
-            ...status,
-            isSearch: "done",
-          }
-        })
-      }
-    )
-  }
-
-  newEngine = createNaive({
-    data: searchObj,                    // search in these data
-    field: ["tags", "content"],         // properties to be searched in data
-    notifier,                           // 通常是 useState 的 set 函数
-    disableStreamNotify: true,
-  })
-
-  setEngine(newEngine)
-  setStatus(status => {
-    return { ...status, pagelimit }
-  })
-
-  return newEngine
 }
 
 
@@ -414,8 +315,6 @@ const SiderCol = styled.div`
     color: ${p => p.theme.colors.accent};
   }
 `
-
-
 
 const SearchBox = styled.input`
   border: 1px solid ${p => p.theme.colors.uiLineGray};

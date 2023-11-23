@@ -82,7 +82,6 @@ function SearchBox({ outSetSearch: outShow, outIsShow: outstate, iconEle, type =
               field: ["title", "description", "keywords", "content"],
               notifier: setres
             })
-
             setEngine(newEngine)
             setisReady(true)
           })

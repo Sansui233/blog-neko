@@ -84,7 +84,7 @@ export async function compileMdxMemo(src: string) {
 }
 
 /**
- * returns html string
+ * return html string
  */
 export async function compileMdxRss(src: string, type: "md" | "mdx") {
 
