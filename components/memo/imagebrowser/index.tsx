@@ -28,7 +28,6 @@ export const useImgBroswerStore = create<ImgBroswerState>((set) => {
   }
 })
 
-
 export default function ImageBrowser() {
   const store = useImgBroswerStore(state => state) // wont update except re-render
   const imagesData = useImgBroswerStore(state => state.imagesData)
@@ -87,7 +86,7 @@ export default function ImageBrowser() {
       width: `${maxWidth * imagesData.length}px`
     }
     : {
-      transition: "transform 0.3s ease",
+      transition: "transform 0.5s ease",
       transform: `translate3d(${-index.curr * maxWidth}px, 0px, 0px)`, // triggered with index.curr got change
       width: `${maxWidth * imagesData.length}px`
     }
@@ -96,7 +95,7 @@ export default function ImageBrowser() {
   const endTrans: CSSProperties = useMemo(() => isBeforeUnmount ? { opacity: 0, transition: "opacity 0.3s ease" } : {}, [isBeforeUnmount])
 
   // image container
-  const renderMap = useMemo(() => {
+  const imgMap = useMemo(() => {
     const i = index.curr
     const left = i > 0 ? { i: i - 1, data: imagesData[i - 1] } : { i: i - 1, data: undefined }
     const middle = { i: i, data: imagesData[i] }
@@ -104,7 +103,7 @@ export default function ImageBrowser() {
     return [left, middle, right] // logical position. repeated i won't be re-render due to react dom diff
   }, [imagesData, index.curr])
 
-  const styleMap: CSSProperties[] = useMemo(() => renderMap.map(img => {
+  const styleMap: CSSProperties[] = useMemo(() => imgMap.map(img => {
     const transX = maxWidth * img.i
     const transStyle = {
       transform: `translateX(${transX}px)`,
@@ -113,7 +112,7 @@ export default function ImageBrowser() {
     }
     if (img.data) {
       const ratio = img.data.width === 0 || img.data.height === 0 ? 1 : img.data.width / img.data.height
-      if (ratio > 0.6) {
+      if (ratio > 0.6 || img.data.height < maxHeight) {
         return { // 不是超长图则居中。需要子元素高度配合以防止溢出
           ...transStyle,
           display: "flex",
@@ -129,14 +128,16 @@ export default function ImageBrowser() {
     return transStyle
 
 
-  }), [renderMap, maxWidth])
+  }), [imgMap, maxHeight, maxWidth])
+
+  const xScrollStyle: CSSProperties = useMemo(() => direction === "x" ? { overflowY: "hidden" } : {}, [direction])
 
   // img style
   const imgStyle = useCallback((img: TImage) => {
     const ratio = img.width === 0 || img.height === 0 ? 1 : img.width / img.height
     const ratioStyle: CSSProperties = ratio >= 2
       ? { maxWidth: maxWidth, maxHeight: maxHeight * 0.9 + "px" } // 宽图
-      : ratio > 0.6
+      : ratio > 0.6 || img.height < maxHeight
         ? { maxWidth: maxWidth, maxHeight: maxHeight + "px" } // 正常图，限制短边
         : { maxWidth: maxWidth * 0.95 } // 超长图
     return ratioStyle
@@ -157,8 +158,11 @@ export default function ImageBrowser() {
         onClick={e => e.stopPropagation()}
         style={containerTrans}
       >
-        {renderMap.map((m, i) => (
-          <ImgContainer key={m.i} style={styleMap[i]}>
+        {imgMap.map((m, i) => (
+          <ImgContainer key={m.i} style={{
+            ...styleMap[i],
+            ...xScrollStyle
+          }}>
             {m.data && <Img src={m.data.ok === "loaded" ? m.data.src : ""} alt={m.data.ok}
               style={imgStyle(m.data)} />}
           </ImgContainer>
@@ -183,6 +187,7 @@ export default function ImageBrowser() {
 
 const ImgContainer = styled.div`
   position: absolute;
+  will-change: transform;
 `
 
 const Img = styled.img`
@@ -253,7 +258,7 @@ const Button = styled.div<{
 const Container = styled.div`
   width: 100%;
   height: 100%;
-  overflow-x: clip;
+  overflow-x: initial;
   overflow-y: hidden;
   position: relative;
   cursor: default;
