@@ -58,8 +58,5 @@ const MaskedContainer = styled.div< { $isOpen: boolean }>`
   width: 100vw;
   background: #000000de;
   z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   cursor: zoom-out;
 `
