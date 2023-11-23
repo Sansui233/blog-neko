@@ -2,14 +2,14 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { CSSProperties, useCallback, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 import { create } from 'zustand';
-import { throttle } from "../../../lib/throttle";
 import { useDocumentEvent } from "../../../lib/use-event";
 import { useViewHeight } from "../../../lib/use-view";
 import { fadeIn, slideInLeft, slideInRight } from "../../../styles/animations";
 import Model from "../../common/model";
 import { TImage } from "../imagesthumb";
+import { useDrag } from "./use-drag";
 
-interface ImgBroswerState {
+export interface ImgBroswerState {
   isModel: boolean;
   setisModel: (b: boolean) => void
   imagesData: Array<TImage>
@@ -19,7 +19,6 @@ interface ImgBroswerState {
 }
 
 export const useImgBroswerStore = create<ImgBroswerState>((set) => {
-  console.debug("%%%% new img browser state")
   return {
     isModel: false,
     setisModel: (isModel: boolean) => set(() => ({ isModel })), // wow amazing, partial updating
@@ -32,7 +31,7 @@ export const useImgBroswerStore = create<ImgBroswerState>((set) => {
 
 
 export default function ImageBrowser() {
-  const ctx = useImgBroswerStore(state => state) // wont update except re-render
+  const store = useImgBroswerStore(state => state) // wont update except re-render
   const imagesData = useImgBroswerStore(state => state.imagesData)
 
   const [index, setIndex] = useState({
@@ -70,6 +69,8 @@ export default function ImageBrowser() {
     }
   }, [index, setIndex, scrollRef, imagesData])
 
+
+  // keyboard shortcut
   const keyevent = useCallback((evt: KeyboardEvent) => {
     if (evt.key === "ArrowLeft") {
       prev()
@@ -97,59 +98,7 @@ export default function ImageBrowser() {
   useDocumentEvent("keydown", keyevent)
 
   // mobile Drag
-  const [isPressed, setIsPressed] = useState(false)
-  const [startpos, setStartpos] = useState([0, 0, 0]) // x, y, scrolly
-  const [starttime, setStartTime] = useState(Date.now())
-  const [trans, setTrans] = useState([0, 0])
-  const [direction, setDirection] = useState<"x" | "y" | "scrolly" | 0>(0)
-  const [isBeforeUnmount, setisBeforeUnmount] = useState(false)
-
-  const touchStartEvent = useCallback((evt: React.TouchEvent<HTMLDivElement>) => {
-    evt.stopPropagation()
-    setIsPressed(true)
-    setStartTime(Date.now())
-    setStartpos([evt.touches[0].clientX, evt.touches[0].clientY, scrollRef.current ? scrollRef.current.scrollTop : 0])
-  }, [])
-
-  const touchMoveEvent = useCallback((evt: React.TouchEvent<HTMLDivElement>) => {
-    evt.stopPropagation()
-    if (isPressed) {
-      const x = evt.touches[0].clientX - startpos[0]
-      const y = evt.touches[0].clientY - startpos[1]
-      const scrolly = scrollRef.current ? scrollRef.current.scrollTop - startpos[2] : 0
-      if (direction !== 0) {
-        setTrans(direction === "x" ? [x, 0] : direction === "y" ? [0, y] : [0, scrolly])
-      } else {
-        if (Math.abs(x) > 20 || Math.abs(y) > 20 || Math.abs(scrolly) > 20) {
-          setDirection(Math.abs(x) > Math.abs(y) && Math.abs(x) > Math.abs(scrolly) ? "x" : Math.abs(y) > Math.abs(scrolly) ? "y" : "scrolly")
-          setTrans(Math.abs(x) > Math.abs(y) && Math.abs(x) > Math.abs(scrolly) ? [x, 0] : y > Math.abs(scrolly) ? [0, y] : [0, scrolly])
-        }
-      }
-    }
-  }, [startpos, direction, isPressed])
-
-  const touchEndEvent = useCallback((evt: React.TouchEvent<HTMLDivElement>) => {
-    evt.stopPropagation()
-    console.debug("%% touch end")
-
-    if (Date.now() - starttime < 200 && Math.abs(trans[0]) < 5 && Math.abs(trans[1]) < 5) {
-      setisBeforeUnmount(true)
-      setTimeout(() => { ctx.setisModel(false); setisBeforeUnmount(false) }, 300) // 避免点击穿透的问题。touchstart ==>touchmove==>touched ==>click
-    } else {
-      if (direction === "x") {
-        if (trans[0] < -60) {
-          next()
-        } else if (trans[0] > 60) {
-          prev()
-        }
-      }
-    }
-
-    setIsPressed(false)
-    setStartpos([0, 0, 0])
-    setTrans([0, 0])
-    setDirection(0)
-  }, [trans, next, prev, direction, starttime, ctx])
+  const { bind, trans, direction, isBeforeUnmount } = useDrag(store, prev, next)
 
   const buttonLTrans = useMemo(() => direction === "x" && trans[0] > 60, [trans, direction])
   const buttonRTrans = useMemo(() => direction === "x" && trans[0] < -60, [trans, direction])
@@ -158,7 +107,7 @@ export default function ImageBrowser() {
     direction === "x"
       ? {
         overflowY: "hidden",
-        transition: "transform 0.016s linear",
+        transition: "transform 0.017s linear",
         transform: `translate3d(${trans[0]}px, 0px, 0px)`,
         opacity: Math.max((200 - Math.abs(trans[0])), 0) / 200
       }
@@ -179,7 +128,7 @@ export default function ImageBrowser() {
   )
 
   return (
-    <Model isModel={true} setModel={ctx.setisModel} style={{ ...endTrans, background: "#1d1d1d" }}>
+    <Model isModel={true} setModel={store.setisModel} style={{ ...endTrans, background: "#1d1d1d" }}>
       {/* Debug */}
       {/* <Tools style={{ bottom: "0rem", flexDirection: "column", height: "12em" }}>
         <div>startpos {startpos.toString()}</div>
@@ -188,9 +137,7 @@ export default function ImageBrowser() {
       </Tools> */}
 
       <Container ref={scrollRef}
-        onTouchStart={touchStartEvent}
-        onTouchMove={throttle(touchMoveEvent, 16)}
-        onTouchEnd={touchEndEvent}
+        {...bind}
         onClick={e => e.stopPropagation()}
         style={containerTrans}
       >
@@ -210,7 +157,7 @@ export default function ImageBrowser() {
       }
 
       <Tools>{index.curr + 1}/{imagesData.length} &nbsp;|&nbsp;
-        <span onClick={(e) => { e.stopPropagation(), ctx.setisModel(false) }}>{"关闭"}</span></Tools>
+        <span onClick={(e) => { e.stopPropagation(), store.setisModel(false) }}>{"关闭"}</span></Tools>
 
     </Model>
   )
