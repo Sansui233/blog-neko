@@ -66,9 +66,13 @@ export function MemoCard({ source, setSearchText, triggerHeightChange, ...otherp
           </div>
         </CardMask>
       </div>
-      <div style={{ padding: "0 0.5rem" }}>
-        <Images imgsmd={source.imgsmd} />
-      </div>
+      {
+        source.imgsmd.length !== 0
+        && <div style={{ padding: "0 0.5rem", marginTop: "0.5rem" }}>
+          <Images imgsmd={source.imgsmd} />
+        </div>
+      }
+
 
     </MemoCardStyle>
   );
@@ -80,8 +84,8 @@ const MemoCardStyle = styled.section<{
 }>`
 
   background:${p => p.theme.colors.bg};
-  margin: 0.5rem 0;
-  padding: 1.25rem 1.5rem;
+  margin: 0.75rem 0;
+  padding: 1.5rem;
   border-radius: 1rem;
   animation: ${bottomFadeIn} .3s ease;
 
@@ -96,7 +100,7 @@ const MemoCardStyle = styled.section<{
   
   & > .content {
     position: relative;
-    height: ${props => props.$isCollapse === true ? "19rem" : "auto"};
+    height: ${props => props.$isCollapse === true ? "18.2rem" : "auto"};
     overflow: hidden;
     /* transition: height 0.5s ease; */
   }
@@ -118,13 +122,13 @@ const CardMask = styled.div<{
     ${props => props.$isCollapse === true ? props.theme.colors.maskGradient : ''}
 
     .rd-more {
-      margin-top: 5.375rem;
       font-size: 0.875rem;
       letter-spacing: 0.02rem;
-      padding: 0.2rem 0;
+      margin-top: 5.5rem;;
       cursor: pointer;
       span {
         transition: box-shadow .3s;
+        margin-right: 0.5rem;
       }
     }
 

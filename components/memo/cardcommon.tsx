@@ -1,15 +1,22 @@
+import { LucideIcon } from "lucide-react"
 import React from "react"
 import styled from "styled-components"
 
 
 type Props = React.HTMLProps<HTMLDivElement> & {
-  title?: string,
+  title: string,
+  Icon?: LucideIcon
 }
 
-export default function CardCommon({ title, children, ...otherprops }: Props) {
+export default function CardCommon({ title, Icon, children, ...otherprops }: Props) {
   return <CardContainer {...otherprops}>
-    {title && <CardTitle>{title}</CardTitle>}
-    {children}
+    <CardTitle>
+      {Icon && <Icon size={"1.1em"} style={{ marginRight: "0.5em" }} />}
+      {title}
+    </CardTitle>
+    <div style={{ paddingTop: "0.5rem" }}>
+      {children}
+    </div>
   </CardContainer>
 }
 
@@ -23,12 +30,5 @@ const CardContainer = styled.section`
 const CardTitle = styled.div`
   font-size: 0.9rem;
   font-weight: bold;
-  color: ${p => p.theme.colors.textGray2};
-`
-
-export const CardTitleIcon = styled.span`
-  display: inline-block;
-  text-align: right;
-  font-size: 1.125rem;
   color: ${p => p.theme.colors.textGray2};
 `

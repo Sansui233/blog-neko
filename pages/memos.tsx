@@ -1,4 +1,4 @@
-import { Search } from "lucide-react";
+import { Search, TagIcon, Users } from "lucide-react";
 import { GetStaticProps } from "next";
 import dynamic from "next/dynamic";
 import Head from "next/head";
@@ -9,7 +9,7 @@ import Footer from "../components/common/footer";
 import { PageDescription } from '../components/common/page-description';
 import Topbar from "../components/common/topbar";
 import { TwoColLayout } from "../components/layout";
-import CardCommon, { CardTitleIcon } from "../components/memo/cardcommon";
+import CardCommon from "../components/memo/cardcommon";
 import CommentCard from "../components/memo/commentcard";
 import { useImgBroswerStore } from "../components/memo/imagebrowser";
 import { MemoCard } from "../components/memo/memocard";
@@ -183,35 +183,36 @@ export default function Memos({ source, info, memotags, client }: Props) {
               <Footer />
             </MemoCol>
             <SiderCol>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                <SearchBox type="text" placeholder="Search" ref={inputRef}
+              <SearchBox>
+                <input type="text" placeholder="Search" ref={inputRef}
                   onFocus={
                     () => { initSearch() }
-                  }
-                />
-                <CardTitleIcon className="hover-gold" style={{ fontSize: "1.275em", marginLeft: "0.125em" }}
+                  } />
+                <Search className="hover-gold" size={"1.4rem"}
                   onClick={handleSearch}
-                >
-                  <Search />
-                </CardTitleIcon>
-              </div>
+                />
+              </SearchBox>
               <NavCard info={info} />
-              <CardCommon title={"TAGS"}>
-                <div style={{ paddingTop: "0.5rem" }}>
-                  {memotags.map(t => {
-                    return <span className="hover-gold" style={{ display: "inline-block" }} key={t.name}
-                      onClick={() => { setSearchText("#" + t.name) }}
-                    >
-                      {`#${t.name}`}
-                    </span>
-                  })}
-                </div>
+              <CardCommon
+                Icon={TagIcon}
+                title={"TAGS"}
+              >
+                {memotags.map(t => {
+                  return <span className="hover-gold" style={{ display: "inline-block", paddingRight: "0.5em" }}
+                    key={t.name}
+                    onClick={() => { setSearchText("#" + t.name) }}
+                  >
+                    {`#${t.name}`}
+                  </span>
+                })}
+
               </CardCommon>
               {siteInfo.friends
-                && <CardCommon title="FRIENDS">
-                  <div style={{ padding: "0.5rem 0.25rem" }}>
-                    {siteInfo.friends.map((f, i) => <div key={i}><LinkWithLine href={f.link}>{f.name}</LinkWithLine></div>)}
-                  </div>
+                && <CardCommon
+                  title="FRIENDS"
+                  Icon={Users}
+                >
+                  {siteInfo.friends.map((f, i) => <div key={i}><LinkWithLine href={f.link}>{f.name}</LinkWithLine></div>)}
                 </CardCommon>
               }
               {siteInfo.walineApi && siteInfo.walineApi !== "" && <CommentCard />}
@@ -307,7 +308,6 @@ const SiderCol = styled.div`
 
   /* util class */
   .hover-gold {
-    padding: 3px 5px;
     cursor: pointer;
   }
 
@@ -316,21 +316,38 @@ const SiderCol = styled.div`
   }
 `
 
-const SearchBox = styled.input`
-  border: 1px solid ${p => p.theme.colors.uiLineGray};
-  border-radius: 1em;
-  padding-left: 1em;
+const SearchBox = styled.div`
+  border-radius: 2.125rem;
+  font-size: 0.9rem;
   background: ${p => p.theme.colors.bg};
   color: ${p => p.theme.colors.textPrimary};
-  width:  0;
-  flex: 2 1 0;
-  line-height: 1.7rem;
-  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  border: 1px solid ${p => p.theme.colors.uiLineGray};
 
-
-  &:focus,
-  &:focus-visible{
-    outline: none;
+  &:focus-within {
     border: 1px solid ${p => p.theme.colors.accentHover};
+  }
+
+  input {
+    border: none;
+    background: inherit;
+    line-height: 2.125rem;
+    color: inherit;
+    flex: 1 1 auto;
+    width: 0;
+    margin-left: 1rem;
+  }
+
+  input:focus,
+  input:focus-visible {
+    outline: none;
+  }
+
+  svg {
+    margin: 0 auto;
+    flex: 0  0 auto;
+    margin: 0 0.6rem 0 0.5rem;
+    color: ${p => p.theme.colors.textGray};
   }
 `

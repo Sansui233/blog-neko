@@ -59,4 +59,5 @@ const MaskedContainer = styled.div< { $isOpen: boolean }>`
   background: #000000de;
   z-index: 10;
   cursor: zoom-out;
+  will-change: transform;
 `

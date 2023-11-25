@@ -98,7 +98,7 @@ export function useDrag(store: ImgBroswerState, prev: () => void, next: () => vo
   const endEvent = useCallback((movefunc: EvtHandler) => (evt: TouchEvent | MouseEvent) => {
     evt.stopPropagation()
 
-    if (Date.now() - state.starttime < 100 && Math.abs(state.trans[0]) < 5 && Math.abs(state.trans[1]) < 5) {
+    if (Date.now() - state.starttime < 140 && Math.abs(state.trans[0]) < 5 && Math.abs(state.trans[1]) < 5) {
       setisBeforeUnmount(true)
       setTimeout(() => {
         store.setisModel(false)

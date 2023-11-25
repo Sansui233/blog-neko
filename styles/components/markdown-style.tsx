@@ -4,6 +4,14 @@ import { hoverRound } from "../styles";
 
 export const MarkdownStyle = styled.div`
   color: ${p => p.theme.colors.textSecondary};
+
+  h1,h2,h3,h4,h5 {
+    color: ${p => p.theme.colors.textPrimary};
+  }
+
+  h6 {
+    color: ${p => p.theme.colors.textGray};
+  }
   
   img, picture, video, canvas, svg, pre{
     margin: 1.5rem auto;
@@ -32,6 +40,10 @@ export const MarkdownStyle = styled.div`
 
   a:hover::before {
     height: 0.4em;
+  }
+
+  img {
+    will-change: transform;
   }
   
   code {

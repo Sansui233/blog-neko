@@ -49,7 +49,7 @@ export const darkTheme: DefaultTheme = {
     accentHover: '#ae8d0b',
     bg: '#242424',
     bg2: '#1e1e1e',
-    bgMask: "#131313f4",
+    bgMask: "#242424f4",
     bgFilter: "screen",
     bgInverse: 'white',
     hoverBg: '#ffffff55',

@@ -1,9 +1,9 @@
 import { WalineComment } from '@waline/client'
+import { BookUser, MessageSquarePlusIcon } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import { useContext, useEffect, useState } from 'react'
 import styled, { ThemeContext } from 'styled-components'
 import { siteInfo } from '../../site.config'
-import { HoverWithBoxShadow } from '../../styles/components/link-with-line'
 import Model from '../common/model'
 import CardCommon from './cardcommon'
 
@@ -30,17 +30,20 @@ export default function CommentCard() {
     <>
       {isModel && <Model isModel={isModel} setModel={setIsModel} style={{ background: theme?.colors.bgMask }}>
         <ModelContainer>
-          <Waline />
+          <Waline onClick={e => e.stopPropagation()} />
         </ModelContainer>
       </Model>
       }
 
-      <CardCommon title='COMMENTS'>
+      <CardCommon title='COMMENTS' Icon={BookUser}>
         <Container>
           {comments.map(item => <li key={item.objectId}>{item.comment.replace(/<[^>]*>/g, '')}</li>)}
         </Container>
         <ModelButton>
-          <HoverWithBoxShadow onClick={() => setIsModel(true)}>给我留言</HoverWithBoxShadow>
+          <MessageSquarePlusIcon size="1.1em" style={{ marginRight: "0.5em" }} />
+          <span onClick={() => setIsModel(true)}>
+            给我留言
+          </span>
         </ModelButton>
       </CardCommon>
     </>
@@ -53,7 +56,6 @@ const Container = styled.div`
   li {
     list-style: none;
     margin: 0.5rem 0;
-    padding-left: 0.25rem;
     height: 1.5em;
     overflow: hidden;
   }
@@ -64,10 +66,10 @@ const ModelButton = styled.span`
   padding-right: 0.5rem;
   font-weight: bold;
   color:${p => p.theme.colors.textGray2};
-  transition: color 0.5s ease;
+  cursor: pointer;
 
   &:hover {
-    color:${p => p.theme.colors.textPrimary};
+    color:${p => p.theme.colors.accent};
   }
 `
 
@@ -79,5 +81,6 @@ const ModelContainer = styled.div`
 
   &>div{
     max-width: min(90%, 640px);
+    cursor: default;
   }
 `

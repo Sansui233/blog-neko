@@ -35,7 +35,6 @@ const HoverWithBoxShadow = styled.span`
 
   position: relative;
   border-bottom: 1px solid ${props => props.theme.colors.accent};
-  transition: box-shadow .5s;
   cursor: pointer;
 
   &:hover::before {
