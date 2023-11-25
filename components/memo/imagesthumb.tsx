@@ -82,16 +82,15 @@ export function Images({ imgsmd }: {
     {imgsmd.length === 1
 
       // only one Image
-      ? <div style={{ height: "300px" }}>
+      ? <div style={{ height: "250px" }}>
         <ImageContainer style={{
           maxWidth: "100%",
-          height: "100%",
+          height: "100%", // 为防止样式shift，底部留空和糟糕的小图体验得选一个，我选了后者
           aspectRatio: thumbData[0]
-            ? thumbData[0].width / thumbData[0].height > 2
-              ? 2 : thumbData[0].width / thumbData[0].height < 0.75
-                ? 0.75
-                : thumbData[0].width / thumbData[0].height
-            : 2,
+            ? thumbData[0].width / thumbData[0].height > 2.5 // 宽图比例限制
+              ? 2.5 : thumbData[0].width / thumbData[0].height < 0.75 // 长图比例限制
+                ? 0.75 : thumbData[0].width / thumbData[0].height // 比例正常的的图
+            : 2, // 没图……？
         }}>
           {/*eslint-disable-next-line @next/next/no-img-element*/} {/* eslint-disable-next-line jsx-a11y/alt-text */}
           <img loading="lazy" src={thumbData[0]?.ok === "loaded" ? thumbData[0]?.src : ""} alt={thumbData[0]?.ok} />
