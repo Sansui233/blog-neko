@@ -68,7 +68,7 @@ export function MemoCard({ source, setSearchText, triggerHeightChange, ...otherp
       </div>
       {
         source.imgsmd.length !== 0
-        && <div style={{ padding: "0 0.5rem", marginTop: "0.5rem" }}>
+        && <div style={{ padding: "0 0.5rem" }}>
           <Images imgsmd={source.imgsmd} />
         </div>
       }

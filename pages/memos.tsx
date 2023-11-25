@@ -348,6 +348,6 @@ const SearchBox = styled.div`
     margin: 0 auto;
     flex: 0  0 auto;
     margin: 0 0.6rem 0 0.5rem;
-    color: ${p => p.theme.colors.textGray};
+    color: ${p => p.theme.colors.uiLineGray};
   }
 `
