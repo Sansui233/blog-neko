@@ -5,10 +5,10 @@ import { create } from 'zustand';
 import { useDocumentEvent } from "../../../lib/use-event";
 import { useViewHeight, useViewWidth } from "../../../lib/use-view";
 import Model from "../../common/model";
-import { TImage } from "../imagesthumb";
+import { TImage } from "../imagethumbs";
 import { useDrag } from "./use-drag";
 
-export interface ImgBroswerState {
+export interface ImageBrowserState {
   isModel: boolean;
   setisModel: (b: boolean) => void
   imagesData: Array<TImage>
@@ -17,7 +17,7 @@ export interface ImgBroswerState {
   setCurrentIndex: (i: number) => void
 }
 
-export const useImgBroswerStore = create<ImgBroswerState>((set) => {
+export const useImageBroswerStore = create<ImageBrowserState>((set) => {
   return {
     isModel: false,
     setisModel: (isModel: boolean) => set(() => ({ isModel })), // wow amazing, partial updating
@@ -29,12 +29,12 @@ export const useImgBroswerStore = create<ImgBroswerState>((set) => {
 })
 
 export default function ImageBrowser() {
-  const store = useImgBroswerStore(state => state) // wont update except re-render
-  const imagesData = useImgBroswerStore(state => state.imagesData)
+  const store = useImageBroswerStore(state => state) // wont update except re-render
+  const imagesData = useImageBroswerStore(state => state.imagesData)
 
   const [index, setIndex] = useState({
-    curr: useImgBroswerStore(state => state.currentIndex),
-    last: useImgBroswerStore(state => state.currentIndex),
+    curr: useImageBroswerStore(state => state.currentIndex),
+    last: useImageBroswerStore(state => state.currentIndex),
   })
   if (index.curr > imagesData.length - 1) console.error("uncaught invalid image index:", index, "in length", imagesData.length)
 

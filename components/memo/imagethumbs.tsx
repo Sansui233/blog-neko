@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { useImgBroswerStore } from "./imagebrowser";
+import { useImageBroswerStore } from "./imagebrowser";
 
 
 export type TImage = {
@@ -28,10 +28,10 @@ function parseMarkdownImage(markdownText: string) {
 }
 
 
-export function Images({ imgsmd }: {
+export function ImageThumbs({ imgsmd }: {
   imgsmd: string[]
 }) {
-  const ctx = useImgBroswerStore(state => state)
+  const ctx = useImageBroswerStore(state => state)
   const [thumbData, setThumbData] = useState<TImage[]>(new Array(imgsmd.length).fill(1).map((_, index) => (
     { ok: "loading", index, src: "", width: 1, height: 1, alt: "" }
   )))

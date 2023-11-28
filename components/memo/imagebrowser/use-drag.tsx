@@ -1,5 +1,5 @@
 import { MouseEventHandler, TouchEventHandler, useCallback, useEffect, useState } from "react";
-import { ImgBroswerState } from ".";
+import { ImageBrowserState } from ".";
 import { throttle } from "../../../lib/throttle";
 
 const state: {
@@ -37,7 +37,7 @@ const evtName = (e: Event | React.UIEvent, suffix: "move" | "end"): keyof HTMLEl
   }
 }
 
-export function useDrag(store: ImgBroswerState, prev: () => void, next: () => void, reset: () => void, interval = 17) {
+export function useDrag(store: ImageBrowserState, prev: () => void, next: () => void, reset: () => void, interval = 17) {
   // output res
   const [startfunc, setstartfunc] = useState<ReactEvtHandler>()
   const [trans, setTrans] = useState([0, 0]) // calced trans

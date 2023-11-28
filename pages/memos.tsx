@@ -11,7 +11,7 @@ import Topbar from "../components/common/topbar";
 import { TwoColLayout } from "../components/layout";
 import CardCommon from "../components/memo/cardcommon";
 import CommentCard from "../components/memo/commentcard";
-import { useImgBroswerStore } from "../components/memo/imagebrowser";
+import { useImageBroswerStore } from "../components/memo/imagebrowser";
 import { MemoCard } from "../components/memo/memocard";
 import NavCard from "../components/memo/navcard";
 import VirtualList from "../components/memo/virtuallist";
@@ -47,7 +47,7 @@ export default function Memos({ source, info, memotags, client }: Props) {
   const [postsData, setpostsData] = useState(source)
   const [postsDataBackup, setpostsDataBackup] = useState(source)
 
-  const isModel = useImgBroswerStore(state => state.isModel)
+  const isModel = useImageBroswerStore(state => state.isModel)
 
   // virtual list
   const [cli, setCli] = useState(createClient(client))

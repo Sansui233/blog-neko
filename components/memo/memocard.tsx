@@ -6,7 +6,7 @@ import { bottomFadeIn } from "../../styles/animations";
 import { MarkdownStyle } from "../../styles/components/markdown-style";
 import { textShadow } from "../../styles/styles";
 import { useMdxMemo } from "../mdx";
-import { Images } from "./imagesthumb";
+import { ImageThumbs } from "./imagethumbs";
 
 
 export type MemoCardProps = {
@@ -69,7 +69,7 @@ export function MemoCard({ source, setSearchText, triggerHeightChange, ...otherp
       {
         source.imgsmd.length !== 0
         && <div style={{ padding: "0 0.5rem" }}>
-          <Images imgsmd={source.imgsmd} />
+          <ImageThumbs imgsmd={source.imgsmd} />
         </div>
       }
 
