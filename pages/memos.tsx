@@ -73,7 +73,7 @@ export default function Memos({ source, info, memotags, client }: Props) {
   const { searchStatus, setsearchStatus, setSearchText, handleSearch, initSearch } = useSearch<TMemo>({
     inputRef,
     setRes: setpostsData,
-    initData: async () => {   // Fetch data and set search engine
+    initData: async () => {   // fetch data and set search engine
       const urls = Array.from({ length: info.pages + 1 }, (_, i) => `${MemoCSRAPI}/${i}.json`)
       const requests = urls.map(url => fetch(url).then(res => res.json()));
       const resp = await Promise.all(requests)

@@ -76,8 +76,8 @@ function useSearch<R>({ inputRef, setRes, initData }: Props<R>) {
     globalThis.scrollTo({ top: 0 })
 
     let e = engine
-    if (!e) { // Init Search Engine && Get data
-      e = await initSearch()
+    if (!e) {
+      e = await initSearch() // init search engine && get data
     }
     e.search(str.split(" "))
 

@@ -3,10 +3,12 @@ import { useEffect } from "react"
 
 
 /**
- * do some key bindings  
- * be aware of extra dependencies. You xan check your listener by use memo.  
- * or just use a memorized callback
- * see https://www.reddit.com/r/reactjs/comments/dgbn15/comment/f3az9nh/?utm_source=share&utm_medium=web2x&context=3
+ * bind events on document, for example, key bindings.  
+ * be aware of extra dependencies.  
+ * you can check your listener by use memo,  
+ * or just use a memorized callback.  
+ * 
+ * see https://www.reddit.com/r/reactjs/comments/dgbn15/comment/f3az9nh
  */
 export function useDocumentEvent<K extends keyof DocumentEventMap>(
   command: K,
