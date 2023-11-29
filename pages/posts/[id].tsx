@@ -49,21 +49,19 @@ export default function Post({ meta, mdxcode, nextPost, prevPost, excerpt, headi
   const router = useRouter()
   const scrollTop = useScrollTop()
 
-  const description = meta.description ?
+  const description = useMemo(() => meta.description ?
     (meta.description as string).concat(excerpt)
-    : excerpt
+    : excerpt, [excerpt, meta.description])
 
-  const genTags = useCallback((tagList: Array<string>) => {
-    return <>
-      {tagList.map((tag: string) => {
-        return (
-          <StyledLink href={`/tags/${tag}`} passHref={true} key={tag}>
-            #{tag}&nbsp;
-          </StyledLink>
-        );
-      })}
-    </>;
-  }, [])
+  const tags = useMemo(() => (<>
+    {meta.tags.map((tag: string) => {
+      return (
+        <StyledLink href={`/tags/${tag}`} passHref={true} key={tag}>
+          #{tag}&nbsp;
+        </StyledLink>
+      );
+    })}
+  </>), [meta.tags])
 
   // use tags and keywords in frontmatter as keywords in <meta>
   const getKeywords = useCallback((fm: Record<string, unknown>) => {
@@ -109,8 +107,7 @@ export default function Post({ meta, mdxcode, nextPost, prevPost, excerpt, headi
           <h1>{meta.title}</h1>
           <MetaStyle>
             <span className="date">{meta.date}</span>
-            <div className="tag">
-              {genTags(meta.tags)}
+            <div className="tag">{tags}
               {"收录于"}
               <StyledLink href={`/categories/${meta.categories}`} passHref={true}>
                 <Folder size={"1.1em"} style={{ margin: "0 0.2rem", paddingBottom: "0.1em" }} />
@@ -275,7 +272,6 @@ const MetaStyle = styled.span`
     color: ${p => p.theme.colors.textPrimary};
     font-weight: bold;
     margin-top: 1rem;
-    margin-bottom: 0.5rem;
   }
 
   .tag {

@@ -43,10 +43,6 @@ export const MarkdownStyle = styled.div`
   a:hover::before {
     height: 0.4em;
   }
-
-  img {
-    will-change: transform;
-  }
   
   code {
     color: ${props => props.theme.colors.accent};
