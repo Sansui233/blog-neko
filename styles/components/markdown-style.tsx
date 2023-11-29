@@ -31,11 +31,13 @@ export const MarkdownStyle = styled.div`
   a {
     position: relative;
     font-weight: bold;
+    color: ${props => props.theme.colors.textPrimary};
   }
 
   a::before {
     ${hoverRound}
     height: 2px;
+    transition: height .3s ease;
   }
 
   a:hover::before {
@@ -86,7 +88,6 @@ export const MarkdownStyle = styled.div`
 
   @media screen and (min-width: 580px){
 
-    letter-spacing: 0.01em;
     text-align: justify;
 
     img, picture, video, canvas, svg, pre{

@@ -43,6 +43,27 @@ export function useViewWidth() {
   return viewWidth
 }
 
+export function useScrollTop() {
+  const [scrollTop, setScrollTop] = useState(globalThis.scrollY)
+
+  // subscribe scroll to get view height
+  // for safari compability
+  useEffect(() => {
+    const handler = () => {
+      setScrollTop(globalThis.scrollY)
+    }
+    const throttled = throttle(handler, 50)
+    globalThis.addEventListener("resize", throttled)
+    globalThis.addEventListener("scroll", throttled)
+    return () => {
+      globalThis.removeEventListener("resize", throttled)
+      globalThis.addEventListener("scroll", throttled)
+    }
+  }, [])
+
+  return scrollTop
+}
+
 export function useMouseCoor() {
   const [mouseCoor, setMouseCoor] = useState([0, 0])
   useEffect(() => {

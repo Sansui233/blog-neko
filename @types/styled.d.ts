@@ -19,6 +19,7 @@ declare module 'styled-components' {
       bgInverse: string,
       bgMask: string;
       bgFilter: "multiply" | "screen";
+      floatBg: string,
       hoverBg: string,
       codeBlockBg: string,
       shadowBg: string,

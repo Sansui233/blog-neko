@@ -39,8 +39,6 @@ export default function Topbar({ placeHolder = true, scrollElem, hideSearch, ...
       elem.scrollTop
     }
 
-
-    // 不要问我单独写这个，因为tsc抽风，需要if后推断具体类型经常报错。
     const getScrollPos = () => {
       if (scrollElem && scrollElem instanceof HTMLElement) {
         return scrollElem.scrollTop

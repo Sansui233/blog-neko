@@ -7,16 +7,17 @@ import Head from "next/head"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import path from "path"
-import { useContext } from "react"
-import styled, { ThemeContext } from "styled-components"
+import { CSSProperties, useCallback, useMemo } from "react"
+import styled from "styled-components"
 import { CommonHead } from ".."
 import Pagination from "../../components/common/pagination"
-import LayoutContainer, { OneColLayout } from "../../components/layout"
+import LayoutContainer from "../../components/layout"
 import { useMdxPost } from "../../components/mdx"
 import { PostMeta } from '../../lib/data/posts.common'
 import { POST_DIR, posts_db } from "../../lib/data/server"
 import { grayMatter2PostMeta } from "../../lib/markdown/frontmatter"
 import { compileMdxPost } from "../../lib/markdown/mdx"
+import { useScrollTop } from "../../lib/use-view"
 import { fadeInRight } from "../../styles/animations"
 import { MarkdownStyle } from "../../styles/components/markdown-style"
 
@@ -46,13 +47,13 @@ type PropHeading = {
 export default function Post({ meta, mdxcode, nextPost, prevPost, excerpt, headings }: Props) {
 
   const router = useRouter()
-  const theme = useContext(ThemeContext)
+  const scrollTop = useScrollTop()
 
   const description = meta.description ?
     (meta.description as string).concat(excerpt)
     : excerpt
 
-  function genTags(tagList: Array<string>) {
+  const genTags = useCallback((tagList: Array<string>) => {
     return <>
       {tagList.map((tag: string) => {
         return (
@@ -62,19 +63,19 @@ export default function Post({ meta, mdxcode, nextPost, prevPost, excerpt, headi
         );
       })}
     </>;
-  }
+  }, [])
 
   // use tags and keywords in frontmatter as keywords in <meta>
-  function getKeywords(fm: Record<string, unknown>) {
+  const getKeywords = useCallback((fm: Record<string, unknown>) => {
     const tagList = typeof (fm.tags) === "string" ? [fm.tags] : (fm.tags) as Array<string>
     if (fm.keywords !== null && typeof (fm.keywords) === "string") {
       return tagList.join().concat(', ').concat(fm.keywords.replaceAll('，', ', '))
     } else {
       return tagList.join()
     }
-  }
+  }, [])
 
-  const scrollToTarget = (event: React.MouseEvent<HTMLElement>, targetId: string) => {
+  const scrollToTarget = useCallback((event: React.MouseEvent<HTMLElement>, targetId: string) => {
     event.preventDefault();
     const targetElement = document.getElementById(targetId);
     if (targetElement) {
@@ -87,7 +88,13 @@ export default function Post({ meta, mdxcode, nextPost, prevPost, excerpt, headi
         behavior: 'smooth',
       });
     }
-  };
+  }, []);
+
+  const fixedStyle: CSSProperties = useMemo(() => {
+    return scrollTop > 100 ? {
+      top: "63px",
+    } : {}
+  }, [scrollTop])
 
   return <>
     <Head>
@@ -97,62 +104,53 @@ export default function Post({ meta, mdxcode, nextPost, prevPost, excerpt, headi
       <CommonHead />
     </Head>
     <LayoutContainer>
-      <div style={{ display: "flex", margin: "auto" }}>
-        <ColumnLeft>
-          <div className="blank-spacer-left" />
-          <PostLayout>
-            <PostTitle>
-              <h1>{meta.title}</h1>
-              <div style={{ display: "flex" }}>
-                <div style={{ flex: "1 1 0" }}>
-                  <MetaStyle style={{ flex: "1 1 0" }}>
-                    <span className="date">{meta.date}</span>
-                    {" | "}
-                    {genTags(meta.tags)}
-                    {" in "}
-                    <StyledLink href={`/categories/${meta.categories}`} passHref={true}>
-                      <Folder size={"1.1em"} style={{ margin: "0 0.2rem", paddingBottom: "0.1em" }} />
-                      {meta.categories}
-                    </StyledLink>
-                  </MetaStyle>
-                </div>
-                <div style={{ fontSize: "0.875rem" }}>
-                  <Eye size={"1.1em"} style={{ margin: "0 0.2rem", paddingBottom: "0.1em" }} />
-                  <span className="waline-pageview-count" data-path={router.basePath} />
-                </div>
-              </div>
-            </PostTitle>
-            <MarkdownStyle>
-              {useMdxPost(mdxcode)}
-            </MarkdownStyle>
-            <div style={{ textAlign: 'right', opacity: .5, fontSize: '0.875rem', margin: "4rem 0 2rem 0" }}>
-              更新于 {meta.date}
+      <PostLayout>
+        <PostTitle>
+          <h1>{meta.title}</h1>
+          <MetaStyle>
+            <span className="date">{meta.date}</span>
+            <div className="tag">
+              {genTags(meta.tags)}
+              {"收录于"}
+              <StyledLink href={`/categories/${meta.categories}`} passHref={true}>
+                <Folder size={"1.1em"} style={{ margin: "0 0.2rem", paddingBottom: "0.1em" }} />
+                {meta.categories}
+              </StyledLink>
             </div>
-            <Pagination
-              nextPage={nextPost ? nextPost : undefined}
-              prevPage={prevPost ? prevPost : undefined}
-            />
-            <Waline />
-          </PostLayout>
-          <div className="blank-spacer-right" />
-        </ColumnLeft>
-        <ColumnRight>
-          <nav>
-            <div style={{ fontSize: "1.25rem", fontWeight: "bold", paddingBottom: "0.5rem", marginBottom: "0.5rem", borderBottom: `solid 1px ${theme?.colors.accent}` }}>
-              目录
+            <div className="view">
+              <Eye size={"1.1em"} style={{ margin: "0 0.2rem", paddingBottom: "0.1em" }} />
+              <span className="waline-pageview-count" data-path={router.basePath} />
             </div>
-            <HeadingContainer>
-              {headings.length > 0
-                ? headings.map((h) => {
-                  return <TocAnchor $rank={h.rank} href={`#${h.id}`} onClick={(e) => { scrollToTarget(e, h.id) }} key={h.id}>
-                    <span>{h.title}</span>
-                  </TocAnchor>
-                })
-                : <span style={{ opacity: "0.6", fontSize: "0.9rem", }}>这是一篇没有目录的文章。</span>}
-            </HeadingContainer>
-          </nav>
-        </ColumnRight>
-      </div>
+          </MetaStyle>
+        </PostTitle>
+        <MarkdownStyle>
+          {useMdxPost(mdxcode)}
+        </MarkdownStyle>
+        <div style={{ textAlign: 'right', opacity: .5, fontSize: '0.875rem', margin: "4rem 0 2rem 0" }}>
+          更新于 {meta.date}
+        </div>
+        <Pagination
+          nextPage={nextPost ? nextPost : undefined}
+          prevPage={prevPost ? prevPost : undefined}
+        />
+        <Waline />
+      </PostLayout>
+      <ColumnRight style={fixedStyle}>
+        <Toc>
+          <div style={{ fontWeight: "bold" }}>
+            目录
+          </div>
+          <HeadingContainer>
+            {headings.length > 0
+              ? headings.map((h) => {
+                return <TocAnchor $rank={h.rank} href={`#${h.id}`} onClick={(e) => { scrollToTarget(e, h.id) }} key={h.id}>
+                  <span>{h.title}</span>
+                </TocAnchor>
+              })
+              : <span style={{ opacity: "0.6", fontSize: "0.9rem", }}>这是一篇没有目录的文章。</span>}
+          </HeadingContainer>
+        </Toc>
+      </ColumnRight>
     </LayoutContainer>
   </>;
 }
@@ -207,52 +205,60 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
   }
 }
 
-const PostLayout = styled(OneColLayout)`
-  max-width: min(700px, 100vw);
+const PostLayout = styled.article`
   margin-top: 72px;
+  margin: 0 auto;
+  padding: 60px 20px;
+  max-width: 800px;
+  width: 56%;
+
+  @media screen and (max-width: 1200px){
+    width: 52%;
+  }
+
+  @media screen and (max-width: 1000px){
+    width: 85%;
+    max-width: 700px;
+  }
 
   @media screen and (max-width: 580px) {
-    margin-top: 36px;
-  }
-`
-const ColumnLeft = styled.div`
-  width: 0;
-  flex: 2 1 0;
-  display: flex;
-
-  & .blank-spacer-left {
-    @media screen and (min-width: 1080px) {
-      flex: 2 1 0;
-    }
-  }
-
-  & .blank-spacer-right {
-    @media screen and (min-width: 780px) {
-      flex: 1 1 0;
-    }
+    padding: 48px 20px;
+    width: 100%;
   }
 `
 
 const ColumnRight = styled.div`
-  max-width: min(18em,20vw);
-  flex: 1 1 0;
-  margin-top: 94px;
-  position: sticky;
-  align-self: flex-start;
-  top: 63px;
-
+  position: fixed;
+  top: 128px;
   animation: ${fadeInRight} 0.3s ease;
+  will-change: top;
+  transition: top 0.3s ease;
 
-  @media screen and (max-width: 780px) {
+  max-width: 18rem;
+  max-height: 80vh;
+  padding: 0 1rem;
+  line-height: 1.7rem; /* 与正文同 line-height */
+  overflow: auto;
+
+  left: 78%;
+  width: 22%;
+
+  @media screen and (max-width: 1200px){
+    left: 76%;
+    width: 24%;
+  }
+
+  @media screen and (max-width: 1000px) {
     display: none
   }
 `
 
 const PostTitle = styled.div`
-  margin-bottom: 3rem;
+  text-align: center;
+
   h1 {
-    margin-top: .3rem;
-    margin-bottom: 0.5rem;
+    max-width: 12em;
+    margin: 0 auto;
   }
 
   @media screen and (max-width: 580px){
@@ -261,22 +267,25 @@ const PostTitle = styled.div`
 `
 
 const MetaStyle = styled.span`
-  font-size: 0.875rem;
-  position: relative;
   color: ${p => p.theme.colors.textGray};
 
   .date {
+    font-size: 1rem;
+    display: inline-block;
+    color: ${p => p.theme.colors.textPrimary};
+    font-weight: bold;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .tag {
     font-size: 0.875rem;
   }
 
-  &::before {
-    content:'';
-    position: absolute;
-    top: -0.75em;
-    left: 0;
-    height: 1px;
-    width: 100%;
-    background: ${p => p.theme.colors.accent};
+  .view {
+    text-align: right;
+    font-size: 0.8rem;
+    margin: 1rem 0;
   }
 `
 
@@ -287,15 +296,23 @@ const StyledLink = styled(Link)`
   &:hover {
     color: ${p => p.theme.colors.accent};
   }
+`
 
+const Toc = styled.nav`
+  background: ${p => p.theme.colors.floatBg};
+  padding: 1.25rem;
+  border-radius: 1rem;
+`
+
+const HeadingContainer = styled.div`
+  position: relative;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
 `
 
 const TocAnchor = styled(Link) <{ $rank: number }>`
   display: block;
   padding-left: ${p => p.$rank}em;
-  padding-top: 0.1em;
-  padding-bottom: 0.1em;
-  line-height: 1.8em;
 
   &::before {
     content: "•";
@@ -311,10 +328,4 @@ const TocAnchor = styled(Link) <{ $rank: number }>`
   &:hover span {
     box-shadow: inset 0 -0.5em 0 ${props => props.theme.colors.accentHover};
   }
-`
-
-const HeadingContainer = styled.div`
-  position: relative;
-  max-height: calc(100vh - 120px);
-  overflow-y: auto;
 `

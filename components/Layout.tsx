@@ -23,16 +23,20 @@ export default LayoutContainer
  * 单栏居中布局
  */
 export const OneColLayout = styled.div`
-  max-width: 780px;
+  width: 800px;
   margin: 0 auto;
-  padding: 0px 48px 48px 48px;
+  padding: 0 20px 48px 20px;
+
+  @media screen and (max-width: 1080px) {
+    width: 700px;
+  }
 
   @media screen and (max-width: 780px) {
     max-width: 580px;
   }
 
   @media screen and (max-width: 580px) {
-    padding: 0 20px 48px 20px;
+    max-width: 100%;
   }
 `
 

@@ -2,15 +2,23 @@ import Link from 'next/link'
 import styled from 'styled-components'
 import { hoverRound } from '../styles'
 
+// 从下向上的色块
 const LinkWithLine = styled(Link)`
   position: relative;
   font-weight: bold;
+
+  &::before {
+    ${hoverRound}
+    height: 0;
+    transition: height .3s ease;
+  }
   
   &:hover::before {
-    ${hoverRound}
+    height: 0.4rem;
   }
 `
 
+// 横着的线嗖得一下过去
 const HoverWithLine = styled.span`
   position: relative;
   cursor: pointer;
@@ -31,14 +39,21 @@ const HoverWithLine = styled.span`
   }
 `
 
+// 从下向上的色块
 const HoverWithBoxShadow = styled.span`
 
   position: relative;
   border-bottom: 1px solid ${props => props.theme.colors.accent};
   cursor: pointer;
 
-  &:hover::before {
+  &::before {
     ${hoverRound}
+    height: 0;
+    transition: height .3s ease;
+  }
+  
+  &:hover::before {
+    height: 0.4rem;
   }
 
 `
