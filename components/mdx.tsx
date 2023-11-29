@@ -21,18 +21,18 @@ function convertBack(code: string) {
 
 export function useMdxPost(code: string) {
   const mdxModule = useMemo(() => convertBack(code), [code])
-  const components = {
+  const components = useMemo(() => ({
     img: MDImg
-  }
+  }), [])
 
   return <mdxModule.default components={components} />
 }
 
 export function useMdxMemo(code: string, searchHandler: (text: string, immediateSearch?: boolean) => void) {
-
   const mdxModule = useMemo(() => convertBack(code), [code])
-
-  return <mdxModule.default components={{
+  const components = useMemo(() => ({
     Tag: memoTag(searchHandler)
-  }} />
+  }), [searchHandler])
+
+  return <mdxModule.default components={components} />
 }
