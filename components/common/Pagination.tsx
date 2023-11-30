@@ -76,7 +76,6 @@ const PageBtn = styled(Link)`
 
   span {
     position: relative;
-    max-width: 66.6%;
   }
 
   span::before {

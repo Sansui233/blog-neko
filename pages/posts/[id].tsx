@@ -1,13 +1,13 @@
 import { readFile } from "fs/promises"
 import matter from "gray-matter"
-import { Eye, Folder } from "lucide-react"
+import { Eye, Folder, TagIcon } from "lucide-react"
 import { GetStaticPaths, GetStaticProps } from "next"
 import dynamic from "next/dynamic"
 import Head from "next/head"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import path from "path"
-import { CSSProperties, useCallback, useMemo } from "react"
+import { CSSProperties, useCallback, useEffect, useMemo, useState } from "react"
 import styled from "styled-components"
 import { CommonHead } from ".."
 import Pagination from "../../components/common/pagination"
@@ -17,7 +17,7 @@ import { PostMeta } from '../../lib/data/posts.common'
 import { POST_DIR, posts_db } from "../../lib/data/server"
 import { grayMatter2PostMeta } from "../../lib/markdown/frontmatter"
 import { compileMdxPost } from "../../lib/markdown/mdx"
-import { useScrollTop } from "../../lib/use-view"
+import { throttle } from "../../lib/throttle"
 import { fadeInRight } from "../../styles/animations"
 import { MarkdownStyle } from "../../styles/components/markdown-style"
 
@@ -47,18 +47,33 @@ type PropHeading = {
 export default function Post({ meta, mdxcode, nextPost, prevPost, excerpt, headings }: Props) {
 
   const router = useRouter()
-  const scrollTop = useScrollTop()
+  const [isViewing, setIsViewing] = useState(false)
 
   const description = useMemo(() => meta.description ?
     (meta.description as string).concat(excerpt)
     : excerpt, [excerpt, meta.description])
 
+  useEffect(() => {
+    const handler = () => {
+      if (globalThis.scrollY > 100) {
+        setIsViewing(true)
+      } else (
+        setIsViewing(false)
+      )
+    }
+    const throttled = throttle(handler, 50)
+    globalThis.addEventListener("scroll", throttled)
+    return () => {
+      globalThis.addEventListener("scroll", throttled)
+    }
+  }, [])
+
   const tags = useMemo(() => (<>
     {meta.tags.map((tag: string) => {
       return (
-        <StyledLink href={`/tags/${tag}`} passHref={true} key={tag}>
-          #{tag}&nbsp;
-        </StyledLink>
+        <Tag href={`/tags/${tag}`} passHref={true} key={tag}>
+          <TagIcon size={"0.875em"} />{tag}
+        </Tag>
       );
     })}
   </>), [meta.tags])
@@ -89,10 +104,10 @@ export default function Post({ meta, mdxcode, nextPost, prevPost, excerpt, headi
   }, []);
 
   const fixedStyle: CSSProperties = useMemo(() => {
-    return scrollTop > 100 ? {
+    return isViewing ? {
       top: "63px",
     } : {}
-  }, [scrollTop])
+  }, [isViewing])
 
   return <>
     <Head>
@@ -103,28 +118,28 @@ export default function Post({ meta, mdxcode, nextPost, prevPost, excerpt, headi
     </Head>
     <LayoutContainer>
       <PostLayout>
-        <PostTitle>
-          <h1>{meta.title}</h1>
-          <MetaStyle>
-            <span className="date">{meta.date}</span>
-            <div className="tag">{tags}
-              {"收录于"}
-              <StyledLink href={`/categories/${meta.categories}`} passHref={true}>
-                <Folder size={"1.1em"} style={{ margin: "0 0.2rem", paddingBottom: "0.1em" }} />
-                {meta.categories}
-              </StyledLink>
-            </div>
-            <div className="view">
-              <Eye size={"1.1em"} style={{ margin: "0 0.2rem", paddingBottom: "0.1em" }} />
-              <span className="waline-pageview-count" data-path={router.basePath} />
-            </div>
-          </MetaStyle>
-        </PostTitle>
+        <PostTitle>{meta.title}</PostTitle>
+        <MetaStyle>
+          <div className="date">{meta.date}</div>
+          <div className="category">
+            {"收录于"}
+            <StyledLink href={`/categories/${meta.categories}`} passHref={true}>
+              <Folder size={"1.1em"} style={{ margin: "0 3px", paddingBottom: "0.1em" }} />
+              {meta.categories}
+            </StyledLink>
+            <div className="tag">{tags}</div>
+          </div>
+        </MetaStyle>
+
         <MarkdownStyle>
           {useMdxPost(mdxcode)}
         </MarkdownStyle>
-        <div style={{ textAlign: 'right', opacity: .5, fontSize: '0.875rem', margin: "4rem 0 2rem 0" }}>
+        <div style={{ textAlign: 'right', opacity: .5, fontSize: '0.875rem', margin: "4rem 0 1rem 0" }}>
           更新于 {meta.date}
+        </div>
+        <div style={{ textAlign: 'right', opacity: .5, fontSize: '0.875rem' }}>
+          <Eye size={"1.1em"} style={{ margin: "0 0.2rem", paddingBottom: "0.1em" }} />
+          <span className="waline-pageview-count" data-path={router.basePath} />
         </div>
         <Pagination
           nextPage={nextPost ? nextPost : undefined}
@@ -250,38 +265,28 @@ const ColumnRight = styled.div`
   }
 `
 
-const PostTitle = styled.div`
+const PostTitle = styled.h1`
   text-align: center;
-
-  h1 {
-    max-width: 12em;
-    margin: 0 auto;
-  }
-
-  @media screen and (max-width: 580px){
-    margin-bottom: 2rem;
-  }
+  max-width: 12em;
+  margin: 0 auto;
 `
 
-const MetaStyle = styled.span`
-  color: ${p => p.theme.colors.textGray};
+const MetaStyle = styled.div`
+  text-align: center;
+  margin-top: 1rem;
+  margin-bottom: 2rem;
 
   .date {
     font-size: 1rem;
-    display: inline-block;
-    color: ${p => p.theme.colors.textPrimary};
     font-weight: bold;
-    margin-top: 1rem;
   }
 
-  .tag {
+  .category {
     font-size: 0.875rem;
   }
 
-  .view {
-    text-align: right;
-    font-size: 0.8rem;
-    margin: 1rem 0;
+  .tag {
+    padding-top: 1rem;
   }
 `
 
@@ -291,6 +296,21 @@ const StyledLink = styled(Link)`
 
   &:hover {
     color: ${p => p.theme.colors.accent};
+  }
+`
+
+const Tag = styled(Link)`
+  transition: background .3s, color .3s;
+  color: ${p => p.theme.colors.textSecondary};
+  background: ${p => p.theme.colors.tagBg};
+  padding: 0.3rem 0.6rem;
+  border-radius: 1rem;
+
+  svg {
+    margin-right: 3px;
+  }
+  &:hover {
+    background: ${p => p.theme.colors.accentHover};
   }
 `
 

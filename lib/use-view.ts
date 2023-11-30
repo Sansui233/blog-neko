@@ -43,6 +43,7 @@ export function useViewWidth() {
   return viewWidth
 }
 
+// 尽量少用，因为会一直重新刷新组件占用cpu
 export function useScrollTop() {
   const [scrollTop, setScrollTop] = useState(globalThis.scrollY)
 
@@ -53,10 +54,8 @@ export function useScrollTop() {
       setScrollTop(globalThis.scrollY)
     }
     const throttled = throttle(handler, 50)
-    globalThis.addEventListener("resize", throttled)
     globalThis.addEventListener("scroll", throttled)
     return () => {
-      globalThis.removeEventListener("resize", throttled)
       globalThis.addEventListener("scroll", throttled)
     }
   }, [])
