@@ -18,6 +18,7 @@ import { POST_DIR, posts_db } from "../../lib/data/server"
 import { grayMatter2PostMeta } from "../../lib/markdown/frontmatter"
 import { compileMdxPost } from "../../lib/markdown/mdx"
 import { throttle } from "../../lib/throttle"
+import { useDocumentEvent } from "../../lib/use-event"
 import { fadeInRight } from "../../styles/animations"
 import { MarkdownStyle } from "../../styles/components/markdown-style"
 
@@ -44,32 +45,70 @@ type PropHeading = {
   id: string
 }
 
+const scrollOffset = 93;
+
 export default function Post({ meta, mdxcode, nextPost, prevPost, excerpt, headings }: Props) {
 
   const router = useRouter()
   const [isViewing, setIsViewing] = useState(false)
+  const [headingsY, setHeadingsY] = useState<(number | undefined)[]>([])
+  const [currentHeading, setCurrentHeading] = useState(-1)
+
+  useEffect(() => {
+    const y = headings.map(h => {
+      const ele = document.getElementById(h.id)
+      return ele ? ele.getBoundingClientRect().top + window.scrollY - scrollOffset : undefined
+    })
+    setHeadingsY(y) // should be updated on window resize but I don't want it to be costy
+  }, [headings])
+
+  const scrollHandler = useMemo(() => {
+    return throttle(() => {
+      const scrollY = globalThis.scrollY
+      if (scrollY > 100) {
+        setIsViewing(true)
+      } else (
+        setIsViewing(false)
+      )
+      const scrollAnchor = scrollY + 20
+      for (let i = 0; i < headingsY.length; i++) {
+        if (i === 0 && scrollAnchor < headingsY[i]!) { // before first
+          setCurrentHeading(-1)
+          break
+        }
+        if (headingsY[i] && i + 1 < headingsY.length && headingsY[i + 1]) { // normal
+          if (scrollAnchor >= headingsY[i]! && scrollAnchor < headingsY[i + 1]!) {
+            setCurrentHeading(i)
+            break
+          }
+        } else if (headingsY[i] && i + 1 === headingsY.length) { // last
+          if (scrollAnchor >= headingsY[i]!) {
+            setCurrentHeading(i)
+            break
+          }
+        }
+      }
+    }, 50)
+  }, [headingsY])
+
+  useDocumentEvent("scroll", scrollHandler)
+
+  const scrollTo = useCallback((event: React.MouseEvent<HTMLElement>, index: number) => {
+    event.preventDefault();
+    if (headingsY[index]) {
+      window.scrollTo({
+        top: headingsY[index],
+        behavior: 'smooth',
+      });
+    }
+  }, [headingsY]);
 
   const description = useMemo(() => meta.description ?
     (meta.description as string).concat(excerpt)
     : excerpt, [excerpt, meta.description])
 
-  useEffect(() => {
-    const handler = () => {
-      if (globalThis.scrollY > 100) {
-        setIsViewing(true)
-      } else (
-        setIsViewing(false)
-      )
-    }
-    const throttled = throttle(handler, 50)
-    globalThis.addEventListener("scroll", throttled)
-    return () => {
-      globalThis.addEventListener("scroll", throttled)
-    }
-  }, [])
-
   const tags = useMemo(() => (<>
-    {meta.tags.map((tag: string) => {
+    {meta.tags.map((tag, i) => {
       return (
         <Tag href={`/tags/${tag}`} passHref={true} key={tag}>
           <TagIcon size={"0.875em"} />{tag}
@@ -88,20 +127,6 @@ export default function Post({ meta, mdxcode, nextPost, prevPost, excerpt, headi
     }
   }, [])
 
-  const scrollToTarget = useCallback((event: React.MouseEvent<HTMLElement>, targetId: string) => {
-    event.preventDefault();
-    const targetElement = document.getElementById(targetId);
-    if (targetElement) {
-      const boundingClientRect = targetElement.getBoundingClientRect();
-      const scrollY = window.scrollY || window.pageYOffset;
-      const offset = 63;
-
-      window.scrollTo({
-        top: boundingClientRect.top + scrollY - offset,
-        behavior: 'smooth',
-      });
-    }
-  }, []);
 
   const fixedStyle: CSSProperties = useMemo(() => {
     return isViewing ? {
@@ -154,8 +179,13 @@ export default function Post({ meta, mdxcode, nextPost, prevPost, excerpt, headi
           </div>
           <HeadingContainer>
             {headings.length > 0
-              ? headings.map((h) => {
-                return <TocAnchor $rank={h.rank} href={`#${h.id}`} onClick={(e) => { scrollToTarget(e, h.id) }} key={h.id}>
+              ? headings.map((h, i) => {
+                return <TocAnchor
+                  className={currentHeading === i ? "current" : undefined}
+                  $rank={h.rank}
+                  href={`#${h.id}`}
+                  onClick={(e) => { scrollTo(e, i) }}
+                  key={h.id}>
                   <span>{h.title}</span>
                 </TocAnchor>
               })
@@ -274,7 +304,7 @@ const PostTitle = styled.h1`
 const MetaStyle = styled.div`
   text-align: center;
   margin-top: 1rem;
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 
   .date {
     font-size: 1rem;
@@ -286,7 +316,7 @@ const MetaStyle = styled.div`
   }
 
   .tag {
-    padding-top: 1rem;
+    padding-top: 1.5rem;
   }
 `
 
@@ -343,5 +373,12 @@ const TocAnchor = styled(Link) <{ $rank: number }>`
 
   &:hover span {
     box-shadow: inset 0 -0.5em 0 ${props => props.theme.colors.accentHover};
+  }
+
+  &.current {
+    font-weight: bold;
+    span {
+      box-shadow: inset 0 -0.5em 0 ${props => props.theme.colors.accentHover};
+    }
   }
 `
