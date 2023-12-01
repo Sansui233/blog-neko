@@ -35,12 +35,12 @@ export default function CommentCard() {
       </Model>
       }
 
-      <CardCommon title='COMMENTS' Icon={BookUser}>
+      <CardCommon title='Comments' Icon={BookUser}>
         <Container>
           {comments.map(item => <li key={item.objectId}>{item.comment.replace(/<[^>]*>/g, '')}</li>)}
         </Container>
         <ModelButton>
-          <MessageSquarePlusIcon size="1.1em" style={{ marginRight: "0.5em" }} />
+          <MessageSquarePlusIcon size="1em" style={{ marginRight: "0.5em" }} />
           <span onClick={() => setIsModel(true)}>
             给我留言
           </span>
@@ -55,7 +55,6 @@ const Container = styled.div`
   
   li {
     list-style: none;
-    margin: 0.5rem 0;
     height: 1.5em;
     overflow: hidden;
   }
@@ -65,7 +64,7 @@ const ModelButton = styled.span`
   margin-top: 2rem;
   padding-right: 0.5rem;
   font-weight: bold;
-  color:${p => p.theme.colors.textGray2};
+  color:${p => p.theme.colors.textPrimary};
   cursor: pointer;
 
   &:hover {

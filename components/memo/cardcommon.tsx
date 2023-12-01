@@ -11,7 +11,7 @@ type Props = React.HTMLProps<HTMLDivElement> & {
 export default function CardCommon({ title, Icon, children, ...otherprops }: Props) {
   return <CardContainer {...otherprops}>
     <CardTitle>
-      {Icon && <Icon size={"1.1em"} style={{ marginRight: "0.5em" }} />}
+      {Icon && <Icon size={"1em"} style={{ marginRight: "0.5em" }} />}
       {title}
     </CardTitle>
     <div style={{ paddingTop: "0.5rem" }}>
@@ -21,14 +21,14 @@ export default function CardCommon({ title, Icon, children, ...otherprops }: Pro
 }
 
 const CardContainer = styled.section`
+  font-size: 0.9rem;
   margin-top: 1rem;
-  padding: 1rem 1rem;
+  padding: 0.5rem 1rem;
   position: relative;
-  color:${p => p.theme.colors.textPrimary};
+  color:${p => p.theme.colors.textSecondary};
 `
 
 const CardTitle = styled.div`
-  font-size: 0.9rem;
   font-weight: bold;
-  color: ${p => p.theme.colors.textGray2};
+  color: ${p => p.theme.colors.textPrimary};
 `

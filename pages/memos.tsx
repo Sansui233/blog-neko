@@ -195,7 +195,7 @@ export default function Memos({ source, info, memotags, client }: Props) {
               <NavCard info={info} />
               <CardCommon
                 Icon={TagIcon}
-                title={"TAGS"}
+                title={"Tags"}
               >
                 {memotags.map(t => {
                   return <span className="hover-gold" style={{ display: "inline-block", paddingRight: "0.5em" }}
@@ -209,10 +209,10 @@ export default function Memos({ source, info, memotags, client }: Props) {
               </CardCommon>
               {siteInfo.friends
                 && <CardCommon
-                  title="FRIENDS"
+                  title="Friends"
                   Icon={Users}
                 >
-                  {siteInfo.friends.map((f, i) => <div key={i}><LinkWithLine href={f.link}>{f.name}</LinkWithLine></div>)}
+                  {siteInfo.friends.map((f, i) => <div key={i}><LinkWithLine href={f.link} style={{ fontWeight: "normal" }}>{f.name}</LinkWithLine></div>)}
                 </CardCommon>
               }
               {siteInfo.walineApi && siteInfo.walineApi !== "" && <CommentCard />}

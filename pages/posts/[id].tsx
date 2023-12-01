@@ -334,6 +334,7 @@ const Tag = styled(Link)`
   color: ${p => p.theme.colors.textSecondary};
   background: ${p => p.theme.colors.tagBg};
   padding: 0.3rem 0.6rem;
+  margin: 0 3px;
   border-radius: 1rem;
 
   svg {
