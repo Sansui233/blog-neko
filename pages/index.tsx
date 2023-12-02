@@ -136,7 +136,7 @@ const Card = styled(Link)`
 
   @media (any-hover: none) {
     &:active{
-      .title::before{
+      .title{
         ${hoverBoxShadow}
       }
     }
