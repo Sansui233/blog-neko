@@ -5,7 +5,7 @@
 import fs from "fs";
 import path from "path";
 import { getStat, loadJson, writeJson } from "./fs";
-import { DInfo, FInfo } from "./obeserver.common";
+import { DirInfo, FileInfo } from "./obeserver.common";
 
 /**
  * 
@@ -17,16 +17,16 @@ import { DInfo, FInfo } from "./obeserver.common";
  * @param filter a string that file name contains
  * @returns modifed-file list
  */
-export async function observe<U extends FInfo>(
+export async function observe<U extends FileInfo>(
   dir: string,
   infoPath: string,
   isIdentical: (oldstatus: U, newstatus: fs.Stats) => boolean,
-  handleInfo?: (info: FInfo) => U,
+  handleInfo?: (info: FileInfo) => U,
   filter?: string,
 ) {
 
   // read old status
-  let oldInfo = (await loadJson(infoPath)) as DInfo<U>
+  let oldInfo = (await loadJson(infoPath)) as DirInfo<U>
 
   // filter new files and sort
   let fileNames = await fs.promises.readdir(dir)
@@ -46,8 +46,8 @@ export async function observe<U extends FInfo>(
     del: new Array<string>(),
     create: new Array<string>()
   }
-  const newInfo: DInfo<FInfo> = {
-    fileMap: new Array<FInfo>()
+  const newInfo: DirInfo<FileInfo> = {
+    fileMap: new Array<FileInfo>()
   }
 
   // 经典的双链表排序问题

@@ -1,9 +1,9 @@
-export interface FInfo {
+export interface FileInfo {
   name: string,
   mtime: number,
   md5?: string,
 }
 
-export interface DInfo<U extends FInfo> {
+export interface DirInfo<U extends FileInfo> {
   fileMap: Array<U>
 }

@@ -3,7 +3,7 @@ import path from "path";
 import readline from "readline";
 import { dateToYMDMM, parseDate } from "../../date";
 import { getLastModTime, writeJson } from "../../fs/fs";
-import { INFOFILE, MemoImgs, MemoPost, MemoTag } from "../memos.common";
+import { INFOFILE, MemoImg, MemoPost, MemoTag } from "../memos.common";
 import { MemoFileMap, MemoInfoExt, MemoPageMap } from "./type";
 
 export const MEMOS_DIR = path.join(process.cwd(), 'source', 'memos')
@@ -29,7 +29,7 @@ const memo_db = await (async function () {
 
   const tags: MemoTag[] = [];
   const memos: MemoPost[] = []
-  const imgs: MemoImgs[] = []
+  const imgs: MemoImg[] = []
   const fileMap: MemoFileMap[] = []
   const pageMap: MemoPageMap[] = []
 
@@ -174,7 +174,7 @@ const memo_db = await (async function () {
 
 
 // 根据memo内容，补全tags, imgs, fileMap 的状态信息
-function updateLastFile(memos: MemoPost[], tags: MemoTag[], imgs: MemoImgs[], fileMap: MemoFileMap[]) {
+function updateLastFile(memos: MemoPost[], tags: MemoTag[], imgs: MemoImg[], fileMap: MemoFileMap[]) {
   if (memos.length > 0) {
 
     const lastMemo = memos[memos.length - 1]
@@ -202,7 +202,7 @@ function updateLastFile(memos: MemoPost[], tags: MemoTag[], imgs: MemoImgs[], fi
     if (lastMemo.imgsmd.length !== 0) {
       imgs.push({
         memoId: lastMemo.id,
-        imgsmd: lastMemo.imgsmd,
+        imgsMd: lastMemo.imgsmd,
       })
     }
 

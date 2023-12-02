@@ -23,7 +23,7 @@ import { SearchObj } from "../lib/search";
 import useSearch from "../lib/use-search";
 import { siteInfo } from "../site.config";
 import { LinkWithLine } from "../styles/components/link-with-line";
-import { Extend } from "../utils/typeinfer";
+import { Extend } from "../utils/type-utils";
 
 const ImageBrowser = dynamic(() => import("../components/memo/imagebrowser"))
 

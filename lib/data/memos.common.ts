@@ -26,7 +26,7 @@ export type MemoTag = {
   memoIds: string[]
 }
 
-export interface MemoImgs{
+export interface MemoImg{
   memoId: string,
-  imgsmd: string[]
+  imgsMd: string[]
 }

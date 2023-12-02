@@ -1,4 +1,4 @@
-import { ArrElement } from "../../utils/typeinfer";
+import { ArrElement } from "../../utils/type-utils";
 import { throttle } from "../throttle";
 import { Engine, Result, SearchObj } from "./common";
 import stopwords from "./stopwords/zh.json";

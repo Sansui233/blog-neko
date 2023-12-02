@@ -1,5 +1,5 @@
-import { Extend } from "../../../utils/typeinfer";
-import { MemoImgs as MemoImg, MemoInfo, MemoPost, MemoTag } from "../memos.common";
+import { Extend } from "../../../utils/type-utils";
+import { MemoImg, MemoInfo, MemoPost, MemoTag } from "../memos.common";
 import StaticClient from "./static";
 
 export interface Client {

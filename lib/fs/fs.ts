@@ -41,7 +41,7 @@ export async function getStat(filePath: string) {
 }
 
 /**
- * PLEASE CHECK if returned obj exsits or not！
+ * PLEASE CHECK if returned obj exsits！
  */
 export async function loadJson(filePath: string) {
   try {
@@ -53,7 +53,7 @@ export async function loadJson(filePath: string) {
       console.error(`[fs.ts] File not found ${filePath}`);
       return null;
     } else {
-      console.error(`[fs.ts] Error when Parse ${filePath}`, err);
+      console.error(`[fs.ts] Error when parse ${filePath}`, err);
       throw err
     }
   }
