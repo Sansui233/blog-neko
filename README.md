@@ -92,7 +92,7 @@ keywords: Markdown, 测试
 
 ```
 
-- `description` 文章简短描述，目前不出现在网页，用于补充 seo 信息，以及生成 rss 描述。没有此字段时会自动截取文章部分内容生成。
+- `description` 文章简短描述，出现在首页，也用于补充 seo 信息。
 - `draft` 是否为草稿，目前不出现在网页，用于控制是否通过 rss 发布。
 - `keywords` 关键词，目前不出现在网页，用于 seo。
 

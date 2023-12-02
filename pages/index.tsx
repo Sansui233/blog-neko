@@ -8,13 +8,14 @@ import LayoutContainer, { OneColLayout } from '../components/layout'
 import NavDropper from '../components/post/nav-dropper'
 import { POST_DIR, buildIndex, posts_db } from '../lib/data/server'
 import { siteInfo } from '../site.config'
-import { floatBoxShadow } from '../styles/styles'
+import { hoverBoxShadow } from '../styles/styles'
 
 type PostType = {
   id: string,
   date: string,
   title?: string,
   categories?: string,
+  description?: string,
   tags?: string | string[],
 }
 
@@ -75,11 +76,11 @@ function ArticleItem({ p, i }: {
   return (
     <Card href={'/posts/' + p.id} passHref={true}>
       <div className='card-content'>
-        <Title>{p.title}</Title>
-        <div className='meta'>
-          <span className='date'>{p.date}</span>
-          <span>{` | `}</span>
-          <Folder size={"1.1em"} style={{ margin: "0 0.2rem", paddingBottom: "0.1em" }} />
+        <div className='meta date'>{p.date.slice(0, 11)}</div>
+        <span className='title'>{p.title}</span>
+        <div className="meta description">{p.description}</div>
+        <div className="meta category">
+          <Folder size={"1.1em"} style={{ marginRight: "3px", paddingBottom: "0.1em" }} />
           {p.categories}
         </div>
       </div>
@@ -101,9 +102,9 @@ export default Home
 
 const PostGrids = styled.section`
   display: grid;
-  grid-template-columns: repeat(2, 50%);
-  grid-row-gap: 1rem;
-  grid-column-gap: 1rem;
+  justify-content: center;
+  grid-template-columns: 1fr 1fr;
+  grid-column-gap: 2rem;
 
   @media screen and (max-width: 780px) {
     grid-template-columns: repeat(1, 100%);
@@ -113,19 +114,31 @@ const PostGrids = styled.section`
 const Card = styled(Link)`
   display: block;
   min-height: 6rem;
-  border-radius: 5px;
   cursor: pointer;
   animation-fill-mode: forwards;
+  position: relative;
+  border-bottom: dotted 2px ${p => p.theme.colors.uiLineGray};
+
+  .title {
+    font-size: 1.125rem;
+    font-weight: bold;
+    transition: box-shadow .5s;
+
+  }
 
   @media (any-hover: hover) {
     &:hover{
-      ${() => floatBoxShadow}
+      .title{
+        ${hoverBoxShadow}
+      }
     }
   }
 
   @media (any-hover: none) {
     &:active{
-      ${() => floatBoxShadow}
+      .title::before{
+        ${hoverBoxShadow}
+      }
     }
   }
 
@@ -134,22 +147,19 @@ const Card = styled(Link)`
   }
 
   .card-content {
-    padding: 1rem;
-  }
+    padding: 1rem 0 2.5rem 0;
+}
 
   .meta {
-    margin-top: 0.25rem;
-    font-size: 0.875rem;
-    color: ${p => p.theme.colors.textSecondary};
-  }
-
-  .date {
+    margin: 0.25rem 0;
     font-size: 0.9rem;
+    font-weight: bold;
+    color: ${p => p.theme.colors.textGray2};
+  }
+
+  .category {
+    position: absolute;
+    bottom: 1rem;
+    right: 0;
   }
 `
-
-const Title = styled.span`
-  font-size: 1.125rem;
-  font-weight: bold;
-`
-

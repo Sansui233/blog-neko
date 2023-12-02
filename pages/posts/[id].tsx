@@ -152,20 +152,22 @@ export default function Post({ meta, mdxcode, nextPost, prevPost, excerpt, headi
               <Folder size={"1.1em"} style={{ margin: "0 3px", paddingBottom: "0.1em" }} />
               {meta.categories}
             </StyledLink>
-            <div className="tag">{tags}</div>
           </div>
+          {meta.tags.length !== 0 && <div className="tag">{tags}</div>}
         </MetaStyle>
 
         <MarkdownStyle>
           {useMdxPost(mdxcode)}
         </MarkdownStyle>
-        <div style={{ textAlign: 'right', opacity: .5, fontSize: '0.875rem', margin: "4rem 0 1rem 0" }}>
-          更新于 {meta.date}
-        </div>
-        <div style={{ textAlign: 'right', opacity: .5, fontSize: '0.875rem' }}>
-          <Eye size={"1.1em"} style={{ margin: "0 0.2rem", paddingBottom: "0.1em" }} />
-          <span className="waline-pageview-count" data-path={router.basePath} />
-        </div>
+        <section>
+          <div style={{ textAlign: 'right', opacity: .5, fontSize: '0.875rem', margin: "4rem 0 0 0" }}>
+            更新于 {meta.date}
+          </div>
+          <div style={{ textAlign: 'right', opacity: .5, fontSize: '0.875rem' }}>
+            <Eye size={"1.1em"} style={{ margin: "0 0.2rem", paddingBottom: "0.1em" }} />
+            <span className="waline-pageview-count" data-path={router.basePath} />
+          </div>
+        </section>
         <Pagination
           nextPage={nextPost ? nextPost : undefined}
           prevPage={prevPost ? prevPost : undefined}
@@ -269,7 +271,7 @@ const PostLayout = styled.article`
   }
 `
 
-const ColumnRight = styled.div`
+const ColumnRight = styled.aside`
   position: fixed;
   top: 128px;
   animation: ${fadeInRight} 0.3s ease;
@@ -304,19 +306,24 @@ const PostTitle = styled.h1`
 const MetaStyle = styled.div`
   text-align: center;
   margin-top: 1rem;
-  margin-bottom: 2.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px dotted ${p => p.theme.colors.uiLineGray};
+  margin-bottom: 1.5rem;
 
   .date {
-    font-size: 1rem;
     font-weight: bold;
   }
 
   .category {
-    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    font-size: 0.9rem;
+    line-height: 1;
   }
 
   .tag {
-    padding-top: 1.5rem;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    line-height: 1;
   }
 `
 
@@ -333,7 +340,8 @@ const Tag = styled(Link)`
   transition: background .3s, color .3s;
   color: ${p => p.theme.colors.textSecondary};
   background: ${p => p.theme.colors.tagBg};
-  padding: 0.3rem 0.6rem;
+  display: inline-block;
+  padding: 0.5rem 0.625rem;
   margin: 0 3px;
   border-radius: 1rem;
 

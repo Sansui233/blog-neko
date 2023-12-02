@@ -13,7 +13,7 @@ const Footer = () => {
   )
 }
 
-const Container = styled.div`
+const Container = styled.footer`
   padding: 24px 0 10px 0;
   text-align: center;
   font-size: 0.625rem;

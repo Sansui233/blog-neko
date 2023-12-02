@@ -1,5 +1,6 @@
-import React, { Dispatch, SetStateAction, useContext, useState } from "react";
+import React, { Dispatch, SetStateAction, useContext, useMemo, useState } from "react";
 import styled, { ThemeContext } from "styled-components";
+import { dateToYMDMM, parseDate } from "../../lib/date";
 import { TMemo } from "../../pages/memos";
 import { siteInfo } from "../../site.config";
 import { bottomFadeIn } from "../../styles/animations";
@@ -21,6 +22,15 @@ export function MemoCard({ source, setSearchText, triggerHeightChange, ...otherp
   const ref = React.useRef<HTMLDivElement>(null);
 
   const shouldCollapse = source.length > 200 ? true : false;
+
+  const date = useMemo(() => {
+    const d = parseDate(source.id)
+    if (d.getTime() !== -1) {
+      return dateToYMDMM(d)
+    } else {
+      return source.id
+    }
+  }, [source.id])
 
   function handleExpand(e: React.MouseEvent<HTMLDivElement>) {
     // Set Collapse
@@ -52,7 +62,7 @@ export function MemoCard({ source, setSearchText, triggerHeightChange, ...otherp
           <div className="meta">
             <div>{siteInfo.author}</div>
             <div className="date">
-              {source.id}&nbsp;&nbsp;
+              {date}
               <span className="word-count">{source.length}&nbsp;字</span>
             </div>
           </div>
@@ -62,7 +72,7 @@ export function MemoCard({ source, setSearchText, triggerHeightChange, ...otherp
         </MemoMarkdown>
         <CardMask $isCollapse={isCollapse} $isShown={shouldCollapse}>
           <div onClick={handleExpand} className="rd-more">
-            <span>{isCollapse ? "SHOW MORE" : "Hide"}</span>
+            <span>{isCollapse ? "展开全文" : "收起"}</span>
           </div>
         </CardMask>
       </div>
@@ -84,7 +94,7 @@ const MemoCardStyle = styled.section<{
 }>`
 
   background:${p => p.theme.colors.bg};
-  margin: 0.75rem 0;
+  margin: 0.625rem 0;
   padding: 1.5rem;
   border-radius: 1rem;
   animation: ${bottomFadeIn} .3s ease;

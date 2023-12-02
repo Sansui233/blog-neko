@@ -317,7 +317,7 @@ const SiderCol = styled.div`
 `
 
 const SearchBox = styled.div`
-  border-radius: 2.125rem;
+  border-radius: 2rem;
   font-size: 0.9rem;
   background: ${p => p.theme.colors.bg};
   color: ${p => p.theme.colors.textPrimary};
@@ -332,7 +332,7 @@ const SearchBox = styled.div`
   input {
     border: none;
     background: inherit;
-    line-height: 2.125rem;
+    line-height: 2rem;
     color: inherit;
     flex: 1 1 auto;
     width: 0;
