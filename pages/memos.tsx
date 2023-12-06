@@ -1,10 +1,11 @@
-import { Search, TagIcon, Users } from "lucide-react";
+import { MenuSquare, Search, TagIcon, Users, X } from "lucide-react";
 import { GetStaticProps } from "next";
 import dynamic from "next/dynamic";
 import Head from "next/head";
 import { useCallback, useContext, useRef, useState } from "react";
 import styled, { ThemeContext } from "styled-components";
 import { CommonHead } from ".";
+import ButtonFloat from "../components/common/button-float";
 import Footer from "../components/common/footer";
 import { PageDescription } from '../components/common/page-description';
 import Topbar from "../components/common/topbar";
@@ -23,6 +24,7 @@ import { SearchObj } from "../lib/search";
 import useSearch from "../lib/use-search";
 import { siteInfo } from "../site.config";
 import { LinkWithLine } from "../styles/components/link-with-line";
+import { floatMenu } from "../styles/styles";
 import { Extend } from "../utils/type-utils";
 
 const ImageBrowser = dynamic(() => import("../components/memo/imagebrowser"))
@@ -46,6 +48,7 @@ export default function Memos({ source, info, memotags, client }: Props) {
   const theme = useContext(ThemeContext)
   const [postsData, setpostsData] = useState(source)
   const [postsDataBackup, setpostsDataBackup] = useState(source)
+  const [isMobileSider, setIsMobileSider] = useState(false)
 
   const isModel = useImageBroswerStore(state => state.isModel)
 
@@ -150,6 +153,11 @@ export default function Memos({ source, info, memotags, client }: Props) {
       />
       <main style={{ backgroundColor: theme?.colors.bg2 }}>
         <OneColLayout>
+          <ButtonFloat
+            className="button-float"
+            Icon={MenuSquare}
+            clickHandler={(e) => setIsMobileSider(v => !v)}
+          />
           <TwoColLayout
             sep={1}
             siderLocation="right"
@@ -182,7 +190,10 @@ export default function Memos({ source, info, memotags, client }: Props) {
               </div>
               <Footer />
             </MemoCol>
-            <SiderCol>
+            <SiderCol $isMobileSider={isMobileSider}>
+              <div className="close-btn" onClick={(e) => { e.stopPropagation(); setIsMobileSider(v => !v) }}>
+                小小の菜单<X size={"1.25em"} style={{ marginLeft: ".5rem" }} />
+              </div>
               <SearchBox>
                 <input type="text" placeholder="Search" ref={inputRef}
                   onFocus={
@@ -251,9 +262,15 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 const OneColLayout = styled.div`
   max-width: 1080px;
   margin: 0 auto;
+  .button-float {
+    display: none;
+  }
 
   @media screen and (max-width: 780px) {
     max-width: 100%;
+    .button-float {
+      display: unset;
+    }
   }
 
   @media screen and (max-width: 580px) {
@@ -284,7 +301,9 @@ const MemoCol = styled.div`
   }
 `
 
-const SiderCol = styled.div`
+const SiderCol = styled.div<{
+  $isMobileSider: boolean,
+}>`
   max-width: 15rem;
   padding-top: 100px;
   padding-bottom: 64px;
@@ -296,14 +315,40 @@ const SiderCol = styled.div`
   &::-webkit-scrollbar {
     display: none;
   }
+
+  .close-btn {
+    display:none;
+  }
   
   @media screen and (max-width: 1080px) {
     margin: 0;
   }
 
   @media screen and (max-width: 780px) {
-    max-width: unset;
-    display: none;
+    .close-btn {
+      display: flex;
+      font-weight: bold;
+      justify-content: space-between;
+      align-items: center;
+
+      padding: 1rem 0;
+      ${p => p.$isMobileSider ? null : `visibility:hidden;`}
+      color: ${p => p.theme.colors.uiLineGray};
+      font-size: 1rem;
+      cursor:pointer;
+      position: sticky;
+      top:0;
+      background: inherit;
+    }
+    .close-btn:hover{
+      color: ${p => p.theme.colors.accent};
+    }
+
+    ${floatMenu}
+    padding: 0rem 1rem;
+    background: ${p => p.theme.colors.bg};
+    transition: transform .3s ease;
+    transform: ${p => p.$isMobileSider ? `translateY(0)` : `translateY(100%)`};
   }
 
   /* util class */

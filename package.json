@@ -23,7 +23,8 @@
     "stopwords-zh": "^0.4.0",
     "styled-components": "^6.0.7",
     "unist-util-visit": "^5.0.0",
-    "zustand": "^4.4.6"
+    "zustand": "^4.4.6",
+    "utility-types": "^3.10.0"
   },
   "devDependencies": {
     "@svgr/webpack": "^8.1.0",

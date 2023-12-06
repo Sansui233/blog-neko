@@ -36,6 +36,16 @@ export const hoverBoxShadow = css`box-shadow: inset 0 -0.5em 0 ${props => props.
  ****************************************/
 export const floatBoxShadow = css`box-shadow: ${props => props.theme.colors.shadowBg} 0px 0.5rem 2rem;`
 export const paperCard = css`background: ${p => p.theme.colors.bg};box-shadow: rgb(0 0 0 / 10%) 0px 2px 4px;`
+export const floatMenu = css`
+border-radius: 1rem;
+max-width: unset;
+position: fixed;
+bottom: 0;
+width: 100%;
+background: ${p => p.theme.colors.bg};
+height: 66vh;
+box-shadow: rgb(0 0 0 / 10%) 0px -3px 5px;
+`
 
 /***************************************
  * function

@@ -1,4 +1,4 @@
-import { ArrElement } from "../../utils/type-utils";
+import { $ElementType } from "utility-types";
 import { throttle } from "../throttle";
 import { Engine, Result, SearchObj } from "./common";
 import stopwords from "./stopwords/zh.json";
@@ -36,7 +36,7 @@ export const createNaive = (conf: Config): Naive => {
      * 
      * 结果存入 this.res
      */
-  const find = (patterns: string[], o: ArrElement<Config['data']>, i?: number) => {
+  const find = (patterns: string[], o: $ElementType<Config['data'],0>, i?: number) => {
     return new Promise<void>(resolve => {
 
       // Iterate Field
