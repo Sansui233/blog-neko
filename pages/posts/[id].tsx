@@ -1,15 +1,16 @@
 import { readFile } from "fs/promises"
 import matter from "gray-matter"
-import { Eye, Folder, TagIcon } from "lucide-react"
+import { Eye, Folder, MenuSquare, TagIcon, X } from "lucide-react"
 import { GetStaticPaths, GetStaticProps } from "next"
 import dynamic from "next/dynamic"
 import Head from "next/head"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import path from "path"
-import { CSSProperties, useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import styled from "styled-components"
 import { CommonHead } from ".."
+import ButtonFloat from "../../components/common/button-float"
 import Pagination from "../../components/common/pagination"
 import LayoutContainer from "../../components/layout"
 import { useMdxPost } from "../../components/mdx"
@@ -21,6 +22,7 @@ import { throttle } from "../../lib/throttle"
 import { useDocumentEvent } from "../../lib/use-event"
 import { fadeInRight } from "../../styles/animations"
 import { MarkdownStyle } from "../../styles/components/markdown-style"
+import { floatMenu } from "../../styles/styles"
 
 const Waline = dynamic(() => import("../../components/common/waline"))
 
@@ -53,6 +55,7 @@ export default function Post({ meta, mdxcode, nextPost, prevPost, excerpt, headi
   const [isViewing, setIsViewing] = useState(false)
   const [headingsY, setHeadingsY] = useState<(number | undefined)[]>([])
   const [currentHeading, setCurrentHeading] = useState(-1)
+  const [isMobileSider, setIsMobileSider] = useState(false)
 
   useEffect(() => {
     const y = headings.map(h => {
@@ -128,11 +131,7 @@ export default function Post({ meta, mdxcode, nextPost, prevPost, excerpt, headi
   }, [])
 
 
-  const fixedStyle: CSSProperties = useMemo(() => {
-    return isViewing ? {
-      top: "63px",
-    } : {}
-  }, [isViewing])
+  const isFixedTop = useMemo(() => isViewing && !isMobileSider, [isViewing, isMobileSider])
 
   return <>
     <Head>
@@ -173,8 +172,16 @@ export default function Post({ meta, mdxcode, nextPost, prevPost, excerpt, headi
           prevPage={prevPost ? prevPost : undefined}
         />
         <Waline />
+        <ButtonFloat
+          className="button-float"
+          Icon={MenuSquare}
+          clickHandler={(e) => { e.stopPropagation(); setIsMobileSider(v => !v) }}
+        />
       </PostLayout>
-      <ColumnRight style={fixedStyle}>
+      <ColumnRight $isMobileSider={isMobileSider} $isFixedTop={isFixedTop}>
+        <div className="close-btn" onClick={(e) => { e.stopPropagation(); setIsMobileSider(v => !v) }}>
+          小小の菜单<X size={"1.25em"} style={{ marginLeft: ".5rem" }} />
+        </div>
         <Toc>
           <div style={{ fontWeight: "bold" }}>
             目录
@@ -256,6 +263,10 @@ const PostLayout = styled.article`
   max-width: 800px;
   width: 56%;
 
+  .button-float {
+    display: none;
+  }
+
   @media screen and (max-width: 1200px){
     width: 52%;
   }
@@ -263,6 +274,9 @@ const PostLayout = styled.article`
   @media screen and (max-width: 1000px){
     width: 85%;
     max-width: 700px;
+    .button-float {
+      display: unset;
+    }
   }
 
   @media screen and (max-width: 580px) {
@@ -271,9 +285,12 @@ const PostLayout = styled.article`
   }
 `
 
-const ColumnRight = styled.aside`
+const ColumnRight = styled.aside<{
+  $isMobileSider: boolean,
+  $isFixedTop: boolean
+}>`
   position: fixed;
-  top: 128px;
+  top: ${p => p.$isFixedTop ? "63px" : "128px"};
   animation: ${fadeInRight} 0.3s ease;
   will-change: top;
   transition: top 0.3s ease;
@@ -287,14 +304,59 @@ const ColumnRight = styled.aside`
   left: 78%;
   width: 22%;
 
+  .close-btn {
+    display:none;
+    z-index: 1;
+  }
+
   @media screen and (max-width: 1200px){
     left: 76%;
     width: 24%;
   }
 
   @media screen and (max-width: 1000px) {
-    display: none
+    top: 79px;
+    left: unset;
+    animation: unset;
+
+    ${floatMenu}
+    width:380px;
+    height: 100%;
+    padding-bottom: 1rem;
+    
+    right: 0;
+    transition: transform .3s ease;
+    transform: ${p => p.$isMobileSider ? `translateX(0)` : `translateX(100%)`};
+
+    .close-btn {
+      position: sticky;
+      top:0;
+      background: inherit;
+
+      display: flex;
+      font-weight: bold;
+      justify-content: space-between;
+      align-items: center;
+
+      padding: 1rem 0;
+      ${p => p.$isMobileSider ? null : `visibility:hidden;`}
+      color: ${p => p.theme.colors.uiLineGray};
+      font-size: 1rem;
+      cursor:pointer;
+    }
+    .close-btn:hover{
+      color: ${p => p.theme.colors.accent};
+    }
   }
+
+  @media screen and (max-width: 580px) {
+    top: unset;
+    height: unset;
+    width: 100%;
+    transition: transform .3s ease;
+    transform: ${p => p.$isMobileSider ? `translateY(0)` : `translateY(100%)`};
+  }
+
 `
 
 const PostTitle = styled.h1`
@@ -388,6 +450,15 @@ const TocAnchor = styled(Link) <{ $rank: number }>`
     font-weight: bold;
     span {
       box-shadow: inset 0 -0.5em 0 ${props => props.theme.colors.accentHover};
+    }
+  }
+
+  @media screen and (max-width: 1000px) {
+    border-bottom: 2px dotted ${p => p.theme.colors.uiLineGray};
+    line-height: 2rem;
+
+    &:first-child{
+      border-top: 2px dotted ${p => p.theme.colors.uiLineGray};
     }
   }
 `

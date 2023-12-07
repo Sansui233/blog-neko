@@ -304,12 +304,12 @@ const MemoCol = styled.div`
 const SiderCol = styled.div<{
   $isMobileSider: boolean,
 }>`
+  position: sticky;
+
   max-width: 15rem;
   padding-top: 100px;
   padding-bottom: 64px;
   margin: 0 0.5rem;
-  position: sticky;
-
   height: 100vh;
   overflow-y: auto;
   &::-webkit-scrollbar {
@@ -318,6 +318,7 @@ const SiderCol = styled.div<{
 
   .close-btn {
     display:none;
+    z-index: 1;
   }
   
   @media screen and (max-width: 1080px) {
@@ -325,7 +326,16 @@ const SiderCol = styled.div<{
   }
 
   @media screen and (max-width: 780px) {
+    ${floatMenu}
+    padding: 0rem 1rem;
+    transition: transform .3s ease;
+    transform: ${p => p.$isMobileSider ? `translateY(0)` : `translateY(100%)`};
+
     .close-btn {
+      position: sticky;
+      top:0;
+      background: inherit;
+
       display: flex;
       font-weight: bold;
       justify-content: space-between;
@@ -336,19 +346,10 @@ const SiderCol = styled.div<{
       color: ${p => p.theme.colors.uiLineGray};
       font-size: 1rem;
       cursor:pointer;
-      position: sticky;
-      top:0;
-      background: inherit;
     }
     .close-btn:hover{
       color: ${p => p.theme.colors.accent};
     }
-
-    ${floatMenu}
-    padding: 0rem 1rem;
-    background: ${p => p.theme.colors.bg};
-    transition: transform .3s ease;
-    transform: ${p => p.$isMobileSider ? `translateY(0)` : `translateY(100%)`};
   }
 
   /* util class */
@@ -363,7 +364,6 @@ const SiderCol = styled.div<{
 
 const SearchBox = styled.div`
   border-radius: 2rem;
-  font-size: 0.9rem;
   background: ${p => p.theme.colors.bg};
   color: ${p => p.theme.colors.textPrimary};
   display: flex;

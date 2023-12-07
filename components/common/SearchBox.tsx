@@ -46,7 +46,7 @@ function SearchBox({ outSetSearch: outShow, outIsShow: outstate, iconEle, type =
       }
     }
 
-    document.addEventListener('mousedown', (e) => handleClick(e), false);
+    document.addEventListener('pointerdown', (e) => handleClick(e), false);
 
     function close(e: KeyboardEvent) {
       if (e.key === "Escape") {
@@ -56,7 +56,7 @@ function SearchBox({ outSetSearch: outShow, outIsShow: outstate, iconEle, type =
     document.addEventListener('keydown', (e) => { close(e) }, false)
 
     return () => {
-      document.removeEventListener('mousedown', (e) => handleClick(e), false);
+      document.removeEventListener('pointerdown', (e) => handleClick(e), false);
       document.removeEventListener('keydown', (e) => { close(e) }, false)
     }
   }, [iconEle, toggle])

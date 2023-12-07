@@ -24,7 +24,6 @@ const CardContainer = styled.section`
   font-size: 0.9rem;
   margin-top: 1rem;
   padding: 0.5rem 1rem;
-  position: relative;
   color:${p => p.theme.colors.textSecondary};
 `
 

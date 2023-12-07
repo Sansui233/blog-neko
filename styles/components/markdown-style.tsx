@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { hoverRound } from "../styles";
+import { hoverBoxShadow } from "../styles";
 
 
 export const MarkdownStyle = styled.div`
@@ -32,12 +32,12 @@ export const MarkdownStyle = styled.div`
     position: relative;
     font-weight: bold;
     color: ${props => props.theme.colors.textPrimary};
+    transition: box-shadow .3s ease;
+    box-shadow: inset 0 -2px 0 ${props => props.theme.colors.accentHover};
   }
 
-  a::before {
-    ${hoverRound}
-    height: 2px;
-    transition: height .3s ease;
+  a:hover {
+    ${hoverBoxShadow}
   }
 
   a:hover::before {
