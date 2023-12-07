@@ -20,8 +20,8 @@ const ButtonContainer = styled.button`
   bottom: 2rem;
   right: 1rem;
 
-  height: 2.5rem;
-  width: 2.5rem;
+  height: 3rem;
+  width: 3rem;
   font-size: 1.5rem;
   border-radius: 50%;
   border: 0;

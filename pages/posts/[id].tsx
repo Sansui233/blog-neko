@@ -1,6 +1,6 @@
 import { readFile } from "fs/promises"
 import matter from "gray-matter"
-import { Eye, Folder, MenuSquare, TagIcon, X } from "lucide-react"
+import { ArrowUpToLine, Eye, Folder, MenuSquare, TagIcon, X } from "lucide-react"
 import { GetStaticPaths, GetStaticProps } from "next"
 import dynamic from "next/dynamic"
 import Head from "next/head"
@@ -68,7 +68,7 @@ export default function Post({ meta, mdxcode, nextPost, prevPost, excerpt, headi
   const scrollHandler = useMemo(() => {
     return throttle(() => {
       const scrollY = globalThis.scrollY
-      if (scrollY > 100) {
+      if (scrollY > 300) {
         setIsViewing(true)
       } else (
         setIsViewing(false)
@@ -173,10 +173,15 @@ export default function Post({ meta, mdxcode, nextPost, prevPost, excerpt, headi
         />
         <Waline />
         <ButtonFloat
-          className="button-float"
+          className="toc-btn"
           Icon={MenuSquare}
           clickHandler={(e) => { e.stopPropagation(); setIsMobileSider(v => !v) }}
         />
+        {isViewing && <ButtonFloat
+          Icon={ArrowUpToLine}
+          clickHandler={(e) => { e.stopPropagation(); window.scrollTo({ top: 0 }) }}
+          style={{ bottom: "6rem" }}
+        />}
       </PostLayout>
       <ColumnRight $isMobileSider={isMobileSider} $isFixedTop={isFixedTop}>
         <div className="close-btn" onClick={(e) => { e.stopPropagation(); setIsMobileSider(v => !v) }}>
@@ -263,7 +268,7 @@ const PostLayout = styled.article`
   max-width: 800px;
   width: 56%;
 
-  .button-float {
+  .toc-btn {
     display: none;
   }
 
@@ -274,7 +279,7 @@ const PostLayout = styled.article`
   @media screen and (max-width: 1000px){
     width: 85%;
     max-width: 700px;
-    .button-float {
+    .toc-btn {
       display: unset;
     }
   }
