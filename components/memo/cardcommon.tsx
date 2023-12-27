@@ -21,7 +21,6 @@ export default function CardCommon({ title, Icon, children, ...otherprops }: Pro
 }
 
 const CardContainer = styled.section`
-  font-size: 0.9rem;
   margin-top: 1rem;
   padding: 0.5rem 1rem;
   color:${p => p.theme.colors.textSecondary};

@@ -43,7 +43,7 @@ export default function Sidebar({ isShow, toggle }: Props) {
             {themeText}
           </OptionText>
         </div>
-        <div><OptionText><Link href="/categories">分类</Link></OptionText></div>
+        <div><OptionText><Link href="/categories">分类标签</Link></OptionText></div>
         <div><OptionText><Link href="/atom.xml">RSS</Link></OptionText></div>
         <LastSection>
           <Icons>

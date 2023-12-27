@@ -44,7 +44,7 @@ max-width: unset;
 width: 100%;
 background: ${p => p.theme.colors.bg};
 height: 66vh;
-box-shadow: rgb(0 0 0 / 10%) 0px -3px 5px;
+box-shadow: rgb(0 0 0 / 10%) 0px 0px 7px;
 `
 
 /***************************************

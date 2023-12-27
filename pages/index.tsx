@@ -1,4 +1,3 @@
-import { Folder } from 'lucide-react'
 import type { GetStaticProps, NextPage } from 'next'
 import Head from 'next/head'
 import Link from 'next/link'
@@ -76,12 +75,15 @@ function ArticleItem({ p, i }: {
   return (
     <Card href={'/posts/' + p.id} passHref={true}>
       <div className='card-content'>
-        <div className='meta date'>{p.date.slice(0, 11)}</div>
+        <div className='meta'>
+          <span className='date'>{p.date.slice(0, 11)}</span>
+          <span className="category">
+            {p.categories}
+          </span>
+        </div>
         <span className='title'>{p.title}</span>
-        <div className="meta description">{p.description}</div>
-        <div className="meta category">
-          <Folder size={"1.1em"} style={{ marginRight: "3px", paddingBottom: "0.1em" }} />
-          {p.categories}
+        <div className="meta description">
+          {p.description}
         </div>
       </div>
     </Card>
@@ -104,7 +106,7 @@ const PostGrids = styled.section`
   display: grid;
   justify-content: center;
   grid-template-columns: 1fr 1fr;
-  grid-column-gap: 2rem;
+  grid-column-gap: 2.5rem;
 
   @media screen and (max-width: 780px) {
     grid-template-columns: repeat(1, 100%);
@@ -117,7 +119,7 @@ const Card = styled(Link)`
   cursor: pointer;
   animation-fill-mode: forwards;
   position: relative;
-  border-bottom: dotted 2px ${p => p.theme.colors.uiLineGray};
+  /*border-bottom: dotted 2px ${p => p.theme.colors.uiLineGray};*/
 
   .title {
     font-size: 1.125rem;
@@ -153,13 +155,17 @@ const Card = styled(Link)`
   .meta {
     margin: 0.25rem 0;
     font-size: 0.9rem;
+    color: ${p => p.theme.colors.textGray2};
+  }
+
+  .date {
     font-weight: bold;
     color: ${p => p.theme.colors.textGray2};
   }
 
   .category {
-    position: absolute;
-    bottom: 1rem;
-    right: 0;
+    font-weight: bold;
+    display: inline-block;
+    margin-left: 0.25em;
   }
 `

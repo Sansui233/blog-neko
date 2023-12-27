@@ -343,7 +343,7 @@ const SiderCol = styled.div<{
 
       padding: 1rem 0;
       ${p => p.$isMobileSider ? null : `visibility:hidden;`}
-      color: ${p => p.theme.colors.uiLineGray};
+      color: ${p => p.theme.colors.textGray2};
       font-size: 1rem;
       cursor:pointer;
     }
@@ -368,6 +368,7 @@ const SearchBox = styled.div`
   color: ${p => p.theme.colors.textPrimary};
   display: flex;
   align-items: center;
+  margin: 0 0.5rem; /* 无 bg 时*/
   border: 1px solid ${p => p.theme.colors.uiLineGray};
 
   &:focus-within {

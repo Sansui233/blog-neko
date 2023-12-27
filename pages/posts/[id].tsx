@@ -345,7 +345,7 @@ const ColumnRight = styled.aside<{
 
       padding: 1rem 0;
       ${p => p.$isMobileSider ? null : `visibility:hidden;`}
-      color: ${p => p.theme.colors.uiLineGray};
+      color: ${p => p.theme.colors.textGray2};
       font-size: 1rem;
       cursor:pointer;
     }
@@ -410,7 +410,7 @@ const Tag = styled(Link)`
   display: inline-block;
   padding: 0.5rem 0.625rem;
   margin: 0 3px;
-  border-radius: 1rem;
+  border-radius: 1em;
 
   svg {
     margin-right: 3px;

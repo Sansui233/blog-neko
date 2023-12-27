@@ -214,6 +214,7 @@ const Tools = styled.div`
   background: #5b5b5bbd;
   color: white;
   backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
 
   &:hover{
     opacity: 1;
@@ -252,6 +253,7 @@ const Button = styled.div<{
   &:hover{
     opacity: 1;
     backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
   }
 `
 

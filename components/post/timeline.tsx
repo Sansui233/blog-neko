@@ -36,7 +36,7 @@ export default function TLContent({ mode, title, posts }: Props) {
                 return (
                   <li key={p.id}>
                     <Link href={`/posts/${p.id}`} legacyBehavior>{p.title}</Link>
-                    <TLDateStyle>{p.date.slice(5)}</TLDateStyle>
+                    <TLDateStyle>{p.date.slice(5, 10)}</TLDateStyle>
                   </li>
                 );
               })}
