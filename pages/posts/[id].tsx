@@ -14,6 +14,7 @@ import ButtonFloat from "../../components/common/button-float"
 import Pagination from "../../components/common/pagination"
 import LayoutContainer from "../../components/layout"
 import { useMdxPost } from "../../components/mdx"
+import { MarkdownStyle } from "../../components/styled/md-block"
 import { PostMeta } from '../../lib/data/posts.common'
 import { POST_DIR, posts_db } from "../../lib/data/server"
 import { grayMatter2PostMeta } from "../../lib/markdown/frontmatter"
@@ -21,8 +22,7 @@ import { compileMdxPost } from "../../lib/markdown/mdx"
 import { throttle } from "../../lib/throttle"
 import { useDocumentEvent } from "../../lib/use-event"
 import { fadeInRight } from "../../styles/animations"
-import { MarkdownStyle } from "../../styles/components/markdown-style"
-import { floatMenu } from "../../styles/styles"
+import { floatMenu } from "../../styles/css"
 
 const Waline = dynamic(() => import("../../components/common/waline"))
 
@@ -423,7 +423,7 @@ const Tag = styled(Link)`
 const Toc = styled.nav`
   background: ${p => p.theme.colors.floatBg};
   padding: 1.25rem;
-  border-radius: 1rem;
+  border-radius: 0.75rem;
 `
 
 const HeadingContainer = styled.div`

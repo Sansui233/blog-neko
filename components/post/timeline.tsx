@@ -1,6 +1,6 @@
 import Link from "next/link";
 import styled from "styled-components";
-import { textShadow } from "../../styles/styles";
+import { textShadow } from "../../styles/css";
 import { OneColLayout } from '../layout';
 
 /**

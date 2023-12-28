@@ -6,9 +6,9 @@ import { ThemeProvider } from 'styled-components'
 import { THEME_CHANGED_EVT, ThemeCallBack, ThemeMsg, emitter, getAppTheme } from '../lib/app-states'
 import * as gtag from '../lib/gtag'
 import { siteInfo } from '../site.config'
+import { darkTheme, genSystemTheme, lightTheme } from '../styles/colors'
 import { GlobalStyle } from '../styles/global'
 import '../styles/global.css'
-import { darkTheme, genSystemTheme, lightTheme } from '../styles/theme'
 
 function MyApp({ Component, pageProps }: AppProps) {
 

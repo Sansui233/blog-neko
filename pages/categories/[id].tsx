@@ -5,7 +5,7 @@ import { CommonHead } from "..";
 import LayoutContainer from "../../components/layout";
 import TLContent from "../../components/post/timeline";
 import { groupByYear, posts_db } from "../../lib/data/server";
-import { textShadow } from "../../styles/styles";
+import { textShadow } from "../../styles/css";
 
 type Props = {
   category: string,

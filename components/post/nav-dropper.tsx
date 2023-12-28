@@ -1,7 +1,7 @@
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import styled from "styled-components";
-import { hoverRound } from "../../styles/styles";
+import { hoverRound } from "../../styles/css";
 
 type Props = {
   // 如果有需要可以适配其他类型，还有高度字号什么的。自用组件就算了不写这么多

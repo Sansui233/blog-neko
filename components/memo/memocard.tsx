@@ -4,9 +4,9 @@ import { dateToYMDMM, parseDate } from "../../lib/date";
 import { TMemo } from "../../pages/memos";
 import { siteInfo } from "../../site.config";
 import { bottomFadeIn } from "../../styles/animations";
-import { MarkdownStyle } from "../../styles/components/markdown-style";
-import { textShadow } from "../../styles/styles";
+import { textShadow } from "../../styles/css";
 import { useMdxMemo } from "../mdx";
+import { MarkdownStyle } from "../styled/md-block";
 import { ImageThumbs } from "./imagethumbs";
 
 
@@ -96,7 +96,7 @@ const MemoCardStyle = styled.section<{
   background:${p => p.theme.colors.bg};
   margin: 0.625rem 0;
   padding: 1.5rem;
-  border-radius: 1rem;
+  border-radius: 0.75rem;
   animation: ${bottomFadeIn} .3s ease;
 
   @media screen and (max-width: 780px) {

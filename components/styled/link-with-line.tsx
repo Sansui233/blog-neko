@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import styled from 'styled-components'
-import { hoverRound } from '../styles'
+import { hoverRound } from '../../styles/css'
 
 // 从下向上的色块
 const LinkWithLine = styled(Link)`

@@ -16,6 +16,7 @@ import { useImageBroswerStore } from "../components/memo/imagebrowser";
 import { MemoCard } from "../components/memo/memocard";
 import NavCard from "../components/memo/navcard";
 import VirtualList from "../components/memo/virtuallist";
+import { LinkWithLine } from "../components/styled/link-with-line";
 import { clientList, createClient } from "../lib/data/client";
 import { MemoInfo, MemoPost, MemoTag } from "../lib/data/memos.common";
 import { memo_db, writeMemoJson } from "../lib/data/server";
@@ -23,8 +24,7 @@ import { compileMdxMemo } from "../lib/markdown/mdx";
 import { SearchObj } from "../lib/search";
 import useSearch from "../lib/use-search";
 import { siteInfo } from "../site.config";
-import { LinkWithLine } from "../styles/components/link-with-line";
-import { floatMenu } from "../styles/styles";
+import { floatMenu } from "../styles/css";
 import { Extend } from "../utils/type-utils";
 
 const ImageBrowser = dynamic(() => import("../components/memo/imagebrowser"))

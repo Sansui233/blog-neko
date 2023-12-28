@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { hoverBoxShadow } from "../styles";
+import { hoverBoxShadow } from "../../styles/css";
 
 
 export const MarkdownStyle = styled.div`

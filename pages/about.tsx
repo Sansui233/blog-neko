@@ -3,10 +3,10 @@ import styled from "styled-components";
 import { CommonHead } from ".";
 import { PageDescription } from '../components/common/page-description';
 import LayoutContainer, { OneColLayout } from "../components/layout";
+import { MarkdownStyle } from "../components/styled/md-block";
 import { siteInfo } from "../site.config";
 import { bottomFadeIn } from "../styles/animations";
-import { MarkdownStyle } from "../styles/components/markdown-style";
-import { textStroke } from "../styles/styles";
+import { textStroke } from "../styles/css";
 
 export default function About() {
   return (
