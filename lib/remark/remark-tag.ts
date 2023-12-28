@@ -6,25 +6,25 @@ export function remarkTag() {
   return function (tree: Root) {
     visit(tree, function (node, index, parent) {
       // console.log("%%%%%%%%%%%",node.type)
-      if(node.type === "paragraph"){
+      if (node.type === "paragraph") {
 
-        const newChildren:any[] = []
+        const newChildren: any[] = []
         node.children.forEach(child => {
-          if(child.type === "text"){ 
+          if (child.type === "text") {
 
             const text = child.value
             const tags = extractTags(text)
-            
 
-            const delimiters = tags.map(t =>"#"+t+" ")
 
-            if (tags.length>0) {
-              const parts = flatsplit(text,delimiters)
+            const delimiters = tags.map(t => "#" + t + " ")
 
-              const endingTag = "#" + tags[tags.length-1]
-              const endingText = parts[parts.length-1].text
-              if(endingText.endsWith(endingTag)){
-                parts[parts.length-1] = {
+            if (tags.length > 0) {
+              const parts = flatsplit(text, delimiters)
+
+              const endingTag = "#" + tags[tags.length - 1]
+              const endingText = parts[parts.length - 1].text
+              if (endingText.endsWith(endingTag)) {
+                parts[parts.length - 1] = {
                   text: endingText.slice(0, endingText.length - endingTag.length),
                   isDelimiter: false
                 }
@@ -36,7 +36,7 @@ export function remarkTag() {
 
               parts.forEach(part => {
                 // reconstuct hast
-                if(part.isDelimiter){
+                if (part.isDelimiter) {
 
                   const newNode = {
                     type: 'mdxJsxFlowElement',
@@ -44,20 +44,20 @@ export function remarkTag() {
                     attributes: [{
                       type: 'mdxJsxAttribute',
                       name: 'text',
-                      value: part.text.slice(1) // ignore # mark
+                      value: part.text.slice(1) // ignore "#"
                     }]
                   };
 
                   newChildren.push(newNode); // push tag node
 
-                }else {
-                  newChildren.push({type: "text", value: part.text}) // push text node
+                } else {
+                  newChildren.push({ type: "text", value: part.text }) // push text node
                 }
               })
-            }else{
+            } else {
               newChildren.push(child) // not tag detected
             }
-          }else{
+          } else {
             newChildren.push(child) // push none-text
           }
         })
@@ -70,16 +70,16 @@ export function remarkTag() {
 }
 
 // todo: test cases
-function flatsplit(input: string, delimiters: string[]):Array<{text: string, isDelimiter: boolean}> {
+function flatsplit(input: string, delimiters: string[]): Array<{ text: string, isDelimiter: boolean }> {
   // boundary
-  if(delimiters.includes(input)){
-    return [{text: input, isDelimiter: true}]
+  if (delimiters.includes(input)) {
+    return [{ text: input, isDelimiter: true }]
   }
 
-  let res:{
+  let res: {
     text: string,
     isDelimiter: boolean
-  }[] = [{ text : input, isDelimiter: false}]
+  }[] = [{ text: input, isDelimiter: false }]
 
   // split by delimiters
   for (const d of delimiters) {
@@ -87,12 +87,12 @@ function flatsplit(input: string, delimiters: string[]):Array<{text: string, isD
     let temp: {
       text: string,
       isDelimiter: boolean
-    }[]  = []
+    }[] = []
 
 
     for (const part of res) {
 
-      if(part.isDelimiter){
+      if (part.isDelimiter) {
         temp.push(part)
         continue
       }
@@ -105,9 +105,9 @@ function flatsplit(input: string, delimiters: string[]):Array<{text: string, isD
         });
 
         // ending boundary
-        if(i === splitParts.length-1 && splitParts[i] !== ""){
+        if (i === splitParts.length - 1 && splitParts[i] !== "") {
           break
-        }else{
+        } else {
           temp.push({
             text: d,
             isDelimiter: true
@@ -120,18 +120,48 @@ function flatsplit(input: string, delimiters: string[]):Array<{text: string, isD
   return res.filter(r => r.text !== "")
 }
 
+// todo: test case
+// markdown 无换行符
+// return "[#tag1,#tag2]"
 function extractTags(markdown: string) {
-  const tagRegex = /#([^\s#]+)(?![^\[]*\])/g;
+  const title = ["#", "##", "###", "####", "#####", "######"]
+  const tags: string[] = [];
+  let tmp = ""
+  let ignore = false
 
-  const tags = [];
-  let match;
-  while ((match = tagRegex.exec(markdown)) !== null) {
-    const tag = match[1];
-    // 检查标签的长度是否不超过14
-    if (tag.length <= 14) {
-      tags.push(tag);
+  for (let i = 0; i < markdown.length; i++) {
+    const v = markdown[i];
+
+    // ignore in code
+    if (v === "`") {
+      ignore = !ignore
+      if (ignore) tmp = ``
+    }
+
+    if (!ignore) {
+      if (tmp.length > 0) { // when in tag
+        if (v === " ") {
+          // commit tag start with "#" but ignore single "#" and title "##"
+          if (!title.includes(tmp)) {
+            tags.push(tmp)
+          }
+          tmp = ""
+        } else {
+          tmp += v
+        }
+      } else if (v === "#" && (i === 0 || markdown[i - 1] === " " || markdown[i - 1] === "\n")) { // detect tag start
+        tmp += v
+      }
     }
   }
 
+  if (tmp.length > 0) tags.push(tmp)
+
   return tags;
 }
+//const s = [
+// "#tag1 asdlfasf",
+// "#tag1 a9sdf #tag2 #tag3 asd#nottag #tag4",
+// "a9sdf #tag1 #tag2 #tag3# `asdf#nottag`haha#tag"
+// ]
+//console.log(s.map( v => extractTags(v)))
