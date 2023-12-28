@@ -17,7 +17,8 @@ export default function NavDropper({ items, current, setCurrent }: Props) {
       onClick={() => { setisOpen(!isOpen) }}>
       <MainItem>
         <span className={isOpen ? "is-open" : ''}>
-          {items[current][0]}{' '}{items[current][1]}
+          {items[current][0]}{' '}
+          <Number>{items[current][1]}</Number>
         </span>
         <ChevronDown className={isOpen ? "is-open" : ''} strokeWidth="1px" />
       </MainItem>
@@ -35,7 +36,7 @@ export default function NavDropper({ items, current, setCurrent }: Props) {
 const NavLayout = styled.nav`
   text-align: right;
   position: relative;
-  padding: 2rem 0;
+  padding: 1rem 0;
 `
 const SubItemContainer = styled.div`
   position: absolute;
@@ -67,21 +68,22 @@ const NavItem = styled.div`
     color: ${props => props.theme.colors.accent};
   }
 `
-
 const MainItem = styled.div`
   cursor: pointer;
+  font-weight: bold;
+  color: ${p => p.theme.colors.textSecondary};
 
-  span {
+  & > span {
     position: relative;
   }
 
-  span::before {
+  & > span::before {
     ${hoverRound}
     height: 2px;
     transition: height .3s;
   }
 
-  span.is-open::before {
+  & > span.is-open::before {
     height: 0.4em;
   }
 
@@ -96,4 +98,8 @@ const MainItem = styled.div`
     transform: rotateX(180deg);
   }
 
+`
+const Number = styled.span`
+  font-size: 0.875rem;
+  color: ${p => p.theme.colors.textGray2};
 `

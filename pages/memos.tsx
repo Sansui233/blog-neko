@@ -307,7 +307,7 @@ const SiderCol = styled.div<{
   position: sticky;
 
   max-width: 15rem;
-  padding-top: 100px;
+  padding-top: 94px;
   padding-bottom: 64px;
   margin: 0 0.5rem;
   height: 100vh;

@@ -21,12 +21,14 @@ export default function CardCommon({ title, Icon, children, ...otherprops }: Pro
 }
 
 const CardContainer = styled.section`
-  margin-top: 1rem;
+  margin-top: 1.5rem;
   padding: 0.5rem 1rem;
   color:${p => p.theme.colors.textSecondary};
 `
 
 const CardTitle = styled.div`
   font-weight: bold;
-  color: ${p => p.theme.colors.textPrimary};
+  text-transform: uppercase;
+  font-size: 0.875rem;
+  color: ${p => p.theme.colors.textGray2};
 `

@@ -25,7 +25,7 @@ const Layout = styled.section`
   padding-left: 1rem;
   display: flex;
   flex-direction: column;
-  color:${p => p.theme.colors.textPrimary};
+  color:${p => p.theme.colors.textSecondary};
 
   .item {
     padding: 0.25rem 0;

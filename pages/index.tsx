@@ -7,7 +7,7 @@ import LayoutContainer, { OneColLayout } from '../components/layout'
 import NavDropper from '../components/post/nav-dropper'
 import { POST_DIR, buildIndex, posts_db } from '../lib/data/server'
 import { siteInfo } from '../site.config'
-import { hoverBoxShadow } from '../styles/styles'
+import { hoverBoxShadow } from '../styles/css'
 
 type PostType = {
   id: string,
@@ -154,13 +154,12 @@ const Card = styled(Link)`
 
   .meta {
     margin: 0.25rem 0;
-    font-size: 0.9rem;
+    font-size: 0.875rem;
     color: ${p => p.theme.colors.textGray2};
   }
 
   .date {
     font-weight: bold;
-    color: ${p => p.theme.colors.textGray2};
   }
 
   .category {

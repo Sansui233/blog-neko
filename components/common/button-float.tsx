@@ -25,7 +25,8 @@ const ButtonContainer = styled.button`
   font-size: 1.5rem;
   border-radius: 50%;
   border: 0;
-  background: ${p => p.theme.colors.floatBg};
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   color: ${p => p.theme.colors.textGray2};
   z-index: 10;
   cursor: pointer;

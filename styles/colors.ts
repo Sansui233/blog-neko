@@ -7,13 +7,13 @@ export const lightTheme: DefaultTheme = {
   },
   colors: {
     textPrimary: '#262626',
-    textSecondary: '#323232',
+    textSecondary: '#434343',
     textGray: '#777',
     textGray2: '#989898',
     accent: '#ae8d0b',
     accentHover: '#e0c56e',
     bg: 'white',
-    bg2: '#f8f8f8',
+    bg2: '#f4f5f7',
     bgFilter: "multiply",
     bgInverse: "#292929",
     bgMask: "#f4f5f7f4",
@@ -35,6 +35,8 @@ export const lightTheme: DefaultTheme = {
     background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 14%, rgba(255,255,255,1) 23%, rgba(255,255,255,1) 100%);
     `,
     uiLineGray: "#a2a2a280",
+    uiLineGray2: "#a2a2a233",
+
   }
 }
 export const darkTheme: DefaultTheme = {
@@ -73,6 +75,7 @@ export const darkTheme: DefaultTheme = {
     `,
     filterDarker: css`filter: brightness(0.8);`,
     uiLineGray: "#a2a2a280",
+    uiLineGray2: "#a2a2a233",
   }
 }
 

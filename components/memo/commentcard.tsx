@@ -61,7 +61,7 @@ const Container = styled.div`
 `
 const ModelButton = styled.span`
   display: inline-block;
-  margin-top: 2rem;
+  margin-top: 2.5rem;
   padding-right: 0.5rem;
   font-weight: bold;
   color:${p => p.theme.colors.textPrimary};

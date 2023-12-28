@@ -111,7 +111,7 @@ export function ImageThumbs({ imgsmd }: {
               <img loading="lazy" src={img.ok === "loaded" ? img.src : ""} alt={img.ok} />
               <ClickMask onClick={e => {
                 e.stopPropagation()
-                console.debug("% click on", i)
+                // console.debug("% click on", i)
                 ctx.setCurrentIndex(i)
                 ctx.setImagesData(thumbData)
                 ctx.setisModel(true)

@@ -233,7 +233,6 @@ function extractTagsFromMarkdown(markdown: string) {
 
     if (!ignore) {
       if (tmp.length > 0) { // when in tag
-        console.debug('tag:', tmp)
         if (v === " ") {
           if (!title.includes(tmp)) {
             tags.push(tmp.slice(1))

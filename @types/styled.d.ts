@@ -28,6 +28,7 @@ declare module 'styled-components' {
       navBgGradient: FlattenInterpolation,
       filterDarker?: FlattenSimpleInterpolation,
       uiLineGray: string,
+      uiLineGray2: string,
     },
   }
 }
