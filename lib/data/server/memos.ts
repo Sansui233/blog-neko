@@ -233,7 +233,7 @@ function extractTagsFromMarkdown(markdown: string) {
 
     if (!ignore) {
       if (tmp.length > 0) { // when in tag
-        if (v === " ") {
+        if (v === " " || v === "\n" || v === "\r\n") {
           if (!title.includes(tmp)) {
             tags.push(tmp.slice(1))
           }

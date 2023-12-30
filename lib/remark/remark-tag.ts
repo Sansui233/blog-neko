@@ -140,7 +140,7 @@ function extractTags(markdown: string) {
 
     if (!ignore) {
       if (tmp.length > 0) { // when in tag
-        if (v === " ") {
+        if (v === " " || v === "\n" || v === "\r\n") {
           // commit tag start with "#" but ignore single "#" and title "##"
           if (!title.includes(tmp)) {
             tags.push(tmp)
