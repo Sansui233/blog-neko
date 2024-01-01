@@ -14,9 +14,7 @@ export function remarkTag() {
 
             const text = child.value
             const tags = extractTags(text)
-
-
-            const delimiters = tags.map(t => "#" + t + " ")
+            const delimiters = tags
 
             if (tags.length > 0) {
               const parts = flatsplit(text, delimiters)
@@ -97,6 +95,10 @@ function flatsplit(input: string, delimiters: string[]): Array<{ text: string, i
         continue
       }
 
+      if (part.text === "") {
+        continue
+      }
+
       const splitParts = part.text.split(d)
       for (let i = 0; i < splitParts.length; i++) {
         temp.push({
@@ -105,7 +107,7 @@ function flatsplit(input: string, delimiters: string[]): Array<{ text: string, i
         });
 
         // ending boundary
-        if (i === splitParts.length - 1 && splitParts[i] !== "") {
+        if (i === splitParts.length - 1) {
           break
         } else {
           temp.push({
@@ -162,6 +164,6 @@ function extractTags(markdown: string) {
 //const s = [
 // "#tag1 asdlfasf",
 // "#tag1 a9sdf #tag2 #tag3 asd#nottag #tag4",
-// "a9sdf #tag1 #tag2 #tag3# `asdf#nottag`haha#tag"
+// "a9sdf #tag1 #tag2 #tag3# `asdf#nottag`haha#tag #tag4"
 // ]
 //console.log(s.map( v => extractTags(v)))

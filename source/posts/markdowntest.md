@@ -10,6 +10,8 @@ tags:
 
 此文件留做 Blog 开发的新 feature 测试文件。
 
+---
+
 ## Draft 属性
 
 目前，在 yaml header 中，draft 属性设置为 false ，意思此 posts 将作为草稿，后续可能修订，不在 rss 中发布。
