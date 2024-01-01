@@ -1,0 +1,17 @@
+{
+  "ui": {
+    "posts": "記事",
+    "memos": "メモ",
+    "about": "紹介",
+    "photos": "写真",
+    "allposts": "すべての記事",
+    "untagged": "タグなしの記事",
+    "dateYMD": "{{year}} 年 {{month}} 月 {{day}} 日",
+    "dateYMDHM": "{{year}} 年 {{month}} 月 {{day}} 日 {{hour}} 時 {{minute}} 分",
+    "tags": "タグ",
+    "friends": "友達",
+    "latestcomments": "最新コメント",
+    "leaveacomment": "コメントしよう",
+    "search": "検索"
+  }
+}

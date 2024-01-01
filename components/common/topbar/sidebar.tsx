@@ -1,8 +1,8 @@
 import { Github, Mail, Rss } from "lucide-react"
 import Link from "next/link"
-import { useContext, useMemo } from "react"
-import styled, { ThemeContext } from "styled-components"
-import { ThemeMsg, getAppTheme, setAppTheme } from "../../../lib/app-states"
+import { useMemo } from "react"
+import styled from "styled-components"
+import useAppState, { ThemeMsg } from "../../../lib/app-states"
 import { siteInfo } from "../../../site.config"
 import MenuIcon from "./menuicon"
 
@@ -12,23 +12,22 @@ type Props = {
 }
 
 export default function Sidebar({ isShow, toggle }: Props) {
-  const themeContext = useContext(ThemeContext)
+  const appState = useAppState()
 
   function handleThemeChange() {
-    const t = getAppTheme()
+    const t = appState.theme
     const targetTheme = (t === 'system' ?
       'dark' : t === 'dark' ?
         'light' : 'system') as ThemeMsg;
-
-    setAppTheme(targetTheme)
+    appState.setTheme(targetTheme)
   }
 
   const themeText = useMemo(() => {
-    const t = themeContext!.mode
+    const t = appState.theme
     return t === 'system' ? '系统外观' :
       t === 'dark' ? '夜间模式'
         : '日间模式'
-  }, [themeContext])
+  }, [appState])
 
   return (
     <Container style={isShow ? undefined : { transform: "translateY(-100%)" }}>

@@ -3,6 +3,7 @@ import { GetStaticProps } from "next";
 import dynamic from "next/dynamic";
 import Head from "next/head";
 import { useCallback, useContext, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import styled, { ThemeContext } from "styled-components";
 import { CommonHead } from ".";
 import ButtonFloat from "../components/common/button-float";
@@ -49,6 +50,7 @@ export default function Memos({ source, info, memotags, client }: Props) {
   const [postsData, setpostsData] = useState(source)
   const [postsDataBackup, setpostsDataBackup] = useState(source)
   const [isMobileSider, setIsMobileSider] = useState(false)
+  const [t, i18n] = useTranslation()
 
   const isModel = useImageBroswerStore(state => state.isModel)
 
@@ -195,7 +197,7 @@ export default function Memos({ source, info, memotags, client }: Props) {
                 小小の菜单<X size={"1.25em"} style={{ marginLeft: ".5rem" }} />
               </div>
               <SearchBox>
-                <input type="text" placeholder="Search" ref={inputRef}
+                <input type="text" placeholder={t("search")} ref={inputRef}
                   onFocus={
                     () => { initSearch() }
                   } />
@@ -206,7 +208,7 @@ export default function Memos({ source, info, memotags, client }: Props) {
               <NavCard info={info} />
               <CardCommon
                 Icon={TagIcon}
-                title={"Tags"}
+                title={t("tags")}
               >
                 {memotags.map(t => {
                   return <span className="hover-gold" style={{ display: "inline-block", paddingRight: "0.5em" }}
@@ -220,7 +222,7 @@ export default function Memos({ source, info, memotags, client }: Props) {
               </CardCommon>
               {siteInfo.friends
                 && <CardCommon
-                  title="Friends"
+                  title={t("friends")}
                   Icon={Users}
                 >
                   {siteInfo.friends.map((f, i) => <div key={i}><LinkWithLine href={f.link} style={{ fontWeight: "normal" }}>{f.name}</LinkWithLine></div>)}

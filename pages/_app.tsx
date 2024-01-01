@@ -1,20 +1,29 @@
 import type { AppProps } from 'next/app'
 import { useRouter } from 'next/router'
 import Script from 'next/script'
-import { useEffect, useRef, useState } from 'react'
-import { ThemeProvider } from 'styled-components'
-import { THEME_CHANGED_EVT, ThemeCallBack, ThemeMsg, emitter, getAppTheme } from '../lib/app-states'
+import { useEffect, useState } from 'react'
+import { DefaultTheme, ThemeProvider } from 'styled-components'
+import useAppState from '../lib/app-states'
 import * as gtag from '../lib/gtag'
+import detectBrowserLang from '../locales/detect'
+import '../locales/i18n'
 import { siteInfo } from '../site.config'
-import { darkTheme, genSystemTheme, lightTheme } from '../styles/colors'
+import { genSystemTheme, lightTheme, themeMap } from '../styles/colors'
 import { GlobalStyle } from '../styles/global'
 import '../styles/global.css'
 
 function MyApp({ Component, pageProps }: AppProps) {
 
-  const [theme, setTheme] = useState(lightTheme);
-  const themeRef = useRef(theme) // 防止 theme 更新而反复 addListener
+  const appState = useAppState()
+  const [themeObj, setThemeObj] = useState<DefaultTheme>({ ...lightTheme, mode: "system" })
   const router = useRouter()
+
+  // lang
+  useEffect(() => {
+    const lang = detectBrowserLang().slice(0, 2)
+    console.debug("app set lang: ", lang)
+    appState.setLanguage(lang) // 由于大部分内容 SSR，英文 ui 会有闪屏……
+  }, [appState])
 
   // Google Analystics
   useEffect(() => {
@@ -32,37 +41,39 @@ function MyApp({ Component, pageProps }: AppProps) {
     }
   }, [router.events])
 
-  useEffect(() => { themeRef.current = theme }, [theme])
-
-  // Set Global Theme Context
+  // set global theme context after theme is manually changed
   useEffect(() => {
-    setTheme(getAppTheme() === 'dark' ?
-      darkTheme : getAppTheme() === 'light' ?
-        lightTheme : genSystemTheme())
-    // subscribe changes
-    const themeCallback: ThemeCallBack = (themeText: ThemeMsg) => {
-      setTheme(themeText === 'dark' ?
-        darkTheme : themeText === 'light' ?
-          lightTheme : genSystemTheme())
+    if (themeObj.mode !== appState.theme) {
+      console.debug("app set theme: ", appState.theme)
+      setThemeObj(themeMap(appState.theme))
     }
-    emitter.on(THEME_CHANGED_EVT, themeCallback);
+  }, [appState, themeObj.mode])
 
-    const systemThemeCallBack = () => {
-      if (themeRef.current.mode === 'system') {
-        setTheme(genSystemTheme())
+  // set global theme context after cookie available
+  useEffect(() => {
+    const cookieTheme = appState.getCookieTheme()
+    console.debug("set cookieTheme ", cookieTheme)
+    setThemeObj(themeMap(cookieTheme))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // subscribe theme change from OS
+  useEffect(() => {
+    const themeChangeHandler = () => {
+      if (appState.theme === 'system') {
+        setThemeObj(genSystemTheme())
       }
     }
-    window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', systemThemeCallBack)
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', themeChangeHandler)
 
     return () => {
-      emitter.removeListener(THEME_CHANGED_EVT, themeCallback)
-      window.matchMedia("(prefers-color-scheme: dark)").removeEventListener('change', systemThemeCallBack)
+      window.matchMedia("(prefers-color-scheme: dark)").removeEventListener('change', themeChangeHandler)
     }
-  }, [themeRef])
+  }, [appState])
 
   return <>
     {/* Global Site Tag (gtag.js) - Google Analytics */}
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={themeObj}>
       <GlobalStyle />
       <Component {...pageProps} />
     </ThemeProvider>

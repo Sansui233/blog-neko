@@ -1,0 +1,17 @@
+{
+  "ui": {
+    "posts": "文章",
+    "memos": "说说",
+    "about": "关于",
+    "photos": "图片",
+    "allposts": "所有文章",
+    "untagged": "无标签文章",
+    "dateYMD": "{{year}} 年 {{month}} 月 {{day}} 日",
+    "dateYMDHM": "{{year}} 年 {{month}} 月 {{day}} 日 {{hour}} 时 {{minute}} 分",
+    "tags": "标签",
+    "friends": "朋友",
+    "latestcomments": "最近评论",
+    "leaveacomment": "给我留言",
+    "search": "搜索"
+  }
+}

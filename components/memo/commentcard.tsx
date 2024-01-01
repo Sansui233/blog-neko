@@ -1,5 +1,6 @@
 import { WalineComment } from '@waline/client'
-import { BookUser, MessageSquarePlusIcon } from 'lucide-react'
+import i18next from 'i18next'
+import { MessageSquare, MessageSquarePlusIcon } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import { useContext, useEffect, useState } from 'react'
 import styled, { ThemeContext } from 'styled-components'
@@ -35,7 +36,7 @@ export default function CommentCard() {
       </Model>
       }
 
-      <CardCommon title='Comments' Icon={BookUser}>
+      <CardCommon title={i18next.t("latestcomments")} Icon={MessageSquare}>
         <Container>
           {comments.map(item => <li key={item.objectId}>{item.comment.replace(/<[^>]*>/g, '')}</li>)}
         </Container>

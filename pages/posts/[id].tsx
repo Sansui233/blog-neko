@@ -17,6 +17,7 @@ import { useMdxPost } from "../../components/mdx"
 import { MarkdownStyle } from "../../components/styled/md-block"
 import { PostMeta } from '../../lib/data/posts.common'
 import { POST_DIR, posts_db } from "../../lib/data/server"
+import { dateI18n, parseDate } from "../../lib/date"
 import { grayMatter2PostMeta } from "../../lib/markdown/frontmatter"
 import { compileMdxPost } from "../../lib/markdown/mdx"
 import { throttle } from "../../lib/throttle"
@@ -142,14 +143,14 @@ export default function Post({ meta, mdxcode, nextPost, prevPost, excerpt, headi
     </Head>
     <LayoutContainer>
       <PostLayout>
-        <Date>{meta.date}</Date>
+        <Date>{dateI18n(parseDate(meta.date))}</Date>
         <PostTitle>{meta.title}</PostTitle>
         <MetaStyle>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <div className="category">
               <span>收录于</span>
               <StyledLink href={`/categories/${meta.categories}`} passHref={true}>
-                <Folder size={"1.1em"} style={{ margin: "0 3px", paddingBottom: "0.1em" }} />
+                <Folder size={"1.1em"} style={{ marginLeft: "0.5em", marginRight: "0.15em", paddingBottom: "0.1em" }} />
                 {meta.categories}
               </StyledLink>
             </div>
@@ -372,19 +373,18 @@ margin-bottom: 0;
 `
 
 const Date = styled.div`
-  color:${props => props.theme.colors.textGray3};
+  color:${props => props.theme.colors.textGray2};
   font-weight: bold;
   margin-bottom: 1rem;
-
+  font-size: 0.875rem;
 `
 
 const MetaStyle = styled.div`
   margin-top: 1rem;
   padding-bottom: 1.5rem;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
   font-size: 0.875rem;
   font-weight: bold;
-  color:${props => props.theme.colors.textGray};
 
   border-bottom: 2px solid ${props => props.theme.colors.uiLineGray2};
 
@@ -410,6 +410,7 @@ const StyledLink = styled(Link)`
 
 const Tag = styled(Link)`
   transition: background .3s, color .3s;
+  background: ${p => p.theme.colors.tagBg};
   color: ${p => p.theme.colors.textSecondary};
   display: inline-block;
   padding: 0.3em 0.5em;

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { MemoInfo } from "../../lib/data/memos.common";
 
@@ -6,14 +7,15 @@ type Props = {
 }
 
 export default function NavCard({ info }: Props) {
+  const [t, i18n] = useTranslation()
   return (
     <Layout>
       <div className="item active">
-        <span className="title">Memos</span>
+        <span className="title">{t("memos")}</span>
         <span className="count">{info.memos}</span>
       </div>
       <div className="item">
-        <span className="title">Photos</span>
+        <span className="title">{t("photos")}</span>
         <span className="count">{info.imgs}</span>
       </div>
     </Layout>
@@ -44,6 +46,8 @@ const Layout = styled.section`
 
   .count {
     font-size: 0.875rem;
-    color: ${p => p.theme.colors.textGray};
+    font-weight: bold;
+    color: ${p => p.theme.colors.textGray2};
+    vertical-align: bottom;
   }
 `

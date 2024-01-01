@@ -1,11 +1,14 @@
+import { Folder } from 'lucide-react'
 import type { GetStaticProps, NextPage } from 'next'
 import Head from 'next/head'
 import Link from 'next/link'
 import React, { useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 import LayoutContainer, { OneColLayout } from '../components/layout'
 import NavDropper from '../components/post/nav-dropper'
 import { POST_DIR, buildIndex, posts_db } from '../lib/data/server'
+import { dateI18n, parseDate } from '../lib/date'
 import { siteInfo } from '../site.config'
 import { hoverBoxShadow } from '../styles/css'
 
@@ -45,6 +48,16 @@ const Home: NextPage<Props> = ({ posts, categories }: Props) => {
     }
   }, [currCategory, posts, categories])
 
+
+  const [t, i18n] = useTranslation()
+  const translatedCat = useMemo(() => categories.map(c => {
+    if (c[0] === "All Posts") {
+      return [t("allposts"), c[1]] as [string, number]
+    } else {
+      return c
+    }
+  }), [categories, t])
+
   return (
     <div>
       <Head>
@@ -53,7 +66,7 @@ const Home: NextPage<Props> = ({ posts, categories }: Props) => {
       </Head>
       <LayoutContainer>
         <OneColLayout>
-          <NavDropper items={categories} current={currCategory} setCurrent={setCurrCategory} />
+          <NavDropper items={translatedCat} current={currCategory} setCurrent={setCurrCategory} />
           <PostGrids>
             {filteredPosts.map((post, i) => {
               return (<ArticleItem key={post.id} p={post} i={i} />)
@@ -76,7 +89,8 @@ function ArticleItem({ p, i }: {
     <Card href={'/posts/' + p.id} passHref={true}>
       <div className='card-content'>
         <div className='meta'>
-          <span className='date'>{p.date.slice(0, 11)}</span>
+          <span className='date'>{dateI18n(parseDate(p.date))}</span>
+          <Folder size="1em" style={{ marginLeft: "0.5em", marginRight: "0.25em" }} />
           <span className="category">
             {p.categories}
           </span>
@@ -155,7 +169,7 @@ const Card = styled(Link)`
   .meta {
     margin: 0.25rem 0;
     font-size: 0.875rem;
-    color: ${p => p.theme.colors.textGray3};
+    color: ${p => p.theme.colors.textGray2};
     font-weight: bold;
   }
 
@@ -164,6 +178,5 @@ const Card = styled(Link)`
 
   .category {
     display: inline-block;
-    margin-left: 0.25em;
   }
 `

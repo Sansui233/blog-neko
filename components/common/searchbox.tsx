@@ -123,7 +123,7 @@ function SearchBox({ outSetSearch: outShow, outIsShow: outstate, iconEle, type =
   return (
     <Container ref={containerRef} style={isShow ? {} : { display: "none" }}>
       <StickyContainer style={{ padding: "1rem 1rem 0 1rem" }}>
-        <Input type="text" placeholder="搜索你感兴趣的内容，以空格分词"
+        <SearchInput type="text" placeholder="搜索你感兴趣的内容，以空格分词"
           ref={inputRef}
           onInput={handleInput} />
       </StickyContainer>
@@ -157,7 +157,7 @@ const StickyContainer = styled.div`
   background: ${p => p.theme.colors.bg};
 `
 
-const Input = styled.input`
+const SearchInput = styled.input`
   border: none;
   /*border-bottom: 1px solid ${p => p.theme.colors.uiLineGray};*/
   border-radius: 0;

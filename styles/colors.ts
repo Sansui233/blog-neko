@@ -1,4 +1,5 @@
 import { css, DefaultTheme } from "styled-components"
+import { ThemeMsg } from "../lib/app-states"
 
 export const lightTheme: DefaultTheme = {
   mode: 'light',
@@ -82,9 +83,25 @@ export const darkTheme: DefaultTheme = {
 }
 
 export const genSystemTheme = ((): DefaultTheme => {
-  const theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? darkTheme : lightTheme
-  return {
-    ...theme,
-    mode: 'system'
+  if (typeof window === "undefined") {
+    console.debug("serverside window not available, set to light");
+    return lightTheme // fallback
+  } else {
+    const theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? darkTheme : lightTheme
+    return {
+      ...theme,
+      mode: 'system'
+    }
   }
 })
+
+export function themeMap(themeMsg: ThemeMsg) {
+  switch (themeMsg) {
+    case "light":
+      return lightTheme
+    case "dark":
+      return darkTheme
+    default:
+      return genSystemTheme()
+  }
+}

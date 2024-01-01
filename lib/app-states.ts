@@ -1,39 +1,33 @@
-import { EventEmitter } from 'events';
-
-/* Manage App State with event emitter and LocalStorage */
-
-export const emitter = new EventEmitter();
+import { create } from 'zustand';
+import i18next from '../locales/i18n';
 
 // Theme
-export const THEME_CHANGED_EVT = 'theme changed'
 export type ThemeMsg = 'light' | 'dark' | 'system'
-export type ThemeCallBack = (theme: ThemeMsg) => void
 
-/**
- * 修改 localStorage 同时 emit ThemeEvent
- * @param theme 
- * @returns 
- */
-export function setAppTheme(theme: ThemeMsg): boolean {
-  if (emitter.emit(THEME_CHANGED_EVT, theme)) {
+interface TAppState {
+  theme: ThemeMsg,
+  getCookieTheme: () => ThemeMsg,
+  setTheme: (theme: ThemeMsg) => void,
+  language: string,
+  setLanguage: (lang: string) => void,
+}
+
+const useAppState = create<TAppState>()((set) => ({
+  theme: "system",
+  getCookieTheme: () => {
+    const themeLS = window.localStorage.getItem('theme')
+    return themeLS === null ? 'system' : themeLS as ThemeMsg
+  },
+  setTheme: (theme) => {
     window.localStorage.setItem('theme', theme)
-    return true
-  } else {
-    return false
-  }
-}
 
+    set(() => ({ theme }))
+  },
+  language: "zh",
+  setLanguage: (lang) => {
+    i18next.changeLanguage(lang)
+  },
 
-/**
- * Get theme field from local storage
- * @returns 'dark' 'light' or 'system'
- */
-export function getAppTheme(): ThemeMsg {
-  const themeLS = window.localStorage.getItem('theme')
-  if (themeLS === null) {
-    // 无Cookie默认为跟随系统，在_app.tsx中首次加载也是跟随系统
-    return 'system'
-  }else {
-    return themeLS as ThemeMsg;
-  }
-}
+}))
+
+export default useAppState;

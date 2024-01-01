@@ -1,0 +1,17 @@
+{
+  "ui": {
+    "posts": "Posts",
+    "memos": "Memos",
+    "about": "About",
+    "photos": "Photos",
+    "allposts": "All Posts",
+    "untagged": "Untagged",
+    "dateYMD": "{{year}}-{{month}}-{{day}}",
+    "dateYMDHM": "{{year}}-{{month}}-{{day}} {{hour}}:{{minute}}",
+    "tags": "Tags",
+    "friends": "Friends",
+    "latestcomments": "Comments",
+    "leaveacomment": "Leave a Comment",
+    "search": "Search"
+  }
+}

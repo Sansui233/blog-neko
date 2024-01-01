@@ -5,7 +5,7 @@ import { Head, Html, Main, NextScript } from 'next/document'
 
 function Document<P = {}>(props: DocumentProps & P) {
   return (
-    <Html lang="zh-Hans">
+    <Html>
       <Head />
       <body>
         <Main />

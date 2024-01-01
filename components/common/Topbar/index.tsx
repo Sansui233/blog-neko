@@ -3,6 +3,7 @@ import dynamic from "next/dynamic"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import React, { useEffect, useRef, useState } from "react"
+import { useTranslation } from "react-i18next"
 import styled from "styled-components"
 import Neko from "../../../assets/neko.svg"
 import { throttle } from "../../../lib/throttle"
@@ -26,6 +27,7 @@ export default function Topbar({ placeHolder = true, scrollElem, hideSearch, ...
   const [isSearch, setisSearch] = useState(false)
   const router = useRouter()
   const searchIcon = useRef<HTMLDivElement>(null)
+  const [t, i18n] = useTranslation()
 
   /**
    * Hide on scroll
@@ -101,9 +103,9 @@ export default function Topbar({ placeHolder = true, scrollElem, hideSearch, ...
           </Link>
         </Avatar>
         <Nav>
-          <ol className={router.pathname === "/" ? 'current' : ''}><LinkWithLine href="/">Posts</LinkWithLine></ol>
-          <ol className={router.pathname === "/memos" ? 'current' : ''}><LinkWithLine href="/memos">Memos</LinkWithLine></ol>
-          <ol className={router.pathname === "/about" ? 'current' : ''}><LinkWithLine href="/about">About</LinkWithLine></ol>
+          <ol className={router.pathname === "/" ? 'current' : ''}><LinkWithLine href="/">{t('posts')}</LinkWithLine></ol>
+          <ol className={router.pathname === "/memos" ? 'current' : ''}><LinkWithLine href="/memos">{t('memos')}</LinkWithLine></ol>
+          <ol className={router.pathname === "/about" ? 'current' : ''}><LinkWithLine href="/about">{t('about')}</LinkWithLine></ol>
         </Nav>
         <More >
           <SearchIcon ref={searchIcon} onClick={(e) => { hideSearch ? null : clickSearch(e) }} $isSearch={isSearch} $hideSearch={hideSearch}>
@@ -223,6 +225,7 @@ const Nav = styled.nav`
   ol {
     padding: 0 .5em;
     padding-top: 2px;
+    font-size: 1.125rem;
   }
 
   ol.current a{
