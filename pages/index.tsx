@@ -155,15 +155,14 @@ const Card = styled(Link)`
   .meta {
     margin: 0.25rem 0;
     font-size: 0.875rem;
-    color: ${p => p.theme.colors.textGray2};
+    color: ${p => p.theme.colors.textGray3};
+    font-weight: bold;
   }
 
   .date {
-    font-weight: bold;
   }
 
   .category {
-    font-weight: bold;
     display: inline-block;
     margin-left: 0.25em;
   }

@@ -20,7 +20,7 @@ export default function NavDropper({ items, current, setCurrent }: Props) {
           {items[current][0]}{' '}
           <Number>{items[current][1]}</Number>
         </span>
-        <ChevronDown className={isOpen ? "is-open" : ''} strokeWidth="1px" />
+        <ChevronDown className={isOpen ? "is-open" : ''} strokeWidth="2px" size={"1em"} />
       </MainItem>
       <SubItemContainer className={isOpen ? "is-open" : ''}>
         {items.map((item, i) => (
@@ -44,7 +44,7 @@ const SubItemContainer = styled.div`
   opacity: 0;
   pointer-events: none;
   margin-top: .625rem;
-  margin-right: 4px;
+  margin-right: 1px;
   border-right: 2px solid ${props => props.theme.colors.accentHover};
   padding-left: 2.5rem;
   transform: none;

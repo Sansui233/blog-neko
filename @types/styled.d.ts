@@ -12,6 +12,7 @@ declare module 'styled-components' {
       textSecondary: string,
       textGray: string,
       textGray2: string,
+      textGray3: string,
       accent: string,
       accentHover: string,
       bg: string,

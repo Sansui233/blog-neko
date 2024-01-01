@@ -10,6 +10,7 @@ export const lightTheme: DefaultTheme = {
     textSecondary: '#434343',
     textGray: '#777',
     textGray2: '#989898',
+    textGray3: '#aeaeae',
     accent: '#ae8d0b',
     accentHover: '#e0c56e',
     bg: 'white',
@@ -35,7 +36,7 @@ export const lightTheme: DefaultTheme = {
     background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 14%, rgba(255,255,255,1) 23%, rgba(255,255,255,1) 100%);
     `,
     uiLineGray: "#a2a2a280",
-    uiLineGray2: "#a2a2a233",
+    uiLineGray2: "#a2a2a243",
 
   }
 }
@@ -49,6 +50,7 @@ export const darkTheme: DefaultTheme = {
     textSecondary: '#dfded9',
     textGray: '#aaaaaa',
     textGray2: '#8e8e8e',
+    textGray3: '#6e6e6e',
     accent: '#c4a747',
     accentHover: '#ae8d0b',
     bg: '#242424',

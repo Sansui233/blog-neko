@@ -12,6 +12,10 @@ export const MarkdownStyle = styled.div`
   h6 {
     color: ${p => p.theme.colors.textGray};
   }
+
+  hr {
+    background-color: ${props => props.theme.colors.uiLineGray2};
+  }
   
   img, picture, video, canvas, svg, pre{
     margin: 1.5rem auto;

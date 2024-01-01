@@ -195,11 +195,13 @@ const MemoMeta = styled.div`
       display: flex;
       flex-direction: column;
       justify-content: center;
+      font-weight: bold;
     }
 
     & .date {
       font-size: 0.85rem;
-      color: ${p => p.theme.colors.textGray};
+      font-weight: normal;
+      color: ${p => p.theme.colors.textGray2};
     }
 
     & .word-count {

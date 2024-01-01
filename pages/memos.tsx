@@ -280,7 +280,7 @@ const OneColLayout = styled.div`
 /** Styles **/
 const MemoCol = styled.div`
   width: 100%;
-  padding: 86px 16px 48px 16px;
+  padding: 73px 16px 48px 16px; /* top height + memocard margin */
   align-self: flex-end;
 
   &::-webkit-scrollbar {
@@ -297,7 +297,8 @@ const MemoCol = styled.div`
   }
 
   @media screen and (max-width: 580px) {
-    padding: 86px 0 48px 0;
+    padding-left: 0;
+    padding-right: 0;
   }
 `
 
@@ -307,7 +308,7 @@ const SiderCol = styled.div<{
   position: sticky;
 
   max-width: 15rem;
-  padding-top: 94px;
+  padding-top: 83px; /* top height + memocard margin * 2 */
   padding-bottom: 64px;
   margin: 0 0.5rem;
   height: 100vh;

@@ -142,17 +142,19 @@ export default function Post({ meta, mdxcode, nextPost, prevPost, excerpt, headi
     </Head>
     <LayoutContainer>
       <PostLayout>
+        <Date>{meta.date}</Date>
         <PostTitle>{meta.title}</PostTitle>
         <MetaStyle>
-          <div className="date">{meta.date}</div>
-          <div className="category">
-            {"收录于"}
-            <StyledLink href={`/categories/${meta.categories}`} passHref={true}>
-              <Folder size={"1.1em"} style={{ margin: "0 3px", paddingBottom: "0.1em" }} />
-              {meta.categories}
-            </StyledLink>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div className="category">
+              <span>收录于</span>
+              <StyledLink href={`/categories/${meta.categories}`} passHref={true}>
+                <Folder size={"1.1em"} style={{ margin: "0 3px", paddingBottom: "0.1em" }} />
+                {meta.categories}
+              </StyledLink>
+            </div>
+            {meta.tags.length !== 0 && <div className="tag">{tags}</div>}
           </div>
-          {meta.tags.length !== 0 && <div className="tag">{tags}</div>}
         </MetaStyle>
 
         <MarkdownStyle>
@@ -188,10 +190,10 @@ export default function Post({ meta, mdxcode, nextPost, prevPost, excerpt, headi
           小小の菜单<X size={"1.25em"} style={{ marginLeft: ".5rem" }} />
         </div>
         <Toc>
-          <div style={{ fontWeight: "bold" }}>
+          <div style={{ fontWeight: "bold", marginBottom: "0.5rem" }}>
             目录
           </div>
-          <HeadingContainer>
+          <TocContent>
             {headings.length > 0
               ? headings.map((h, i) => {
                 return <TocAnchor
@@ -203,8 +205,8 @@ export default function Post({ meta, mdxcode, nextPost, prevPost, excerpt, headi
                   <span>{h.title}</span>
                 </TocAnchor>
               })
-              : <span style={{ opacity: "0.6", fontSize: "0.9rem", }}>这是一篇没有目录的文章。</span>}
-          </HeadingContainer>
+              : <span style={{ opacity: "0.6", fontSize: "0.875rem", }}>这是一篇没有目录的文章。</span>}
+          </TocContent>
         </Toc>
       </ColumnRight>
     </LayoutContainer>
@@ -265,7 +267,7 @@ const PostLayout = styled.article`
   margin-top: 72px;
   margin: 0 auto;
   padding: 60px 20px;
-  max-width: 800px;
+  max-width: 680px;
   width: 56%;
 
   .toc-btn {
@@ -278,7 +280,6 @@ const PostLayout = styled.article`
 
   @media screen and (max-width: 1000px){
     width: 85%;
-    max-width: 700px;
     .toc-btn {
       display: unset;
     }
@@ -356,7 +357,7 @@ const ColumnRight = styled.aside<{
 
   @media screen and (max-width: 580px) {
     top: unset;
-    height: unset;
+    height: 60vh;
     width: 100%;
     transition: transform .3s ease;
     transform: ${p => p.$isMobileSider ? `translateY(0)` : `translateY(100%)`};
@@ -364,32 +365,36 @@ const ColumnRight = styled.aside<{
 
 `
 
+
 const PostTitle = styled.h1`
-  text-align: center;
-  max-width: 12em;
-  margin: 0 auto;
+margin-top: 0;
+margin-bottom: 0;
+`
+
+const Date = styled.div`
+  color:${props => props.theme.colors.textGray3};
+  font-weight: bold;
+  margin-bottom: 1rem;
+
 `
 
 const MetaStyle = styled.div`
-  text-align: center;
   margin-top: 1rem;
   padding-bottom: 1.5rem;
-  border-bottom: 2px dotted ${p => p.theme.colors.uiLineGray};
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  font-weight: bold;
+  color:${props => props.theme.colors.textGray};
 
-  .date {
-    font-weight: bold;
-  }
+  border-bottom: 2px solid ${props => props.theme.colors.uiLineGray2};
 
   .category {
-    margin-top: 0.25rem;
-    font-size: 0.9rem;
-    line-height: 1;
+    font-size: 0.875rem;
+    line-height: 1.5rem;
   }
 
   .tag {
-    margin-top: 1rem;
-    font-size: 0.9rem;
+    font-size: 0.875rem;
     line-height: 1;
   }
 `
@@ -406,11 +411,10 @@ const StyledLink = styled(Link)`
 const Tag = styled(Link)`
   transition: background .3s, color .3s;
   color: ${p => p.theme.colors.textSecondary};
-  background: ${p => p.theme.colors.tagBg};
   display: inline-block;
-  padding: 0.5rem 0.625rem;
-  margin: 0 3px;
-  border-radius: 1em;
+  padding: 0.3em 0.5em;
+  margin: 1px;
+  border-radius: 2em;
 
   svg {
     margin-right: 3px;
@@ -421,24 +425,22 @@ const Tag = styled(Link)`
 `
 
 const Toc = styled.nav`
-  background: ${p => p.theme.colors.floatBg};
-  padding: 1.25rem;
   border-radius: 0.75rem;
 `
 
-const HeadingContainer = styled.div`
+const TocContent = styled.div`
   position: relative;
-  max-height: calc(100vh - 120px);
-  overflow-y: auto;
 `
 
 const TocAnchor = styled(Link) <{ $rank: number }>`
   display: block;
   padding-left: ${p => p.$rank}em;
+  color: ${props => props.theme.colors.textGray};
+  font-size: 0.875rem;
 
   &::before {
     content: "•";
-    color: ${p => p.theme.colors.accent};
+    color: ${p => p.theme.colors.accentHover};
     left: ${p => p.$rank - 1}em;
     position: absolute;
   }
@@ -456,14 +458,15 @@ const TocAnchor = styled(Link) <{ $rank: number }>`
     span {
       box-shadow: inset 0 -0.5em 0 ${props => props.theme.colors.accentHover};
     }
+    color: ${props => props.theme.colors.textPrimary};
+    &::before {
+      color: ${p => p.theme.colors.accent};
+    }
   }
+
 
   @media screen and (max-width: 1000px) {
     border-bottom: 2px dotted ${p => p.theme.colors.uiLineGray};
     line-height: 2rem;
-
-    &:first-child{
-      border-top: 2px dotted ${p => p.theme.colors.uiLineGray};
-    }
   }
 `
