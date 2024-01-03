@@ -14,16 +14,16 @@ import '../styles/global.css'
 
 function MyApp({ Component, pageProps }: AppProps) {
 
-  const appState = useAppState()
+  const { language, setLanguage, ...appState } = useAppState() // 解构赋值以防止改 theme 时刷新 lang
   const [themeObj, setThemeObj] = useState<DefaultTheme>({ ...lightTheme, mode: "system" })
   const router = useRouter()
 
-  // lang
+  // init language
   useEffect(() => {
     const lang = detectBrowserLang().slice(0, 2)
     console.debug("app set lang: ", lang)
-    appState.setLanguage(lang) // 由于大部分内容 SSR，英文 ui 会有闪屏……
-  }, [appState])
+    setLanguage(lang) // 由于大部分内容 SSR，英文 ui 会有闪屏……
+  }, [setLanguage])
 
   // Google Analystics
   useEffect(() => {
@@ -41,7 +41,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     }
   }, [router.events])
 
-  // set global theme context after theme is manually changed
+  // subscribe theme changed from User
   useEffect(() => {
     if (themeObj.mode !== appState.theme) {
       console.debug("app set theme: ", appState.theme)
@@ -49,11 +49,12 @@ function MyApp({ Component, pageProps }: AppProps) {
     }
   }, [appState, themeObj.mode])
 
-  // set global theme context after cookie available
+  // init global theme context after cookie available
   useEffect(() => {
     const cookieTheme = appState.getCookieTheme()
     console.debug("set cookieTheme ", cookieTheme)
     setThemeObj(themeMap(cookieTheme))
+    appState.setTheme(cookieTheme)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
