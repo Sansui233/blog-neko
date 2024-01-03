@@ -59,12 +59,13 @@ export function MemoCard({ source, setSearchText, triggerHeightChange, ...otherp
         <MemoMeta>
           {/*eslint-disable-next-line @next/next/no-img-element*/}
           <img className="avatar" src={theme!.assets.favico} alt={siteInfo.author} />
-          <div className="meta">
-            <div>{siteInfo.author}</div>
-            <div className="date">
+          <div className="meta-text">
+            <span className="author" >{siteInfo.author}</span>
+            <span className="meta-sm">•</span>
+            <span className="meta-sm date">
               {date}
-              <span className="word-count">{source.length}&nbsp;字</span>
-            </div>
+            </span>
+            <span className="meta-sm word-count">{source.length}&nbsp;字</span>
           </div>
         </MemoMeta>
         <MemoMarkdown $bottomSpace={shouldCollapse}>
@@ -99,12 +100,8 @@ const MemoCardStyle = styled.section<{
   border-radius: 0.75rem;
   animation: ${bottomFadeIn} .3s ease;
 
-  @media screen and (max-width: 780px) {
-    padding: 1.25rem 1.5rem;
-  }
-
   @media screen and (max-width: 580px) {
-    padding: 1.25rem 1rem;
+    padding: 1rem;
     border-radius: unset;
   }
   
@@ -151,13 +148,6 @@ const CardMask = styled.div<{
 const MemoMarkdown = styled(MarkdownStyle) <{
   $bottomSpace: boolean,
 }>`
-    padding-left: 5px;
-
-    @media screen and (min-width: 580px){
-      padding-left: 0.5rem;
-      padding-right: 0.5rem;
-    }
-
     padding-bottom: ${props => props.$bottomSpace === true ? "2rem" : "inherit"};
     
     h1,h2,h3,h4,h5,h6 {
@@ -176,32 +166,34 @@ const MemoMarkdown = styled(MarkdownStyle) <{
 
 const MemoMeta = styled.div`
     display: flex;
-
-    & > .avatar {
-      width: 3rem;
-      height: 3rem;
+    align-items: center;
+      
+    & .avatar {
+      width: 1.5rem;
+      height: 1.5rem;
+      margin-right: 0.25rem;
       border-radius: 50%;
       border: 1px solid ${p => p.theme.colors.uiLineGray};
-
-      @media screen and (max-width: 580px){
-        width: 2.75rem;
-        height: 2.75rem;
-      }
-
     }
 
-    & .meta{
-      margin-left: 0.5rem;
+    & .meta-text {
       display: flex;
-      flex-direction: column;
-      justify-content: center;
-      font-weight: bold;
+      align-items: flex-end;
+      font-weight: 600;
+    }
+
+    & .meta-sm {
+      color: ${p => p.theme.colors.textGray3};
+      font-size: 0.875rem;
+    }
+    
+    & .author {
+      color: ${p => p.theme.colors.textSecondary};
+      margin: 0 0.25rem;
     }
 
     & .date {
-      font-size: 0.85rem;
-      font-weight: normal;
-      color: ${p => p.theme.colors.textGray2};
+      margin: 0 0.25rem;
     }
 
     & .word-count {

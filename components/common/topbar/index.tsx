@@ -169,7 +169,7 @@ const Avatar = styled.div`
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  font-weight: bold;
+  font-weight: 600;
   width: 210px;
 
   span {
@@ -225,6 +225,7 @@ const Nav = styled.nav`
   ol {
     padding: 0 .5em;
     padding-top: 2px;
+    font-weight: 600;
   }
 
   ol.current a{

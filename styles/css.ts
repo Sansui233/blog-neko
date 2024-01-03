@@ -34,7 +34,8 @@ export const hoverBoxShadow = css`box-shadow: inset 0 -0.5em 0 ${props => props.
 /***************************************
  * card
  ****************************************/
-export const floatBoxShadow = css`box-shadow: 0 0 2px 0px ${props => props.theme.colors.shadowBg}, 0 0 8px 0px ${props => props.theme.colors.shadowBg};`
+export const dropShadow = css`box-shadow: 0 0 2px 0px ${props => props.theme.colors.shadowBg}, 0 0 8px 0px ${props => props.theme.colors.shadowBg};`
+export const dropShadowAccent = css`box-shadow: 0 0 2px 0px ${props => props.theme.colors.accent + "33"}, 0 0 8px 0px ${props => props.theme.colors.accent + "33"};`
 export const paperCard = css`background: ${p => p.theme.colors.bg};box-shadow: rgb(0 0 0 / 10%) 0px 2px 4px;`
 export const floatMenu = css`
 position: fixed;

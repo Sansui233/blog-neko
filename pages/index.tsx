@@ -90,7 +90,7 @@ function ArticleItem({ p, i }: {
       <div className='card-content'>
         <div className='meta'>
           <span className='date'>{dateI18n(parseDate(p.date))}</span>
-          <Folder size="1em" style={{ marginLeft: "0.5em", marginRight: "0.25em" }} />
+          <Folder size="1em" style={{ marginLeft: "0.5em", marginRight: "0.25em", marginBottom: "0.125rem" }} />
           <span className="category">
             {p.categories}
           </span>
@@ -137,7 +137,7 @@ const Card = styled(Link)`
 
   .title {
     font-size: 1.125rem;
-    font-weight: bold;
+    font-weight: 600;
     transition: box-shadow .5s;
 
   }
@@ -170,7 +170,7 @@ const Card = styled(Link)`
     margin: 0.25rem 0;
     font-size: 0.875rem;
     color: ${p => p.theme.colors.textGray2};
-    font-weight: bold;
+    font-weight: 600;
   }
 
   .date {

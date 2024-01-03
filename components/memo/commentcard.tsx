@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic'
 import { useContext, useEffect, useState } from 'react'
 import styled, { ThemeContext } from 'styled-components'
 import { siteInfo } from '../../site.config'
+import { dropShadowAccent } from '../../styles/css'
 import Model from '../common/model'
 import CardCommon from './cardcommon'
 
@@ -61,15 +62,29 @@ const Container = styled.div`
   }
 `
 const ModelButton = styled.span`
-  display: inline-block;
   margin-top: 2.5rem;
-  padding-right: 0.5rem;
-  font-weight: bold;
+  height: 2.5rem;
+  max-width: 8rem;
+  padding: 0 0.5rem;
+  border-radius: 2rem;
+
+  font-weight: 600;
   color:${p => p.theme.colors.textPrimary};
   cursor: pointer;
+  background: ${props => props.theme.colors.bg};
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  @media screen and (max-width: 780px) {
+    max-width: unset;
+    background: ${props => props.theme.colors.bg2};
+  }
 
   &:hover {
     color:${p => p.theme.colors.accent};
+    ${dropShadowAccent}
   }
 `
 

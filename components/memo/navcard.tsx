@@ -40,13 +40,13 @@ const Layout = styled.section`
   }
 
   .title {
-    font-weight: bold;
+    font-weight: 600;
     margin-right: 0.25rem;
   }
 
   .count {
     font-size: 0.875rem;
-    font-weight: bold;
+    font-weight: 600;
     color: ${p => p.theme.colors.textGray2};
     vertical-align: bottom;
   }

@@ -341,7 +341,7 @@ const ColumnRight = styled.aside<{
       background: inherit;
 
       display: flex;
-      font-weight: bold;
+      font-weight: 600;
       justify-content: space-between;
       align-items: center;
 
@@ -374,7 +374,7 @@ margin-bottom: 0;
 
 const Date = styled.div`
   color:${props => props.theme.colors.textGray2};
-  font-weight: bold;
+  font-weight: 600;
   margin-bottom: 1rem;
   font-size: 0.875rem;
 `
@@ -384,9 +384,9 @@ const MetaStyle = styled.div`
   padding-bottom: 1.5rem;
   margin-bottom: 1.5rem;
   font-size: 0.875rem;
-  font-weight: bold;
+  font-weight: 600;
 
-  border-bottom: 2px solid ${props => props.theme.colors.uiLineGray2};
+  border-bottom: 2px dotted ${props => props.theme.colors.uiLineGray};
 
   .category {
     font-size: 0.875rem;

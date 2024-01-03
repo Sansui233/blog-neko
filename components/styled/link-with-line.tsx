@@ -5,7 +5,6 @@ import { hoverRound } from '../../styles/css'
 // 从下向上的色块
 const LinkWithLine = styled(Link)`
   position: relative;
-  font-weight: bold;
 
   &::before {
     ${hoverRound}

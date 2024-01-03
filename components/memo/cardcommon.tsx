@@ -27,7 +27,7 @@ const CardContainer = styled.section`
 `
 
 const CardTitle = styled.div`
-  font-weight: bold;
+  font-weight: 600;
   text-transform: uppercase;
   font-size: 0.875rem;
   color: ${p => p.theme.colors.textGray2};

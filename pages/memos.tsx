@@ -225,7 +225,7 @@ export default function Memos({ source, info, memotags, client }: Props) {
                   title={t("friends")}
                   Icon={Users}
                 >
-                  {siteInfo.friends.map((f, i) => <div key={i}><LinkWithLine href={f.link} style={{ fontWeight: "normal" }}>{f.name}</LinkWithLine></div>)}
+                  {siteInfo.friends.map((f, i) => <div key={i}><LinkWithLine href={f.link}>{f.name}</LinkWithLine></div>)}
                 </CardCommon>
               }
               {siteInfo.walineApi && siteInfo.walineApi !== "" && <CommentCard />}
@@ -340,7 +340,7 @@ const SiderCol = styled.div<{
       background: inherit;
 
       display: flex;
-      font-weight: bold;
+      font-weight: 600;
       justify-content: space-between;
       align-items: center;
 
