@@ -14,13 +14,13 @@ export function dateI18n(d: Date, to: "day" | "miniute" = "day"): string {
     case "day":
       return t('dateYMD', {
         year: d.getFullYear(),
-        month: d.getMonth(),
+        month: d.getMonth() + 1,
         day: d.getDate(),
       })
     case "miniute":
       return t('dateYMD', {
         year: d.getFullYear(),
-        month: d.getMonth(),
+        month: d.getMonth() + 1,
         day: d.getDate(),
         hour: d.getHours(),
         minute: d.getMinutes()
