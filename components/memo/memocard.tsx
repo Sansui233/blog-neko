@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction, useContext, useMemo, useState } from "react";
 import styled, { ThemeContext } from "styled-components";
-import { dateToYMDMM, parseDate } from "../../lib/date";
+import { dateToYMDMM } from "../../lib/date";
 import { TMemo } from "../../pages/memos";
 import { siteInfo } from "../../site.config";
 import { bottomFadeIn } from "../../styles/animations";
@@ -24,8 +24,8 @@ export function MemoCard({ source, setSearchText, triggerHeightChange, ...otherp
   const shouldCollapse = source.length > 200 ? true : false;
 
   const date = useMemo(() => {
-    const d = parseDate(source.id)
-    if (d.getTime() !== -1) {
+    const d = new Date(source.id)
+    if (d.toString() !== "Invalid Date") {
       return dateToYMDMM(d)
     } else {
       return source.id
