@@ -268,7 +268,7 @@ const PostLayout = styled.article`
   margin-top: 72px;
   margin: 0 auto;
   padding: 60px 20px;
-  max-width: 680px;
+  max-width: 800px;
   width: 56%;
 
   .toc-btn {

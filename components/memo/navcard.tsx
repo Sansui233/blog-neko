@@ -25,14 +25,14 @@ export default function NavCard({ info }: Props) {
 const Layout = styled.section`
   margin-top: 1.5rem;
   padding-left: 1rem;
-  display: flex;
-  flex-direction: column;
   color:${p => p.theme.colors.textSecondary};
 
   .item {
     padding: 0.25rem 0;
     margin-right: 0.75rem;
     border-right: 2px solid ${p => p.theme.colors.uiLineGray};
+    display: flex;
+    align-items: flex-end;
   }
 
   .item.active {
