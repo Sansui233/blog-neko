@@ -5,13 +5,16 @@ import { throttle } from "../../lib/throttle";
 type Props<T extends { id: string | number }> = {
   sources: T[]
   setSources: Dispatch<SetStateAction<T[]>>
+  fetchFrom?: (i: number, batchsize: number) => Promise<T[] | undefined> // the function that returns new source data
+  batchsize: number
+
   Elem: (props: {
     source: T
     triggerHeightChange: Dispatch<SetStateAction<boolean>>;
   }) => JSX.Element // the render
-  fetchFrom?: (i: number, batchsize: number) => Promise<T[] | undefined>
-  batchsize: number
-  scrollRef?: React.RefObject<HTMLElement>
+  Loading?: () => JSX.Element
+
+  scrollRef?: React.RefObject<HTMLElement> // get the outer scroll DOM, default for window
 }
 
 export type VirtualListType = <T extends {
@@ -19,12 +22,15 @@ export type VirtualListType = <T extends {
 }>(props: Props<T>) => JSX.Element
 
 
-const VirtualList: VirtualListType = ({ sources, setSources, Elem, scrollRef, fetchFrom: fetchFrom, batchsize }) => {
+// TODO scroll to anywhere
+// TODO modify height while loading
+const VirtualList: VirtualListType = ({ sources, setSources, Elem, scrollRef, fetchFrom: fetchFrom, batchsize, Loading }) => {
   const [placeHolder, setplaceHolder] = useState<number[]>(new Array(sources.length).fill(300))
   // 注意保持 activeIndex 和 sources 的状态一致性
   const [activeIndex, setActiveIndex] = useState<number[]>(new Array(sources.length).fill(0).map((_, i) => i))
   const [winBreakPoint, setWinBreakPoint] = useState(sources.length * 3)
-  const scrollLock = useRef({ enable: true })
+  const [isLoading, setIsLoading] = useState(false) // render the loading compoenent or not
+  const scrollLock = useRef({ enable: true }) // true means enable scroll
 
   const minHeight = useMemo(() => placeHolder.reduce((sum, height) => sum += height, 0), [placeHolder])
 
@@ -39,17 +45,20 @@ const VirtualList: VirtualListType = ({ sources, setSources, Elem, scrollRef, fe
   // scroll monitor. when < 30% or > 30%, 
   // fetch new source and set source
   // concating placeholder with extended data length 
-  // TODO scroll to anywhere
   useEffect(() => {
-
     const scrollElem = scrollRef?.current
     const handler = () => {
-      if (!scrollLock.current.enable) return
+      if (!scrollLock.current.enable) return // false means disable scroll
 
-      const scrollHeight = transformOnIndex(activeIndex[activeIndex.length - 1]) - transformOnIndex(activeIndex[0])// okay?
-      const currScroll = (scrollElem ? scrollElem.scrollHeight : globalThis.scrollY) - transformOnIndex(activeIndex[0])
+      const scrollHeight = transformOnIndex(activeIndex[activeIndex.length - 1]) - transformOnIndex(activeIndex[0]) // okay?
+      const currScrollTop = (scrollElem ? scrollElem.scrollTop : globalThis.scrollY) - transformOnIndex(activeIndex[0])
+      const currScrollBottom = currScrollTop + globalThis.innerHeight - (scrollElem ? (scrollElem.getBoundingClientRect().y > 0 ? scrollElem.getBoundingClientRect().y : 0) : 0)
+      // console.debug("scroll", scrollHeight, currScrollTop, currScrollBottom)
 
-      const progress = currScroll / scrollHeight
+      const progress = currScrollTop / scrollHeight
+      const progressBottom = currScrollBottom / scrollHeight
+      // console.debug("progress", scrollHeight, progress, progressBottom)
+
       if (isNaN(progress) || !isFinite(progress) || progress > 1.5) return
 
       scrollLock.current = { enable: false }
@@ -61,7 +70,9 @@ const VirtualList: VirtualListType = ({ sources, setSources, Elem, scrollRef, fe
           return
         }
 
+        setIsLoading(true)
         fetchFrom(reqStart, batchsize).then(prevdata => {
+          setIsLoading(false)
           if (!prevdata || prevdata.length === 0) { // head
             scrollLock.current = { enable: true }
             return
@@ -89,9 +100,11 @@ const VirtualList: VirtualListType = ({ sources, setSources, Elem, scrollRef, fe
           scrollLock.current = { enable: true }
         })
 
-      } else if (fetchFrom && progress > 0.7) {
+      } else if (fetchFrom && progressBottom > 0.8) {
         const reqStart = activeIndex[activeIndex.length - 1] + 1
+        setIsLoading(true)
         fetchFrom(reqStart, batchsize).then(nextdata => {
+          setIsLoading(false)
           if (!nextdata || nextdata.length === 0) { // tail
             scrollLock.current = { enable: true }
             return
@@ -153,6 +166,13 @@ const VirtualList: VirtualListType = ({ sources, setSources, Elem, scrollRef, fe
       minHeight: `${minHeight}px`
     }}>
       {sources.map((e, i) => <ListItem key={e.id} index={activeIndex[i]} Elem={Elem} source={e} placeHolder={placeHolder} setplaceHolder={setplaceHolder} />)}
+      {Loading && isLoading ? <div style={{
+        position: "absolute",
+        width: "100%",
+        transform: `translateY(${placeHolder.slice(0, placeHolder.length).reduce((sum, height) => sum += height, 0)}px)`
+      }}>
+        <Loading />
+      </div> : null}
     </div>
   )
 }

@@ -16,9 +16,9 @@ export interface Client {
  */
 export const clientList = {
   static: StaticClient
-}
+} as const
 
-export function createClient(name: keyof typeof clientList){
-  if(!clientList[name]) console.error(`[client.ts] client ${name} not in clientList`)
+export function createClient(name: keyof typeof clientList) {
+  if (!clientList[name]) console.error(`[client.ts] client ${name} not in clientList`)
   return clientList[name]
 }

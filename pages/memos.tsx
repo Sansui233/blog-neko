@@ -14,7 +14,7 @@ import { TwoColLayout } from "../components/layout";
 import CardCommon from "../components/memo/cardcommon";
 import CommentCard from "../components/memo/commentcard";
 import { useImageBroswerStore } from "../components/memo/imagebrowser";
-import { MemoCard } from "../components/memo/memocard";
+import { MemoCard, MemoLoading } from "../components/memo/memocard";
 import NavCard from "../components/memo/navcard";
 import VirtualList from "../components/memo/virtuallist";
 import { LinkWithLine } from "../components/styled/link-with-line";
@@ -168,7 +168,7 @@ export default function Memos({ source, info, memotags, client }: Props) {
               <PageDescription style={{ marginRight: "1rem" }}>
                 {statusRender()}
               </PageDescription>
-              <div style={{ minHeight: "100vh" }}>
+              <div style={{ minHeight: "80vh" }}>
                 {searchStatus.isSearch === "ready" // 首屏的问题……
                   ? <VirtualList<TMemo>
                     key={"vl1"}
@@ -179,6 +179,7 @@ export default function Memos({ source, info, memotags, client }: Props) {
                     }}
                     fetchFrom={fetchFrom}
                     batchsize={10}
+                    Loading={MemoLoading}
                   /> : searchStatus.isSearch === "done"
                     ? <VirtualList<TMemo>
                       key={searchStatus.searchText}
@@ -190,7 +191,7 @@ export default function Memos({ source, info, memotags, client }: Props) {
                       batchsize={10}
                     /> : null}
               </div>
-              <Footer />
+              <Footer style={{ marginTop: "5rem" }} />
             </MemoCol>
             <SiderCol $isMobileSider={isMobileSider}>
               <div className="close-btn" onClick={(e) => { e.stopPropagation(); setIsMobileSider(v => !v) }}>

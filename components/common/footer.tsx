@@ -2,9 +2,11 @@ import { Github, Mail, Rss } from 'lucide-react'
 import styled from 'styled-components'
 import { siteInfo } from '../../site.config'
 
-const Footer = () => {
+type Props = React.HTMLProps<HTMLDivElement>
+
+const Footer = (props: Props) => {
   return (
-    <Container>
+    <Container {...props}>
       <a href={siteInfo.social.github}><Github /></a>
       <a href={`mailto:${siteInfo.social.email}`}><Mail /></a>
       <a href="/rss"><Rss /></a>

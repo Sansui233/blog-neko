@@ -89,6 +89,11 @@ export function MemoCard({ source, setSearchText, triggerHeightChange, ...otherp
   );
 }
 
+export function MemoLoading() {
+  return <MemoCardStyle $isCollapse={false}>
+    <span style={{ opacity: 0.35, fontWeight: "bold" }}>Loading...</span>
+  </MemoCardStyle>
+}
 
 const MemoCardStyle = styled.section<{
   $isCollapse: boolean

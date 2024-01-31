@@ -38,7 +38,6 @@ export default function Topbar({ placeHolder = true, scrollElem, hideSearch, ...
 
     if (scrollElem) {
       elem = scrollElem
-      elem.scrollTop
     }
 
     const getScrollPos = () => {
