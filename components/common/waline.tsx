@@ -18,14 +18,13 @@ const Waline = (props: React.HTMLProps<HTMLDivElement>) => {
   }, [])
 
   if (siteInfo.walineApi && siteInfo.walineApi !== "") {
-
+    return (
+      <StyledWL id="waline" {...props}>Waline</StyledWL>
+    )
   } else {
+    console.log("Comment system not loaded")
     return <></>
   }
-
-  return (
-    <StyledWL id="waline" {...props}>Waline</StyledWL>
-  )
 }
 
 const StyledWL = styled.div`
