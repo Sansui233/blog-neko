@@ -139,7 +139,6 @@ const Card = styled(Link)`
     font-size: 1.125rem;
     font-weight: 600;
     transition: box-shadow .5s;
-
   }
 
   @media (any-hover: hover) {
@@ -167,16 +166,22 @@ const Card = styled(Link)`
 }
 
   .meta {
-    margin: 0.25rem 0;
+    margin: 0.5rem 0;
     font-size: 0.875rem;
     color: ${p => p.theme.colors.textGray2};
-    font-weight: 600;
+  }
+
+  .description {
+    color: ${p => p.theme.colors.textSecondary};
   }
 
   .date {
+    font-weight: 600;
+    color: ${p => p.theme.colors.textGray2};
   }
 
   .category {
+    font-weight: 600;
     display: inline-block;
   }
 `

@@ -25,7 +25,7 @@ export const MarkdownStyle = styled.div`
   p,
   ul,
   ol {
-    line-height: 1.7rem;
+    line-height: 2rem;
   }
 
   blockquote {

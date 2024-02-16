@@ -154,6 +154,7 @@ const MemoMarkdown = styled(MarkdownStyle) <{
   $bottomSpace: boolean,
 }>`
     padding-bottom: ${props => props.$bottomSpace === true ? "2rem" : "inherit"};
+    padding-left: 0.25em;
     
     h1,h2,h3,h4,h5,h6 {
       font-size: 1rem;

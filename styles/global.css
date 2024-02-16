@@ -119,7 +119,7 @@ html,
 body {
   padding: 0;
   margin: 0;
-  font-family: ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,"Apple Color Emoji","Segoe UI Emoji",Segoe UI Symbol,"Noto Color Emoji";
+  font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,PingFang SC, Microsoft Yahei,Arial,Hiragino Sans GB,ui-sans-serif,system-ui,sans-serif,"Apple Color Emoji","Segoe UI Emoji",Segoe UI Symbol,"Noto Color Emoji";
   /* background-color: black;
   color: whitesmoke; */
   
@@ -150,21 +150,21 @@ h2 {
   font-size: 1.875rem;
   line-height: 2.75rem;
   margin-top: 2.375rem;
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
 }
 
 h3 {
   font-size: 1.5rem;
   line-height: 2.25rem;
   margin-top: 1.5rem;
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
 }
 
 h4,
 h5,
 h6 {
-  margin-top: 1rem;
-  margin-bottom: 1rem;
+  margin-top: 1.25rem;
+  margin-bottom: 1.25rem;
 }
 
 h4 {
@@ -226,6 +226,7 @@ html ::-webkit-scrollbar-thumb:hover {
 
 
 code {
+  letter-spacing: normal;
   font-family: SFMono-Regular,consolas,Liberation Mono,menlo,monaco,"Courier New",courier,monospace,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol",sans-serif;
 }
 

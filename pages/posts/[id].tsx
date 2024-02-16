@@ -148,7 +148,7 @@ export default function Post({ meta, mdxcode, nextPost, prevPost, excerpt, headi
         <MetaStyle>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <div className="category">
-              <span>收录于</span>
+              <span>分类:</span>
               <StyledLink href={`/categories/${meta.categories}`} passHref={true}>
                 <Folder size={"1.1em"} style={{ marginLeft: "0.5em", marginRight: "0.15em", paddingBottom: "0.1em" }} />
                 {meta.categories}
@@ -183,7 +183,7 @@ export default function Post({ meta, mdxcode, nextPost, prevPost, excerpt, headi
         {isViewing && <ButtonFloat
           Icon={ArrowUpToLine}
           clickHandler={(e) => { e.stopPropagation(); window.scrollTo({ top: 0 }) }}
-          style={{ bottom: "6rem" }}
+          style={{ bottom: "5rem" }}
         />}
       </PostLayout>
       <ColumnRight $isMobileSider={isMobileSider} $isFixedTop={isFixedTop}>
@@ -275,12 +275,20 @@ const PostLayout = styled.article`
     display: none;
   }
 
-  @media screen and (max-width: 1200px){
+  @media screen and (max-width: 1400px){
     width: 52%;
+  }
+
+  @media screen and (max-width: 1200px){
+    width: 75%;
+    padding-left: 80px;
+    margin: unset;
   }
 
   @media screen and (max-width: 1000px){
     width: 85%;
+    margin: 0 auto;
+    padding-left: 20px;
     .toc-btn {
       display: unset;
     }
@@ -305,7 +313,7 @@ const ColumnRight = styled.aside<{
   max-width: 18rem;
   max-height: 80vh;
   padding: 0 1rem;
-  line-height: 1.7rem; /* 与正文同 line-height */
+  line-height: 2rem; /* 与正文同 line-height */
   overflow: auto;
 
   left: 78%;
@@ -386,7 +394,7 @@ const MetaStyle = styled.div`
   font-size: 0.875rem;
   font-weight: 600;
 
-  border-bottom: 2px dotted ${props => props.theme.colors.uiLineGray};
+  /*border-bottom: 2px dotted ${props => props.theme.colors.uiLineGray};*/
 
   .category {
     font-size: 0.875rem;
@@ -436,7 +444,7 @@ const TocContent = styled.div`
 const TocAnchor = styled(Link) <{ $rank: number }>`
   display: block;
   padding-left: ${p => p.$rank}em;
-  color: ${props => props.theme.colors.textGray};
+  color: ${props => props.theme.colors.textSecondary};
   font-size: 0.875rem;
 
   &::before {
