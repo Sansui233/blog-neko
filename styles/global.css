@@ -192,6 +192,11 @@ ol {
   margin: 1rem 0;
 }
 
+ul,
+ol {
+  padding-inline-start: 1rem;
+}
+
 li {
   margin: 0.125rem 0;
 }

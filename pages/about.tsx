@@ -20,7 +20,7 @@ export default function About() {
           <span>{`Hi, I'm ${siteInfo.author}`}</span>
         </Hero>
         <OneColLayout>
-          <AboutDescription>| 记录一些思考和吐槽 |</AboutDescription>
+          <AboutDescription>/ 记录一些思考和吐槽 /</AboutDescription>
           <AnimatedMarkdown>
             <p>Github: <a href="https://github.com/sansui233">Sansui233</a><br />
               E-mail：<a href="mailto:sansuilnm@gmail.com">sansuilnm@gmail.com</a></p>

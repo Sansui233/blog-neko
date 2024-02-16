@@ -148,7 +148,7 @@ export default function Post({ meta, mdxcode, nextPost, prevPost, excerpt, headi
         <MetaStyle>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <div className="category">
-              <span>分类:</span>
+              <span>分类</span>
               <StyledLink href={`/categories/${meta.categories}`} passHref={true}>
                 <Folder size={"1.1em"} style={{ marginLeft: "0.5em", marginRight: "0.15em", paddingBottom: "0.1em" }} />
                 {meta.categories}

@@ -79,9 +79,7 @@ export function MemoCard({ source, setSearchText, triggerHeightChange, ...otherp
       </div>
       {
         source.imgsmd.length !== 0
-        && <div style={{ padding: "0 0.5rem" }}>
-          <ImageThumbs imgsmd={source.imgsmd} />
-        </div>
+        && <ImageThumbs imgsmd={source.imgsmd} />
       }
 
 
@@ -101,7 +99,7 @@ const MemoCardStyle = styled.section<{
 
   background:${p => p.theme.colors.bg};
   margin: 0.625rem 0;
-  padding: 1.5rem;
+  padding: 1.25rem 1.5rem;
   border-radius: 0.75rem;
   animation: ${bottomFadeIn} .3s ease;
 
@@ -154,7 +152,18 @@ const MemoMarkdown = styled(MarkdownStyle) <{
   $bottomSpace: boolean,
 }>`
     padding-bottom: ${props => props.$bottomSpace === true ? "2rem" : "inherit"};
-    padding-left: 0.25em;
+    padding-left: 40px; /* 头像的 32px + 8px */
+
+    p,
+    ul,
+    ol {
+      line-height: 1.625rem;
+    }
+
+    p {
+      margin: 0.5rem 0;
+    }
+    
     
     h1,h2,h3,h4,h5,h6 {
       font-size: 1rem;
@@ -175,9 +184,9 @@ const MemoMeta = styled.div`
     align-items: center;
       
     & .avatar {
-      width: 1.5rem;
-      height: 1.5rem;
-      margin-right: 0.25rem;
+      width: 32px;
+      height: 32px;
+      margin-right: 8px;
       border-radius: 50%;
       border: 1px solid ${p => p.theme.colors.uiLineGray};
     }
@@ -195,7 +204,7 @@ const MemoMeta = styled.div`
     
     & .author {
       color: ${p => p.theme.colors.textSecondary};
-      margin: 0 0.25rem;
+      margin-right: 0.25rem;
     }
 
     & .date {

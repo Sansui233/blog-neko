@@ -1,6 +1,5 @@
 import React, { useCallback, useState } from 'react'
 import { Naive, Result, SearchObj } from './search'
-import { useDocumentEvent } from './use-event'
 
 const createNaive = await (import("./search").then(mod => mod.createNaive))
 
@@ -10,21 +9,49 @@ export type SearchStatus = {
 }
 
 type Props<R> = {
+  /**
+   * html input element reference
+   */
   inputRef: React.RefObject<HTMLInputElement>,
+  /**
+   * once search is done, the engine call this function with search result in argument.
+   */
   setRes: React.Dispatch<React.SetStateAction<R[]>>
+  /**
+   * configure source data
+   * and the function about convert engine result format into your search result format
+   */
   initData: () => Promise<{
     searchObj: SearchObj[]
     filterRes: (searchres: Required<Result>[]) => R[] | Promise<R>[]
   }>
 }
 
-function useSearch<R>({ inputRef, setRes, initData }: Props<R>) {
+/**
+ * Here are 2 ways to use search:
+ * 
+ * 1. `setSearchText(str, true)` This will put search text into your inputRef and automatically init search engine and doing search
+ * 2. `handleSearch()` This will init search engine and do search according to the content in your inputRef
+ * 
+ * If you want init search engine on your demand, you can use `initSearch()`
+ */
+function useSearch<R>({ inputRef, setRes, initData }: Props<R>): {
+  searchStatus: SearchStatus; setsearchStatus: React.Dispatch<React.SetStateAction<SearchStatus>>; setSearchText: (text: string, immediateSearch?: boolean) => void // put text into input ref element and (optinal) search immediately.
+  handleSearch: () => Promise<void>
+  initSearch: () => Promise<Naive>
+} {
   const [engine, setEngine] = useState<Naive>()
   const [searchStatus, setsearchStatus] = useState<SearchStatus>({
     isSearch: "ready",
     searchText: "",
   })
 
+  /**
+   * init search engine when you want.
+   * 
+   * this will execute initData() which may take long time on first time
+   * or search engine will automatically init on first search
+   */
   const initSearch = useCallback(async () => {
 
     console.debug("%% init search...")
@@ -49,9 +76,9 @@ function useSearch<R>({ inputRef, setRes, initData }: Props<R>) {
     }
 
     newEngine = createNaive({
-      data: searchObj, 
-      field: ["tags", "content"], 
-      notifier, 
+      data: searchObj,
+      field: ["tags", "content"],
+      notifier,
       disableStreamNotify: true,
     })
 
@@ -63,6 +90,9 @@ function useSearch<R>({ inputRef, setRes, initData }: Props<R>) {
     return newEngine
   }, [initData, setRes])
 
+  /**
+   * start search according to the text in the input ref element
+   */
   const handleSearch = useCallback(async () => {
     if (!inputRef.current) return
     const str = inputRef.current.value.trim()
@@ -83,6 +113,9 @@ function useSearch<R>({ inputRef, setRes, initData }: Props<R>) {
 
   }, [initSearch, engine, inputRef])
 
+  /**
+   * put text into input ref element and (optinal) search immediately.
+   */
   const setSearchText = useCallback((text: string, immediateSearch = true) => {
     if (!inputRef.current) return
 
@@ -91,13 +124,6 @@ function useSearch<R>({ inputRef, setRes, initData }: Props<R>) {
       handleSearch()
     }
   }, [handleSearch, inputRef])
-
-  // bind keyboard event
-  useDocumentEvent("keydown", (evt) => {
-    if (inputRef.current && inputRef.current === document.activeElement && evt.key === "Enter")
-      handleSearch()
-  }, undefined, [handleSearch])
-
 
   return {
     searchStatus,

@@ -172,6 +172,8 @@ const ImageGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 5px;
+  margin-top: 8px;
+  padding-left: 40px; /* 头像的 32px + 8px*/
 
   @media screen and (max-width: 580px) {
     grid-template-columns: repeat(3, 1fr);

@@ -23,6 +23,7 @@ import { MemoInfo, MemoPost, MemoTag } from "../lib/data/memos.common";
 import { memo_db, writeMemoJson } from "../lib/data/server";
 import { compileMdxMemo } from "../lib/markdown/mdx";
 import { SearchObj } from "../lib/search";
+import { useDocumentEvent } from "../lib/use-event";
 import useSearch from "../lib/use-search";
 import { siteInfo } from "../site.config";
 import { floatMenu } from "../styles/css";
@@ -112,6 +113,27 @@ export default function Memos({ source, info, memotags, client }: Props) {
     }
   })
 
+  // 包装 handle search，空值输入不触发搜索，恢复数据
+  const searchBehavior = useCallback(() => {
+    if (inputRef.current && inputRef.current.value === "") {
+      setpostsData(postsDataBackup)
+      setsearchStatus({ searchText: "", isSearch: "ready" })
+      return
+    }
+    handleSearch()
+  }, [handleSearch, postsDataBackup, setsearchStatus])
+
+  // bind keyboard event
+  useDocumentEvent(
+    "keydown",
+    (evt) => {
+      if (inputRef.current && inputRef.current === document.activeElement && evt.key === "Enter")
+        searchBehavior()
+    },
+    undefined,
+    [handleSearch]
+  )
+
   function statusRender() {
     switch (searchStatus.isSearch) {
       case "ready":
@@ -142,6 +164,7 @@ export default function Memos({ source, info, memotags, client }: Props) {
         </>
     }
   }
+
 
   return (
     <>
@@ -203,7 +226,7 @@ export default function Memos({ source, info, memotags, client }: Props) {
                     () => { initSearch() }
                   } />
                 <Search className="hover-gold" size={"1.4rem"}
-                  onClick={handleSearch}
+                  onClick={searchBehavior}
                 />
               </SearchBox>
               <NavCard info={info} />
@@ -291,7 +314,7 @@ const MemoCol = styled.div`
   }
 
   @media screen and (min-width: 1080px) {
-    max-width: 700px;
+    max-width: 640px;
   }
 
 
