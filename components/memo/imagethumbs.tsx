@@ -81,8 +81,8 @@ export function ImageThumbs({ imgsmd }: {
   return <>
     {imgsmd.length === 1
 
-      // only one Image
-      ? <div style={{ height: "250px" }}>
+      // only one Image, padding 取自头像的 32px + 8px
+      ? <div style={{ height: "250px", paddingLeft: "40px" }}>
         <ImageContainer style={{
           maxWidth: "100%",
           height: "100%", // 为防止样式shift，底部留空和糟糕的小图体验得选一个，我选了后者
