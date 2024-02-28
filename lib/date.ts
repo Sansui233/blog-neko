@@ -43,7 +43,7 @@ export function parseDate(str: string | Date): Date {
     if (date.toString() !== "Invalid Date") {
       return date
     } else {
-      console.error(`[date.ts] unable to parse date string "${newstr}"\n\tset date to -1`)
+      console.error(`[date.ts] error: unable to parse date string "${newstr}"\n\tset date to -1`)
       return new Date(-1)
     }
   }

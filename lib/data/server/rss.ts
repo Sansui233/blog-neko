@@ -138,7 +138,6 @@ async function getMemo(): Promise<Item | null> {
 
   // parse target file front matter
   const matterResult = grayMatter2PostMeta(await getFrontMatter(f, MEMOS_DIR))
-
   // convert markdown to html
   const htmlcontent = await (compileMdxRss(content, "md"))
 

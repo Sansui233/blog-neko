@@ -12,13 +12,16 @@ const MEMO_CSR_DATA_DIR = path.join(process.cwd(), 'public', 'data', 'memos')
 /**
  * memos database
  * 构造函数返回一个 memo_db 对象
+ * 
+ * - memos 是所有的 memo 内容，会加载进内存  
+ * - imgs 是所有的图片信息，之后建立相册用
  */
 const memo_db = await (async function () {
 
   /**
    * Exported properies
    */
-  const names = await ((async () => {
+  const filenames = await ((async () => {
     let fileNames = await fs.promises.readdir(MEMOS_DIR);
     return fileNames.filter(f => {
       return f.endsWith(".md")
@@ -52,7 +55,7 @@ const memo_db = await (async function () {
   let csrPage = -1;
   let csrIndex = 9;
 
-  for (const src_file of names) {
+  for (const src_file of filenames) {
 
     // state
     let isFirstLine = true
@@ -164,7 +167,7 @@ const memo_db = await (async function () {
   console.log(`[memos.ts] ${memos.length} memos in total`)
 
   return {
-    names,
+    filenames,
     memos,
     tags,
     info,
@@ -215,7 +218,9 @@ function updateLastFile(memos: MemoPost[], tags: MemoTag[], imgs: MemoImg[], fil
   }
 }
 
-// return "[tag1,tag2]"
+/**
+ *  return "[tag1,tag2]"
+ */
 function extractTagsFromMarkdown(markdown: string) {
   const title = ["#", "##", "###", "####", "#####", "######"]
   const tags: string[] = [];

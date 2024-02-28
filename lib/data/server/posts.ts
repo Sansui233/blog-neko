@@ -11,15 +11,18 @@ const TAG_UNTAGGED = 'Untagged'
 /**
  * posts database
  * 构造函数返回一个 posts_db 对象
+ * 
+ * - 数据集中存储于 metas，其他的字段信息从 metas 动态获取
+ * - 不存储正文内容本身，需要单独 parse
  */
 const posts_db = await (async function () {
 
-  console.log("[posts.ts] collecting posts data...")
+  console.log("[posts.ts] building posts database...")
 
   /*
   * source file names
   */
-  const names = await ((async () => {
+  const filenames = await ((async () => {
     let fileNames = await fs.promises.readdir(POST_DIR);
     fileNames = fileNames.filter(f => {
       return f.endsWith(".md") || f.endsWith(".mdx")
@@ -27,31 +30,31 @@ const posts_db = await (async function () {
     return fileNames
   })())
 
-    /**
-   * metas sorted by date
-   */
-    const metas = await (async function () {
-      const promises = names.map(async fileName => {
-        const id = fileName.replace(/\.mdx?$/, '')
-        
-        const frontMatter = grayMatter2PostMeta((await getFrontMatter(fileName)))
-        return {
-          id,
-          ...frontMatter,
-        }
-      })
-  
-      const allPosts = await Promise.all(promises)
-      return allPosts.sort((a, b) => {
-        return a.date < b.date ? 1 : -1
-      })
-    })()
+  /**
+ * metas sorted by date
+ */
+  const metas = await (async function () {
+    const promises = filenames.map(async fileName => {
+      const id = fileName.replace(/\.mdx?$/, '')
+
+      const frontMatter = grayMatter2PostMeta((await getFrontMatter(fileName)))
+      return {
+        id,
+        ...frontMatter,
+      }
+    })
+
+    const allPosts = await Promise.all(promises)
+    return allPosts.sort((a, b) => {
+      return a.date < b.date ? 1 : -1
+    })
+  })()
 
   /**
    * used in url
    */
   const ids = function () {
-    return names.map(f => {
+    return filenames.map(f => {
       return {
         params: {
           id: f.replace(/\.mdx?$/, '').replaceAll(" ", "-")
@@ -62,7 +65,7 @@ const posts_db = await (async function () {
 
   const categories = function () {
     const categories = new Map<string, number>()
-    const p = names
+    const p = filenames
     categories.set(CATEGORY_ALL, p.length)
 
     metas.forEach(p => {
@@ -124,9 +127,9 @@ const posts_db = await (async function () {
     return posts.sort((a, b) => a.date < b.date ? 1 : -1)
   }
 
-/**
- * return posts in category c, sorted by date
- */
+  /**
+   * return posts in category c, sorted by date
+   */
   const inCategory = async function (c: string) {
     const posts: { id: string, title: string, date: Date }[] = []
 
@@ -140,21 +143,15 @@ const posts_db = await (async function () {
       }
 
     })
-    const promises = names.map(async fileName => {
-      const matterResult = await getFrontMatter(fileName)
-      
-    })
-
-    await Promise.all(promises)
 
     return posts.sort((a, b) => a.date < b.date ? 1 : -1)
   }
 
   return {
-    names,
+    filenames,
+    metas,
     ids,
     categories,
-    metas,
     tags,
     inTag,
     inCategory
