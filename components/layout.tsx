@@ -86,8 +86,11 @@ const TwoContainer = styled.div`
 `
 
 const Main = styled.div`
-  position: relative;
   flex: 3 1 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+
   @media screen and (max-width: 780px) {
     flex: 1 1 0;
   }
@@ -96,7 +99,11 @@ const Main = styled.div`
 
 const Sider = styled.div`
   flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  
   position: sticky;
   top: 0px;
   max-height: 100vh;
+  
 `

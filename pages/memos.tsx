@@ -307,11 +307,7 @@ const OneColLayout = styled.div`
 const MemoCol = styled.div`
   width: 100%;
   padding: 73px 16px 48px 16px; /* top height + memocard margin */
-  position: absolute;
-  right:0;
-  height: 100vh;
-  overflow: auto;
-  background: ${props => props.theme.colors.bg2};
+  align-self: flex-end;
 
   &::-webkit-scrollbar {
     display: none;
@@ -335,6 +331,8 @@ const MemoCol = styled.div`
 const SiderContent = styled.div<{
   $isMobileSider: boolean,
 }>`
+  position: sticky;
+
   max-width: 15rem;
   padding-top: 83px; /* top height + memocard margin * 2 */
   padding-bottom: 64px;
@@ -355,14 +353,16 @@ const SiderContent = styled.div<{
   }
 
   @media screen and (max-width: 780px) {
+    ${floatMenu}
     position: fixed;
     bottom: 0;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
     max-width: unset;
     width: 96%;
     right: 2%;
-    max-height: 66vh;
-    ${floatMenu}
-    padding: 0rem 1rem;
+    height: 66vh;
+    padding: 0rem 1rem 1rem 1rem;
     transition: transform .3s ease;
     transform: ${p => p.$isMobileSider ? `translateY(0)` : `translateY(105%)`};
 
