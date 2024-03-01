@@ -38,14 +38,9 @@ export const dropShadow = css`box-shadow: 0 0 2px 0px ${props => props.theme.col
 export const dropShadowAccent = css`box-shadow: 0 0 2px 0px ${props => props.theme.colors.accent + "33"}, 0 0 8px 0px ${props => props.theme.colors.accent + "33"};`
 export const paperCard = css`background: ${p => p.theme.colors.bg};box-shadow: rgb(0 0 0 / 10%) 0px 2px 4px;`
 export const floatMenu = css`
-position: fixed;
-bottom: 0;
 border-radius: 0.75rem;
-max-width: unset;
-width: 100%;
 background: ${p => p.theme.colors.bg};
-height: 66vh;
-box-shadow: rgb(0 0 0 / 10%) 0px 0px 7px;
+box-shadow: rgb(0 0 0 / 15%) 0px 0px 7px;
 `
 
 /***************************************

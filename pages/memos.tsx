@@ -176,7 +176,7 @@ export default function Memos({ source, info, memotags, client }: Props) {
         placeHolder={false}
         hideSearch={true}
       />
-      <main style={{ backgroundColor: theme?.colors.bg2 }}>
+      <main style={{ background: theme?.colors.bg2 }}>
         <OneColLayout>
           <ButtonFloat
             className="button-float"
@@ -216,7 +216,7 @@ export default function Memos({ source, info, memotags, client }: Props) {
               </div>
               <Footer style={{ marginTop: "5rem" }} />
             </MemoCol>
-            <SiderCol $isMobileSider={isMobileSider}>
+            <SiderContent $isMobileSider={isMobileSider}>
               <div className="close-btn" onClick={(e) => { e.stopPropagation(); setIsMobileSider(v => !v) }}>
                 小小の菜单<X size={"1.25em"} style={{ marginLeft: ".5rem" }} />
               </div>
@@ -253,7 +253,7 @@ export default function Memos({ source, info, memotags, client }: Props) {
                 </CardCommon>
               }
               {siteInfo.walineApi && siteInfo.walineApi !== "" && <CommentCard />}
-            </SiderCol>
+            </SiderContent>
           </TwoColLayout>
         </OneColLayout>
         {isModel && <ImageBrowser />}
@@ -307,7 +307,11 @@ const OneColLayout = styled.div`
 const MemoCol = styled.div`
   width: 100%;
   padding: 73px 16px 48px 16px; /* top height + memocard margin */
-  align-self: flex-end;
+  position: absolute;
+  right:0;
+  height: 100vh;
+  overflow: auto;
+  background: ${props => props.theme.colors.bg2};
 
   &::-webkit-scrollbar {
     display: none;
@@ -328,11 +332,9 @@ const MemoCol = styled.div`
   }
 `
 
-const SiderCol = styled.div<{
+const SiderContent = styled.div<{
   $isMobileSider: boolean,
 }>`
-  position: sticky;
-
   max-width: 15rem;
   padding-top: 83px; /* top height + memocard margin * 2 */
   padding-bottom: 64px;
@@ -353,10 +355,16 @@ const SiderCol = styled.div<{
   }
 
   @media screen and (max-width: 780px) {
+    position: fixed;
+    bottom: 0;
+    max-width: unset;
+    width: 96%;
+    right: 2%;
+    max-height: 66vh;
     ${floatMenu}
     padding: 0rem 1rem;
     transition: transform .3s ease;
-    transform: ${p => p.$isMobileSider ? `translateY(0)` : `translateY(100%)`};
+    transform: ${p => p.$isMobileSider ? `translateY(0)` : `translateY(105%)`};
 
     .close-btn {
       position: sticky;

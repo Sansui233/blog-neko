@@ -22,12 +22,6 @@ export const MarkdownStyle = styled.div`
     display: block;
   }
 
-  p,
-  ul,
-  ol {
-    line-height: 2rem;
-  }
-
   blockquote {
     margin: 1.5rem 0;
   }

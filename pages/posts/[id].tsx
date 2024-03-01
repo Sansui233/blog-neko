@@ -179,37 +179,39 @@ export default function Post({ meta, mdxcode, nextPost, prevPost, excerpt, headi
           className="toc-btn"
           Icon={MenuSquare}
           clickHandler={(e) => { e.stopPropagation(); setIsMobileSider(v => !v) }}
+          style={{ bottom: "5rem" }}
         />
         {isViewing && <ButtonFloat
           Icon={ArrowUpToLine}
           clickHandler={(e) => { e.stopPropagation(); window.scrollTo({ top: 0 }) }}
-          style={{ bottom: "5rem" }}
         />}
       </PostLayout>
-      <ColumnRight $isMobileSider={isMobileSider} $isFixedTop={isFixedTop}>
+      <ColumnRightContainer $isMobileSider={isMobileSider} $isFixedTop={isFixedTop}>
         <div className="close-btn" onClick={(e) => { e.stopPropagation(); setIsMobileSider(v => !v) }}>
-          小小の菜单<X size={"1.25em"} style={{ marginLeft: ".5rem" }} />
+          <X size={"1.25em"} style={{ marginLeft: ".5rem" }} />
         </div>
-        <Toc>
-          <div style={{ fontWeight: "bold", marginBottom: "0.5rem" }}>
-            目录
-          </div>
-          <TocContent>
-            {headings.length > 0
-              ? headings.map((h, i) => {
-                return <TocAnchor
-                  className={currentHeading === i ? "current" : undefined}
-                  $rank={h.rank}
-                  href={`#${h.id}`}
-                  onClick={(e) => { scrollTo(e, i) }}
-                  key={h.id}>
-                  <span>{h.title}</span>
-                </TocAnchor>
-              })
-              : <span style={{ opacity: "0.6", fontSize: "0.875rem", }}>这是一篇没有目录的文章。</span>}
-          </TocContent>
-        </Toc>
-      </ColumnRight>
+        <ColumnRightContent>
+          <Toc>
+            <div style={{ fontWeight: "bold", marginBottom: "0.5rem" }}>
+              目录
+            </div>
+            <TocContent>
+              {headings.length > 0
+                ? headings.map((h, i) => {
+                  return <TocAnchor
+                    className={currentHeading === i ? "current" : undefined}
+                    $rank={h.rank}
+                    href={`#${h.id}`}
+                    onClick={(e) => { scrollTo(e, i) }}
+                    key={h.id}>
+                    <span>{h.title}</span>
+                  </TocAnchor>
+                })
+                : <span style={{ opacity: "0.6", fontSize: "0.875rem", }}>这是一篇没有目录的文章。</span>}
+            </TocContent>
+          </Toc>
+        </ColumnRightContent>
+      </ColumnRightContainer>
     </LayoutContainer>
   </>;
 }
@@ -300,20 +302,23 @@ const PostLayout = styled.article`
   }
 `
 
-const ColumnRight = styled.aside<{
+const ColumnRightContent = styled.section`
+`
+
+const ColumnRightContainer = styled.aside<{
   $isMobileSider: boolean,
   $isFixedTop: boolean
 }>`
   position: fixed;
   top: ${p => p.$isFixedTop ? "63px" : "128px"};
   animation: ${fadeInRight} 0.3s ease;
-  will-change: top;
+  will-change: transform;
   transition: top 0.3s ease;
 
   max-width: 18rem;
-  max-height: 80vh;
+  max-height: ${p => p.$isFixedTop ? "calc(100vh - 63px)" : "calc(100vh - 128px)"};
   padding: 0 1rem;
-  line-height: 2rem; /* 与正文同 line-height */
+  line-height: 1.75rem; /* 与正文同 line-height */
   overflow: auto;
 
   left: 78%;
@@ -330,30 +335,31 @@ const ColumnRight = styled.aside<{
   }
 
   @media screen and (max-width: 1000px) {
-    top: 79px;
+    top: unset;
     left: unset;
+    bottom: 9rem;
     animation: unset;
 
     ${floatMenu}
-    width:380px;
-    height: 100%;
+    max-height: calc(100vh - 128px - 9rem);
+    width:250px;
+    padding-top: 1rem;
     padding-bottom: 1rem;
     
-    right: 0;
-    transition: transform .3s ease;
-    transform: ${p => p.$isMobileSider ? `translateX(0)` : `translateX(100%)`};
+    right: 7px;
+    transition: opacity .3s ease;
+    opacity: ${p => p.$isMobileSider ? `1` : `0`};
 
     .close-btn {
       position: sticky;
-      top:0;
-      background: inherit;
+      float: right;
+      top: 0;
 
       display: flex;
       font-weight: 600;
       justify-content: space-between;
       align-items: center;
 
-      padding: 1rem 0;
       ${p => p.$isMobileSider ? null : `visibility:hidden;`}
       color: ${p => p.theme.colors.textGray2};
       font-size: 1rem;
@@ -365,11 +371,15 @@ const ColumnRight = styled.aside<{
   }
 
   @media screen and (max-width: 580px) {
-    top: unset;
+    right: 2%;
+    bottom: 0;
+    max-height: unset;
     height: 60vh;
-    width: 100%;
+    max-width: unset;
+    opacity: unset;
+    width: 96%;
     transition: transform .3s ease;
-    transform: ${p => p.$isMobileSider ? `translateY(0)` : `translateY(100%)`};
+    transform: ${p => p.$isMobileSider ? `translateY(0%)` : `translateY(100%)`};
   }
 
 `
@@ -446,6 +456,7 @@ const TocAnchor = styled(Link) <{ $rank: number }>`
   padding-left: ${p => p.$rank}em;
   color: ${props => props.theme.colors.textSecondary};
   font-size: 0.875rem;
+  line-height: 2rem;
 
   &::before {
     content: "•";
@@ -471,11 +482,5 @@ const TocAnchor = styled(Link) <{ $rank: number }>`
     &::before {
       color: ${p => p.theme.colors.accent};
     }
-  }
-
-
-  @media screen and (max-width: 1000px) {
-    border-bottom: 2px dotted ${p => p.theme.colors.uiLineGray};
-    line-height: 2rem;
   }
 `
