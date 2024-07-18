@@ -6,7 +6,7 @@ import { siteInfo } from "../../site.config";
 import { bottomFadeIn } from "../../styles/animations";
 import { textShadow } from "../../styles/css";
 import { useMdxMemo } from "../mdx";
-import { MarkdownStyle } from "../styled/md-block";
+import { MarkdownStyle } from "../styled/markdown-style";
 import { ImageThumbs } from "./imagethumbs";
 
 

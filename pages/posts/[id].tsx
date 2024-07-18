@@ -14,7 +14,7 @@ import ButtonFloat from "../../components/common/button-float"
 import Pagination from "../../components/common/pagination"
 import LayoutContainer from "../../components/layout"
 import { useMdxPost } from "../../components/mdx"
-import { MarkdownStyle } from "../../components/styled/md-block"
+import { MarkdownStyle } from "../../components/styled/markdown-style"
 import { PostMeta } from '../../lib/data/posts.common'
 import { POST_DIR, posts_db } from "../../lib/data/server"
 import { dateI18n, parseDate } from "../../lib/date"
@@ -349,6 +349,8 @@ const ColumnRightContainer = styled.aside<{
     right: 7px;
     transition: opacity .3s ease;
     opacity: ${p => p.$isMobileSider ? `1` : `0`};
+    ${p => p.$isMobileSider ? null : `pointer-events: none;`};
+
 
     .close-btn {
       position: sticky;

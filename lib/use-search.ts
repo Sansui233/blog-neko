@@ -36,7 +36,9 @@ type Props<R> = {
  * If you want init search engine on your demand, you can use `initSearch()`
  */
 function useSearch<R>({ inputRef, setRes, initData }: Props<R>): {
-  searchStatus: SearchStatus; setsearchStatus: React.Dispatch<React.SetStateAction<SearchStatus>>; setSearchText: (text: string, immediateSearch?: boolean) => void // put text into input ref element and (optinal) search immediately.
+  searchStatus: SearchStatus;
+  setsearchStatus: React.Dispatch<React.SetStateAction<SearchStatus>>;
+  setSearchText: (text: string, immediateSearch?: boolean) => void // put text into input ref element and (optinal) search immediately.
   handleSearch: () => Promise<void>
   initSearch: () => Promise<Naive>
 } {

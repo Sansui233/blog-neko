@@ -8,27 +8,22 @@ import { rehypeExtractHeadings, rehypeHeadingsAddId } from '../rehype/rehype-toc
 import { remarkTag } from '../remark/remark-tag'
 
 // code splitting
-async function compileImport (){
+async function compileImport() {
   return (await import("@mdx-js/mdx")).compile
 }
 
-async function runSyncImport (){
+async function runSyncImport() {
   return (await import("@mdx-js/mdx")).runSync
 }
 
 // returns mdx function string
 export async function compileMdxPost(src: string) {
-  let headings: {
-    title: string;
-    rank: number;
-    id: string;
-}[] = []
-
+  let headings: { title: string; rank: number; id: string; }[] = []
   const compile = await compileImport()
 
   const code = String(await compile(src, {
     outputFormat: 'function-body',
-    remarkPlugins:[
+    remarkPlugins: [
       remarkGfm
     ],
     rehypePlugins: [
@@ -37,13 +32,13 @@ export async function compileMdxPost(src: string) {
       rehypeHighlight,
     ]
   }))
-  // normalize heading rank
 
+  // normalize heading rank
   function normalizeHeading(headings: {
     title: string;
     rank: number;
     id: string;
-  }[]){
+  }[]) {
     if (headings.length > 0) {
       const minRank = Math.min(...headings.map(heading => heading.rank));
       const offset = minRank - 1;
@@ -51,12 +46,10 @@ export async function compileMdxPost(src: string) {
         ...heading,
         rank: heading.rank - offset
       }));
-    }else {
+    } else {
       return headings
     }
   }
-
-  
   return {
     code,
     headings: normalizeHeading(headings)
@@ -71,7 +64,7 @@ export async function compileMdxMemo(src: string) {
 
   const code = String(await compile(src, {
     outputFormat: 'function-body',
-    remarkPlugins:[
+    remarkPlugins: [
       remarkGfm,
       remarkTag,
     ],
@@ -94,7 +87,7 @@ export async function compileMdxRss(src: string, type: "md" | "mdx") {
   if (type === "md") {
     const code = String(await compile(src, {
       outputFormat: 'function-body',
-      remarkPlugins:[
+      remarkPlugins: [
         remarkGfm
       ],
       rehypePlugins: [
@@ -114,7 +107,8 @@ export async function compileMdxRss(src: string, type: "md" | "mdx") {
       ).default)
     )
 
-  }else {
+  } else {
     return "This article is written in mdx format, which is not compatible with rss. Please visit the original site."
   }
 }
+

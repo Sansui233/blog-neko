@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { CommonHead } from ".";
 import { PageDescription } from '../components/common/page-description';
 import LayoutContainer, { OneColLayout } from "../components/layout";
-import { MarkdownStyle } from "../components/styled/md-block";
+import { MarkdownStyle } from "../components/styled/markdown-style";
 import { siteInfo } from "../site.config";
 import { bottomFadeIn } from "../styles/animations";
 import { textStroke } from "../styles/css";

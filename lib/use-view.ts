@@ -26,13 +26,13 @@ export function useViewHeight() {
  * Get real view width
  */
 export function useViewWidth() {
-  const [viewWidth, setviewHeight] = useState(globalThis.innerWidth)
+  const [viewWidth, setviewWidth] = useState(globalThis.innerWidth)
 
   // subscribe scroll to get view height
   // for safari compability
   useEffect(() => {
     const setvhOnResize = () => {
-      setviewHeight(globalThis.innerWidth)
+      setviewWidth(globalThis.innerWidth)
     }
     globalThis.addEventListener("resize", setvhOnResize)
     return () => {

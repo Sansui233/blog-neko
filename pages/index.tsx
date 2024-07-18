@@ -75,8 +75,12 @@ const Home: NextPage<Props> = ({ posts, categories }: Props) => {
               return <ArticleItem p={p} springStyle={style} key={p.id} index={i}/>
             })} */}
           </PostGrids>
+          <Decoration>
+            ✿ <span>{"𝑑𝑎𝑠 𝑣𝑒𝑟𝑔𝑖𝑠𝑠𝑚𝑒𝑖𝑛𝑛𝑖𝑐ℎ𝑡"}</span>&nbsp;
+          </Decoration>
         </OneColLayout>
       </LayoutContainer>
+
     </div>
   )
 }
@@ -184,4 +188,15 @@ const Card = styled(Link)`
     font-weight: 600;
     display: inline-block;
   }
+`
+
+const Decoration = styled.div`
+  position: fixed;
+  bottom: 5px;
+  left:0;
+  color: ${props => props.theme.colors.accent};
+  width: 100%;
+  text-align: right;
+  font-size: 0.875rem;
+  padding-right: 1.5rem;
 `

@@ -19,7 +19,12 @@ export const MarkdownStyle = styled.div`
   
   img, picture, video, canvas, svg, pre{
     margin: 1.5rem auto;
-    display: block;
+    display: block; 
+  }
+
+  img, picture {
+    border-radius: 1rem;
+    box-shadow: rgb(0 0 0 / 15%) 0px 2px 6px;
   }
 
   blockquote {
