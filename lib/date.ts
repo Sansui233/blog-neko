@@ -1,3 +1,5 @@
+import i18next from "../locales/i18n";
+
 export function dateToYMDMM(d: Date): string {
   return d.getFullYear() + "-"
     + ("0" + (d.getMonth() + 1)).slice(-2) + "-"
@@ -6,22 +8,35 @@ export function dateToYMDMM(d: Date): string {
     + ("0" + d.getMinutes()).slice(-2);
 }
 
-import i18next from "../locales/i18n";
 
-export function dateI18n(d: Date, to: "day" | "miniute" = "day"): string {
+
+
+export function dateI18n(d: Date, to: "day" | "miniute" = "day", mode: "dateYMD" | "dateMDY" = "dateYMD"): string {
   const t = i18next.t
+  const lang = i18next.resolvedLanguage
+
+  function appendOrdinalSuffix(day: number) {
+    if (day > 3 && day < 21) return 'th';
+    switch (day % 10) {
+      case 1: return day + 'st';
+      case 2: return day + 'nd';
+      case 3: return day + 'rd';
+      default: return day + 'th';
+    }
+  }
+
   switch (to) {
     case "day":
-      return t('dateYMD', {
+      return t(mode, {
         year: d.getFullYear(),
-        month: d.getMonth() + 1,
-        day: d.getDate(),
+        month: lang !== "en" ? d.getMonth() + 1 : new Intl.DateTimeFormat("en-US", { month: "short" }).format(d),
+        day: lang !== "en" ? d.getDate() : appendOrdinalSuffix(d.getDate()),
       })
     case "miniute":
-      return t('dateYMD', {
+      return t(mode, {
         year: d.getFullYear(),
-        month: d.getMonth() + 1,
-        day: d.getDate(),
+        month: lang !== "en" ? d.getMonth() + 1 : new Intl.DateTimeFormat("en-US", { month: "short" }).format(d),
+        day: lang !== "en" ? d.getDate() : appendOrdinalSuffix(d.getDate()),
         hour: d.getHours(),
         minute: d.getMinutes()
       })

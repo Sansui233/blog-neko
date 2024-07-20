@@ -143,8 +143,8 @@ export default function Post({ meta, mdxcode, nextPost, prevPost, excerpt, headi
     </Head>
     <LayoutContainer>
       <PostLayout>
-        <Date>{dateI18n(parseDate(meta.date))}</Date>
         <PostTitle>{meta.title}</PostTitle>
+        <Date>{dateI18n(parseDate(meta.date), "day", "dateMDY")}</Date>
         <MetaStyle>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <div className="category">
@@ -390,13 +390,15 @@ const ColumnRightContainer = styled.aside<{
 const PostTitle = styled.h1`
 margin-top: 0;
 margin-bottom: 0;
+text-align: center;
 `
 
 const Date = styled.div`
   color:${props => props.theme.colors.textGray2};
   font-weight: 600;
-  margin-bottom: 1rem;
+  margin-top: 1rem;
   font-size: 0.875rem;
+  text-align: center;
 `
 
 const MetaStyle = styled.div`

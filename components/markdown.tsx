@@ -1,5 +1,5 @@
 
-import { CSSProperties, DetailedHTMLProps, ImgHTMLAttributes, LegacyRef, useEffect, useRef, useState } from "react";
+import { CSSProperties, DetailedHTMLProps, ImgHTMLAttributes, LegacyRef, useCallback, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { useDocumentEvent } from "../lib/use-event";
 import { useViewHeight, useViewWidth } from "../lib/use-view";
@@ -13,9 +13,9 @@ export function MDImg(props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElemen
   const [isModel, setisModel] = useState(false)
   const imgRef: LegacyRef<HTMLImageElement> | undefined = useRef(null);
   const [ghostStyle, setGhostStyle] = useState<CSSProperties & {
-    width?: string,
-    height?: string
-  }>({ opacity: 0 });
+    width: string,
+    height: string
+  }>({ width: '0px', height: '0px', opacity: 0 });
   const [imgStyle, setImgStyle] = useState<CSSProperties>({ opacity: 1 });
 
   const vw = useViewWidth()
@@ -27,9 +27,12 @@ export function MDImg(props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElemen
     const handleImageLoaded = () => {
       if (imgRef.current) {
         const img = imgRef.current.getBoundingClientRect()
-        setGhostStyle({
-          width: img.width + "px",
-          height: img.height + "px",
+        setGhostStyle(s => {
+          return {
+            ...s,
+            width: img.width + "px",
+            height: img.height + "px",
+          }
         });
       }
     };
@@ -37,21 +40,26 @@ export function MDImg(props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElemen
     const elem = imgRef.current;
     if (elem.complete) {
       handleImageLoaded();
+    } else {
+      // Otherwise, wait for the image to load
+      elem.onload = handleImageLoaded;
     }
-    return
-  }, [vw]); // re-calc when view width changed
+    return () => {
+      elem.onload = null;
+    };
+  }, []); // re-calc when view width changed
 
   useDocumentEvent("scroll", () => {
     if (isModel) {
       setisModel(false)
       handleClick()
     }
-  })
+  }, false, [isModel])
 
   /**
    * with UX animation
    */
-  const handleClick = () => {
+  const handleClick = useCallback(() => {
     if (isModel) {
       // hide model
       setGhostStyle(dim => {
@@ -72,23 +80,25 @@ export function MDImg(props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElemen
       }, 300)
       // 400ms
       setTimeout(() => {
-        setGhostStyle(dim => {
+        setGhostStyle(s => {
           return {
-            ...dim,
+            ...s,
             opacity: 0,
           }
         })
       }, 400)
-    } else if (ghostStyle.width && ghostStyle.height && imgRef.current) {
+    } else if (imgRef.current) {
       // show
-      const width = parseFloat(ghostStyle.width.slice(0, -2))
-      const height = parseFloat(ghostStyle.height.slice(0, -2))
-      const transY = -(imgRef.current.getBoundingClientRect().y - vh / 2 + height / 2)
-      const transX = -(imgRef.current.getBoundingClientRect().x - vw / 2 + width / 2)
+      const img = imgRef.current.getBoundingClientRect()
+      const width = img.width
+      const height = img.height
+      const transY = -(img.y - vh / 2 + height / 2)
+      const transX = -(img.x - vw / 2 + width / 2)
       const scale = Math.min(vw / width, vh / height)
-      setGhostStyle(dim => {
+      setGhostStyle(() => {
         return {
-          ...dim,
+          width: width + "px",
+          height: height + "px",
           opacity: 1,
           transform: `translateX(${transX}px) translateY(${transY}px) scale(${scale})`,
           zIndex: 11,
@@ -100,9 +110,11 @@ export function MDImg(props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElemen
           opacity: 0
         }
       })
+    } else {
+      console.error("[Error] img nothing happened, ref not inited")
     }
     setisModel(!isModel)
-  }
+  }, [isModel, vh, vw])
 
   return <FluidWrap>
     {/* <ImgModel imgProps={props} isModel={isModel} setModel={setisModel} /> */}
@@ -122,18 +134,17 @@ export function MDImg(props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElemen
       backgroundSize: "cover",
       transition: "transform ease 0.3s",
     }} onClick={handleClick} />
-    {isModel && <div onClick={handleClick} style={{
-      backdropFilter: "blur(10px)",
-      WebkitBackdropFilter: "blur(10px)",
-      zIndex: 10,
-      // background: "#000000cd",
+    {isModel ? <div onClick={handleClick} style={{
       position: "fixed",
+      backdropFilter: "blur(10px)",
       top: 0,
       left: 0,
+      WebkitBackdropFilter: "blur(10px)",
       right: 0,
       bottom: 0,
-      cursor: "zoom-out"
-    }} />}
+      cursor: "zoom-out",
+      zIndex: 10
+    }} /> : null}
 
   </FluidWrap>
 }
