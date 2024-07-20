@@ -146,15 +146,14 @@ export default function Post({ meta, mdxcode, nextPost, prevPost, excerpt, headi
         <PostTitle>{meta.title}</PostTitle>
         <Date>{dateI18n(parseDate(meta.date), "day", "dateMDY")}</Date>
         <MetaStyle>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <div className="category">
-              <span>分类</span>
+          <div style={{ display: "inline-block", maxWidth: "50%" }}>
+            <span className="category">
               <StyledLink href={`/categories/${meta.categories}`} passHref={true}>
                 <Folder size={"1.1em"} style={{ marginLeft: "0.5em", marginRight: "0.15em", paddingBottom: "0.1em" }} />
                 {meta.categories}
               </StyledLink>
-            </div>
-            {meta.tags.length !== 0 && <div className="tag">{tags}</div>}
+            </span>
+            {meta.tags.length !== 0 && <span className="tag">{tags}</span>}
           </div>
         </MetaStyle>
 
@@ -407,12 +406,14 @@ const MetaStyle = styled.div`
   margin-bottom: 1.5rem;
   font-size: 0.875rem;
   font-weight: 600;
+  text-align: center;
 
   /*border-bottom: 2px dotted ${props => props.theme.colors.uiLineGray};*/
 
   .category {
     font-size: 0.875rem;
     line-height: 1.5rem;
+    padding-right: 0.5rem;
   }
 
   .tag {

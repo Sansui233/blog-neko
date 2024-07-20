@@ -140,7 +140,7 @@ const Card = styled(Link)`
   /*border-bottom: dotted 2px ${p => p.theme.colors.uiLineGray};*/
 
   .title {
-    font-size: 1.125rem;
+    font-size: 1.375rem;
     font-weight: 600;
     transition: box-shadow .5s;
   }

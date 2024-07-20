@@ -176,7 +176,9 @@ export default function Memos({ source, info, memotags, client }: Props) {
         placeHolder={false}
         hideSearch={true}
       />
-      <main style={{ background: theme?.colors.bg2 }}>
+      <main style={{
+        background: theme?.colors.bg2
+      }}>
         <OneColLayout>
           <ButtonFloat
             className="button-float"

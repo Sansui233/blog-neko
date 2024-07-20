@@ -12,6 +12,7 @@ import { useViewHeight, useViewWidth } from "../lib/use-view";
 export function MDImg(props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>) {
   const [isModel, setisModel] = useState(false)
   const imgRef: LegacyRef<HTMLImageElement> | undefined = useRef(null);
+  const ghostRef: LegacyRef<HTMLImageElement> | undefined = useRef(null);
   const [ghostStyle, setGhostStyle] = useState<CSSProperties & {
     width: string,
     height: string
@@ -23,15 +24,22 @@ export function MDImg(props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElemen
 
   // Set ghost wrapper's width and height after image loaded
   useEffect(() => {
-    if (!imgRef.current) return
+    if (!imgRef.current || !ghostRef.current) return
     const handleImageLoaded = () => {
-      if (imgRef.current) {
+      if (imgRef.current && ghostRef.current) {
         const img = imgRef.current.getBoundingClientRect()
+        setImgStyle(s => {
+          return {
+            minHeight: "unset",
+            minWidth: "unset",
+            background: "unset",
+          }
+        })
         setGhostStyle(s => {
           return {
             ...s,
             width: img.width + "px",
-            height: img.height + "px",
+            height: img.height + "px"
           }
         });
       }
@@ -62,10 +70,10 @@ export function MDImg(props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElemen
   const handleClick = useCallback(() => {
     if (isModel) {
       // hide model
-      setGhostStyle(dim => {
+      setGhostStyle(s => {
         return {
-          ...dim,
-          transform: "scale(1)",
+          ...s,
+          transform: `scale(1) `,
         }
       })
       // ending animation series
@@ -122,19 +130,26 @@ export function MDImg(props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElemen
     <img ref={imgRef} loading="lazy" onClick={handleClick} style={{
       ...imgStyle,
       cursor: "zoom-in",
+      minHeight: "2rem",
+      minWidth: "3rem",
+      background: "#88888833",
     }} {...props} />
-    <div style={{
+    <span style={{
       ...ghostStyle,
+      display: "block",
       position: "absolute",
       top: 0,
-      cursor: isModel ? "zoom-out" : "zoom-in",
-      borderRadius: isModel ? 0 : "1rem",
-      backgroundImage: `url("${props.src}")`,
-      backgroundPosition: "50%",
-      backgroundSize: "cover",
-      transition: "transform ease 0.3s",
-    }} onClick={handleClick} />
-    {isModel ? <div onClick={handleClick} style={{
+      left: 0,
+      right: 0,
+      bottom: 0,
+      cursor: "zoom-out",
+      zIndex: 10
+    }} onClick={handleClick}></span>
+
+    {/* bg layer */}
+    <span onClick={handleClick} style={{
+
+      display: isModel ? "block" : "none",
       position: "fixed",
       backdropFilter: "blur(10px)",
       top: 0,
@@ -144,17 +159,18 @@ export function MDImg(props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElemen
       bottom: 0,
       cursor: "zoom-out",
       zIndex: 10
-    }} /> : null}
-
+    }}></span>
   </FluidWrap>
 }
 
-const FluidWrap = styled.div`
+const FluidWrap = styled.p`
   position: relative;
   background-position: 50%;
   background-size: cover;
   transition: all .25s ease-in-out;
 `
+
+
 
 
 /**
