@@ -81,3 +81,7 @@ export const slideInRight = keyframes`
   opacity: 1;
 }
 `
+
+export const LoaderAnimation = keyframes`
+  50% {background-position: right }
+` 
