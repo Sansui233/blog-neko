@@ -70,7 +70,6 @@ const NavItem = styled.div`
 `
 const MainItem = styled.div`
   cursor: pointer;
-  font-weight: bold;
   color: ${p => p.theme.colors.textSecondary};
 
   & > span {

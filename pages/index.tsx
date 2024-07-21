@@ -124,7 +124,7 @@ const PostGrids = styled.section`
   display: grid;
   justify-content: center;
   grid-template-columns: 1fr 1fr;
-  grid-column-gap: 2.5rem;
+  grid-column-gap: 4rem;
 
   @media screen and (max-width: 780px) {
     grid-template-columns: repeat(1, 100%);
@@ -162,6 +162,9 @@ const Card = styled(Link)`
   }
 
   @media screen and (max-width: 780px){
+    .title{
+      font-size: 1.25rem;
+    }
     min-height: 5.25rem;
   }
 
