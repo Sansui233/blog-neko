@@ -3,6 +3,7 @@ import { CSSProperties, DetailedHTMLProps, ImgHTMLAttributes, LegacyRef, useCall
 import styled from "styled-components";
 import { useDocumentEvent } from "../lib/use-event";
 import { useViewHeight, useViewWidth } from "../lib/use-view";
+import { LoaderAnimation } from "../styles/animations";
 
 /**
  * custom img component
@@ -11,8 +12,9 @@ import { useViewHeight, useViewWidth } from "../lib/use-view";
  */
 export function MDImg(props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>) {
   const [isModel, setisModel] = useState(false)
+  const [isLoading, setisLoading] = useState(true)
   const imgRef: LegacyRef<HTMLImageElement> | undefined = useRef(null);
-  const ghostRef: LegacyRef<HTMLImageElement> | undefined = useRef(null);
+  const containerRef: LegacyRef<HTMLSpanElement> | undefined = useRef(null);
   const [ghostStyle, setGhostStyle] = useState<CSSProperties & {
     width: string,
     height: string
@@ -24,24 +26,21 @@ export function MDImg(props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElemen
 
   // Set ghost wrapper's width and height after image loaded
   useEffect(() => {
-    if (!imgRef.current || !ghostRef.current) return
+    if (!imgRef.current) return
     const handleImageLoaded = () => {
-      if (imgRef.current && ghostRef.current) {
+      if (imgRef.current && containerRef.current) {
         const img = imgRef.current.getBoundingClientRect()
-        setImgStyle(s => {
-          return {
-            minHeight: "unset",
-            minWidth: "unset",
-            background: "unset",
-          }
-        })
+        const ghost = containerRef.current.getBoundingClientRect()
+        const transX = img.x - ghost.x
         setGhostStyle(s => {
           return {
             ...s,
             width: img.width + "px",
-            height: img.height + "px"
+            height: img.height + "px",
+            transform: `translateX(${transX}px)`
           }
         });
+        setisLoading(false)
       }
     };
 
@@ -68,12 +67,15 @@ export function MDImg(props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElemen
    * with UX animation
    */
   const handleClick = useCallback(() => {
-    if (isModel) {
+    if (isModel && imgRef.current && containerRef.current) {
+      const img = imgRef.current.getBoundingClientRect()
+      const ctn = containerRef.current.getBoundingClientRect()
+      const transX = img.x - ctn.x
       // hide model
       setGhostStyle(s => {
         return {
           ...s,
-          transform: `scale(1) `,
+          transform: `scale(1) translateX(${transX}px)`,
         }
       })
       // ending animation series
@@ -95,16 +97,19 @@ export function MDImg(props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElemen
           }
         })
       }, 400)
-    } else if (imgRef.current) {
+    } else if (imgRef.current && containerRef.current) {
       // show
       const img = imgRef.current.getBoundingClientRect()
+      const ctn = containerRef.current.getBoundingClientRect()
       const width = img.width
       const height = img.height
       const transY = -(img.y - vh / 2 + height / 2)
-      const transX = -(img.x - vw / 2 + width / 2)
+      const transX = img.x - 2 * ctn.x - ctn.width / 2 + vw / 2
+
       const scale = Math.min(vw / width, vh / height)
-      setGhostStyle(() => {
+      setGhostStyle(s => {
         return {
+          ...s,
           width: width + "px",
           height: height + "px",
           opacity: 1,
@@ -124,31 +129,23 @@ export function MDImg(props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElemen
     setisModel(!isModel)
   }, [isModel, vh, vw])
 
-  return <FluidWrap>
+  return <FluidWrap ref={containerRef}>
     {/* <ImgModel imgProps={props} isModel={isModel} setModel={setisModel} /> */}
+    {isLoading && <FluidLoader>
+      <span></span>
+    </FluidLoader>}
     {/*eslint-disable-next-line @next/next/no-img-element*/}{/* eslint-disable-next-line jsx-a11y/alt-text */}
     <img ref={imgRef} loading="lazy" onClick={handleClick} style={{
       ...imgStyle,
-      cursor: "zoom-in",
-      minHeight: "2rem",
-      minWidth: "3rem",
-      background: "#88888833",
+      cursor: "zoom-in"
     }} {...props} />
-    <span style={{
-      ...ghostStyle,
-      display: "block",
-      position: "absolute",
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      cursor: "zoom-out",
-      zIndex: 10
-    }} onClick={handleClick}></span>
+    <FluidGhost style={{
+      backgroundImage: `url(${props.src})`,
+      ...ghostStyle
+    }} onClick={handleClick}></FluidGhost>
 
     {/* bg layer */}
     <span onClick={handleClick} style={{
-
       display: isModel ? "block" : "none",
       position: "fixed",
       backdropFilter: "blur(10px)",
@@ -163,11 +160,43 @@ export function MDImg(props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElemen
   </FluidWrap>
 }
 
-const FluidWrap = styled.p`
+const FluidWrap = styled.span`
+  display: block;
   position: relative;
+  text-align: center;
   background-position: 50%;
   background-size: cover;
   transition: all .25s ease-in-out;
+`
+
+const FluidGhost = styled.span`
+  position: absolute;
+  display: block;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  cursor: zoom-out;
+  z-index: 11;
+  transition: transform ease 0.3s;
+  border-radius: 1rem;
+  background-position: 50%;
+  background-size: cover;
+`
+
+const FluidLoader = styled.span`
+/* HTML: <div class="loader"></div> */
+  display: flex;
+  position: absolute;
+  top: 0px;
+  span {
+    padding: 10px;
+    width: 120px;
+    height: 20px;
+    background: linear-gradient(#000 0 0) left/20px 20px no-repeat #ddd;
+    animation: ${LoaderAnimation} 1s infinite linear;
+  }
+  pointer-events: none;
 `
 
 
