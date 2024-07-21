@@ -43,6 +43,9 @@ export function MDImg(props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElemen
         setisLoading(false)
       }
     };
+    const handleImageError = () => {
+      setisLoading(false)
+    };
 
     const elem = imgRef.current;
     if (elem.complete) {
@@ -50,9 +53,11 @@ export function MDImg(props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElemen
     } else {
       // Otherwise, wait for the image to load
       elem.onload = handleImageLoaded;
+      elem.onerror = handleImageError;
     }
     return () => {
       elem.onload = null;
+      elem.onerror = null;
     };
   }, []); // re-calc when view width changed
 
