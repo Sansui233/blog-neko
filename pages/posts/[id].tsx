@@ -316,7 +316,7 @@ const ColumnRightContainer = styled.aside<{
 
   max-width: 18rem;
   max-height: ${p => p.$isFixedTop ? "calc(100vh - 63px)" : "calc(100vh - 128px)"};
-  padding: 0 1rem;
+  padding: 0 1rem 0 2rem;
   line-height: 1.75rem; /* 与正文同 line-height */
   overflow: auto;
 
@@ -341,13 +341,14 @@ const ColumnRightContainer = styled.aside<{
 
     ${floatMenu}
     max-height: calc(100vh - 128px - 9rem);
-    width:250px;
+    width:300px;
     padding-top: 1rem;
     padding-bottom: 1rem;
     
     right: 7px;
-    transition: opacity .3s ease;
+    transition: opacity .3s ease, transform .3s ease;
     opacity: ${p => p.$isMobileSider ? `1` : `0`};
+    transform: translateX(${p => p.$isMobileSider ? `0px` : `100%`});
     ${p => p.$isMobileSider ? null : `pointer-events: none;`};
 
 
@@ -458,16 +459,22 @@ const TocContent = styled.div`
 
 const TocAnchor = styled(Link) <{ $rank: number }>`
   display: block;
-  padding-left: ${p => p.$rank}em;
+  padding-left: ${p => p.$rank - 1}em;
   color: ${props => props.theme.colors.textSecondary};
   font-size: 0.875rem;
   line-height: 2rem;
+  position: relative;
 
   &::before {
-    content: "•";
-    color: ${p => p.theme.colors.accentHover};
-    left: ${p => p.$rank - 1}em;
+    content: " ";
+    width: 3px;
+    height: 1rem;
+    top: 0.5rem;
+    background-color: ${p => p.theme.colors.textPrimary};
+    left: -0.75em;
     position: absolute;
+    opacity: 0;
+    transition: opacity 0.3s ease;
   }
 
   & span {
@@ -485,7 +492,7 @@ const TocAnchor = styled(Link) <{ $rank: number }>`
     }
     color: ${props => props.theme.colors.textPrimary};
     &::before {
-      color: ${p => p.theme.colors.accent};
+      opacity: 1;
     }
   }
 `

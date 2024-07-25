@@ -88,12 +88,7 @@ export const MarkdownStyle = styled.div`
   @media screen and (min-width: 580px){
 
     img, picture, video, canvas, svg, pre{
-      margin: 1.6rem auto;
       display: block;
-    }
-
-    blockquote {
-      margin: 1.6rem 0;
     }
   }
 

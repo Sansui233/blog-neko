@@ -69,19 +69,24 @@ export function MDImg(props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElemen
    * with UX animation
    */
   const handleClick = useCallback(() => {
-    if (isModel && imgRef.current && containerRef.current) {
+    if (isModel && imgRef.current && containerRef.current) { // hide
       // hide model
       //0ms
       setImgStyle(s => {
         return {
           ...s,
           transform: "scale(1) translate(0,0)",
-          cursor: "zoom-in",
-          zIndex: "auto"
+          cursor: "zoom-in"
         }
       })
       // 300ms
       setTimeout(() => {
+        setImgStyle(s => {
+          return {
+            ...s,
+            zIndex: "auto"
+          }
+        })
         setContainerStyle(s => {
           return {
             ...s,
@@ -91,7 +96,7 @@ export function MDImg(props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElemen
         })
       }, 300)
 
-    } else if (imgRef.current && containerRef.current) {
+    } else if (imgRef.current && containerRef.current) { // show
       // show
       const img = imgRef.current.getBoundingClientRect()
       const ctn = containerRef.current.getBoundingClientRect()
@@ -101,20 +106,19 @@ export function MDImg(props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElemen
       const transX = img.x - 2 * ctn.x - ctn.width / 2 + vw / 2
 
       const scale = Math.min(vw / width, vh / height) - 0.05
+      setContainerStyle(s => {
+        // Lock height
+        return {
+          ...s,
+          height: height + "px",
+        }
+      })
       setImgStyle(s => {
         return {
           ...s,
           transform: `translateX(${transX}px) translateY(${transY}px) scale(${scale})`,
           zIndex: 11,
           cursor: "zoom-out"
-        }
-      })
-      setContainerStyle(s => {
-        // Lock height
-        return {
-          ...s,
-          height: height + "px",
-          zIndex: 11,
         }
       })
     } else {
@@ -158,6 +162,7 @@ export function MDImg(props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElemen
 const FluidWrap = styled.div`
   position: relative;
   transition: all .3s ease-in-out;
+  margin: 1.5rem 0;
 `
 
 const FluidLoader = styled.div`

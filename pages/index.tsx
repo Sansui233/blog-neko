@@ -190,7 +190,7 @@ const Card = styled(Link)`
   .meta {
     margin: 0.5rem 0;
     font-size: 0.875rem;
-    color: ${p => p.theme.colors.textSecondary};
+    color: ${p => p.theme.colors.textGray2};
   }
 
   .description {
