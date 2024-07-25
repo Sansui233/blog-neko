@@ -99,9 +99,10 @@ function ArticleItem({ p, i }: {
             {p.categories}
           </span>
         </div>
-        <span className='title'>{p.title}</span>
-        <div className="meta description">
-          {p.description}
+        <div className="post-container"><span className='title'>{p.title}</span>
+          <div className="meta description">
+            {p.description}
+          </div>
         </div>
       </div>
     </Card>
@@ -143,23 +144,37 @@ const Card = styled(Link)`
     font-size: 1.375rem;
     font-weight: 600;
     transition: box-shadow .5s;
+    }
+
+  .post-container{
+    transform: translateX(0);
+    transition: transform .5s;
   }
 
-  @media (any-hover: hover) {
-    &:hover{
+  .post-container::before {
+    content: '';
+    position: absolute;
+    left: 0px;
+    width: 0px;
+    height: 100%;
+    background: ${props => props.theme.colors.textPrimary};
+    transform: translateX(0px);
+    transition: transform ease .5s, width linear 0.3s;
+  }
+
+  &:hover{
+      .post-container{
+        transform: translateX(16px);
+      }
+      .post-container::before{
+        width: 6px;
+        transform: translateX(-16px);
+      }
       .title{
         ${hoverBoxShadow}
       }
     }
-  }
 
-  @media (any-hover: none) {
-    &:active{
-      .title{
-        ${hoverBoxShadow}
-      }
-    }
-  }
 
   @media screen and (max-width: 780px){
     .title{
