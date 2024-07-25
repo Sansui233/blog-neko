@@ -6,6 +6,7 @@ import remarkGfm from 'remark-gfm'
 import { rehypeTag } from '../rehype/rehype-tag'
 import { rehypeExtractHeadings, rehypeHeadingsAddId } from '../rehype/rehype-toc'
 import { remarkTag } from '../remark/remark-tag'
+import { remarkUnrwrapImages } from '../remark/remark-unwrap-images'
 
 // code splitting
 async function compileImport() {
@@ -24,7 +25,8 @@ export async function compileMdxPost(src: string) {
   const code = String(await compile(src, {
     outputFormat: 'function-body',
     remarkPlugins: [
-      remarkGfm
+      remarkGfm,
+      remarkUnrwrapImages
     ],
     rehypePlugins: [
       rehypeHeadingsAddId,

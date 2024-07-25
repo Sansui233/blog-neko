@@ -4,65 +4,62 @@ import { visit } from "unist-util-visit"
 // 将 #标签 替换为 <Tag text={"#标签"} /> ，以解决与react hook的交互问题和事件绑定问题
 export function remarkTag() {
   return function (tree: Root) {
-    visit(tree, function (node, index, parent) {
+    visit(tree, "paragraph", function (node, index, parent) {
       // console.log("%%%%%%%%%%%",node.type)
-      if (node.type === "paragraph") {
+      const newChildren: any[] = []
+      node.children.forEach(child => {
+        if (child.type === "text") {
 
-        const newChildren: any[] = []
-        node.children.forEach(child => {
-          if (child.type === "text") {
+          const text = child.value
+          const tags = extractTags(text)
+          const delimiters = tags
 
-            const text = child.value
-            const tags = extractTags(text)
-            const delimiters = tags
+          if (tags.length > 0) {
+            const parts = flatsplit(text, delimiters)
 
-            if (tags.length > 0) {
-              const parts = flatsplit(text, delimiters)
-
-              const endingTag = "#" + tags[tags.length - 1]
-              const endingText = parts[parts.length - 1].text
-              if (endingText.endsWith(endingTag)) {
-                parts[parts.length - 1] = {
-                  text: endingText.slice(0, endingText.length - endingTag.length),
-                  isDelimiter: false
-                }
-                parts.push({
-                  text: endingTag,
-                  isDelimiter: true
-                })
+            const endingTag = "#" + tags[tags.length - 1]
+            const endingText = parts[parts.length - 1].text
+            if (endingText.endsWith(endingTag)) {
+              parts[parts.length - 1] = {
+                text: endingText.slice(0, endingText.length - endingTag.length),
+                isDelimiter: false
               }
-
-              parts.forEach(part => {
-                // reconstuct hast
-                if (part.isDelimiter) {
-
-                  const newNode = {
-                    type: 'mdxJsxFlowElement',
-                    name: "Tag",
-                    attributes: [{
-                      type: 'mdxJsxAttribute',
-                      name: 'text',
-                      value: part.text.slice(1) // ignore "#"
-                    }]
-                  };
-
-                  newChildren.push(newNode); // push tag node
-
-                } else {
-                  newChildren.push({ type: "text", value: part.text }) // push text node
-                }
+              parts.push({
+                text: endingTag,
+                isDelimiter: true
               })
-            } else {
-              newChildren.push(child) // not tag detected
             }
+
+            parts.forEach(part => {
+              // reconstuct hast
+              if (part.isDelimiter) {
+
+                const newNode = {
+                  type: 'mdxJsxFlowElement',
+                  name: "Tag",
+                  attributes: [{
+                    type: 'mdxJsxAttribute',
+                    name: 'text',
+                    value: part.text.slice(1) // ignore "#"
+                  }]
+                };
+
+                newChildren.push(newNode); // push tag node
+
+              } else {
+                newChildren.push({ type: "text", value: part.text }) // push text node
+              }
+            })
           } else {
-            newChildren.push(child) // push none-text
+            newChildren.push(child) // not tag detected
           }
-        })
+        } else {
+          newChildren.push(child) // push none-text
+        }
+      })
 
-        node.children = newChildren
+      node.children = newChildren
 
-      }
     })
   }
 }

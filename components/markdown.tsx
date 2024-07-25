@@ -11,10 +11,16 @@ import { LoaderAnimation } from "../styles/animations";
  * @returns 
  */
 export function MDImg(props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>) {
+  // see https://nextjs.org/docs/messages/react-hydration-error#possible-ways-to-fix-it
+  const [isClient, setIsClient] = useState(false)
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+
   const [isModel, setisModel] = useState(false)
   const [isLoading, setisLoading] = useState(true)
   const imgRef: LegacyRef<HTMLImageElement> | undefined = useRef(null);
-  const containerRef: LegacyRef<HTMLSpanElement> | undefined = useRef(null);
+  const containerRef: LegacyRef<HTMLDivElement> | undefined = useRef(null);
   const [ghostStyle, setGhostStyle] = useState<CSSProperties & {
     width: string,
     height: string
@@ -26,7 +32,7 @@ export function MDImg(props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElemen
 
   // Set ghost wrapper's width and height after image loaded
   useEffect(() => {
-    if (!imgRef.current) return
+    if (!isClient || !imgRef.current) return
     const handleImageLoaded = () => {
       if (imgRef.current && containerRef.current) {
         const img = imgRef.current.getBoundingClientRect()
@@ -59,7 +65,7 @@ export function MDImg(props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElemen
       elem.onload = null;
       elem.onerror = null;
     };
-  }, []); // re-calc when view width changed
+  }, [isClient]); // re-calc when view width changed
 
   useDocumentEvent("scroll", () => {
     if (isModel) {
@@ -81,6 +87,7 @@ export function MDImg(props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElemen
         return {
           ...s,
           transform: `scale(1) translateX(${transX}px)`,
+          cursor: "zoom-in"
         }
       })
       // ending animation series
@@ -120,6 +127,7 @@ export function MDImg(props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElemen
           opacity: 1,
           transform: `translateX(${transX}px) translateY(${transY}px) scale(${scale})`,
           zIndex: 11,
+          cursor: "zoom-out"
         }
       })
       setImgStyle(s => {
@@ -134,39 +142,40 @@ export function MDImg(props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElemen
     setisModel(!isModel)
   }, [isModel, vh, vw])
 
-  return <FluidWrap ref={containerRef}>
-    {/* <ImgModel imgProps={props} isModel={isModel} setModel={setisModel} /> */}
-    {isLoading && <FluidLoader>
-      <span></span>
-    </FluidLoader>}
-    {/*eslint-disable-next-line @next/next/no-img-element*/}{/* eslint-disable-next-line jsx-a11y/alt-text */}
-    <img ref={imgRef} loading="lazy" onClick={handleClick} style={{
-      ...imgStyle,
-      cursor: "zoom-in"
-    }} {...props} />
-    <FluidGhost style={{
-      backgroundImage: `url(${props.src})`,
-      ...ghostStyle
-    }} onClick={handleClick}></FluidGhost>
+  if (isClient) {
+    return <FluidWrap ref={containerRef}>
+      {/* <ImgModel imgProps={props} isModel={isModel} setModel={setisModel} /> */}
+      {isLoading && <FluidLoader>
+        <span></span>
+      </FluidLoader>}
+      {/*eslint-disable-next-line @next/next/no-img-element*/}{/* eslint-disable-next-line jsx-a11y/alt-text */}
+      <img ref={imgRef} loading="lazy" onClick={handleClick} style={{
+        ...imgStyle,
+        cursor: "zoom-in"
+      }} {...props} />
+      <FluidGhost style={{
+        backgroundImage: `url(${props.src})`,
+        ...ghostStyle
+      }} onClick={handleClick}></FluidGhost>
 
-    {/* bg layer */}
-    <span onClick={handleClick} style={{
-      display: isModel ? "block" : "none",
-      position: "fixed",
-      backdropFilter: "blur(10px)",
-      top: 0,
-      left: 0,
-      WebkitBackdropFilter: "blur(10px)",
-      right: 0,
-      bottom: 0,
-      cursor: "zoom-out",
-      zIndex: 10
-    }}></span>
-  </FluidWrap>
+      {/* bg layer */}
+      {isModel ? <div onClick={handleClick} style={{
+        position: "fixed",
+        backdropFilter: "blur(10px)",
+        top: 0,
+        left: 0,
+        WebkitBackdropFilter: "blur(10px)",
+        right: 0,
+        bottom: 0,
+        cursor: "zoom-out",
+        zIndex: 10
+      }}></div> : null}
+    </FluidWrap>
+  }
+  return
 }
 
-const FluidWrap = styled.span`
-  display: block;
+const FluidWrap = styled.div`
   position: relative;
   text-align: center;
   background-position: 50%;
@@ -174,14 +183,13 @@ const FluidWrap = styled.span`
   transition: all .25s ease-in-out;
 `
 
-const FluidGhost = styled.span`
+const FluidGhost = styled.div`
   position: absolute;
-  display: block;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  cursor: zoom-out;
+  cursor: zoom-in;
   z-index: 11;
   transition: transform ease 0.3s;
   border-radius: 1rem;
@@ -189,12 +197,14 @@ const FluidGhost = styled.span`
   background-size: cover;
 `
 
-const FluidLoader = styled.span`
+const FluidLoader = styled.div`
 /* HTML: <div class="loader"></div> */
-  display: flex;
   position: absolute;
   top: 0px;
+  width: 100%;
+  text-align: center;
   span {
+    display:inline-block;
     padding: 10px;
     width: 120px;
     height: 20px;
