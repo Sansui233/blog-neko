@@ -220,7 +220,7 @@ const Nav = styled.nav`
 
   a:hover {
     background: ${props => props.theme.colors.accentHover};
-    transition: background linear .5s;
+    transition: background ease .5s;
   }
 
   a.current {

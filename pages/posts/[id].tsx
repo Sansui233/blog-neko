@@ -178,7 +178,7 @@ export default function Post({ meta, mdxcode, nextPost, prevPost, excerpt, headi
           className="toc-btn"
           Icon={MenuSquare}
           clickHandler={(e) => { e.stopPropagation(); setIsMobileSider(v => !v) }}
-          style={{ bottom: "5rem" }}
+          style={{ bottom: "5.25rem" }}
         />
         {isViewing && <ButtonFloat
           Icon={ArrowUpToLine}

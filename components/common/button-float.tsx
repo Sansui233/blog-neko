@@ -23,11 +23,12 @@ const ButtonContainer = styled.button`
   height: 2.5rem;
   width: 2.5rem;
   font-size: 1.25rem;
-  border-radius: 50%;
+  border-radius: 0.625rem;
   border: 0;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   color: ${p => p.theme.colors.textGray2};
+  background-color: ${p => p.theme.colors.tagBg};
   z-index: 10;
   cursor: pointer;
 
@@ -41,7 +42,6 @@ const ButtonContainer = styled.button`
 
   @media (any-hover: hover) {
     &:hover{
-      background: ${p => p.theme.colors.accentHover};
       color: ${p => p.theme.colors.textPrimary};
     }
   }

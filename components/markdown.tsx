@@ -21,33 +21,23 @@ export function MDImg(props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElemen
   const [isLoading, setisLoading] = useState(true)
   const imgRef: LegacyRef<HTMLImageElement> | undefined = useRef(null);
   const containerRef: LegacyRef<HTMLDivElement> | undefined = useRef(null);
-  const [ghostStyle, setGhostStyle] = useState<CSSProperties & {
+  const [containerStyle, setContainerStyle] = useState<CSSProperties & {
     width: string,
     height: string
-  }>({ width: '0px', height: '0px', opacity: 0 });
-  const [imgStyle, setImgStyle] = useState<CSSProperties>({ opacity: 1 });
+  }>({ width: '100%', height: "auto" });
+  const [imgStyle, setImgStyle] = useState<CSSProperties>({
+    cursor: "zoom-in",
+    transform: "scale(1) translate(0,0)",
+  });
 
   const vw = useViewWidth()
   const vh = useViewHeight()
 
-  // Set ghost wrapper's width and height after image loaded
+  // After image loaded
   useEffect(() => {
     if (!isClient || !imgRef.current) return
     const handleImageLoaded = () => {
-      if (imgRef.current && containerRef.current) {
-        const img = imgRef.current.getBoundingClientRect()
-        const ghost = containerRef.current.getBoundingClientRect()
-        const transX = img.x - ghost.x
-        setGhostStyle(s => {
-          return {
-            ...s,
-            width: img.width + "px",
-            height: img.height + "px",
-            transform: `translateX(${transX}px)`
-          }
-        });
-        setisLoading(false)
-      }
+      setisLoading(false)
     };
     const handleImageError = () => {
       setisLoading(false)
@@ -65,8 +55,9 @@ export function MDImg(props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElemen
       elem.onload = null;
       elem.onerror = null;
     };
-  }, [isClient]); // re-calc when view width changed
+  }, [isClient]);
 
+  // close on scroll
   useDocumentEvent("scroll", () => {
     if (isModel) {
       setisModel(false)
@@ -79,36 +70,27 @@ export function MDImg(props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElemen
    */
   const handleClick = useCallback(() => {
     if (isModel && imgRef.current && containerRef.current) {
-      const img = imgRef.current.getBoundingClientRect()
-      const ctn = containerRef.current.getBoundingClientRect()
-      const transX = img.x - ctn.x
       // hide model
-      setGhostStyle(s => {
+      //0ms
+      setImgStyle(s => {
         return {
           ...s,
-          transform: `scale(1) translateX(${transX}px)`,
-          cursor: "zoom-in"
+          transform: "scale(1) translate(0,0)",
+          cursor: "zoom-in",
+          zIndex: "auto"
         }
       })
-      // ending animation series
       // 300ms
       setTimeout(() => {
-        setImgStyle(s => {
+        setContainerStyle(s => {
           return {
             ...s,
-            opacity: 1
+            height: "auto",
+            zIndex: "auto",
           }
         })
       }, 300)
-      // 400ms
-      setTimeout(() => {
-        setGhostStyle(s => {
-          return {
-            ...s,
-            opacity: 0,
-          }
-        })
-      }, 400)
+
     } else if (imgRef.current && containerRef.current) {
       // show
       const img = imgRef.current.getBoundingClientRect()
@@ -118,22 +100,21 @@ export function MDImg(props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElemen
       const transY = -(img.y - vh / 2 + height / 2)
       const transX = img.x - 2 * ctn.x - ctn.width / 2 + vw / 2
 
-      const scale = Math.min(vw / width, vh / height)
-      setGhostStyle(s => {
+      const scale = Math.min(vw / width, vh / height) - 0.05
+      setImgStyle(s => {
         return {
           ...s,
-          width: width + "px",
-          height: height + "px",
-          opacity: 1,
           transform: `translateX(${transX}px) translateY(${transY}px) scale(${scale})`,
           zIndex: 11,
           cursor: "zoom-out"
         }
       })
-      setImgStyle(s => {
+      setContainerStyle(s => {
+        // Lock height
         return {
           ...s,
-          opacity: 0
+          height: height + "px",
+          zIndex: 11,
         }
       })
     } else {
@@ -143,7 +124,9 @@ export function MDImg(props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElemen
   }, [isModel, vh, vw])
 
   if (isClient) {
-    return <FluidWrap ref={containerRef}>
+    return <FluidWrap ref={containerRef} style={{
+      ...containerStyle
+    }}>
       {/* <ImgModel imgProps={props} isModel={isModel} setModel={setisModel} /> */}
       {isLoading && <FluidLoader>
         <span></span>
@@ -151,12 +134,9 @@ export function MDImg(props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElemen
       {/*eslint-disable-next-line @next/next/no-img-element*/}{/* eslint-disable-next-line jsx-a11y/alt-text */}
       <img ref={imgRef} loading="lazy" onClick={handleClick} style={{
         ...imgStyle,
-        cursor: "zoom-in"
+        position: "relative",
+        transition: "transform .3s ease"
       }} {...props} />
-      <FluidGhost style={{
-        backgroundImage: `url(${props.src})`,
-        ...ghostStyle
-      }} onClick={handleClick}></FluidGhost>
 
       {/* bg layer */}
       {isModel ? <div onClick={handleClick} style={{
@@ -177,24 +157,7 @@ export function MDImg(props: DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElemen
 
 const FluidWrap = styled.div`
   position: relative;
-  text-align: center;
-  background-position: 50%;
-  background-size: cover;
-  transition: all .25s ease-in-out;
-`
-
-const FluidGhost = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  cursor: zoom-in;
-  z-index: 11;
-  transition: transform ease 0.3s;
-  border-radius: 1rem;
-  background-position: 50%;
-  background-size: cover;
+  transition: all .3s ease-in-out;
 `
 
 const FluidLoader = styled.div`
