@@ -149,10 +149,10 @@ const Card = styled(Link) <{
     right: 0;
     bottom: 1rem;
     font-style: italic;
-    font-size: 1.5rem;
+    font-size: 1.125rem;
     font-variant-numeric: tabular-nums;
-    color: transparent;
-    -webkit-text-stroke: #a2a2a260 1px;
+    font-weight: bold;
+    color: ${props => props.theme.colors.uiLineGray3};
   }
 
   .title {
