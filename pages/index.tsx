@@ -90,8 +90,8 @@ function ArticleItem({ p, i }: {
   i: number
 }) {
   return (
-    <Card href={'/posts/' + p.id} passHref={true}>
-      <div className='card-content'>
+    <Card href={'/posts/' + p.id} $num={i + 1} passHref={true}>
+      <CardContent $num={i + 1}>
         <div className='meta'>
           <span className='date'>{dateI18n(parseDate(p.date))}</span>
           <Folder size="1em" style={{ marginLeft: "0.5em", marginRight: "0.25em", marginBottom: "0.125rem" }} />
@@ -104,7 +104,7 @@ function ArticleItem({ p, i }: {
             {p.description}
           </div>
         </div>
-      </div>
+      </CardContent>
     </Card>
   );
 }
@@ -132,13 +132,28 @@ const PostGrids = styled.section`
   }
 `
 
-const Card = styled(Link)`
+const Card = styled(Link) <{
+  $num: number
+}>`
   display: block;
   min-height: 6rem;
   cursor: pointer;
   animation-fill-mode: forwards;
   position: relative;
   /*border-bottom: dotted 2px ${p => p.theme.colors.uiLineGray};*/
+
+  
+  &::before {
+    content: "No.0x${p => p.$num.toString(16).padStart(2, '0')}";
+    position: absolute;
+    right: 0;
+    bottom: 1rem;
+    font-style: italic;
+    font-size: 1.5rem;
+    font-variant-numeric: tabular-nums;
+    color: transparent;
+    -webkit-text-stroke: #a2a2a260 1px;
+  }
 
   .title {
     font-size: 1.375rem;
@@ -183,13 +198,18 @@ const Card = styled(Link)`
     min-height: 5.25rem;
   }
 
-  .card-content {
-    padding: 1rem 0 2.5rem 0;
-}
+`
 
+const CardContent = styled.div<{
+  $num: number
+}>`
+
+  padding: 1rem 0 2.5rem 0;
+  position: relative;
+
+    
   .meta {
     margin: 0.5rem 0;
-    font-size: 0.875rem;
     color: ${p => p.theme.colors.textGray2};
   }
 
@@ -198,13 +218,16 @@ const Card = styled(Link)`
   }
 
   .date {
-    font-weight: 600;
+    font-weight: 500;
+    font-size: 0.875rem;
   }
 
   .category {
-    font-weight: 600;
+    font-weight: 500;
+    font-size: 0.875rem;
     display: inline-block;
   }
+
 `
 
 const Decoration = styled.div`

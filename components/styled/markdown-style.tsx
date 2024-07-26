@@ -14,7 +14,7 @@ export const MarkdownStyle = styled.div`
   }
 
   hr {
-    background-color: ${props => props.theme.colors.uiLineGray2};
+    background-color: ${props => props.theme.colors.uiLineGray3};
   }
   
   img, picture, video, canvas, svg, pre{

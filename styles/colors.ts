@@ -37,7 +37,8 @@ export const lightTheme: DefaultTheme = {
     background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 14%, rgba(255,255,255,1) 23%, rgba(255,255,255,1) 100%);
     `,
     uiLineGray: "#a2a2a280",
-    uiLineGray2: "#a2a2a243",
+    uiLineGray2: "#a2a2a260",
+    uiLineGray3: "#a2a2a243",
 
   }
 }
@@ -78,7 +79,8 @@ export const darkTheme: DefaultTheme = {
     `,
     filterDarker: css`filter: brightness(0.8);`,
     uiLineGray: "#a2a2a280",
-    uiLineGray2: "#a2a2a233",
+    uiLineGray2: "#a2a2a260",
+    uiLineGray3: "#a2a2a233",
   }
 }
 
