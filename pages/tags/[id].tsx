@@ -29,7 +29,7 @@ export default function TagPage({ tag, posts }: Props) {
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const paths = Array.from(await posts_db.tags()).map(v => {
+  const paths = Array.from(posts_db.tags()).map(v => {
     return { params: { id: v[0] } }
   })
   return {

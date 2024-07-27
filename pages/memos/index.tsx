@@ -5,31 +5,28 @@ import Head from "next/head";
 import { useCallback, useContext, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import styled, { ThemeContext } from "styled-components";
-import { CommonHead } from ".";
-import ButtonFloat from "../components/common/button-float";
-import Footer from "../components/common/footer";
-import { PageDescription } from '../components/common/page-description';
-import Topbar from "../components/common/topbar";
-import { TwoColLayout } from "../components/layout";
-import CardCommon from "../components/memo/cardcommon";
-import CommentCard from "../components/memo/commentcard";
-import { useImageBroswerStore } from "../components/memo/imagebrowser";
-import { MemoCard, MemoLoading } from "../components/memo/memocard";
-import NavCard from "../components/memo/navcard";
-import VirtualList from "../components/memo/virtuallist";
-import { LinkWithLine } from "../components/styled/link-with-line";
-import { clientList, createClient } from "../lib/data/client";
-import { MemoInfo, MemoPost, MemoTag } from "../lib/data/memos.common";
-import { memo_db, writeMemoJson } from "../lib/data/server";
-import { compileMdxMemo } from "../lib/markdown/mdx";
-import { SearchObj } from "../lib/search";
-import { useDocumentEvent } from "../lib/use-event";
-import useSearch from "../lib/use-search";
-import { siteInfo } from "../site.config";
-import { floatMenu } from "../styles/css";
-import { Extend } from "../utils/type-utils";
+import { CommonHead } from "..";
+import ButtonFloat from "../../components/common/button-float";
+import Topbar from "../../components/common/topbar";
+import { TwoColLayout } from "../../components/layout";
+import CardCommon from "../../components/memo/cardcommon";
+import CommentCard from "../../components/memo/commentcard";
+import { useImageBroswerStore } from "../../components/memo/imagebrowser";
+import MemoCol from "../../components/memo/memocol";
+import NavCard from "../../components/memo/navcard";
+import { LinkWithLine } from "../../components/styled/link-with-line";
+import { clientList } from "../../lib/data/client";
+import { MemoInfo, MemoPost, MemoTag } from "../../lib/data/memos.common";
+import { memo_db, writeMemoJson } from "../../lib/data/server";
+import { compileMdxMemo } from "../../lib/markdown/mdx";
+import { SearchObj } from "../../lib/search";
+import { useDocumentEvent } from "../../lib/use-event";
+import useSearch from "../../lib/use-search";
+import { siteInfo } from "../../site.config";
+import { floatMenu } from "../../styles/css";
+import { Extend } from "../../utils/type-utils";
 
-const ImageBrowser = dynamic(() => import("../components/memo/imagebrowser"))
+const ImageBrowser = dynamic(() => import("../../components/memo/imagebrowser"))
 
 const MemoCSRAPI = '/data/memos'
 
@@ -48,30 +45,13 @@ type Props = {
 
 export default function Memos({ source, info, memotags, client }: Props) {
   const theme = useContext(ThemeContext)
-  const [postsData, setpostsData] = useState(source)
-  const [postsDataBackup, setpostsDataBackup] = useState(source)
   const [isMobileSider, setIsMobileSider] = useState(false)
   const [t, i18n] = useTranslation()
-
   const isModel = useImageBroswerStore(state => state.isModel)
+  const [postsData, setpostsData] = useState(source)
+  const [postsDataBackup, setpostsDataBackup] = useState(source)
 
-  // virtual list
-  const [cli, setCli] = useState(createClient(client))
-  const fetchFrom = useCallback(async (start: number, batchsize: number) => {
-    return cli.queryMemoByCount(start, batchsize).then(data => {
-      if (data.length > 0) {
-        return Promise.all(data.map(async d => {
-          return {
-            ...d,
-            length: d.content.length,
-            code: (await compileMdxMemo(d.content)).code
-          }
-        }))
-      } else {
-        return undefined
-      }
-    })
-  }, [cli])
+
 
   // search
   // TODO set page limitation
@@ -121,7 +101,7 @@ export default function Memos({ source, info, memotags, client }: Props) {
       return
     }
     handleSearch()
-  }, [handleSearch, postsDataBackup, setsearchStatus])
+  }, [handleSearch, postsDataBackup, setsearchStatus]) //TODO
 
   // bind keyboard event
   useDocumentEvent(
@@ -133,38 +113,6 @@ export default function Memos({ source, info, memotags, client }: Props) {
     undefined,
     [handleSearch]
   )
-
-  function statusRender() {
-    switch (searchStatus.isSearch) {
-      case "ready":
-        return ""
-      case "searching":
-        return "Searching..."
-      case "done":
-        return <>
-          Results: {postsData.length} memos
-          <span
-            style={{
-              fontStyle: "normal",
-              fontWeight: "bold",
-              cursor: "pointer",
-              marginLeft: "0.875em"
-            }}
-            onClick={() => {
-              setsearchStatus(status => {
-                return {
-                  ...status,
-                  isSearch: "ready",
-                  searchText: ""
-                }
-              })
-              setpostsData(postsDataBackup)
-            }}
-          >X</span>
-        </>
-    }
-  }
-
 
   return (
     <>
@@ -189,35 +137,13 @@ export default function Memos({ source, info, memotags, client }: Props) {
             sep={1}
             siderLocation="right"
           >
-            <MemoCol>
-              <PageDescription style={{ marginRight: "1rem" }}>
-                {statusRender()}
-              </PageDescription>
-              <div style={{ minHeight: "80vh" }}>
-                {searchStatus.isSearch === "ready" // 首屏的问题……
-                  ? <VirtualList<TMemo>
-                    key={"vl1"}
-                    sources={postsData}
-                    setSources={setpostsData}
-                    Elem={(props) => {
-                      return <MemoCard source={props.source} setSearchText={setSearchText} triggerHeightChange={props.triggerHeightChange} />
-                    }}
-                    fetchFrom={fetchFrom}
-                    batchsize={10}
-                    Loading={MemoLoading}
-                  /> : searchStatus.isSearch === "done"
-                    ? <VirtualList<TMemo>
-                      key={searchStatus.searchText}
-                      sources={postsData}
-                      setSources={setpostsData}
-                      Elem={(props) => {
-                        return <MemoCard source={props.source} setSearchText={setSearchText} triggerHeightChange={props.triggerHeightChange} />
-                      }}
-                      batchsize={10}
-                    /> : null}
-              </div>
-              <Footer style={{ marginTop: "5rem" }} />
-            </MemoCol>
+            <Col>
+              <MemoCol
+                postsData={postsData} postsDataBackup={postsDataBackup}
+                setpostsData={setpostsData} setpostsDataBackup={setpostsDataBackup}
+                client={client} searchStatus={searchStatus} setsearchStatus={setsearchStatus} setSearchText={setSearchText}
+              />
+            </Col>
             <SiderContent $isMobileSider={isMobileSider}>
               <div className="close-btn" onClick={(e) => { e.stopPropagation(); setIsMobileSider(v => !v) }}>
                 小小の菜单<X size={"1.25em"} style={{ marginLeft: ".5rem" }} />
@@ -264,6 +190,7 @@ export default function Memos({ source, info, memotags, client }: Props) {
   )
 }
 
+
 export const getStaticProps: GetStaticProps<Props> = async () => {
   writeMemoJson()
 
@@ -305,29 +232,31 @@ const OneColLayout = styled.div`
   }
 `
 
+
 /** Styles **/
-const MemoCol = styled.div`
+const Col = styled.div`
+
+width: 100%;
+padding: 73px 16px 48px 16px; /* top height + memocard margin */
+align-self: flex-end;
+
+&::-webkit-scrollbar {
+  display: none;
+}
+
+@media screen and (min-width: 1080px) {
+  max-width: 640px;
+}
+
+
+@media screen and (max-width: 780px) {
   width: 100%;
-  padding: 73px 16px 48px 16px; /* top height + memocard margin */
-  align-self: flex-end;
+}
 
-  &::-webkit-scrollbar {
-    display: none;
-  }
-
-  @media screen and (min-width: 1080px) {
-    max-width: 640px;
-  }
-
-
-  @media screen and (max-width: 780px) {
-    width: 100%;
-  }
-
-  @media screen and (max-width: 580px) {
-    padding-left: 0;
-    padding-right: 0;
-  }
+@media screen and (max-width: 580px) {
+  padding-left: 0;
+  padding-right: 0;
+}
 `
 
 const SiderContent = styled.div<{
