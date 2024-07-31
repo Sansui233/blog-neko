@@ -7,7 +7,7 @@ import Head from "next/head"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import path from "path"
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import styled from "styled-components"
 import { CommonHead } from ".."
 import ButtonFloat from "../../components/common/button-float"
@@ -57,13 +57,29 @@ export default function Post({ meta, mdxcode, nextPost, prevPost, excerpt, headi
   const [headingsY, setHeadingsY] = useState<(number | undefined)[]>([])
   const [currentHeading, setCurrentHeading] = useState(-1)
   const [isMobileSider, setIsMobileSider] = useState(false)
+  const postContent = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const y = headings.map(h => {
-      const ele = document.getElementById(h.id)
-      return ele ? ele.getBoundingClientRect().top + window.scrollY - scrollOffset : undefined
-    })
-    setHeadingsY(y) // should be updated on window resize but I don't want it to be costy
+    const handler = () => {
+      const y = headings.map(h => {
+        const ele = document.getElementById(h.id)
+        return ele ? ele.getBoundingClientRect().top + window.scrollY - scrollOffset : undefined
+      })
+      setHeadingsY(y) // should be updated on window resize but I don't want it to be costy
+    }
+
+    handler()
+
+    const heightObserver = new ResizeObserver(() => handler())
+    if (postContent.current) {
+      heightObserver.observe(postContent.current)
+    }
+
+    return () => {
+      heightObserver.disconnect()
+    }
+
+
   }, [headings])
 
   const scrollHandler = useMemo(() => {
@@ -157,7 +173,7 @@ export default function Post({ meta, mdxcode, nextPost, prevPost, excerpt, headi
           </div>
         </MetaStyle>
 
-        <MarkdownStyle>
+        <MarkdownStyle ref={postContent}>
           {useMdxPost(mdxcode)}
         </MarkdownStyle>
         <section>
