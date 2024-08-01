@@ -253,6 +253,7 @@ html ::-webkit-scrollbar-thumb:hover {
 code {
   letter-spacing: normal;
   font-family: SFMono-Regular,consolas,Liberation Mono,menlo,monaco,"Courier New",courier,monospace,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol",sans-serif;
+  word-break: break-all;
 }
 
 @media screen and (max-width: 580px){
