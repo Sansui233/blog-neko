@@ -7,7 +7,7 @@
     "allposts": "所有文章",
     "untagged": "无标签文章",
     "dateYMD": "{{year}} 年 {{month}} 月 {{day}} 日",
-    "dateMDY": "{{month}} 月 {{day}} 日, 2024",
+    "dateMDY": "{{month}} 月 {{day}} 日, {{year}}",
     "dateYMDHM": "{{year}} 年 {{month}} 月 {{day}} 日 {{hour}} 时 {{minute}} 分",
     "tags": "标签",
     "friends": "朋友",
