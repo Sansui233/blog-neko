@@ -1,6 +1,6 @@
 import { WalineComment } from '@waline/client'
 import i18next from 'i18next'
-import { MessageSquare, MessageSquarePlusIcon } from 'lucide-react'
+import { MessageSquare, PencilLine } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import { useContext, useEffect, useState } from 'react'
 import styled, { ThemeContext } from 'styled-components'
@@ -42,9 +42,9 @@ export default function CommentCard() {
           {comments.map(item => <li key={item.objectId}>{item.comment.replace(/<[^>]*>/g, '')}</li>)}
         </Container>
         <ModelButton>
-          <MessageSquarePlusIcon size="1em" style={{ marginRight: "0.5em" }} />
+          <PencilLine size="1em" style={{ marginRight: "0.5em" }} />
           <span onClick={() => setIsModel(true)}>
-            给我留言
+            添加留言
           </span>
         </ModelButton>
       </CardCommon>
@@ -61,21 +61,18 @@ const Container = styled.div`
     overflow: hidden;
   }
 `
-const ModelButton = styled.span`
-  margin-top: 2.5rem;
-  height: 2.5rem;
+const ModelButton = styled.button`
+  margin-top: 2rem;
   max-width: 8rem;
-  padding: 0 0.5rem;
-  border-radius: 2rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid ${p => p.theme.colors.uiLineGray2};
 
   font-weight: 600;
-  color:${p => p.theme.colors.textPrimary};
+  color:${p => p.theme.colors.textSecondary};
   cursor: pointer;
   background: ${props => props.theme.colors.bg};
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
 
   @media screen and (max-width: 780px) {
     max-width: unset;

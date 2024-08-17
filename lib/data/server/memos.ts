@@ -3,7 +3,7 @@ import path from "path";
 import readline from "readline";
 import { dateToYMDMM, parseDate } from "../../date";
 import { getLastModTime, writeJson } from "../../fs/fs";
-import { INFOFILE, MemoImg, MemoPost, MemoTag } from "../memos.common";
+import { INFOFILE, MemoPost, MemoTag } from "../memos.common";
 import { MemoFileMap, MemoInfoExt, MemoPageMap } from "./type";
 
 export const MEMOS_DIR = path.join(process.cwd(), 'source', 'memos')
@@ -32,7 +32,7 @@ const memo_db = await (async function () {
 
   const tags: MemoTag[] = [];
   const memos: MemoPost[] = []
-  const imgs: MemoImg[] = []
+  const imgs: MemoPost[] = []
   const fileMap: MemoFileMap[] = []
   const pageMap: MemoPageMap[] = []
 
@@ -171,13 +171,15 @@ const memo_db = await (async function () {
     memos,
     tags,
     info,
+    imgs,
     atPage,
   }
 })()
 
 
-// 根据memo内容，补全tags, imgs, fileMap 的状态信息
-function updateLastFile(memos: MemoPost[], tags: MemoTag[], imgs: MemoImg[], fileMap: MemoFileMap[]) {
+// 根据 memoPost 内容，提取 tags, imgs, fileMap 的状态信息，记录至 MemPost
+// 如果有图片，也记录至 imgs
+function updateLastFile(memos: MemoPost[], tags: MemoTag[], imgs: MemoPost[], fileMap: MemoFileMap[]) {
   if (memos.length > 0) {
 
     const lastMemo = memos[memos.length - 1]
@@ -203,10 +205,7 @@ function updateLastFile(memos: MemoPost[], tags: MemoTag[], imgs: MemoImg[], fil
 
     // update imgs
     if (lastMemo.imgsmd.length !== 0) {
-      imgs.push({
-        memoId: lastMemo.id,
-        imgsMd: lastMemo.imgsmd,
-      })
+      imgs.push(lastMemo)
     }
 
 
@@ -261,9 +260,11 @@ function extractTagsFromMarkdown(markdown: string) {
 function writeMemoJson() {
 
   // CSR page
+  // Map<page, postlist>
   const groupByPage = new Map<number, MemoPost[]>()
   let maxpage = 0;
 
+  //group by page
   memo_db.memos.forEach(m => {
     const p = m.csrIndex[0]
     if (groupByPage.has(p)) {
@@ -274,12 +275,15 @@ function writeMemoJson() {
     maxpage = p > maxpage ? p : maxpage;
   })
 
+  // write by page
   groupByPage.forEach((memos, page) => {
     writeJson(path.join(MEMO_CSR_DATA_DIR, `${page}.json`), memos)
   })
 
+  //write other csr file
   writeJson(path.join(MEMO_CSR_DATA_DIR, INFOFILE), memo_db.info)
   writeJson(path.join(MEMO_CSR_DATA_DIR, `tags.json`), memo_db.tags)
+  writeJson(path.join(MEMO_CSR_DATA_DIR, `imgs.json`), memo_db.imgs)
 }
 
 export { memo_db, writeMemoJson };

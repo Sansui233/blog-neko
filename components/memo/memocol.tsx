@@ -8,15 +8,15 @@ import { PageDescription } from '../common/page-description';
 import { MemoCard, MemoLoading } from "./memocard";
 import VirtualList from "./virtuallist";
 
-export default function MemoCol({ postsData, postsDataBackup, setpostsData, setpostsDataBackup, client, searchStatus, setsearchStatus, setSearchText }: {
+export default function MemoCol({ postsData, postsDataBackup, setpostsData, setpostsDataBackup, client, searchStatus, resetSearchStatus, setTextAndSearch: setSearchText }: {
   postsData: TMemo[]
   postsDataBackup: TMemo[]
   setpostsData: Dispatch<SetStateAction<TMemo[]>>
   setpostsDataBackup: Dispatch<SetStateAction<TMemo[]>>
   client: keyof typeof clientList,
   searchStatus: SearchStatus,
-  setsearchStatus: Dispatch<SetStateAction<SearchStatus>>
-  setSearchText: (text: string, immediateSearch?: boolean) => void
+  resetSearchStatus: () => void
+  setTextAndSearch: (text: string, immediateSearch?: boolean) => void
 }) {
 
 
@@ -56,13 +56,7 @@ export default function MemoCol({ postsData, postsDataBackup, setpostsData, setp
               marginLeft: "0.875em"
             }}
             onClick={() => {
-              setsearchStatus(status => {
-                return {
-                  ...status,
-                  isSearch: "ready",
-                  searchText: ""
-                }
-              })
+              resetSearchStatus()
               setpostsData(postsDataBackup)
             }}
           >X</span>

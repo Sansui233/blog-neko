@@ -1,5 +1,5 @@
 import { Extend } from "../../../utils/type-utils";
-import { MemoImg, MemoInfo, MemoPost, MemoTag } from "../memos.common";
+import { MemoInfo, MemoPost, MemoTag } from "../memos.common";
 import StaticClient from "./static";
 
 export interface Client {
@@ -7,9 +7,8 @@ export interface Client {
   queryMemoByCount: (start: number, len: number) => Promise<MemoPost[]>
   queryMemoByDate: (latest: Date, oldest: Date) => Promise<MemoPost[]>
   queryMemoTags: (start: Date, end: Date) => Promise<MemoTag[]>
-  queryMemoImgs: (start: Date, end: Date) => Promise<MemoImg[]>
+  queryMemoImgs: (start: Date, end: Date) => Promise<MemoPost[]>
 }
-
 
 /**
  * name: Client

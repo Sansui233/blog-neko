@@ -14,7 +14,7 @@ export default function CardCommon({ title, Icon, children, ...otherprops }: Pro
       {Icon && <Icon size={"1em"} style={{ marginRight: "0.5em" }} />}
       {title}
     </CardTitle>
-    <div style={{ paddingTop: "0.5rem" }}>
+    <div style={{ paddingTop: "0.5rem", fontSize: "0.9rem" }}>
       {children}
     </div>
   </CardContainer>

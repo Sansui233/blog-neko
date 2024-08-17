@@ -1,4 +1,4 @@
-import { MenuSquare, Search, TagIcon, Users, X } from "lucide-react";
+import { HashIcon, MenuSquare, Search, TagIcon, Users, X } from "lucide-react";
 import { GetStaticProps } from "next";
 import dynamic from "next/dynamic";
 import Head from "next/head";
@@ -28,7 +28,7 @@ import { Extend } from "../../utils/type-utils";
 
 const ImageBrowser = dynamic(() => import("../../components/memo/imagebrowser"))
 
-const MemoCSRAPI = '/data/memos'
+export const MemoCSRAPI = '/data/memos'
 
 // TMemo 的 content 是 code……
 export type TMemo = Omit<MemoPost, "content"> & {
@@ -53,10 +53,10 @@ export default function Memos({ source, info, memotags, client }: Props) {
 
 
 
-  // search
+  // search engine init
   // TODO set page limitation
   const inputRef = useRef<HTMLInputElement>(null)
-  const { searchStatus, setsearchStatus, setSearchText, handleSearch, initSearch } = useSearch<TMemo>({
+  const { searchStatus, resetSearchStatus, setTextAndSearch: setSearchText, search, initSearch } = useSearch<TMemo>({
     inputRef,
     setRes: setpostsData,
     initData: async () => {   // fetch data and set search engine
@@ -97,11 +97,11 @@ export default function Memos({ source, info, memotags, client }: Props) {
   const searchBehavior = useCallback(() => {
     if (inputRef.current && inputRef.current.value === "") {
       setpostsData(postsDataBackup)
-      setsearchStatus({ searchText: "", isSearch: "ready" })
+      resetSearchStatus()
       return
     }
-    handleSearch()
-  }, [handleSearch, postsDataBackup, setsearchStatus]) //TODO
+    search()
+  }, [search, postsDataBackup, resetSearchStatus]) //TODO
 
   // bind keyboard event
   useDocumentEvent(
@@ -111,7 +111,7 @@ export default function Memos({ source, info, memotags, client }: Props) {
         searchBehavior()
     },
     undefined,
-    [handleSearch]
+    [search]
   )
 
   return (
@@ -141,7 +141,7 @@ export default function Memos({ source, info, memotags, client }: Props) {
               <MemoCol
                 postsData={postsData} postsDataBackup={postsDataBackup}
                 setpostsData={setpostsData} setpostsDataBackup={setpostsDataBackup}
-                client={client} searchStatus={searchStatus} setsearchStatus={setsearchStatus} setSearchText={setSearchText}
+                client={client} searchStatus={searchStatus} resetSearchStatus={resetSearchStatus} setTextAndSearch={setSearchText}
               />
             </Col>
             <SiderContent $isMobileSider={isMobileSider}>
@@ -163,11 +163,13 @@ export default function Memos({ source, info, memotags, client }: Props) {
                 title={t("tags")}
               >
                 {memotags.map(t => {
-                  return <span className="hover-gold" style={{ display: "inline-block", paddingRight: "0.5em" }}
+                  return <span className="hover-gold" style={{ display: "inline-block", paddingRight: "0.75em" }}
                     key={t.name}
                     onClick={() => { setSearchText("#" + t.name) }}
                   >
-                    {`#${t.name}`}
+                    <HashIcon size={"1rem"} style={{ opacity: 0.5, paddingRight: "1px" }} />
+                    {`${t.name}`}
+                    {t.memoIds.length > 1 ? <span style={{ opacity: 0.5 }}>({t.memoIds.length})</span> : ""}
                   </span>
                 })}
 
@@ -329,13 +331,13 @@ const SiderContent = styled.div<{
 `
 
 const SearchBox = styled.div`
-  border-radius: 2rem;
+  border-radius: 0.75rem;
   background: ${p => p.theme.colors.bg};
-  color: ${p => p.theme.colors.textPrimary};
+  color: ${p => p.theme.colors.textGray};
   display: flex;
   align-items: center;
   margin: 0 0.5rem; /* 无 bg 时*/
-  border: 1px solid ${p => p.theme.colors.uiLineGray};
+  border: 1px solid ${p => p.theme.colors.uiLineGray2};
 
   &:focus-within {
     border: 1px solid ${p => p.theme.colors.accentHover};
@@ -354,6 +356,10 @@ const SearchBox = styled.div`
   input:focus,
   input:focus-visible {
     outline: none;
+  }
+
+  input::placeholder {
+    color: ${p => p.theme.colors.textGray3};
   }
 
   svg {

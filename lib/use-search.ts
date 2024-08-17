@@ -30,16 +30,17 @@ type Props<R> = {
 /**
  * Here are 2 ways to use search:
  * 
- * 1. `setSearchText(str, true)` This will put search text into your inputRef and automatically init search engine and doing search
- * 2. `handleSearch()` This will init search engine and do search according to the content in your inputRef
+ * 1. `setTextAndSearch(str, true)` This will put search text into your inputRef and automatically init search engine and doing search
+ * 2. `search()` This will init search engine and do search according to the content in your inputRef
  * 
  * If you want init search engine on your demand, you can use `initSearch()`
+ * 
  */
 function useSearch<R>({ inputRef, setRes, initData }: Props<R>): {
   searchStatus: SearchStatus;
-  setsearchStatus: React.Dispatch<React.SetStateAction<SearchStatus>>;
-  setSearchText: (text: string, immediateSearch?: boolean) => void // put text into input ref element and (optinal) search immediately.
-  handleSearch: () => Promise<void>
+  resetSearchStatus: () => void;
+  setTextAndSearch: (text: string, immediateSearch?: boolean) => void // put text into input ref element and (optinal) search immediately.
+  search: () => Promise<void>
   initSearch: () => Promise<Naive>
 } {
   const [engine, setEngine] = useState<Naive>()
@@ -95,7 +96,7 @@ function useSearch<R>({ inputRef, setRes, initData }: Props<R>): {
   /**
    * start search according to the text in the input ref element
    */
-  const handleSearch = useCallback(async () => {
+  const search = useCallback(async () => {
     if (!inputRef.current) return
     const str = inputRef.current.value.trim()
     if (str.length === 0) return
@@ -118,20 +119,29 @@ function useSearch<R>({ inputRef, setRes, initData }: Props<R>): {
   /**
    * put text into input ref element and (optinal) search immediately.
    */
-  const setSearchText = useCallback((text: string, immediateSearch = true) => {
+  const setTextAndSearch = useCallback((text: string, immediateSearch = true) => {
     if (!inputRef.current) return
 
     inputRef.current.value = text
     if (immediateSearch) {
-      handleSearch()
+      search()
     }
-  }, [handleSearch, inputRef])
+  }, [search, inputRef])
+
+  const resetSearchStatus = useCallback(() => {
+    setsearchStatus(() => {
+      return {
+        isSearch: "ready",
+        searchText: ""
+      }
+    })
+  }, [])
 
   return {
     searchStatus,
-    setsearchStatus,
-    setSearchText,
-    handleSearch,
+    resetSearchStatus,
+    setTextAndSearch: setTextAndSearch,
+    search,
     initSearch,
   }
 }
