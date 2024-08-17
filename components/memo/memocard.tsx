@@ -61,7 +61,6 @@ export function MemoCard({ source, setSearchText, triggerHeightChange, ...otherp
           <img className="avatar" src={theme!.assets.favico} alt={siteInfo.author} />
           <div className="meta-text">
             <span className="author" >{siteInfo.author}</span>
-            <span className="meta-sm">•</span>
             <span className="meta-sm date">
               {date}
             </span>
@@ -152,7 +151,11 @@ const MemoMarkdown = styled(MarkdownStyle) <{
   $bottomSpace: boolean,
 }>`
     padding-bottom: ${props => props.$bottomSpace === true ? "2rem" : "inherit"};
-    padding-left: 40px; /* 头像的 32px + 8px */
+    padding-left: 48px; /* 头像的 40px + 8px */
+
+    @media screen and (max-width: 580px) {
+      padding-left: 5px;
+    }
 
     p,
     ul,
@@ -184,8 +187,8 @@ const MemoMeta = styled.div`
     align-items: center;
       
     & .avatar {
-      width: 32px;
-      height: 32px;
+      width: 40px;
+      height: 40px;
       margin-right: 8px;
       border-radius: 50%;
       border: 1px solid ${p => p.theme.colors.uiLineGray};
@@ -193,22 +196,22 @@ const MemoMeta = styled.div`
 
     & .meta-text {
       display: flex;
-      align-items: flex-end;
-      font-weight: 600;
+      align-items: flex-start;
+      flex-direction: column;
     }
 
     & .meta-sm {
-      color: ${p => p.theme.colors.textGray3};
-      font-size: 0.875rem;
+      color: ${p => p.theme.colors.textGray};
+      font-size: 0.8rem;
     }
     
     & .author {
       color: ${p => p.theme.colors.textSecondary};
       margin-right: 0.25rem;
+      font-weight: 600;
     }
 
     & .date {
-      margin: 0 0.25rem;
     }
 
     & .word-count {
