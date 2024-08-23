@@ -161,10 +161,7 @@ const MemoMarkdown = styled(MarkdownStyle) <{
     ul,
     ol {
       line-height: 1.625rem;
-    }
-
-    p {
-      margin: 0.5rem 0;
+      font-size: 0.9375rem;
     }
     
     
