@@ -75,9 +75,6 @@ const Home: NextPage<Props> = ({ posts, categories }: Props) => {
               return <ArticleItem p={p} springStyle={style} key={p.id} index={i}/>
             })} */}
           </PostGrids>
-          <Decoration>
-            ✿ <span>{"𝑑𝑎𝑠 𝑣𝑒𝑟𝑔𝑖𝑠𝑠𝑚𝑒𝑖𝑛𝑛𝑖𝑐ℎ𝑡"}</span>&nbsp;
-          </Decoration>
         </OneColLayout>
       </LayoutContainer>
 
@@ -142,9 +139,9 @@ const Card = styled(Link) <{
   position: relative;
   /*border-bottom: dotted 2px ${p => p.theme.colors.uiLineGray};*/
 
-  
+/*  
   &::before {
-    content: "No.0x${p => p.$num.toString(16).padStart(2, '0')}";
+    content: "No.${p => p.$num.toString(10)}";
     position: absolute;
     right: 0;
     bottom: 1rem;
@@ -154,6 +151,7 @@ const Card = styled(Link) <{
     font-weight: bold;
     color: ${props => props.theme.colors.uiLineGray3};
   }
+    */
 
   .title {
     font-size: 1.375rem;
