@@ -194,7 +194,7 @@ export default function Post({ meta, mdxcode, nextPost, prevPost, excerpt, headi
           className="toc-btn"
           Icon={MenuSquare}
           clickHandler={(e) => { e.stopPropagation(); setIsMobileSider(v => !v) }}
-          style={{ bottom: "5.25rem" }}
+          style={isViewing ? { bottom: "5.25rem" } : {}}
         />
         {isViewing && <ButtonFloat
           Icon={ArrowUpToLine}
@@ -202,14 +202,14 @@ export default function Post({ meta, mdxcode, nextPost, prevPost, excerpt, headi
         />}
       </PostLayout>
       <ColumnRightContainer $isMobileSider={isMobileSider} $isFixedTop={isFixedTop}>
-        <div className="close-btn" onClick={(e) => { e.stopPropagation(); setIsMobileSider(v => !v) }}>
-          <X size={"1.25em"} style={{ marginLeft: ".5rem" }} />
-        </div>
+        <ColumnRightTitle>
+          目录
+          <div className="close-btn" onClick={(e) => { e.stopPropagation(); setIsMobileSider(v => !v) }}>
+            <X size={"1.5em"} style={{ marginLeft: ".5rem" }} />
+          </div>
+        </ColumnRightTitle>
         <ColumnRightContent>
           <Toc>
-            <div style={{ fontWeight: "bold", marginBottom: "0.5rem" }}>
-              目录
-            </div>
             <TocContent>
               {headings.length > 0
                 ? headings.map((h, i) => {
@@ -317,8 +317,18 @@ const PostLayout = styled.article`
   }
 `
 
-const ColumnRightContent = styled.section`
+const ColumnRightTitle = styled.div`
+position: sticky;
+background-color: ${p => p.theme.colors.bg};
+font-weight: bold;
+margin-bottom: 0.5rem;
+top: 0;
+padding: 1rem 1rem 0.5rem 2rem;
+z-index:1;
+font-size: 1.25rem;
 `
+
+
 
 const ColumnRightContainer = styled.aside<{
   $isMobileSider: boolean,
@@ -332,8 +342,6 @@ const ColumnRightContainer = styled.aside<{
 
   max-width: 18rem;
   max-height: ${p => p.$isFixedTop ? "calc(100vh - 63px)" : "calc(100vh - 128px)"};
-  padding: 0 1rem 0 2rem;
-  line-height: 1.75rem; /* 与正文同 line-height */
   overflow: auto;
 
   left: 78%;
@@ -352,15 +360,12 @@ const ColumnRightContainer = styled.aside<{
   @media screen and (max-width: 1000px) {
     top: unset;
     left: unset;
-    bottom: 9rem;
+    bottom: 8.5rem;
     animation: unset;
 
     ${floatMenu}
     max-height: calc(100vh - 128px - 9rem);
     width:300px;
-    padding-top: 1rem;
-    padding-bottom: 1rem;
-    
     right: 7px;
     transition: opacity .3s ease, transform .3s ease;
     opacity: ${p => p.$isMobileSider ? `1` : `0`};
@@ -391,13 +396,22 @@ const ColumnRightContainer = styled.aside<{
   @media screen and (max-width: 580px) {
     right: 2%;
     bottom: 0;
-    max-height: unset;
-    height: 60vh;
+    max-height: 60vh;
     max-width: unset;
     opacity: unset;
     width: 96%;
     transition: transform .3s ease;
     transform: ${p => p.$isMobileSider ? `translateY(0%)` : `translateY(100%)`};
+  }
+
+`
+
+const ColumnRightContent = styled.section`
+  padding: 0 1rem 0 2rem;
+  line-height: 1.75rem; /* 与正文同 line-height */
+
+  @media screen and (max-width: 1000px){
+    padding-bottom: 1rem;
   }
 
 `
@@ -510,5 +524,9 @@ const TocAnchor = styled(Link) <{ $rank: number }>`
     &::before {
       opacity: 1;
     }
+  }
+
+  @media screen and (max-width: 1000px) {
+    font-size: 1rem;
   }
 `
