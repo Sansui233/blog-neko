@@ -47,15 +47,26 @@ export function useDrag(store: ImageBrowserState, prev: () => void, next: () => 
 
   const startEvent = useCallback((movefunc: EvtHandler, endfunc: EvtHandler) => (evt: React.TouchEvent<HTMLDivElement> | React.MouseEvent<HTMLDivElement>) => {
     evt.stopPropagation()
+
+    // 忽略非左键鼠标点击
+    if (evt.type === "mousedown" && (evt as React.MouseEvent<HTMLDivElement>).button != 0) {
+      return
+    }
+
+    // 禁止原生手势
+    // 冲突1: 和系统手势冲突，比如双指缩放
+    // 冲突2: 鼠标 drag image 会触发浏览器拖拽
+    evt.preventDefault()
+
     if (evt.target) {
       state.isPressed = true;
       state.starttime = Date.now();
       state.startpos = [coord(evt).x, coord(evt).y, (evt.target as HTMLElement).scrollTop]
       const target = evt.target as HTMLElement
-      if (evt.type.includes("touch")) {
-        //@ts-ignore
-        target.addEventListener(evtName(evt, "move"), movefunc, { passive: false })
-      }
+      // if (evt.type.includes("touch")) {
+      // }
+      //@ts-ignore
+      target.addEventListener(evtName(evt, "move"), movefunc, { passive: false })
       //@ts-ignore
       target.addEventListener(evtName(evt, "end"), endfunc, { once: true })
     }
@@ -123,7 +134,8 @@ export function useDrag(store: ImageBrowserState, prev: () => void, next: () => 
     state.direction = 0
     state.bias = 0
     setDirection(0)
-      ; (evt.target as HTMLElement).removeEventListener("touchmove", movefunc)
+      // @ts-ignore
+      ; (evt.target as HTMLElement).removeEventListener(evtName(evt, "move"), movefunc)
   }
     , [store, prev, next, reset])
 
