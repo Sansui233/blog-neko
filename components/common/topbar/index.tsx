@@ -8,6 +8,8 @@ import styled from "styled-components"
 import Neko from "../../../assets/neko.svg"
 import { throttle } from "../../../lib/throttle"
 import { siteInfo } from "../../../site.config"
+import { hoverRound } from "../../../styles/css"
+import { LinkWithLine } from "../../styled/link-with-line"
 import MenuIcon from "./menuicon"
 import Sidebar from "./sidebar"
 
@@ -100,9 +102,9 @@ export default function Topbar({ placeHolder = true, scrollElem, hideSearch, ...
           </Link>
         </Avatar>
         <Nav>
-          <Link href="/" className={router.pathname === "/" ? 'current' : ''}>{t('posts')}</Link>
-          <Link href="/memos" className={router.pathname === "/memos" ? 'current' : ''}>{t('memos')}</Link>
-          <Link href="/about" className={router.pathname === "/about" ? 'current' : ''}>{t('about')}</Link>
+          <ol className={router.pathname === "/" ? 'current' : ''}><LinkWithLine href="/">{t('posts')}</LinkWithLine></ol>
+          <ol className={router.pathname === "/memos" ? 'current' : ''}><LinkWithLine href="/memos">{t('memos')}</LinkWithLine></ol>
+          <ol className={router.pathname === "/about" ? 'current' : ''}><LinkWithLine href="/about">{t('about')}</LinkWithLine></ol>
         </Nav>
         <More >
           <SearchIcon ref={searchIcon} onClick={(e) => { hideSearch ? null : clickSearch(e) }} $isSearch={isSearch} $hideSearch={hideSearch}>
@@ -205,43 +207,32 @@ const Nav = styled.nav`
   display: flex;
   justify-content: space-evenly;
   letter-spacing: 0.02em;
-  align-items: stretch;
-  height: 63px;
+  align-items: center;
+  font-size: 1.125rem;
 
-  a {
-    text-align: center;
-    flex-grow: 1;
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
-    padding-top: 20px;
-    font-weight: 600;
-    background: ${props => props.theme.colors.bg};
-  }
-
-  a:hover {
-    background: ${props => props.theme.colors.accentHover};
-    transition: background ease .5s;
-  }
-
-  a.current {
-    background: ${props => props.theme.colors.textPrimary};
-    color: ${props => props.theme.colors.bg};
-  }
 
   @media screen and (min-width: 780px) {
     max-width: 50%;
-    a {
-      flex-grow: 0;
-      padding-left: 1.5rem;
-      padding-right: 1.5rem;
-    }
   }
   @media screen and (min-width: 580px) {
     max-width: 390px;
   }
-    
-  }
   @media screen and (max-width: 580px) {
     max-width: 290px;
   }
+  
+
+  ol {
+    padding: 0 .5em;
+    padding-top: 2px;
+    font-weight: 600;
+  }
+
+  ol.current a{
+    position: relative;
+  }
+  ol.current a:before {
+    ${hoverRound}
+  }
+
 `
