@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction, useCallback, useState } from 'react';
+import styled from 'styled-components';
 import { clientList, createClient } from "../../lib/data/client";
 import { compileMdxMemo } from "../../lib/markdown/mdx";
 import { SearchStatus } from '../../lib/use-search';
@@ -71,14 +72,15 @@ export default function MemoCol({ postsData, postsDataBackup, setpostsData, setp
       <PageDescription style={{ marginRight: "1rem" }}>
         {statusRender()}
       </PageDescription>
-      <div style={{ minHeight: "80vh" }}>
+      <MemoColContainer style={{ minHeight: "80vh", marginTop: "0.625rem" }}>
         {searchStatus.isSearch === "ready" // 首屏的问题……
           ? <VirtualList<TMemo>
             key={"vl1"}
+            className='virtualist'
             sources={postsData}
             setSources={setpostsData}
             Elem={(props) => {
-              return <MemoCard source={props.source} setSearchText={setSearchText} triggerHeightChange={props.triggerHeightChange} />
+              return <MemoCard source={props.source} setSearchText={setSearchText} triggerHeightChange={props.triggerHeightChange} style={props.style} />
             }}
             fetchFrom={fetchFrom}
             batchsize={10}
@@ -86,6 +88,7 @@ export default function MemoCol({ postsData, postsDataBackup, setpostsData, setp
           /> : searchStatus.isSearch === "done"
             ? <VirtualList<TMemo>
               key={searchStatus.searchText}
+              className='virtualist'
               sources={postsData}
               setSources={setpostsData}
               Elem={(props) => {
@@ -93,8 +96,31 @@ export default function MemoCol({ postsData, postsDataBackup, setpostsData, setp
               }}
               batchsize={10}
             /> : null}
-      </div>
+      </MemoColContainer>
       <Footer style={{ marginTop: "5rem" }} />
     </>
   )
 }
+
+const MemoColContainer = styled.div`
+min-height: 80vh;
+margin: 0.625rem 0;
+border-radius: 1.5rem;
+border: 1px solid ${props => props.theme.colors.uiLineGray2};
+background-color: white;
+
+box-shadow: 0 0 12px 0 ${props => props.theme.colors.shadowBg};
+
+// MemoCardStyle
+.virtualist > div:first-child > section {
+  border-radius: 2rem 2rem 0 0;
+}
+.virtualist > div:last-child > section {
+  border-radius: 0 0 2rem 2rem;
+}
+
+.virtualist > div:not(:last-child) > section {
+  border-bottom: solid 1px ${props => props.theme.colors.uiLineGray2};
+}
+
+`

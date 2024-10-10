@@ -15,14 +15,14 @@ export const lightTheme: DefaultTheme = {
     accent: '#ae8d0b',
     accentHover: '#e0c56e',
     bg: 'white',
-    bg2: '#f4f5f7',
+    bg2: '#f9f9f9',
     bgFilter: "multiply",
     bgInverse: "#292929",
     bgMask: "#f4f5f7f4",
     tagBg: "#efefef",
     floatBg: "#f5f5f5",
     hoverBg: '#00000022',
-    shadowBg: `rgb(0 0 0 / 5%)`,
+    shadowBg: `rgb(0 0 0 / 4%)`,
     codeBlockBg: '#f3f3f3',
     maskGradient: css`
     background-image: -webkit-linear-gradient(top,rgba(255,255,255,0) 0%,rgba(255,255,255,.8) 40%,rgba(255,255,255,1) 75%);

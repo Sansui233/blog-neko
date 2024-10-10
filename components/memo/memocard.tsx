@@ -9,7 +9,6 @@ import { useMdxMemo } from "../mdx";
 import { MarkdownStyle } from "../styled/markdown-style";
 import { ImageThumbs } from "./imagethumbs";
 
-
 export type MemoCardProps = {
   source: TMemo;
   setSearchText: (text: string, immediateSearch?: boolean) => void;
@@ -97,9 +96,7 @@ const MemoCardStyle = styled.section<{
 }>`
 
   background:${p => p.theme.colors.bg};
-  margin: 0.625rem 0;
   padding: 1.25rem 1.5rem;
-  border-radius: 0.75rem;
   animation: ${bottomFadeIn} .3s ease;
 
   @media screen and (max-width: 580px) {

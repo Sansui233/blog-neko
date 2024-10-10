@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useRef, useS
 import { throttle } from "../../lib/throttle";
 
 // source data type and element prop type
-type Props<T extends { id: string | number }> = {
+type Props<T extends { id: string | number }> = React.HTMLProps<HTMLDivElement> & {
   sources: T[]
   setSources: Dispatch<SetStateAction<T[]>>
   fetchFrom?: (i: number, batchsize: number) => Promise<T[] | undefined> // the function that returns new source data
@@ -11,7 +11,8 @@ type Props<T extends { id: string | number }> = {
   Elem: (props: {
     source: T
     triggerHeightChange: Dispatch<SetStateAction<boolean>>;
-  }) => JSX.Element // the render
+  } & React.HTMLProps<HTMLDivElement>) => JSX.Element // the render
+
   Loading?: () => JSX.Element
 
   scrollRef?: React.RefObject<HTMLElement> // get the outer scroll DOM, default for window
@@ -24,7 +25,7 @@ export type VirtualListType = <T extends {
 
 // TODO scroll to anywhere
 // TODO modify height while loading
-const VirtualList: VirtualListType = ({ sources, setSources, Elem, scrollRef, fetchFrom: fetchFrom, batchsize, Loading }) => {
+const VirtualList: VirtualListType = ({ sources, setSources, Elem, scrollRef, fetchFrom: fetchFrom, batchsize, Loading, style, ...otherprops }) => {
   const [placeHolder, setplaceHolder] = useState<number[]>(new Array(sources.length).fill(300))
   // 注意保持 activeIndex 和 sources 的状态一致性
   const [activeIndex, setActiveIndex] = useState<number[]>(new Array(sources.length).fill(0).map((_, i) => i))
@@ -160,11 +161,13 @@ const VirtualList: VirtualListType = ({ sources, setSources, Elem, scrollRef, fe
   }, [scrollLock, scrollRef, fetchFrom, activeIndex, setSources, placeHolder, transformOnIndex, sources, batchsize, winBreakPoint])
 
   return (
-    <div style={{
+    <div style={Object.assign({
       position: "relative",
       width: "100%",
       minHeight: `${minHeight}px`
-    }}>
+    }, style)}
+      className={otherprops.className}
+    >
       {sources.map((e, i) => <ListItem key={e.id} index={activeIndex[i]} Elem={Elem} source={e} placeHolder={placeHolder} setplaceHolder={setplaceHolder} />)}
       {Loading && isLoading ? <div style={{
         position: "absolute",
