@@ -205,6 +205,7 @@ const Nav = styled.nav`
   }
   @media screen and (max-width: 580px) {
     max-width: 290px;
+    display: none;
   }
   
 
@@ -242,4 +243,10 @@ const More = styled.div`
 const MobileNav = styled.div`
 display: flex;
 flex-direction: column;
+font-size: 20px;
+font-weight: 600;
+
+ @media screen and (min-width: 580px) {
+    display: none;
+  }
 `

@@ -63,13 +63,17 @@ export default function NavCat({ items, current, setCurrent }: Props) {
 }
 
 const NavLayout = styled.nav`
-  position: relative;
   display: flex;
-  margin: 2rem 0 1rem 0;
+  margin-top: 1rem;
+  padding: 1rem 0 1rem 0;
   overflow-x: auto;
   &::-webkit-scrollbar {
     display: none
   }
+  position: sticky;
+  top: -1px;
+  background: ${props => props.theme.colors.bg};
+  z-index: 1;
 `
 
 const Button = styled.button`
