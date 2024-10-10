@@ -169,24 +169,29 @@ const Card = styled(Link) <{
     position: absolute;
     left: 0px;
     width: 0px;
-    height: 100%;
+    height: 2.25rem;
     background: ${props => props.theme.colors.textPrimary};
     transform: translateX(0px);
-    transition: transform ease .5s, width linear 0.3s;
+    transition: transform .5s ease, width 0.1s linear;
+    border-radius: 3px;
   }
 
-  &:hover{
-      .post-container{
+   @media (any-hover: hover) {
+    &:hover{
+      .post-container {
         transform: translateX(16px);
       }
-      .post-container::before{
+      .post-container::before {
         width: 6px;
         transform: translateX(-16px);
+        transition: transform .5s ease, width 0.1s linear .2s;
       }
       .title{
         ${hoverBoxShadow}
       }
     }
+  }
+  
 
 
   @media screen and (max-width: 780px){
@@ -208,7 +213,7 @@ const CardContent = styled.div<{
     
   .meta {
     margin: 0.5rem 0;
-    color: ${p => p.theme.colors.textGray2};
+    color: ${p => p.theme.colors.textGray3};
   }
 
   .description {

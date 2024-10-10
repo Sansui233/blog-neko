@@ -7,7 +7,7 @@ export const lightTheme: DefaultTheme = {
     favico: '/avatar-white.png',
   },
   colors: {
-    textPrimary: '#1F2329',
+    textPrimary: '#000000',
     textSecondary: '#343a3b',
     textGray: '#777',
     textGray2: '#989898',
