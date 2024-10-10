@@ -123,6 +123,7 @@ export default function Memos({ source, info, memotags, client }: Props) {
       <Topbar
         placeHolder={false}
         hideSearch={true}
+        style={{ borderBottom: "1px solid " + theme?.colors.uiLineGray2 }}
       />
       <main style={{
         background: theme?.colors.bg2
@@ -338,6 +339,7 @@ const SearchBox = styled.div`
   align-items: center;
   margin: 0 0.5rem; /* 无 bg 时*/
   border: 1px solid ${p => p.theme.colors.uiLineGray2};
+  box-shadow: 0 0 12px 0 ${props => props.theme.colors.shadowBg};
 
   &:focus-within {
     border: 1px solid ${p => p.theme.colors.accentHover};

@@ -107,6 +107,9 @@ export default function Topbar({ placeHolder = true, scrollElem, hideSearch, ...
           <ol className={router.pathname === "/about" ? 'current' : ''}><LinkWithLine href="/about">{t('about')}</LinkWithLine></ol>
         </Nav>
         <More >
+          <MobileNav>
+            {router.pathname === "/" ? t('posts') : router.pathname === "/memos" ? t('memos') : t('about')}
+          </MobileNav>
           <SearchIcon ref={searchIcon} onClick={(e) => { hideSearch ? null : clickSearch(e) }} $isSearch={isSearch} $hideSearch={hideSearch}>
             <Search />
           </SearchIcon>
@@ -185,23 +188,6 @@ const Avatar = styled.div`
     display: none
   }
 `
-
-const More = styled.div`
-  flex: 1 1 auto;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  font-size: 0.875em;
-  width: 210px;
-  
-  & > div {
-    margin-right: 15px;
-  }
-
-  @media screen and (max-width: 780px){
-    width: 100px;
-  }
-`
 const Nav = styled.nav`
   flex: 2 1 auto;
   display: flex;
@@ -235,4 +221,25 @@ const Nav = styled.nav`
     ${hoverRound}
   }
 
+`
+
+const More = styled.div`
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 210px;
+  
+  & > div {
+    margin-right: 15px;
+  }
+
+  @media screen and (max-width: 780px){
+    width: 100px;
+  }
+`
+
+const MobileNav = styled.div`
+display: flex;
+flex-direction: column;
 `

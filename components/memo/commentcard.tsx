@@ -72,6 +72,7 @@ const ModelButton = styled.button`
   color:${p => p.theme.colors.textSecondary};
   cursor: pointer;
   background: ${props => props.theme.colors.bg};
+  box-shadow: 0 0 12px 0 ${props => props.theme.colors.shadowBg};
 
 
   @media screen and (max-width: 780px) {
