@@ -6,7 +6,7 @@ import React, { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 import LayoutContainer, { OneColLayout } from '../components/layout'
-import NavDropper from '../components/post/nav-dropper'
+import NavCat from '../components/post/navcat'
 import { POST_DIR, buildIndex, posts_db } from '../lib/data/server'
 import { dateI18n, parseDate } from '../lib/date'
 import { siteInfo } from '../site.config'
@@ -66,7 +66,7 @@ const Home: NextPage<Props> = ({ posts, categories }: Props) => {
       </Head>
       <LayoutContainer>
         <OneColLayout>
-          <NavDropper items={translatedCat} current={currCategory} setCurrent={setCurrCategory} />
+          <NavCat items={translatedCat} current={currCategory} setCurrent={setCurrCategory} />
           <PostGrids>
             {filteredPosts.map((post, i) => {
               return (<ArticleItem key={post.id} p={post} i={i} />)
