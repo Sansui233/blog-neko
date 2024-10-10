@@ -1,4 +1,4 @@
-import { Search } from "lucide-react"
+import { ChevronDown, Search } from "lucide-react"
 import dynamic from "next/dynamic"
 import Link from "next/link"
 import { useRouter } from "next/router"
@@ -8,6 +8,7 @@ import styled from "styled-components"
 import Neko from "../../../assets/neko.svg"
 import { throttle } from "../../../lib/throttle"
 import { siteInfo } from "../../../site.config"
+import { fadeInTop } from "../../../styles/animations"
 import { hoverRound } from "../../../styles/css"
 import { LinkWithLine } from "../../styled/link-with-line"
 import MenuIcon from "./menuicon"
@@ -28,6 +29,7 @@ export default function Topbar({ placeHolder = true, scrollElem, hideSearch, ...
   const router = useRouter()
   const searchIcon = useRef<HTMLDivElement>(null)
   const [t, i18n] = useTranslation()
+  const [isDropperOpen, setIsDropperOpen] = useState(false)
 
   /**
    * Hide on scroll
@@ -106,9 +108,17 @@ export default function Topbar({ placeHolder = true, scrollElem, hideSearch, ...
           <ol className={router.pathname === "/memos" ? 'current' : ''}><LinkWithLine href="/memos">{t('memos')}</LinkWithLine></ol>
           <ol className={router.pathname === "/about" ? 'current' : ''}><LinkWithLine href="/about">{t('about')}</LinkWithLine></ol>
         </Nav>
-        <More >
+        <More>
           <MobileNav>
-            {router.pathname === "/" ? t('posts') : router.pathname === "/memos" ? t('memos') : t('about')}
+            <div className={"subnav " + (isDropperOpen ? "open" : "")}>
+              {router.pathname !== "/" && <Link href="/">{t('posts')}</Link>}
+              {router.pathname !== "/memos" && <Link href="/memos">{t('memos')}</Link>}
+              {router.pathname !== "/about" && <Link href="/about">{t('about')}</Link>}
+            </div>
+            <button style={{ position: "relative" }} onClick={() => setIsDropperOpen(v => !v)}>
+              {router.pathname === "/" ? t('posts') : router.pathname === "/memos" ? t('memos') : t('about')}
+              <ChevronDown size={"1.25em"} style={{ marginRight: "-0.5rem" }} />
+            </button>
           </MobileNav>
           <SearchIcon ref={searchIcon} onClick={(e) => { hideSearch ? null : clickSearch(e) }} $isSearch={isSearch} $hideSearch={hideSearch}>
             <Search />
@@ -243,10 +253,45 @@ const More = styled.div`
 const MobileNav = styled.div`
 display: flex;
 flex-direction: column;
-font-size: 20px;
+font-size: 1.25rem;
 font-weight: 600;
+position: relative;
 
- @media screen and (min-width: 580px) {
-    display: none;
+button {
+  color: ${props => props.theme.colors.textPrimary};
+}
+
+.subnav {
+  visibility: hidden;
+  position: absolute;
+  top: 0;
+  left: -0.625rem;
+  width: 100%;
+  padding: calc(1rempx) 0;
+}
+
+.subnav.open {
+  visibility: visible;
+}
+
+.subnav.open > a {
+  display: block;
+  text-align: center;
+  
+  border-radius: 0.75rem;
+  border: solid 1px ${props => props.theme.colors.textSecondary};
+  background-color: ${props => props.theme.colors.bgInverse};
+  color: ${props => props.theme.colors.bg};
+  margin: 0.5rem 0;
+
+  animation: ${fadeInTop} 0.8s ease;
+
+  &:first-child {
+    margin-top: 2.25rem;
   }
+}
+
+@media screen and (min-width: 580px) {
+  display: none;
+}
 `
