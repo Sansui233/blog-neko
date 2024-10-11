@@ -213,6 +213,7 @@ const Container = styled(PopOver)`
   width: 24rem;
   overflow: hidden;
   margin: 0 10px;
+  border: 1px solid ${props => props.theme.colors.uiLineGray2};
   
   & mark {
     background: none;

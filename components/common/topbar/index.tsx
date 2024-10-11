@@ -104,19 +104,21 @@ export default function Topbar({ placeHolder = true, scrollElem, hideSearch, ...
           </Link>
         </Avatar>
         <Nav>
-          <ol className={router.pathname === "/" ? 'current' : ''}><LinkWithLine href="/">{t('posts')}</LinkWithLine></ol>
+          <ol className={router.pathname === "/" || router.pathname.startsWith("/posts") ? 'current' : ''}><LinkWithLine href="/">{t('posts')}</LinkWithLine></ol>
           <ol className={router.pathname === "/memos" ? 'current' : ''}><LinkWithLine href="/memos">{t('memos')}</LinkWithLine></ol>
           <ol className={router.pathname === "/about" ? 'current' : ''}><LinkWithLine href="/about">{t('about')}</LinkWithLine></ol>
         </Nav>
         <More>
           <MobileNav>
             <div className={"subnav " + (isDropperOpen ? "open" : "")}>
-              {router.pathname !== "/" && <Link href="/">{t('posts')}</Link>}
-              {router.pathname !== "/memos" && <Link href="/memos">{t('memos')}</Link>}
-              {router.pathname !== "/about" && <Link href="/about">{t('about')}</Link>}
+              {router.pathname !== "/" && !router.pathname.startsWith("/posts") && <Link href="/">{t('posts')}</Link>}
+              {!router.pathname.startsWith("/memos") && <Link href="/memos">{t('memos')}</Link>}
+              {!router.pathname.startsWith("about") && <Link href="/about">{t('about')}</Link>}
             </div>
             <button style={{ position: "relative" }} onClick={() => setIsDropperOpen(v => !v)}>
-              {router.pathname === "/" ? t('posts') : router.pathname === "/memos" ? t('memos') : t('about')}
+              {router.pathname === "/" || router.pathname.startsWith("/posts") ? t('posts')
+                : router.pathname === "/memos" ? t('memos')
+                  : router.pathname === "/about" ? t('about') : ""}
               <ChevronDown size={"1.25em"} style={{ marginRight: "-0.5rem" }} />
             </button>
           </MobileNav>
@@ -256,6 +258,7 @@ flex-direction: column;
 font-size: 1.25rem;
 font-weight: 600;
 position: relative;
+min-width: 57px;
 
 button {
   color: ${props => props.theme.colors.textPrimary};
@@ -265,8 +268,8 @@ button {
   visibility: hidden;
   position: absolute;
   top: 0;
-  left: -0.625rem;
-  width: 100%;
+  left: -0.75rem;
+  width: 4rem;
   padding: calc(1rempx) 0;
 }
 
