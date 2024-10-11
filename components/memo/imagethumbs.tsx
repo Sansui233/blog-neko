@@ -82,7 +82,7 @@ export function ImageThumbs({ imgsmd }: {
     {imgsmd.length === 1
 
       // only one Image, padding 取自头像的 32px + 8px
-      ? <div style={{ height: "250px", paddingLeft: "40px" }}>
+      ? <div style={{ height: "250px", paddingLeft: "48px" }}>
         <ImageContainer style={{
           maxWidth: "100%",
           height: "100%", // 为防止样式shift，底部留空和糟糕的小图体验得选一个，我选了后者
@@ -173,10 +173,9 @@ const ImageGrid = styled.div`
   grid-template-columns: repeat(4, 1fr);
   gap: 5px;
   margin-top: 8px;
-  padding-left: 40px; /* 头像的 32px + 8px*/
+  padding-left: 48px; /* 头像的 40px + 8px*/
 
   @media screen and (max-width: 580px) {
     grid-template-columns: repeat(3, 1fr);
   }
-
-` 
+`

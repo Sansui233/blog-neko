@@ -3,12 +3,14 @@ import styled from "styled-components";
 import Footer from "./common/footer";
 import Topbar from "./common/topbar";
 
-type Props = React.HTMLProps<HTMLDivElement>
+type Props = React.HTMLProps<HTMLDivElement> & {
+  hidesearch?: boolean
+}
 
-const LayoutContainer: React.FC<Props> = ({ children, ...otherProps }) => {
+const LayoutContainer: React.FC<Props> = ({ children, hidesearch = false, ...otherProps }) => {
   return (
     <>
-      <Topbar />
+      <Topbar hideSearch={hidesearch} />
       <main {...otherProps}>
         {children}
       </main>

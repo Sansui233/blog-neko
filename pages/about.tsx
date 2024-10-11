@@ -15,7 +15,7 @@ export default function About() {
         <title>{`About ${siteInfo.author}`}</title>
         <CommonHead />
       </Head>
-      <LayoutContainer>
+      <LayoutContainer hidesearch={true}>
         <Hero>
           <span>{`Hi, I'm ${siteInfo.author}`}</span>
         </Hero>

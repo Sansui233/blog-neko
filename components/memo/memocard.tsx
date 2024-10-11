@@ -150,10 +150,6 @@ const MemoMarkdown = styled(MarkdownStyle) <{
     padding-bottom: ${props => props.$bottomSpace === true ? "2rem" : "inherit"};
     padding-left: 48px; /* 头像的 40px + 8px */
 
-    @media screen and (max-width: 580px) {
-      padding-left: 5px;
-    }
-
     p,
     ul,
     ol {
