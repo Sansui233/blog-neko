@@ -107,7 +107,7 @@ min-height: 80vh;
 margin: 0.625rem 0;
 border-radius: 1.5rem;
 border: 1px solid ${props => props.theme.colors.uiLineGray2};
-background-color: white;
+background-color: ${props => props.theme.colors.bg};
 
 box-shadow: 0 0 12px 0 ${props => props.theme.colors.shadowBg};
 
