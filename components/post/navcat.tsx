@@ -81,10 +81,10 @@ font-size: .875rem;
 padding: 0.3rem 0.625rem;
 margin-right: 1rem;
 cursor: pointer;
-border-radius: 2rem;
-border: 1px solid ${props => props.theme.colors.textGray};
+border-radius: 0.75rem;
+border: 1px solid ${props => props.theme.colors.uiLineGray2};
 text-wrap: nowrap;
-color: ${props => props.theme.colors.textPrimary};
+color: ${props => props.theme.colors.textGray};
 
 &.current {
 background: ${props => props.theme.colors.bgInverse};
