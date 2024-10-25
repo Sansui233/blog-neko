@@ -11,11 +11,11 @@ export function dateToYMDMM(d: Date): string {
 
 
 
-export function dateI18n(d: Date, to: "day" | "miniute" = "day", mode: "dateYMD" | "dateMDY" = "dateYMD"): string {
+export function dateI18n(d: Date, mode: "dateYMD" | "dateNatural" = "dateNatural"): string {
   const t = i18next.t
   const lang = i18next.resolvedLanguage
 
-  function appendOrdinalSuffix(day: number) {
+  function getEngOrdinalSuffix(day: number) {
     if (day > 3 && day < 21) return 'th';
     switch (day % 10) {
       case 1: return day + 'st';
@@ -25,23 +25,26 @@ export function dateI18n(d: Date, to: "day" | "miniute" = "day", mode: "dateYMD"
     }
   }
 
-  switch (to) {
-    case "day":
-      return t(mode, {
-        year: d.getFullYear(),
-        month: lang !== "en" ? d.getMonth() + 1 : new Intl.DateTimeFormat("en-US", { month: "short" }).format(d),
-        day: lang !== "en" ? d.getDate() : appendOrdinalSuffix(d.getDate()),
-      })
-    case "miniute":
-      return t(mode, {
-        year: d.getFullYear(),
-        month: lang !== "en" ? d.getMonth() + 1 : new Intl.DateTimeFormat("en-US", { month: "short" }).format(d),
-        day: lang !== "en" ? d.getDate() : appendOrdinalSuffix(d.getDate()),
-        hour: d.getHours(),
-        minute: d.getMinutes()
-      })
+  if (mode !== "dateNatural" || lang !== 'en') {
+    return t(mode, {
+      year: d.getFullYear(),
+      month: d.getMonth() + 1,
+      day: d.getDate(),
+      hour: d.getHours(),
+      minute: d.getMinutes()
+    })
+  } else {
+    return t(mode, {
+      year: d.getFullYear(),
+      month: new Intl.DateTimeFormat("en-US", { month: "short" }).format(d),
+      day: d.getDate(),
+      daySuffix: getEngOrdinalSuffix(d.getDate()),
+      hour: d.getHours(),
+      minute: d.getMinutes(),
+    })
   }
 }
+
 
 // todo test cases "2021-01-01 00:00"
 // "year-month-day" is required

@@ -160,7 +160,7 @@ export default function Post({ meta, mdxcode, nextPost, prevPost, excerpt, headi
     <LayoutContainer>
       <PostLayout>
         <PostTitle>{meta.title}</PostTitle>
-        <Date>{dateI18n(parseDate(meta.date), "day", "dateMDY")}</Date>
+        <Date>{dateI18n(parseDate(meta.date))}</Date>
         <MetaStyle>
           <div style={{ display: "inline-block", maxWidth: "50%" }}>
             <span className="category">

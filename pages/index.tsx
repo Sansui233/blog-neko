@@ -154,7 +154,7 @@ const Card = styled(Link) <{
     */
 
   .title {
-    font-size: 1.375rem;
+    font-size: 1.25rem;
     font-weight: 600;
     transition: box-shadow .5s;
     }
@@ -213,7 +213,7 @@ const CardContent = styled.div<{
     
   .meta {
     margin: 0.5rem 0;
-    color: ${p => p.theme.colors.textGray3};
+    color: ${p => p.theme.colors.textGray2};
   }
 
   .description {
