@@ -9,7 +9,7 @@ import Neko from "../../../assets/neko.svg"
 import { throttle } from "../../../lib/throttle"
 import { siteInfo } from "../../../site.config"
 import { fadeInTop } from "../../../styles/animations"
-import { hoverRound } from "../../../styles/css"
+import { dropShadowSoft, hoverRound } from "../../../styles/css"
 import { LinkWithLine } from "../../styled/link-with-line"
 import MenuIcon from "./menuicon"
 import Sidebar from "./sidebar"
@@ -262,15 +262,15 @@ min-width: 57px;
 
 button {
   color: ${props => props.theme.colors.textPrimary};
+  padding: 0 0.5rem;
 }
 
 .subnav {
   visibility: hidden;
   position: absolute;
-  top: 0;
-  left: -0.75rem;
-  width: 4rem;
-  padding: calc(1rempx) 0;
+  top: 0.25rem;
+  left: 0em;
+  padding: 0;
 }
 
 .subnav.open {
@@ -280,12 +280,14 @@ button {
 .subnav.open > a {
   display: block;
   text-align: center;
+  padding: 0.25rem 0.5rem;
   
   border-radius: 0.75rem;
-  border: solid 1px ${props => props.theme.colors.textSecondary};
-  background-color: ${props => props.theme.colors.bgInverse};
-  color: ${props => props.theme.colors.bg};
+  border: solid 1px ${props => props.theme.colors.uiLineGray2};
+  background-color: ${props => props.theme.colors.bg};
+  color: ${props => props.theme.colors.textSecondary};
   margin: 0.5rem 0;
+  ${dropShadowSoft}
 
   animation: ${fadeInTop} 0.8s ease;
 
