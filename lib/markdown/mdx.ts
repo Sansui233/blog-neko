@@ -1,3 +1,4 @@
+import { compile, runSync } from '@mdx-js/mdx'
 import React, { Fragment } from 'react'
 import { renderToStaticMarkup } from "react-dom/server"
 import * as prod from 'react/jsx-runtime'
@@ -8,19 +9,9 @@ import { rehypeExtractHeadings, rehypeHeadingsAddId } from '../rehype/rehype-toc
 import { remarkTag } from '../remark/remark-tag'
 import { remarkUnrwrapImages } from '../remark/remark-unwrap-images'
 
-// code splitting
-async function compileImport() {
-  return (await import("@mdx-js/mdx")).compile
-}
-
-async function runSyncImport() {
-  return (await import("@mdx-js/mdx")).runSync
-}
-
 // returns mdx function string
 export async function compileMdxPost(src: string) {
   let headings: { title: string; rank: number; id: string; }[] = []
-  const compile = await compileImport()
 
   const code = String(await compile(src, {
     outputFormat: 'function-body',
@@ -62,8 +53,6 @@ export async function compileMdxPost(src: string) {
 
 export async function compileMdxMemo(src: string) {
 
-  const compile = await compileImport()
-
   const code = String(await compile(src, {
     outputFormat: 'function-body',
     remarkPlugins: [
@@ -82,9 +71,6 @@ export async function compileMdxMemo(src: string) {
  * return html string
  */
 export async function compileMdxRss(src: string, type: "md" | "mdx") {
-
-  const compile = await compileImport()
-  const runSync = await runSyncImport()
 
   if (type === "md") {
     const code = String(await compile(src, {

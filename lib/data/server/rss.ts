@@ -16,7 +16,7 @@ import { POST_DIR, getFrontMatter, posts_db } from './posts';
  */
 async function getPosts(): Promise<Item[]> {
 
-  console.log("[rss.ts] generate post rss")
+  console.log("\n🌱 [rss.ts] generate post rss")
 
   let fileNames = await fs.promises.readdir(POST_DIR);
   fileNames = fileNames.filter(f => {
@@ -114,7 +114,7 @@ async function getMemo(): Promise<Item | null> {
   }
 
 
-  console.log("[rss.ts] generate memo rss")
+  console.log("🌱 [rss.ts] generate memo rss")
 
   const fileStream = fs.createReadStream(path.join(MEMOS_DIR, f))
   const rl = readline.createInterface({
@@ -196,6 +196,7 @@ async function createRss() {
 
 async function writeRss() {
   const feed = await createRss()
+  console.log("🌱 [rss.ts] wrtie rss")
   fs.promises.writeFile("./public/atom.xml", feed.atom1());
   fs.promises.writeFile("./public/rss", feed.rss2());
   fs.promises.writeFile("./public/feed.json", feed.json1());
