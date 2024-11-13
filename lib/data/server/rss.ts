@@ -196,7 +196,7 @@ async function createRss() {
 
 async function writeRss() {
   const feed = await createRss()
-  console.log("🌱 [rss.ts] wrtie rss")
+  console.log("🌱 [rss.ts] write rss")
   fs.promises.writeFile("./public/atom.xml", feed.atom1());
   fs.promises.writeFile("./public/rss", feed.rss2());
   fs.promises.writeFile("./public/feed.json", feed.json1());
