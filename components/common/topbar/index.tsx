@@ -113,7 +113,7 @@ export default function Topbar({ placeHolder = true, scrollElem, hideSearch, ...
             <div className={"subnav " + (isDropperOpen ? "open" : "")}>
               {router.pathname !== "/" && !router.pathname.startsWith("/posts") && <Link href="/">{t('posts')}</Link>}
               {!router.pathname.startsWith("/memos") && <Link href="/memos">{t('memos')}</Link>}
-              {!router.pathname.startsWith("about") && <Link href="/about">{t('about')}</Link>}
+              {!router.pathname.startsWith("/about") && <Link href="/about">{t('about')}</Link>}
             </div>
             <button style={{ position: "relative" }} onClick={() => setIsDropperOpen(v => !v)}>
               {router.pathname === "/" || router.pathname.startsWith("/posts") ? t('posts')
@@ -262,37 +262,41 @@ min-width: 57px;
 
 button {
   color: ${props => props.theme.colors.textPrimary};
-  padding: 0 0.5rem;
+  padding: 0 0.75rem;
 }
 
 .subnav {
   visibility: hidden;
   position: absolute;
-  top: 0.25rem;
+  top: -0.5rem;
   left: 0em;
   padding: 0;
+  width: 100%;
 }
 
 .subnav.open {
   visibility: visible;
+  border-radius: 0.75rem;
+  border: solid 1px ${props => props.theme.colors.uiLineGray2};
+  background-color: ${props => props.theme.colors.bg};
+  ${dropShadowSoft}
 }
 
 .subnav.open > a {
   display: block;
   text-align: center;
-  padding: 0.25rem 0.5rem;
-  
-  border-radius: 0.75rem;
-  border: solid 1px ${props => props.theme.colors.uiLineGray2};
-  background-color: ${props => props.theme.colors.bg};
   color: ${props => props.theme.colors.textSecondary};
   margin: 0.5rem 0;
-  ${dropShadowSoft}
+  padding: 0 0.25rem 0.25rem 0.25rem;
+  
+
 
   animation: ${fadeInTop} 0.8s ease;
 
   &:first-child {
-    margin-top: 2.25rem;
+    margin-top: 2.75rem;
+    padding-top: 0.5rem;
+    border-top: solid 1px ${props => props.theme.colors.uiLineGray2};
   }
 }
 

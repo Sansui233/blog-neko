@@ -285,35 +285,29 @@ const PostLayout = styled.article`
   margin-top: 72px;
   margin: 0 auto;
   padding: 60px 20px;
-  max-width: 800px;
-  width: 56%;
+  width: 680px;
 
   .toc-btn {
     display: none;
   }
 
-  @media screen and (max-width: 1400px){
-    width: 52%;
+  @media screen and (max-width: 1200px){
+    width: calc( 100% - 480px );
+    max-width: 680px;
   }
 
-  @media screen and (max-width: 1200px){
-    width: 75%;
-    padding-left: 80px;
-    margin: unset;
-  }
 
   @media screen and (max-width: 1000px){
-    width: 85%;
-    margin: 0 auto;
-    padding-left: 20px;
+    width: unset;
+    max-width: 680px;
     .toc-btn {
       display: unset;
     }
   }
 
   @media screen and (max-width: 580px) {
-    padding: 48px 20px;
     width: 100%;
+    padding: 48px 20px;
   }
 `
 
@@ -345,7 +339,7 @@ const ColumnRightContainer = styled.aside<{
   overflow: auto;
 
   left: 78%;
-  width: 22%;
+  width: 288px;
 
   .close-btn {
     display:none;
@@ -354,7 +348,7 @@ const ColumnRightContainer = styled.aside<{
 
   @media screen and (max-width: 1200px){
     left: 76%;
-    width: 24%;
+    width: 240px;
   }
 
   @media screen and (max-width: 1000px) {
