@@ -16,13 +16,10 @@ export function dateI18n(d: Date, mode: "dateYMD" | "dateNatural" = "dateNatural
   const lang = i18next.resolvedLanguage
 
   function getEngOrdinalSuffix(day: number) {
-    if (day > 3 && day < 21) return 'th';
-    switch (day % 10) {
-      case 1: return day + 'st';
-      case 2: return day + 'nd';
-      case 3: return day + 'rd';
-      default: return day + 'th';
-    }
+    // From https://community.shopify.com/c/Shopify-Design/Ordinal-Number-in-javascript-1st-2nd-3rd-4th/m-p/72156
+    const s = ["th", "st", "nd", "rd"],
+      v = day % 100;
+    return (s[(v - 20) % 10] || s[v] || s[0]);
   }
 
   if (mode !== "dateNatural" || lang !== 'en') {
